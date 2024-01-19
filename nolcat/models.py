@@ -990,11 +990,7 @@ class StatisticsSources(db.Model):
             no_usage_returned_count = 0
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
-                SUSHI_parameters['end_date'] = date(
-                    month_to_harvest.year,
-                    month_to_harvest.month,
-                    calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                )
+                SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
@@ -1624,7 +1620,10 @@ class AnnualUsageCollectionTracking(db.Model):
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
-        file_path = Path(file)
+        try:
+            file_path = Path(file)
+        except:
+            file_path = Path(file.filename)
         file_extension = file_path.suffix
         if file_extension not in file_extensions_and_mimetypes().keys():
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"

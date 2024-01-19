@@ -19,10 +19,6 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-Iteration 1: Complete Current Data I/O
-======================================
-* Set up basic customizable SQL queries in ``nolcat.view_usage.views.run_custom_SQL_query()``
-
 Iteration 2: Add Historical Data
 ================================
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
@@ -39,8 +35,8 @@ Iteration 2: Add Historical Data
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
+* Finish ``tests.conftest.function sample_COUNTER_reports_for_MultipartEncoder()`` and use it in the designated test functions
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
-* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
 * Get failing test ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to pass
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_63()``
@@ -110,25 +106,17 @@ Iteration 4: Show and Edit Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 5: Create Query Wizard
-================================
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
-* Craft queries to use
-* Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
-* Finish ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
-* Finish form in "query-wizard.html"
-
-Iteration 6: Switch Message Display from Stdout to Flask
+Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 
-Iteration 7: Create UI Design and Jinja Templates
+Iteration 6: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
-Iteration 8: Interact with Host File System
+Iteration 7: Interact with Host File System
 ============================================
 * Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
 * Finish ``tests.test_app.default_download_folder()``

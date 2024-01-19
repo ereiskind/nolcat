@@ -448,7 +448,9 @@ class UploadCOUNTERReports:
                 
                 #Subsection: Standardize R4 Turnaway Metric Values
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied. C", "denied: c"))
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied: C", "denied: c"))
                 
                 log.info(f"Dataframe being used in concatenation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Complete dataframe:\n{df}")

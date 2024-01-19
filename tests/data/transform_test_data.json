@@ -147,11 +147,11 @@
             "mode": "row-based"
         },
         "columnName": "Metric_Type",
-        "expression": "grel:value.replace(\"denied.\", \"denied:\")",
+        "expression": "grel:value.replace(\"denied. C\", \"denied: c\").replace(\"denied.\", \"denied:\").replace(\"denied: C\", \"denied: c\")",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Have turnaway report metrics always use a colon"
+        "description": "Have turnaway report metrics always use a colon and a lowercase `c`"
     },
     {
         "op": "core/text-transform",

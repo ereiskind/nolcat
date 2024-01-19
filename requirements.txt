@@ -5,6 +5,7 @@ Flask==2.0.1
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
 fsspec==2021.7.0
+fuzzywuzzy==0.18.0
 graphviz==0.17
 lxml==4.9.0
 mysql==0.0.3
@@ -18,6 +19,7 @@ PyMySQL==0.10.1
 pytest==6.2.5
 pytest-dependency==0.5.1
 pytest-session2file==0.1.11
+python-Levenshtein==0.12.2
 requests==2.26.0
 requests-toolbelt==0.10.1
 Sphinx==4.1.1

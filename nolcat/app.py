@@ -5,6 +5,8 @@ from datetime import datetime
 from itertools import product
 import json
 import re
+from datetime import date
+import calendar
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -170,7 +172,7 @@ def create_app():
     def download_file(file_path):
         """Downloads the file at the absolute file path in the variable route.
 
-        An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
+        This function allows static files to be downloaded in Jinja templates (redirecting to this route function from other route functions raises a ValueError in pytest). An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
 
         Args:
             file_path (str): an absolute file path
@@ -328,7 +330,7 @@ def restore_boolean_values_to_boolean_field(series):
 
 
 def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
-    """The function for uploading files to a S3 bucket.  #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
+    """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
 
@@ -342,6 +344,8 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
+    #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
+    #ALERT: On 2024-01-11, this function doesn't work when FileStorage objects are being passed in from `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` when testing `nolcat.ingest_usage.views.upload_non_COUNTER_reports()`
     log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
@@ -376,8 +380,8 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
-    if file.is_file():
-        try:
+    try:
+        if file.is_file():
             client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,
                 Bucket=bucket,
@@ -386,11 +390,11 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
             log.info(message)
             return message
-        except Exception as error:
-            message = f"Running the function `upload_file()` on {file} (type {type(file)}) raised the error {error}."
+        else:
+            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
             log.error(message)
             return message
-    else:
+    except AttributeError as error:
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
@@ -679,3 +683,30 @@ def ISSN_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
+
+
+def ISBN_regex():
+    """A regex object matching an ISBN.
+
+    Regex copied from https://stackoverflow.com/a/53482655.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
+
+
+def last_day_of_month(original_date):
+    """The last day of the month for the month of the given date.
+
+    Args:
+        original_date (datetime.date): the original date
+    
+    Returns:
+        datetime.date: the last day of the month
+    """
+    return date(
+        original_date.year,
+        original_date.month,
+        calendar.monthrange(original_date.year, original_date.month)[1],
+    )

@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2023-11-17 ##########
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
@@ -16,6 +16,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
+from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
 
@@ -34,11 +35,7 @@ def current_month_like_most_recent_month_with_usage():
     """
     current_date = date.today()
     begin_date = current_date.replace(day=1)
-    end_date = date(
-        begin_date.year,
-        begin_date.month,
-        calendar.monthrange(begin_date.year, begin_date.month)[1],
-    )
+    end_date = last_day_of_month(begin_date)
     log.info(f"`current_month_like_most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
@@ -191,11 +188,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
-    end_date = date(
-        begin_date.year,
-        begin_date.month,
-        calendar.monthrange(begin_date.year, begin_date.month)[1],
-    )
+    end_date = last_day_of_month(begin_date)
     with client:
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
@@ -268,11 +261,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
-    end_date = date(
-        begin_date.year,
-        begin_date.month,
-        calendar.monthrange(begin_date.year, begin_date.month)[1],
-    )
+    end_date = last_day_of_month(begin_date)
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
@@ -285,11 +274,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     """Tests the code for rejecting a SUSHI end date before the begin date."""
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
     end_date = begin_date - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
-    end_date = date(
-        end_date.year,
-        end_date.month,
-        calendar.monthrange(end_date.year, end_date.month)[1],
-    )
+    end_date = last_day_of_month(end_date)
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
@@ -311,11 +296,7 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-1)
-    end_date = date(
-        begin_date.year,
-        begin_date.month,
-        calendar.monthrange(begin_date.year, begin_date.month)[1],
-    )
+    end_date = last_day_of_month(begin_date)
     log.info(f"`month_before_month_like_most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 

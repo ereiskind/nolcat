@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2023-11-17 ##########
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
@@ -10,6 +10,7 @@ import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from conftest import COUNTER_reports_offered_by_statistics_source
+from nolcat.app import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
@@ -70,11 +71,7 @@ def SUSHI_credentials_fixture():
                 '%Y/%m', # yyyy/mm
             ]
         )
-    SUSHI_credentials['end_date'] = date(  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
-        SUSHI_credentials['end_date'].year,
-        SUSHI_credentials['end_date'].month,
-        calendar.monthrange(SUSHI_credentials['end_date'].year, SUSHI_credentials['end_date'].month)[1]
-    )
+    SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
 
     yield (URL, SUSHI_credentials)
 
