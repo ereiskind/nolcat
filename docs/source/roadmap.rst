@@ -19,13 +19,6 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-Iteration 1: Complete Current Data I/O
-======================================
-* Write ``nolcat.view_usage.views.construct_query_with_wizard()``
-
-  * Create form
-  * Create test function
-
 Iteration 2: Add Historical Data
 ================================
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
