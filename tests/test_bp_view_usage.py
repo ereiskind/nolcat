@@ -774,7 +774,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     "Filter by fixed vocabulary fields",
     "Filter by publication date",
     "Filter by parent title",
-    #"Filter by parent ISBN",
+    "Filter by parent ISBN",
     #"Filter by parent ISSN",
 ])
 def IR_parameters(request):
@@ -902,45 +902,37 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05763f40>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('ISBN', 'ISBN'), ('parent_title', 'Parent Title'), ('parent_ISBN', 'Parent ISBN'))
-                ('resource_name', "Item Name"),
-                ('ISBN', "ISBN"),
-                ('parent_ISBN', "Parent ISBN"),
-            ),
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
-            'publication_date_start_filter': None,
-            'publication_date_end_filter': None,
-            'ISBN_filter': None,
-            'ISSN_filter': None,
-            'parent_title_filter': None,
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
             'parent_ISBN_filter': "978-0-8223-8491-5",
-            'parent_ISSN_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Book_Segment'],
-                forms.data_type_values['Other'],
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
-            ),
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, ISBN, parent_ISBN, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (ISBN='978-0-8223-8491-5')
-                AND (data_type='Book_Segment' OR data_type='Other')
-                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name;
+                AND (parent_ISBN='978-0-8223-8491-5')
+                AND (data_type='Book')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
