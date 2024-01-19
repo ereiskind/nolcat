@@ -298,8 +298,8 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         query=f"SELECT AUCT_statistics_source, AUCT_fiscal_year, collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
         index=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-    )  #TEST: 0::Running the query `SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = 5 AND AUCT_fiscal_year = 5;` raised the error "None of ['AUCT_statistics_source', 'AUCT_fiscal_year'] are in the columns".
-    assert check_database_update.at[0,'collection_status'] == 'Collection complete'  #TEST: 0::AttributeError: 'str' object has no attribute 'at'
+    )
+    assert check_database_update.at[0,'collection_status'] == 'Collection complete'  #TEST: KeyError: 0
     assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
 
     #Section: Check S3 for File

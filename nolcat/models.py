@@ -1632,16 +1632,13 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
 
         #Section: Use Temp File to Upload File to S3
-        log.info(f"Before saving a copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         temp_file_path = Path(__file__).parent / f"temp{file_extension}"
         file.save(temp_file_path)
-        log.info(f"After saving a copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             file_name,
         )
         temp_file_path.unlink()
-        log.info(f"After removing the saved copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
