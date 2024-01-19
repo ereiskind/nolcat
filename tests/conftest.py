@@ -382,8 +382,8 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
         non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
 
-    Yield:
-        None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
     log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 bucket {BUCKET_NAME}"))
@@ -394,7 +394,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
-    yield None
+    yield path_to_sample_file
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
