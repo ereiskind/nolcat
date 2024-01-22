@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-01-11 ##########
+########## Failing 2024-01-22 ##########
 
 import pytest
 import logging
@@ -243,7 +243,7 @@ def test_restore_boolean_values_to_boolean_field():
         dtype='boolean',
         name="boolean_values",
     )
-    converted_series = restore_boolean_values_to_boolean_field(tinyint_s)
+    converted_series = restore_boolean_values_to_boolean_field(tinyint_s)  #TEST: TypeError: Invalid value 'False' for dtype Int8 --> `tinyint_s` as `self = <IntegerArray> [1, 0, <NA>, 1] Length: 4, dtype: Int8, value = False` -- pandas update
     log.debug(f"The converted series is a {type(converted_series)}")
     assert_series_equal(converted_series, boolean_s)
 
