@@ -243,7 +243,9 @@ def test_restore_boolean_values_to_boolean_field():
         dtype='boolean',
         name="boolean_values",
     )
-    assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
+    converted_series = restore_boolean_values_to_boolean_field(tinyint_s)
+    log.debug(f"The converted series is a {type(converted_series)}")
+    assert_series_equal(converted_series, boolean_s)
 
 
 def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
