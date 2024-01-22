@@ -492,13 +492,11 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         df["publication_date"] = pd.to_datetime(
             df["publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
         )
     if 'parent_publication_date' in df.columns.to_list():
         df["parent_publication_date"] = pd.to_datetime(
             df["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
         )
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])

@@ -209,7 +209,7 @@ def date_parser(dates):
     Returns:
         datetime64[ns]: a datetime value pandas inherits from numpy
     """
-    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
+    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce')  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
 
 
 def last_day_of_month(first_day_of_month):

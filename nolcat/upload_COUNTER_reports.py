@@ -234,7 +234,6 @@ class UploadCOUNTERReports:
                     df[field] = pd.to_datetime(
                         df[field],
                         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                        infer_datetime_format=True,
                         utc=True,  # This must be set to `True` to convert timezone-aware datetime objects
                     )
                     df[field] = df[field].dt.tz_localize(None)
@@ -476,13 +475,11 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(
                 combined_df['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
 
