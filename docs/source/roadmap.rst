@@ -19,6 +19,12 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
+Iteration: Formalize Documentation
+====================================
+* Update and flesh out README according to best practices
+* Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
+* Organize custom documentation pages on Sphinx index
+
 Iteration 2: Add Historical Data
 ================================
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
@@ -141,12 +147,6 @@ Iteration 2: Write ``__repr__`` Methods
 * Write ``nolcat.models.StatisticsResourceSources.__repr__()``
 * Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
 * Write ``nolcat.models.COUNTERData.__repr__()``
-
-Iteration 3: Formalize Documentation
-====================================
-* Update and flesh out README according to best practices
-* Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
-* Organize custom documentation pages on Sphinx index
 
 Iteration 4: Display Data Uploaded at End of Initialization
 ===========================================================
