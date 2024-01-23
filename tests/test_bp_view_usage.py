@@ -373,12 +373,12 @@ def DR_parameters(request):
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (resource_name='ProQuest Social Sciences Premium Collection->ERIC' OR resource_name='Social Science Premium Collection->Education Collection->ERIC' OR resource_name='ERIC (Module)' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3' OR resource_name='01 Periodicals Archive Online Foundation Collection 1' OR resource_name='ERIC' OR resource_name='Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online Foundation Collection 3' OR resource_name='Historical Abstracts')
+                AND (MATCH(resource_name) AGAINST('eric' IN NATURAL LANGUAGE MODE))
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Resource names from values returned by `fuzzy_search_on_field()` on test data
+        """
         yield (form_input, query)
     elif request.param == "Filter by publisher name":
         form_input = {
@@ -399,12 +399,12 @@ def DR_parameters(request):
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (publisher='ProQuest')
+                AND (MATCH(publisher) AGAINST('proq' IN NATURAL LANGUAGE MODE))
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Publisher name from value returned by `fuzzy_search_on_field()` on test data
+        """
         yield (form_input, query)
 
 
