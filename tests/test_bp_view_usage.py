@@ -295,7 +295,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
-    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
     database_df = query_database(
         query=query,
         engine=engine,
@@ -303,7 +303,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
-    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -432,7 +432,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
-    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
     database_df = query_database(
         query=query,
         engine=engine,
@@ -440,7 +440,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
-    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -663,7 +663,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
-    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
     database_df = query_database(
         query=query,
         engine=engine,
@@ -671,7 +671,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
-    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -909,7 +909,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
-    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
     database_df = query_database(
         query=query,
         engine=engine,
@@ -917,7 +917,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
-    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
