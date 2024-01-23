@@ -11,6 +11,7 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
+from mysqlclient import escape_string()
 
 from . import bp
 from .forms import *
@@ -403,21 +404,10 @@ def construct_PR_query_with_wizard():
         #Section: Add String-Based Filters
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
-            platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "PR")
-            if platform_filter_options:
-                platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
-                log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-                query = query + f"AND ({platform_filter_option_statement})\n"
-            else:
-                message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
-                log.warning(message)
-                flash(message)
-                return redirect(url_for(
-                    'view_usage.query_wizard_sort_redirect',
-                    report_type='PR',
-                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
-                    end_date=form.end_date.data.strftime('%Y-%m-%d')
-                ))
+            search_term = escape_string(form.platform_filter.data)
+            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
+            query = query + f"AND ({platform_filter_option_statement})\n"
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
