@@ -11,7 +11,6 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
-from fuzzywuzzy import fuzz
 
 from . import bp
 from .forms import *
@@ -20,55 +19,6 @@ from ..models import *
 from ..statements import *
 
 log = logging.getLogger(__name__)
-
-def fuzzy_search_on_field(value, field, report):
-    """This function provides fuzzy matches for free text field input into the query wizard.
-
-    The query wizard allows for free text input to use as a filter for some fields, but because SQL query string filters use exact matching, the chance that no results will be returned because the input isn't an exact match for what the SUSHI reports contain is high. To counter this problem, this function will pull all of the unique values in the field to be matched, perform fuzzy matching comparing those values to the value input into the query wizard, and returns all the existing values that are a fuzzy match.
-
-    Args:
-        value (str): the string input into the query wizard
-        field (str): the `COUNTERData` field
-        report (str): the abbreviation for the report being searched for
-
-    Returns:
-        list: the filed values that are fuzzy matches
-        str: the error message if the query fails
-    """
-    log.info("Starting `fuzzy_search_on_field()`.")
-    #Section: Get Existing Values from Database
-    if report == "PR":
-        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='PR' OR report_type='PR1';"
-    elif report == "DR":
-        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='DR' OR report_type='DB1' OR report_type='DB2';"
-    elif report == "TR":
-        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1';"
-    elif report == "IR":
-        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='IR';"
-    log.debug(f"Using the following query: {query}.")
-    
-    df = query_database(
-        query=query,
-        engine=db.engine,
-    )
-    if isinstance(df, str):
-        message = database_query_fail_statement(df)
-        log.error(message)
-        return message
-
-    #Section: Perform Matching
-    df['partial_ratio'] = df.apply(lambda record: fuzz.partial_ratio(record[field], value), axis='columns')
-    df['token_sort_ratio'] = df.apply(lambda record: fuzz.token_sort_ratio(record[field], value), axis='columns')
-    df['token_set_ratio'] = df.apply(lambda record: fuzz.token_set_ratio(record[field], value), axis='columns')
-    log.debug(f"Dataframe with all fuzzy matching values:\n{df}")
-    df = df[
-        (df['partial_ratio'] >= 70) |
-        (df['token_sort_ratio'] >= 65) |
-        (df['token_set_ratio'] >= 75)
-    ]
-    log.info(f"Dataframe filtered for matching values:\n{df}")
-    return [value.replace("'", "\\'") for value in df[field].to_list()]
-
 
 def create_COUNTER_fixed_vocab_list(form_selections):
     """Separates all COUNTER vocabulary terms into independent items in a list.

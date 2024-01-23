@@ -39,23 +39,6 @@ def COUNTER_download_CSV():
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
 
-def test_fuzzy_search_on_field(client):
-    """Tests the fuzzy match of a string to values in a given `COUNTERData` field."""
-    with client:
-        Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
-        TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
-        ERIC_test = views.fuzzy_search_on_field("ERIC", "resource_name", "DR")
-    assert "Gale" in Gale_test
-    assert "Gale a Cengage Company" in Gale_test
-    assert "Gale, a Cengage Company" in Gale_test
-    assert "Taylor & Francis Ltd" in TF_test
-    assert "ERIC" in ERIC_test
-    assert "ERIC (Module)" in ERIC_test
-    assert "ERICdata Higher Education Knowledge" in ERIC_test
-    assert "ProQuest Social Sciences Premium Collection->ERIC" in ERIC_test
-    assert "Social Science Premium Collection->Education Collection->ERIC" in ERIC_test
-
-
 def test_create_COUNTER_fixed_vocab_list():
     """Tests creating a single-level list from individual strings and pipe-delimited lists."""
     assert views.create_COUNTER_fixed_vocab_list(["a", "b", "c|d|e", "f"]) == ["a", "b", "c", "d", "e", "f"]
@@ -282,7 +265,7 @@ def PR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Platform name from values returned by `fuzzy_search_on_field()` on test data
+        """  # Platform name from values returned by fuzzy search on test data
         yield (form_input, query)
 
 
