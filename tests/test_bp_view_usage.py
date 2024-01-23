@@ -121,7 +121,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
 
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
-        index_col='COUNTER_data_ID',
+        index_col=None,
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -131,7 +131,6 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
     database_df = query_database(
         query=query_options[1],
         engine=engine,
-        index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
@@ -232,7 +231,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT platform, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
@@ -240,7 +239,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count, platform, COUNTER_data_ID;
+            GROUP BY usage_count, platform;
         """
         yield (form_input, query)
     elif request.param == "Filter by platform name":
@@ -255,7 +254,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT platform, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
@@ -264,7 +263,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """
         yield (form_input, query)
 
@@ -288,7 +287,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
-        index_col='COUNTER_data_ID',
+        index_col=None,
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -300,7 +299,6 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     database_df = query_database(
         query=query,
         engine=engine,
-        index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
@@ -343,7 +341,7 @@ def DR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
@@ -351,7 +349,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name":
@@ -368,7 +366,7 @@ def DR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
@@ -377,7 +375,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """
         yield (form_input, query)
     elif request.param == "Filter by publisher name":
@@ -394,7 +392,7 @@ def DR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT publisher, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT publisher, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
@@ -403,7 +401,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """
         yield (form_input, query)
 
@@ -426,7 +424,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
-        index_col='COUNTER_data_ID',
+        index_col=None,
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -438,7 +436,6 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     database_df = query_database(
         query=query,
         engine=engine,
-        index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
@@ -489,7 +486,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -499,7 +496,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
@@ -522,7 +519,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -533,7 +530,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """  #TEST: Result of `escape_string()` will likely need modification
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
@@ -556,7 +553,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -567,7 +564,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN":
@@ -590,7 +587,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -601,7 +598,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Unique_Item_Requests')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by year of publication":
@@ -624,7 +621,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -635,7 +632,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Unique_Item_Requests')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
 
@@ -658,7 +655,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
-        index_col='COUNTER_data_ID',
+        index_col=None,
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -670,7 +667,6 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     database_df = query_database(
         query=query,
         engine=engine,
-        index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
@@ -725,7 +721,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -734,7 +730,7 @@ def IR_parameters(request):
                 AND (access_type='OA_Gold' OR access_type='Open' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
@@ -761,7 +757,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -771,7 +767,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":
@@ -798,7 +794,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT parent_title, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT parent_title, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -808,7 +804,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, COUNTER_data_ID;
+            GROUP BY usage_count;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
@@ -835,7 +831,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -845,7 +841,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
@@ -872,7 +868,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT parent_title, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            SELECT parent_title, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -882,7 +878,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, parent_title, COUNTER_data_ID;
+            GROUP BY usage_count, parent_title;
         """
         yield (form_input, query)
 
@@ -905,7 +901,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
-        index_col='COUNTER_data_ID',
+        index_col=None,
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -917,7 +913,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     database_df = query_database(
         query=query,
         engine=engine,
-        index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
         pytest.skip(database_function_skip_statements(database_df))
