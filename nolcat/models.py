@@ -549,7 +549,7 @@ class Vendors(db.Model):
     __tablename__ = 'vendors'
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    vendor_name = db.Column(db.String(80), nullable=False)
+    vendor_name = db.Column(db.String(80), nullable=False, index=True)
     alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
@@ -704,7 +704,7 @@ class StatisticsSources(db.Model):
     __tablename__ = 'statisticsSources'
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_name = db.Column(db.String(100), nullable=False)
+    statistics_source_name = db.Column(db.String(100), nullable=False, index=True)
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
@@ -1217,7 +1217,7 @@ class ResourceSources(db.Model):
     __tablename__ = 'resourceSources'
 
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    resource_source_name = db.Column(db.String(100), nullable=False)
+    resource_source_name = db.Column(db.String(100), nullable=False, index=True)
     source_in_use = db.Column(db.Boolean, nullable=False)
     access_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
@@ -1748,10 +1748,10 @@ class COUNTERData(db.Model):
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     report_type = db.Column(db.String(5))
-    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
-    publisher = db.Column(db.String(PUBLISHER_LENGTH))
+    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH), index=True)
+    publisher = db.Column(db.String(PUBLISHER_LENGTH), index=True)
     publisher_ID = db.Column(db.String(PUBLISHER_ID_LENGTH))
-    platform = db.Column(db.String(PLATFORM_LENGTH))
+    platform = db.Column(db.String(PLATFORM_LENGTH), index=True)
     authors = db.Column(db.String(AUTHORS_LENGTH))
     publication_date = db.Column(db.DateTime)
     article_version = db.Column(db.String(50))
@@ -1766,7 +1766,7 @@ class COUNTERData(db.Model):
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
-    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH), index=True)
     parent_authors = db.Column(db.String(AUTHORS_LENGTH))
     parent_publication_date = db.Column(db.DateTime)
     parent_article_version = db.Column(db.String(50))
