@@ -803,13 +803,13 @@ def IR_parameters(request):
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
+                AND (MATCH(parent_title) AGAINST('glq' IN NATURAL LANGUAGE MODE))
                 AND (data_type='Article')
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Parent title from values returned by `fuzzy_search_on_field()` on test data
+        """
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
         form_input = {
