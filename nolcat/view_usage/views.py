@@ -11,7 +11,7 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
-from mysqlclient import escape_string()
+from mysqlclient import escape_string
 
 from . import bp
 from .forms import *
