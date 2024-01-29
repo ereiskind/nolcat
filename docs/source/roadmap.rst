@@ -105,6 +105,8 @@ Iteration 4: Show and Edit Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
+* Write ``nolcat.models.AnnualStatistics.add_annual_statistic_value()``
+* Write ``tests.test_AnnualStatistics_test_add_annual_statistic_value()``
 
 Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
@@ -133,6 +135,7 @@ Iteration 1: Make Initialization Forms Downloadable
 Iteration 2: Write ``__repr__`` Methods
 =======================================
 * Write ``nolcat.models.FiscalYears.__repr__()``
+* Write ``nolcat.models.AnnualStatistics.__repr__()``
 * Write ``nolcat.models.Vendors.__repr__()``
 * Write ``nolcat.models.VendorNotes.__repr__()``
 * Write ``nolcat.models.StatisticsSourceNotes.__repr__()``

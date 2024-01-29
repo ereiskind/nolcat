@@ -133,6 +133,16 @@ def fiscalYears_relation():
 
 
 @pytest.fixture
+def annualStatistics_relation():
+    """Creates a dataframe that can be loaded into the `annualStatistics` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.annualStatistics_relation()
+
+
+@pytest.fixture
 def vendors_relation():
     """Creates a dataframe that can be loaded into the `vendors` relation.
     

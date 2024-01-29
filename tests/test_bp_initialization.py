@@ -57,6 +57,26 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
 
 
 @pytest.fixture
+def create_annualStatistics_CSV_file(tmp_path, annualStatistics_relation):
+    """Create a CSV file with the test data for the `annualStatistics` relation, then removes the file at the end of the test.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        annualStatistics_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
+    yield annualStatistics_relation.to_csv(
+        tmp_path / 'annualStatistics_relation.csv',
+        index_label="fiscal_year_ID",
+        encoding='utf-8',
+        errors='backslashreplace',
+    )
+    os.remove(tmp_path / 'annualStatistics_relation.csv')
+
+
+@pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
     """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test.
     
@@ -374,14 +394,15 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+    """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
             'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb'), 'text/csv'),
+            'annualStatistics_CSV': ('annualStatistics_relation.csv', open(tmp_path / 'annualStatistics_relation.csv', 'rb'), 'text/csv'),
             'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb'), 'text/csv'),
             'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb'), 'text/csv'),
         },
@@ -407,6 +428,15 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
+
+    annualStatistics_relation_data = query_database(
+        query="SELECT * FROM annualStatistics;",
+        engine=engine,
+        index=['fiscal_year_ID', 'question'],
+    )
+    if isinstance(annualStatistics_relation_data, str):
+        pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
+    annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
 
     vendors_relation_data = query_database(
         query="SELECT * FROM vendors;",
@@ -438,6 +468,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
+    assert_frame_equal(annualStatistics_relation_data, annualStatistics_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 

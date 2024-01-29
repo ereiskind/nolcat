@@ -95,6 +95,7 @@ class FiscalYears(db.Model):
     notes_on_corrections_after_submission = db.Column(db.Text)
 
     FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='fiscalYears')
+    FK_in_AnnualStatistics = db.relationship('AnnualStatistics', backref='fiscalYears')
 
 
     def __repr__(self):
@@ -530,6 +531,46 @@ class FiscalYears(db.Model):
             all_flash_statements.append(message)
             return (message, all_flash_statements)
         return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
+
+
+class AnnualStatistics(db.Model):
+    """The class representation of the `annualStatistics` relation, which contains a list of the national reporting aggregate statistics.
+    
+    Attributes:
+        self.fiscal_year_ID (int): part of the composite primary key; the foreign key for `fiscalYears`
+        self.question (str): part of the composite primary key; the survey and question number
+        self.count (int): the value answering the given question for the given fiscal year
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
+        add_annual_statistic_value: This method adds a record to the `annualStatistics` relation.
+    """
+    __tablename__ = 'annualStatistics'
+
+    fiscal_year_ID = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True, autoincrement=False)
+    question = db.Column(db.String(20), primary_key=True, autoincrement=False)
+    count = db.Column(db.Integer, nullable=False)
+
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            "count": 'Int64',
+        }
+
+
+    @hybrid_method
+    def add_annual_statistic_value():
+        """This method adds a record to the `annualStatistics` relation."""
+        pass
 
 
 class Vendors(db.Model):

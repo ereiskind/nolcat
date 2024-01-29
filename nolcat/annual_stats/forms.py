@@ -39,6 +39,14 @@ class EditFiscalYearForm(FlaskForm):
     pass
 
 
+class EditAnnualStatisticsForm(FlaskForm):
+    """Creates a form for adding records to the `annualStatistics` relation."""
+    #ToDo: Create a field to select the fiscal year
+    #ToDo: Create a field to enter the question
+    #ToDo: Create a field to enter the value
+    pass
+
+
 class EditAUCTForm(FlaskForm):
     """Creates a form for editing records in the `annualUsageCollectionTracking` relation."""
     #ToDo: Create a field to edit `usage_is_being_collected`

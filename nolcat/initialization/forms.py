@@ -5,8 +5,9 @@ from wtforms.validators import DataRequired
 
 
 class FYAndVendorsDataForm(FlaskForm):
-    """Creates a form for uploading the `fiscalYears`, `vendors`, and `vendorNotes` relation data."""
+    """Creates a form for uploading the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relation data."""
     fiscalYears_CSV = FileField("Select the filled out \"initialize_fiscalYears.csv\" file here.", validators=[DataRequired()])
+    annualStatistics_CSV = FileField("Select the filled out \"initialize_annualStatistics.csv\" file here.", validators=[DataRequired()])
     vendors_CSV = FileField("Select the filled out \"initialize_vendors.csv\" file here.", validators=[DataRequired()])
     vendorNotes_CSV = FileField("Select the filled out \"initialize_vendorNotes.csv\" file here.", validators=[DataRequired()])
 

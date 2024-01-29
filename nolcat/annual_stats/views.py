@@ -51,8 +51,10 @@ def show_fiscal_year_details(PK):
     log.info(f"Starting `show_fiscal_year_details()` for the FY with the PK {PK}.")
     #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` runs from here
     #ToDo: `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` runs from here
+    #ToDo: `AnnualStatistics.add_annual_statistic_value()` runs from here
     run_annual_stats_methods_form = RunAnnualStatsMethodsForm()
     edit_fiscalYear_form = EditFiscalYearForm()
+    edit_annualStatistics_form = EditAnnualStatisticsForm()
     edit_AUCT_form = EditAUCTForm()
     #ToDo: is the best way to run `FiscalYears.create_usage_tracking_records_for_fiscal_year()` also a form?
     if request.method == 'GET':
@@ -104,6 +106,10 @@ def show_fiscal_year_details(PK):
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     elif edit_AUCT_form.validate_on_submit():
         #ToDo: Upload change to `annualUsageCollectionTracking` relation
+        #ToDo: Set up message flashing that change was made
+        return redirect(url_for('annual_stats.show_fiscal_year_details'))
+    elif edit_annualStatistics_form.validate_on_submit():
+        #ToDo: Pass submitted values to `AnnualStatistics.add_annual_statistic_value()`
         #ToDo: Set up message flashing that change was made
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:

@@ -41,6 +41,20 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_annualStatistics {
+        label="annualStatistics"
+
+        // Attributes
+        fiscal_year_ID_in_annualStatistics [shape="component" note="fiscal_year_ID"]
+        question [shape="note"]
+        count
+
+        // Methods
+        state_data_types [shape="Mrecord"]
+        add_annual_statistic_value [shape="Mrecord"]
+    }
+
+
     subgraph cluster_vendors {
         label="vendors"
 
@@ -310,6 +324,13 @@ digraph erd_and_classes {
     */
 
     fiscal_year_ID -> AUCT_fiscal_year [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+
+    fiscal_year_ID -> fiscal_year_ID_in_annualStatistics [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
