@@ -107,7 +107,7 @@ class FiscalYears(db.Model):
     def calculate_depreciated_ACRL_60b(self):
         """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
-        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 60b
@@ -169,7 +169,7 @@ class FiscalYears(db.Model):
     def calculate_depreciated_ACRL_63(self):
         """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
-        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 63
@@ -197,7 +197,7 @@ class FiscalYears(db.Model):
     def calculate_ACRL_61a(self):
         """This method calculates the value of ACRL question 61a for the given fiscal year.
 
-        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database."
+        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 61a
@@ -243,7 +243,7 @@ class FiscalYears(db.Model):
     def calculate_ACRL_61b(self):
         """This method calculates the value of ACRL question 61b for the given fiscal year.
 
-        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage.
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage. This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 61b, OA included
@@ -271,7 +271,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_18(self):
         """This method calculates the value of ARL question 18 for the given fiscal year.
 
-        ARL 18 is the "Number of successful full-text article requests (journals)."
+        ARL 18 is the "Number of successful full-text article requests (journals)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 18
@@ -299,7 +299,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_19(self):
         """This method calculates the value of ARL question 19 for the given fiscal year.
 
-        ARL 19 is the "Number of regular searches (databases)."
+        ARL 19 is the "Number of regular searches (databases)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 19
@@ -327,7 +327,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_20(self):
         """This method calculates the value of ARL question 20 for the given fiscal year.
 
-        ARL 20 is the "Number of federated searches (databases)."
+        ARL 20 is the "Number of federated searches (databases)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 20
