@@ -49,20 +49,13 @@ def PATH_TO_CREDENTIALS_FILE():
 
 
 class FiscalYears(db.Model):
-    """The class representation of the `fiscalYears` relation, which contains a list of the fiscal years with data in the database as well as information about the national reporting aggregate statistics for the given fiscal year.
+    """The class representation of the `fiscalYears` relation, which contains a list of the fiscal years with data in the database.
     
     Attributes:
         self.fiscal_year_ID (int): the primary key
         self.fiscal_year (string): the fiscal year in "yyyy" format; the ending year of the range is used
         self.start_date (datetime64[ns]): the first day of the fiscal year
         self.end_date (datetime64[ns]) the last day of the fiscal year
-        self.depreciated_ACRL_60b (Int64): the reported value for depreciated ACRL 60b
-        self.depreciated_ACRL_63 (Int64): the reported value for depreciated ACRL 63
-        self.ACRL_61a (Int64): the reported value for ACRL 61a
-        self.ACRL_61b (Int64): the reported value for 61b
-        self.ARL_18 (Int64): the reported value for ARL 18
-        self.ARL_19 (Int64): the reported value for ARL 19
-        self.ARL_20 (Int64): the reported value for ARL 20
         self.notes_on_statisticsSources_used (text): notes on data sources used to collect ARL and ACRL/IPEDS numbers
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
@@ -84,13 +77,6 @@ class FiscalYears(db.Model):
     fiscal_year = db.Column(db.String(4), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    depreciated_ACRL_60b = db.Column(db.Integer)
-    depreciated_ACRL_63 = db.Column(db.Integer)
-    ACRL_61a = db.Column(db.Integer)
-    ACRL_61b = db.Column(db.Integer)
-    ARL_18 = db.Column(db.Integer)
-    ARL_19 = db.Column(db.Integer)
-    ARL_20 = db.Column(db.Integer)
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
@@ -112,13 +98,6 @@ class FiscalYears(db.Model):
             "fiscal_year": 'string',
             "start_date": 'datetime64[ns]',
             "end_date": 'datetime64[ns]',
-            "depreciated_ACRL_60b": 'Int64',
-            "depreciated_ACRL_63": 'Int64',
-            "ACRL_61a": 'Int64',
-            "ACRL_61b": 'Int64',
-            "ARL_18": 'Int64',
-            "ARL_19": 'Int64',
-            "ARL_20": 'Int64',
             "notes_on_statisticsSources_used": 'string',
             "notes_on_corrections_after_submission": 'string',
         }

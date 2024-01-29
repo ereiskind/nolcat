@@ -27,13 +27,6 @@ class EditFiscalYearForm(FlaskForm):
     #ToDo: Create a field to edit `fiscal_year`
     #ToDo: Create a field to edit `start_date`
     #ToDo: Create a field to edit `end_date`
-    #ToDo: Create a field to edit `depreciated_ACRL_60b`
-    #ToDo: Create a field to edit `depreciated_ACRL_63`
-    #ToDo: Create a field to edit `ACRL_61a`
-    #ToDo: Create a field to edit `ACRL_61b`
-    #ToDo: Create a field to edit `ARL_18`
-    #ToDo: Create a field to edit `ARL_19`
-    #ToDo: Create a field to edit `ARL_20`
     #ToDo: Create a field to edit `notes_on_statisticsSources_used`
     #ToDo: Create a field to edit `notes_on_corrections_after_submission`
     pass
