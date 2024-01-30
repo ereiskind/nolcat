@@ -36,6 +36,7 @@ def collect_FY_and_vendor_data():
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
         log.debug(f"The `fiscalYears` FileField data:\n{form.fiscalYears_CSV.data}\n")
+        log.info(f"`form.fiscalYears_CSV.data.read()` (type {type(form.fiscalYears_CSV.data.read())}) is {form.fiscalYears_CSV.data.read()}")  #TEST: temp
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -56,9 +57,7 @@ def collect_FY_and_vendor_data():
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
-        #TEST: temp
-        log.info(f"`form.annualStatistics_CSV.data.read()` (type {type(form.annualStatistics_CSV.data.read())}) is {form.annualStatistics_CSV.data.read()}")
-        #TEST: end temp
+        log.info(f"`form.annualStatistics_CSV.data.read()` (type {type(form.annualStatistics_CSV.data.read())}) is {form.annualStatistics_CSV.data.read()}")  #TEST: temp
         annualStatistics_dataframe = pd.read_csv(
             form.annualStatistics_CSV.data,
             index_col=['fiscal_year_ID', 'question'],
