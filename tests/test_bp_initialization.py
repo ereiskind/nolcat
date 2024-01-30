@@ -69,7 +69,7 @@ def create_annualStatistics_CSV_file(tmp_path, annualStatistics_relation):
     """
     yield annualStatistics_relation.to_csv(
         tmp_path / 'annualStatistics_relation.csv',
-        index_label="fiscal_year_ID",
+        index_label=["fiscal_year_ID", 'question'],
         encoding='utf-8',
         errors='backslashreplace',
     )
