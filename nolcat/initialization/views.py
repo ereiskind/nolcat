@@ -59,8 +59,6 @@ def collect_FY_and_vendor_data():
         annualStatistics_dataframe = pd.read_csv(
             form.annualStatistics_CSV.data,
             index_col='fiscal_year_ID',
-            parse_dates=['start_date', 'end_date'],
-            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
