@@ -57,9 +57,7 @@ def collect_FY_and_vendor_data():
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
         #TEST: temp
-        with open(form.annualStatistics_CSV.data.filename) as f:
-            for line in f:
-                log.info(line)
+        log.info(f"`form.annualStatistics_CSV.data.read()` (type {type(form.annualStatistics_CSV.data.read())}) is {form.annualStatistics_CSV.data.read()}")
         #TEST: end temp
         annualStatistics_dataframe = pd.read_csv(
             form.annualStatistics_CSV.data,
