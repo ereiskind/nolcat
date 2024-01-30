@@ -58,7 +58,7 @@ def collect_FY_and_vendor_data():
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
         annualStatistics_dataframe = pd.read_csv(
             form.annualStatistics_CSV.data,
-            index_col='fiscal_year_ID',
+            index_col=['fiscal_year_ID', 'question'],
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
