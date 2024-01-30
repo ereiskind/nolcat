@@ -409,6 +409,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         encoding='utf-8',
     )
     header_value['Content-Type'] = CSV_files.content_type
+    log.info(Path(tmp_path / 'annualStatistics_relation.csv').resolve())  #TEST: temp
     POST_response = client.post(
         '/initialization/',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
