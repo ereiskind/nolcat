@@ -56,6 +56,11 @@ def collect_FY_and_vendor_data():
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
+        #TEST: temp
+        with open(form.annualStatistics_CSV.data) as f:
+            for line in f:
+                log.info(line)
+        #TEST: end temp
         annualStatistics_dataframe = pd.read_csv(
             form.annualStatistics_CSV.data,
             index_col=['fiscal_year_ID', 'question'],
