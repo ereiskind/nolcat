@@ -385,7 +385,7 @@ class UploadCOUNTERReports:
                 #TEST: temp
                 log.info(f"`df_non_date_field_names` are {df_non_date_field_names}")
                 temp = df['temp_index'].str.split(pat=delimiter_character, expand=True)
-                log.info(f"`temp`:\n{return_string_of_dataframe_info(temp)}")
+                log.info(f"`temp`:\n{temp}\n{return_string_of_dataframe_info(temp)}")
                 #TEST: end temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
