@@ -141,7 +141,7 @@ def harvest_SUSHI_statistics():
     form = SUSHIParametersForm()
     if request.method == 'GET':
         statistics_source_options = query_database(
-            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
             engine=db.engine,
         )
         if isinstance(statistics_source_options, str):
