@@ -382,10 +382,9 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                log.info(f"temp df is\n{df['temp_index'].str.split(pat=delimiter_character, expand=True)}")  #TEST: temp
-                log.info(f"last field of temp df is\n{df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1]}")  #TEST: temp
-                log.info(f"values in last field of temp df are null\n{df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull()}")  #TEST: temp
-                log.info(f"all values in last field of temp df are null\n{df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None)}")  #TEST: temp
+                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True)  #TEST: temp
+                log.info(f"last field of temp df is\n{temp.iloc[:, -1]}")  #TEST: temp
+                log.info(f"records where last field of temp df are not null\n{temp[temp.iloc[:, -1].notnull()]}")  #TEST: temp
                 if df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None):  # This is triggered if the split creates an extra field of null values
                     temp_list = df_non_date_field_names + ['all_nulls']
                     df[temp_list] = df['temp_index'].str.split(pat=delimiter_character, expand=True)
