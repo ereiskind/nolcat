@@ -320,6 +320,7 @@ class UploadCOUNTERReports:
                     log.debug(f"Dataframe with identifiers in standardized fields:\n{df}")
 
                 #Subsection: Put Placeholder in for Null Values
+                log.info(f"Dataframe before null placeholder\n{return_string_of_dataframe_info(df)}")  #TEST: temp
                 df = df.fillna("`None`")
                 log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
