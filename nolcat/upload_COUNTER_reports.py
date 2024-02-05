@@ -337,6 +337,8 @@ class UploadCOUNTERReports:
                 list_of_field_names_from_df = df.columns.values.tolist()
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
+                temp = {field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df}  #TEST: temp
+                log.info(f"dtype conversion is {temp}")  #TEST: temp
                 df = df.astype({field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df})
                 log.debug(f"Dataframe with dtypes set:\n{return_string_of_dataframe_info(df)}")
 
