@@ -338,15 +338,16 @@ class UploadCOUNTERReports:
                 list_of_field_names_from_df = df.columns.values.tolist()
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
-                temp = {field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df}  #TEST: temp
-                log.info(f"dtype conversion is {temp}")  #TEST: temp
-                df = df.astype({field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df})
-                log.debug(f"Dataframe with dtypes set:\n{return_string_of_dataframe_info(df)}")
+
+                fields_and_their_dtypes = {field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df}
+                list_of_string_fields = [field_name for (field_name, field_dtype) in fields_and_their_dtypes if field_dtype == "string"]  # Not actually doing a dtype conversion because null values were replaced with a string placeholder
+                log.info(f"`list_of_string_fields` is {list_of_string_fields}")  #TEST: temp
 
                 #Subsection: Determine Delimiter Character
                 # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
                 possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
-                string_type_df_fields = [field for field in df_non_date_field_names if is_string_dtype(df[field])]
+                string_type_df_fields = [field_name for field_name in df_non_date_field_names if field_name in list_of_string_fields]
+                log.info(f"`string_type_df_fields` is {string_type_df_fields}")  #TEST: temp
                 for character in possible_delimiter_characters:
                     fields_without_possible_delimiter = 0
                     for field in string_type_df_fields:
