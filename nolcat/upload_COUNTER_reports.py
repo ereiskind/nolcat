@@ -344,7 +344,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Determine Delimiter Character
                 # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
-                possible_delimiter_characters = ['~', '@', '^', '`', '|', '$', '#']
+                possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
                 string_type_df_fields = [field for field in df_non_date_field_names if is_string_dtype(df[field])]
                 for character in possible_delimiter_characters:
                     fields_without_possible_delimiter = 0
