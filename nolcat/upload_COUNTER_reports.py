@@ -340,7 +340,7 @@ class UploadCOUNTERReports:
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
 
                 fields_and_their_dtypes = {field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df}
-                list_of_string_fields = [field_name for (field_name, field_dtype) in fields_and_their_dtypes if field_dtype == "string"]  # Not actually doing a dtype conversion because null values were replaced with a string placeholder
+                list_of_string_fields = [field_name for (field_name, field_dtype) in fields_and_their_dtypes.items() if field_dtype == "string"]  # Not actually doing a dtype conversion because null values were replaced with a string placeholder
                 log.info(f"`list_of_string_fields` is {list_of_string_fields}")  #TEST: temp
 
                 #Subsection: Determine Delimiter Character
