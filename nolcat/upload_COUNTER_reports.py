@@ -343,6 +343,12 @@ class UploadCOUNTERReports:
 
                 #Subsection: Determine Delimiter Character
                 # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
+                #TEST: temp
+                df['pipe_test'] = df['resource_name'].apply(lambda cell_value: "|" in cell_value)
+                temp = df[df['pipe_test'] == True]
+                log.info(f"names with pipes:\n{temp['resource_name'].to_list()}")
+                df = df.drop(columns='pipe_test')
+                #TEST: end temp
                 possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
                 string_type_df_fields = [field_name for field_name in df_non_date_field_names if field_name in list_of_string_fields]
                 for character in possible_delimiter_characters:
