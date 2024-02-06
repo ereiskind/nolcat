@@ -348,13 +348,13 @@ class UploadCOUNTERReports:
                 for character in possible_delimiter_characters:
                     possible_delimiter = True
                     for field in string_type_df_fields:
-                        log.info(f"Checking for delimiter '{character}' in field {field}.")  #TEST: revert to debug
+                        log.debug(f"Checking for delimiter '{character}' in field {field}.")
                         if df[field].apply(lambda cell_value: character in cell_value).any():
-                            log.info(f"Delimiter '{character}' found in field {field}.")  #TEST: revert to debug
+                            log.debug(f"Delimiter '{character}' found in field {field}.")
                             possible_delimiter = False
                             break
                         else:
-                            log.info(f"Delimiter '{character}' not found in field {field}.")  #TEST: revert to debug
+                            log.debug(f"Delimiter '{character}' not found in field {field}.")
                     if possible_delimiter:
                         delimiter_character = character
                         break
