@@ -341,16 +341,15 @@ class UploadCOUNTERReports:
 
                 fields_and_their_dtypes = {field_name: field_dtype for (field_name, field_dtype) in COUNTERData.state_data_types().items() if field_name in list_of_field_names_from_df}
                 list_of_string_fields = [field_name for (field_name, field_dtype) in fields_and_their_dtypes.items() if field_dtype == "string"]  # Not actually doing a dtype conversion because null values were replaced with a string placeholder
-                log.info(f"`list_of_string_fields` is {list_of_string_fields}")  #TEST: temp
 
                 #Subsection: Determine Delimiter Character
                 # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
                 possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
                 string_type_df_fields = [field_name for field_name in df_non_date_field_names if field_name in list_of_string_fields]
-                log.info(f"`string_type_df_fields` is {string_type_df_fields}")  #TEST: temp
                 for character in possible_delimiter_characters:
                     fields_without_possible_delimiter = 0
                     for field in string_type_df_fields:
+                        log.info(f"`df[field].apply(lambda cell_value: character in cell_value)`:\n{df[field].apply(lambda cell_value: character in cell_value)}")  #TEST: temp
                         if df[field].apply(lambda cell_value: character in cell_value).any():
                             break
                         else:
@@ -389,16 +388,13 @@ class UploadCOUNTERReports:
 
                 #Subsection: Recreate Metadata Fields
                 #TEST: temp
-                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True)
-                log.info(f"last field of temp df is\n{temp.iloc[:, -1]}")
-                temp2 = temp[temp.iloc[:, -1].notnull()]
-                log.info(f"records where last field of temp df are not null\n{temp2}")
-                log.info(f"record from above with all values shown:\n{temp2.iloc[0]}")
+                if df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None):  # This is triggered if the split creates an extra field of null values
+                    temp = df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].notnull()
+                    log.info(f"record with no null values from df where last field is sometimes null with all values shown:\n{temp.iloc[0]}")
                 #TEST: end temp
                 if df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None):  # This is triggered if the split creates an extra field of null values
                     temp_list = df_non_date_field_names + ['all_nulls']
                     df[temp_list] = df['temp_index'].str.split(pat=delimiter_character, expand=True)
-                    log.info(f"temp df\n{df}")  #TEST: temp
                     df = df.drop(columns='all_nulls')
                 else:
                     df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)
