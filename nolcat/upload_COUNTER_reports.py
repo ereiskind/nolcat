@@ -320,7 +320,6 @@ class UploadCOUNTERReports:
                     log.debug(f"Dataframe with identifiers in standardized fields:\n{df}")
 
                 #Subsection: Put Placeholder in for Null Values
-                log.info(f"Dataframe before null placeholder\n{return_string_of_dataframe_info(df)}")  #TEST: temp
                 df = df.fillna("`None`")
                 log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
@@ -349,11 +348,12 @@ class UploadCOUNTERReports:
                 for character in possible_delimiter_characters:
                     fields_without_possible_delimiter = 0
                     for field in string_type_df_fields:
-                        log.info(f"`df[field].apply(lambda cell_value: character in cell_value)`:\n{df[field].apply(lambda cell_value: character in cell_value)}")  #TEST: temp
+                        log.info(f"for {field}, `df[field].apply(lambda cell_value: character in cell_value)`:\n{df[field].apply(lambda cell_value: character in cell_value)}")  #TEST: temp
                         if df[field].apply(lambda cell_value: character in cell_value).any():
                             break
                         else:
                             fields_without_possible_delimiter += 1
+                        log.info(f"after {field} iteration, `fields_without_possible_delimiter` is {fields_without_possible_delimiter}")  #TEST: temp
                     if fields_without_possible_delimiter == len(string_type_df_fields):
                         delimiter_character = character
                         break
@@ -388,9 +388,11 @@ class UploadCOUNTERReports:
 
                 #Subsection: Recreate Metadata Fields
                 #TEST: temp
-                if df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None):  # This is triggered if the split creates an extra field of null values
-                    temp = df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].notnull()
+                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].notnull()
+                try:
                     log.info(f"record with no null values from df where last field is sometimes null with all values shown:\n{temp.iloc[0]}")
+                except:
+                    log.info(f"temp is empty: {temp.empty}")
                 #TEST: end temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index at the chosen delimiter into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
