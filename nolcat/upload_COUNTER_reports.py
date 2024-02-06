@@ -346,18 +346,18 @@ class UploadCOUNTERReports:
                 possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
                 string_type_df_fields = [field_name for field_name in df_non_date_field_names if field_name in list_of_string_fields]
                 for character in possible_delimiter_characters:
-                    field_has_possible_delimiter = False
+                    possible_delimiter = True
                     for field in string_type_df_fields:
                         log.info(f"Checking for delimiter '{character}' in field {field}.")  #TEST: revert to debug
                         if df[field].apply(lambda cell_value: character in cell_value).any():
                             log.info(f"Delimiter '{character}' found in field {field}.")  #TEST: revert to debug
-                            field_has_possible_delimiter = True
+                            possible_delimiter = False
                             break
                         else:
                             log.info(f"Delimiter '{character}' not found in field {field}.")  #TEST: revert to debug
-                    delimiter_character = character
-                    log.info(f"TEMP: Using '{delimiter_character}' as the delimiter.")  #TEST: temp
-                    break
+                    if possible_delimiter:
+                        delimiter_character = character
+                        break
                 try:
                     log.info(f"Using '{delimiter_character}' as the delimiter.")
                 except Exception as error:
