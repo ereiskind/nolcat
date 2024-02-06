@@ -348,12 +348,14 @@ class UploadCOUNTERReports:
                 for character in possible_delimiter_characters:
                     fields_without_possible_delimiter = 0
                     for field in string_type_df_fields:
-                        log.info(f"for {field}, `df[field].apply(lambda cell_value: character in cell_value)`:\n{df[field].apply(lambda cell_value: character in cell_value)}")  #TEST: temp
+                        log.debug(f"Checking for delimiter '{character}' in field {field}.")
                         if df[field].apply(lambda cell_value: character in cell_value).any():
+                            log.debug(f"Delimiter '{character}' found in field {field}.")
                             break
                         else:
                             fields_without_possible_delimiter += 1
-                        log.info(f"after {field} iteration, `fields_without_possible_delimiter` is {fields_without_possible_delimiter}")  #TEST: temp
+                            log.debug(f"Delimiter '{character}' not found in field {field}, bringing total number of fields not found in to {fields_without_possible_delimiter}.")
+                    log.debug(f"Delimiter '{character}' not found in {fields_without_possible_delimiter} of {len(string_type_df_fields)} fields.")
                     if fields_without_possible_delimiter == len(string_type_df_fields):
                         delimiter_character = character
                         break
