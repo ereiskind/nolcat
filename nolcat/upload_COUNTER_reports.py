@@ -357,7 +357,7 @@ class UploadCOUNTERReports:
                         else:
                             log.debug(f"Delimiter '{character}' not found in field {field}.")
                 
-                potential_delimiters = [character for character in possible_delimiter_characters not in delimiters_in_data]
+                potential_delimiters = [character for character in possible_delimiter_characters if character not in delimiters_in_data]
                 if potential_delimiters:
                     delimiter_character = choice(potential_delimiters)
                     log.info(f"Using '{delimiter_character}' as the delimiter.")
