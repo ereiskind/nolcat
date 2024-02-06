@@ -3,6 +3,7 @@ import re
 from datetime import date
 from datetime import datetime
 import html
+from random import choice
 from openpyxl import load_workbook
 import pandas as pd
 from pandas.api.types import is_string_dtype
@@ -354,23 +355,22 @@ class UploadCOUNTERReports:
                 #TEST: end temp
                 possible_delimiter_characters = ['#', '~', '@', '^', '`', '|', '$']  # Hash is the first tested delimiter because it appears in a title in the test data, so this aspect of the code is covered by the tests
                 string_type_df_fields = [field_name for field_name in df_non_date_field_names if field_name in list_of_string_fields]
+                delimiters_in_data = []
                 for character in possible_delimiter_characters:
-                    number_of_fields_without_delimiter = 0
                     for field in string_type_df_fields:
                         log.debug(f"Checking for delimiter '{character}' in field {field}.")
                         if df[field].apply(lambda cell_value: character in cell_value).any():
                             log.debug(f"Delimiter '{character}' found in field {field}.")
+                            delimiters_in_data.append(character)
                             break
                         else:
-                            number_of_fields_without_delimiter += 1
-                            log.debug(f"Delimiter '{character}' not found in field {field}, bringing total number of fields not found in to {number_of_fields_without_delimiter}.")
-                    log.debug(f"Iteration for field {field} complete with {number_of_fields_without_delimiter} fields without the delimiter.")
-                    if number_of_fields_without_delimiter == len(string_type_df_fields):
-                        delimiter_character = character
-                        break
-                try:
+                            log.debug(f"Delimiter '{character}' not found in field {field}.")
+                
+                potential_delimiters = [character for character in possible_delimiter_characters not in delimiters_in_data]
+                if potential_delimiters:
+                    delimiter_character = choice(potential_delimiters)
                     log.info(f"Using '{delimiter_character}' as the delimiter.")
-                except Exception as error:
+                else:
                     message = "None of the possible delimiter characters were viable, so the `delimiter_character` variable, which the program needs to continue, wasn't set."
                     log.critical(message)
                     data_not_in_dataframes.append(f"Worksheet {report_type} in workbook {str(FileStorage_object.filename)}")
