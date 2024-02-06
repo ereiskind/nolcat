@@ -389,14 +389,6 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                #TEST: temp
-                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True)
-                temp = temp[temp.iloc[:, -1].notnull()]
-                try:
-                    log.info(f"record with no null values from df where last field is sometimes null with all values shown:\n{temp.iloc[0]}")
-                except:
-                    log.info(f"temp is empty: {temp.empty}")
-                #TEST: end temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index at the chosen delimiter into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
