@@ -429,13 +429,14 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
-    annualStatistics_relation_data = query_database(
+    annualStatistics_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
         query="SELECT * FROM annualStatistics;",
         engine=engine,
         index=['fiscal_year_ID', 'question'],
     )
     if isinstance(annualStatistics_relation_data, str):
         pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
+    annualStatistics_relation_data = change_single_field_dataframe_into_series(annualStatistics_relation_data)
     annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
 
     vendors_relation_data = query_database(
