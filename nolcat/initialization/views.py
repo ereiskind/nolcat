@@ -321,7 +321,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
         df = query_database(
-            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
+            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
             engine=db.engine,
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
