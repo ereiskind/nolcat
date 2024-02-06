@@ -430,7 +430,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
     annualStatistics_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        query="SELECT * FROM annualStatistics;",
+        query="SELECT * FROM annualStatistics ORDER BY question DESC;",  # The ORDER BY puts the records in the same order as in the test data
         engine=engine,
         index=['fiscal_year_ID', 'question'],
     )
