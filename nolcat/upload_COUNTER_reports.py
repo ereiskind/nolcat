@@ -388,7 +388,8 @@ class UploadCOUNTERReports:
 
                 #Subsection: Recreate Metadata Fields
                 #TEST: temp
-                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].notnull()
+                temp = df['temp_index'].str.split(pat=delimiter_character, expand=True)
+                temp = temp[temp.iloc[:, -1].notnull()]
                 try:
                     log.info(f"record with no null values from df where last field is sometimes null with all values shown:\n{temp.iloc[0]}")
                 except:
