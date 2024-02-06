@@ -8,6 +8,7 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
+from conftest import mock_FileStorage_object
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
@@ -142,6 +143,21 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
 
 #Section: Upload and Download Nonstandard Usage File
+@pytest.fixture
+def sample_usage_file(path_to_sample_file):
+    """Creates a mock_FileStorage_object object for use in testing the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
+    
+    The AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method takes a Werkzeug FileStorage object; the `mock_FileStorage_object` class was devised to simulate such objects.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+
+    Yields:
+        mock_FileStorage_object: a file in a simulated Werkzeug FileStorage object
+    """
+    yield mock_FileStorage_object(path_to_sample_file)
+
+
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
