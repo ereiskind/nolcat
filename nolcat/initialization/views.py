@@ -71,8 +71,6 @@ def collect_FY_and_vendor_data():
         annualStatistics_dataframe = annualStatistics_dataframe.reset_index()
         annualStatistics_dataframe['question'] = annualStatistics_dataframe['question'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         annualStatistics_dataframe = annualStatistics_dataframe.set_index(['fiscal_year_ID', 'question'])
-        log.info(return_string_of_dataframe_info(annualStatistics_dataframe))  #TEST: temp
-        log.info(type(annualStatistics_dataframe))  #TEST: temp
         log.info(f"`annualStatistics` dataframe:\n{annualStatistics_dataframe}\n")
 
         #Subsection: Upload `vendors` CSV File
