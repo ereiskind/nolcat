@@ -1682,7 +1682,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(message)
             return message
         message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
-        log.debug(message)
+        log.info(message)
         return message
     
 
