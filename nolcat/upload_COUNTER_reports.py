@@ -355,10 +355,9 @@ class UploadCOUNTERReports:
                             break
                         else:
                             log.info(f"Delimiter '{character}' not found in field {field}.")  #TEST: revert to debug
-                    if not field_has_possible_delimiter:
-                        delimiter_character = character
-                        log.info(f"IN IF BLOCK: Using '{delimiter_character}' as the delimiter.")  #TEST: temp
-                        break
+                    delimiter_character = character
+                    log.info(f"TEMP: Using '{delimiter_character}' as the delimiter.")  #TEST: temp
+                    break
                 try:
                     log.info(f"Using '{delimiter_character}' as the delimiter.")
                 except Exception as error:
