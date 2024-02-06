@@ -54,7 +54,9 @@ def upload_COUNTER_data():
                 df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
                 df['report_creation_date'] = pd.to_datetime(None)
                 if data_not_in_df:
-                    messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+                    messages_to_flash = [f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}"]
+                else:
+                    messages_to_flash = []
             except Exception as error:
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
                 log.error(message)
@@ -72,10 +74,8 @@ def upload_COUNTER_data():
             if df is None:
                 flash(message_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            if message_to_flash is None:
-                messages_to_flash = []
-            else:
-                messages_to_flash = [message_to_flash]
+            if message_to_flash:
+                messages_to_flash.append(message_to_flash)
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
