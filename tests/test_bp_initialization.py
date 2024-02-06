@@ -468,7 +468,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
-    assert_frame_equal(annualStatistics_relation_data, annualStatistics_relation)
+    assert_series_equal(annualStatistics_relation_data, annualStatistics_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
