@@ -352,6 +352,7 @@ class UploadCOUNTERReports:
                         if df[field].apply(lambda cell_value: character in cell_value).any():
                             log.info(f"Delimiter '{character}' found in field {field}.")  #TEST: revert to debug
                             field_has_possible_delimiter = True
+                            break
                         else:
                             log.info(f"Delimiter '{character}' not found in field {field}.")  #TEST: revert to debug
                     if not field_has_possible_delimiter:
