@@ -392,12 +392,7 @@ class UploadCOUNTERReports:
                     temp = df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].notnull()
                     log.info(f"record with no null values from df where last field is sometimes null with all values shown:\n{temp.iloc[0]}")
                 #TEST: end temp
-                if df['temp_index'].str.split(pat=delimiter_character, expand=True).iloc[:, -1].isnull().all(axis=None):  # This is triggered if the split creates an extra field of null values
-                    temp_list = df_non_date_field_names + ['all_nulls']
-                    df[temp_list] = df['temp_index'].str.split(pat=delimiter_character, expand=True)
-                    df = df.drop(columns='all_nulls')
-                else:
-                    df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)
+                df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index at the chosen delimiter into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
                 log.debug(f"Fully transposed dataframe:\n{df}")
