@@ -1,5 +1,5 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2024-01-11 ##########
+########## Passing 2024-02-05 ##########
 
 import pytest
 import logging
@@ -34,7 +34,10 @@ def sample_COUNTER_report_workbooks():
 
 #Section: Test
 def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation):
-    """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe."""
+    """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe.
+    
+    The order of the possible delimiters means the existence of the delimiter characters in a string field is tested, but the possibility of a delimiter character as the first character in a string field isn't covered by this test.
+    """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     COUNTERData_relation = COUNTERData_relation.drop(columns='report_creation_date')  # Reports ingested using the `UploadCOUNTERReports.create_dataframe()` method have no `report_creation_date` values, so a field for this value containing entirely null values is added to the dataframe returned by the method; thus, the dataframe returned by this method shouldn't have the `report_creation_date` field
     assert isinstance(data_not_in_df, list)
