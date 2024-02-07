@@ -496,7 +496,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
