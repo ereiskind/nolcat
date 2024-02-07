@@ -1,10 +1,11 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-01-19 ##########
+########## Passing 2024-02-07 ##########
 
 import pytest
 import logging
 from filecmp import cmp
 from pandas.testing import assert_frame_equal
+from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
@@ -142,8 +143,28 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
 
 #Section: Upload and Download Nonstandard Usage File
+@pytest.fixture
+def sample_FileStorage_object(path_to_sample_file):
+    """Creates a Werkzeug FileStorage object for use in testing the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
+    
+    The AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method takes a Werkzeug FileStorage object; the `mock_FileStorage_object` class was devised to simulate such objects.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+
+    Yields:
+        werkzeug.datastructures.FileStorage: a file in a Werkzeug FileStorage object
+    """
+    open_file_stream = open(path_to_sample_file, 'rb')  # Opening the JSON as text raises `TypeError: a bytes-like object is required, not 'str'` on the `werkzeug.datastructures.FileStorage.save()` method 
+    yield FileStorage(
+        stream=open_file_stream,
+        filename=path_to_sample_file.absolute(),
+    )
+    open_file_stream.close()
+
+
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
@@ -151,10 +172,10 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 
     #Section: Make Function Call
     with client:
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)
+        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object)
 
     #Section: Check Results with Assert Statements
-    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{sample_FileStorage_object.filename.suffix}"
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")

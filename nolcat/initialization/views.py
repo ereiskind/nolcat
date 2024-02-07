@@ -21,9 +21,9 @@ log = logging.getLogger(__name__)
 #Section: Database Initialization Wizard
 @bp.route('/', methods=['GET', 'POST'])
 def collect_FY_and_vendor_data():
-    """This route function ingests the files containing data going into the `fiscalYears`, `vendors`, and `vendorNotes` relations, then loads that data into the database.
+    """This route function ingests the files containing data going into the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
+    The route function renders the page showing the templates for the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
     log.info("Starting `collect_FY_and_vendor_data()`.")
     form = FYAndVendorsDataForm()
@@ -53,6 +53,25 @@ def collect_FY_and_vendor_data():
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
+
+        #Subsection: Upload `annualStatistics` CSV File
+        log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
+        annualStatistics_dataframe = pd.read_csv(
+            form.annualStatistics_CSV.data,
+            index_col=['fiscal_year_ID', 'question'],
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        if annualStatistics_dataframe.isnull().all(axis=None) == True:
+            log.error("The `annualStatistics` relation data file was read in with no data.")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`annualStatistics`")
+        
+        annualStatistics_dataframe = annualStatistics_dataframe.astype({k: v for (k, v) in AnnualStatistics.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        log.debug(f"`annualStatistics` dataframe dtypes before encoding conversions:\n{annualStatistics_dataframe.dtypes}\n")
+        annualStatistics_dataframe = annualStatistics_dataframe.reset_index()
+        annualStatistics_dataframe['question'] = annualStatistics_dataframe['question'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        annualStatistics_dataframe = annualStatistics_dataframe.set_index(['fiscal_year_ID', 'question'])
+        log.info(f"`annualStatistics` dataframe:\n{annualStatistics_dataframe}\n")
 
         #Subsection: Upload `vendors` CSV File
         log.debug(f"The `vendors` FileField data:\n{form.vendors_CSV.data}\n")
@@ -99,6 +118,13 @@ def collect_FY_and_vendor_data():
         )
         if not load_data_into_database_success_regex().fullmatch(fiscalYears_load_result):
             data_load_errors.append(fiscalYears_load_result)
+        annualStatistics_load_result = load_data_into_database(
+            df=annualStatistics_dataframe,
+            relation='annualStatistics',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(annualStatistics_load_result):
+            data_load_errors.append(annualStatistics_load_result)
         vendors_load_result = load_data_into_database(
             df=vendors_dataframe,
             relation='vendors',
@@ -295,7 +321,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
         df = query_database(
-            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
+            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
             engine=db.engine,
             index=["statistics_source_ID", "fiscal_year_ID"],
         )

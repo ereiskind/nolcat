@@ -113,6 +113,7 @@ def create_app():
         with create_app().app_context():  # Creates an app context using the Flask factory pattern
             # Per instructions at https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/: "To create the initial database, just import the db object[s]...and run the `SQLAlchemy.create_all()` method"
             from .models import FiscalYears
+            from .models import AnnualStatistics
             from .models import Vendors
             from .models import VendorNotes
             from .models import StatisticsSources
