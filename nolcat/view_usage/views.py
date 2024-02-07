@@ -432,7 +432,9 @@ def construct_PR_query_with_wizard():
             query = query + f"AND ({metric_type_filter_statement})\n"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -547,7 +549,9 @@ def construct_DR_query_with_wizard():
             query = query + f"AND ({metric_type_filter_statement})\n"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -697,7 +701,9 @@ def construct_TR_query_with_wizard():
             query = query + YOP_filter_option_statement
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -864,7 +870,9 @@ def construct_IR_query_with_wizard():
             query = query + YOP_filter_option_statement
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
