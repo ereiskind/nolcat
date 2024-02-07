@@ -575,7 +575,8 @@ class Vendors(db.Model):
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
     FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
-    vendor_name_index = db.Index('vendor_name_index', vendor_name)
+
+    vendor_name_index = db.Index('vendor_name_index', vendor_name, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
@@ -725,7 +726,7 @@ class StatisticsSources(db.Model):
     __tablename__ = 'statisticsSources'
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_name = db.Column(db.String(100), nullable=False, index=True)
+    statistics_source_name = db.Column(db.String(100), nullable=False)
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
@@ -733,6 +734,8 @@ class StatisticsSources(db.Model):
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
     FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='statisticsSources')
     FK_in_COUNTERData = db.relationship('COUNTERData', backref='statisticsSources')
+
+    statistics_source_name_index = db.Index('statistics_source_name_index', statistics_source_name, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
@@ -1238,13 +1241,15 @@ class ResourceSources(db.Model):
     __tablename__ = 'resourceSources'
 
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    resource_source_name = db.Column(db.String(100), nullable=False, index=True)
+    resource_source_name = db.Column(db.String(100), nullable=False)
     source_in_use = db.Column(db.Boolean, nullable=False)
     access_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
+
+    resource_source_name_index = db.Index('resource_source_name_index', resource_source_name, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
@@ -1769,10 +1774,10 @@ class COUNTERData(db.Model):
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     report_type = db.Column(db.String(5))
-    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH), index=True)
-    publisher = db.Column(db.String(PUBLISHER_LENGTH), index=True)
+    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    publisher = db.Column(db.String(PUBLISHER_LENGTH))
     publisher_ID = db.Column(db.String(PUBLISHER_ID_LENGTH))
-    platform = db.Column(db.String(PLATFORM_LENGTH), index=True)
+    platform = db.Column(db.String(PLATFORM_LENGTH))
     authors = db.Column(db.String(AUTHORS_LENGTH))
     publication_date = db.Column(db.DateTime)
     article_version = db.Column(db.String(50))
@@ -1787,7 +1792,7 @@ class COUNTERData(db.Model):
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
-    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH), index=True)
+    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH))
     parent_authors = db.Column(db.String(AUTHORS_LENGTH))
     parent_publication_date = db.Column(db.DateTime)
     parent_article_version = db.Column(db.String(50))
@@ -1802,6 +1807,11 @@ class COUNTERData(db.Model):
     usage_date = db.Column(db.Date, nullable=False)
     usage_count = db.Column(db.Integer, nullable=False)
     report_creation_date = db.Column(db.DateTime)
+
+    resource_name_index = db.Index('resource_name_index', resource_name, mysql_prefix='FULLTEXT')
+    publisher_index = db.Index('publisher_index', publisher, mysql_prefix='FULLTEXT')
+    platform_index = db.Index('platform_index', platform, mysql_prefix='FULLTEXT')
+    parent_title_index = db.Index('parent_title_index', parent_title, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
