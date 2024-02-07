@@ -575,7 +575,7 @@ class Vendors(db.Model):
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
     FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
-    vendor_name_index = db.Index('vendor_name_index', self.vendor_name)
+    vendor_name_index = db.Index('vendor_name_index', vendor_name)
 
 
     def __repr__(self):
