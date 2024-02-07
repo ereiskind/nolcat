@@ -536,8 +536,8 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
-    if isinstance(response, str):
-        pytest.skip(f"The SUSHI call for the list of reports raised the error {response}.")
+    if isinstance(response[0], str):
+        pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
