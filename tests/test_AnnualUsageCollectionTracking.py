@@ -155,10 +155,7 @@ def sample_FileStorage_object(path_to_sample_file):
     Yields:
         werkzeug.datastructures.FileStorage: a file in a Werkzeug FileStorage object
     """
-    if path_to_sample_file.suffix == '.json':
-        open_file_stream = open(path_to_sample_file, 'rt', encoding='utf-8')
-    else:
-        open_file_stream = open(path_to_sample_file, 'rb')
+    open_file_stream = open(path_to_sample_file, 'rb')  # Opening the JSON as text raises `TypeError: a bytes-like object is required, not 'str'` on the `werkzeug.datastructures.FileStorage.save()` method 
     yield FileStorage(
         stream=open_file_stream,
         filename=path_to_sample_file.absolute(),
