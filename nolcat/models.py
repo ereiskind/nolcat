@@ -1653,8 +1653,6 @@ class AnnualUsageCollectionTracking(db.Model):
 
         #Section: Use Temp File to Upload File to S3
         temp_file_path = Path(__file__).parent / f"temp{file_extension}"
-        log.info(f"`temp_file_path` is {temp_file_path} (type {type(temp_file_path)})")  #TEST: temp
-        log.info(f"`file` is {file} (type {type(file)})")  #TEST: temp
         file.save(temp_file_path)
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
