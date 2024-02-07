@@ -531,7 +531,7 @@ def TR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY usage_count;
-        """  #TEST: Result of `escape_string()` will likely need modification
+        """
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
         form_input = {
