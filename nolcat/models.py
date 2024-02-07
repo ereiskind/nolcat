@@ -569,12 +569,13 @@ class Vendors(db.Model):
     __tablename__ = 'vendors'
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    vendor_name = db.Column(db.String(80), nullable=False, index=True)
+    vendor_name = db.Column(db.String(80), nullable=False)
     alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
     FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
+    vendor_name_index = db.Index('vendor_name_index', Vendors.vendor_name)
 
 
     def __repr__(self):
