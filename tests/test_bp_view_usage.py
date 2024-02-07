@@ -239,7 +239,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count, platform;
+            GROUP BY platform, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by platform name":
@@ -263,7 +263,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count;
+            GROUP BY platform, metric_type, usage_date;
         """
         yield (form_input, query)
 
@@ -349,7 +349,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name":
@@ -375,7 +375,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
-            GROUP BY usage_count;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by publisher name":
@@ -401,7 +401,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
-            GROUP BY usage_count;
+            GROUP BY publisher, metric_type, usage_date;
         """
         yield (form_input, query)
 
@@ -496,7 +496,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
@@ -530,7 +530,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
@@ -564,7 +564,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN":
@@ -598,7 +598,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Unique_Item_Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by year of publication":
@@ -632,7 +632,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Unique_Item_Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
 
@@ -730,7 +730,7 @@ def IR_parameters(request):
                 AND (access_type='OA_Gold' OR access_type='Open' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
@@ -767,7 +767,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":
@@ -804,7 +804,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count;
+            GROUP BY parent_title, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
@@ -841,7 +841,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name;
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
@@ -878,7 +878,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, parent_title;
+            GROUP BY parent_title, metric_type, usage_date;
         """
         yield (form_input, query)
 
