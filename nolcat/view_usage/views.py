@@ -398,8 +398,7 @@ def construct_PR_query_with_wizard():
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
-        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning of the query is:\n{query}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `platform` as Filter or Groupby Group
@@ -408,8 +407,6 @@ def construct_PR_query_with_wizard():
             platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
-        elif 'platform' in selected_display_fields:
-            query_end = query_end + ", platform"
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -418,8 +415,6 @@ def construct_PR_query_with_wizard():
             data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
             log.debug(f"The data type filter statement is {data_type_filter_statement}.")
             query = query + f"AND ({data_type_filter_statement})\n"
-        elif 'data_type' in selected_display_fields:
-            query_end = query_end + ", data_type"
         
         #Subsection: Add `access_method` as Filter or Groupby Group
         if form.access_method_filter.data:
@@ -428,8 +423,6 @@ def construct_PR_query_with_wizard():
             access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
-        elif 'access_method' in selected_display_fields:
-            query_end = query_end + ", access_method"
         
         #Subsection: Add `metric_type` as Filter or Groupby Group
         if form.metric_type_filter.data:
@@ -437,11 +430,11 @@ def construct_PR_query_with_wizard():
             metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
             log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
             query = query + f"AND ({metric_type_filter_statement})\n"
-        elif 'metric_type' in selected_display_fields:
-            query_end = query_end + ", metric_type"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -508,8 +501,7 @@ def construct_DR_query_with_wizard():
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
-        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning of the query is:\n{query}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -518,8 +510,6 @@ def construct_DR_query_with_wizard():
             resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
-        elif 'resource_name' in selected_display_fields:
-            query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
@@ -527,8 +517,6 @@ def construct_DR_query_with_wizard():
             publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
-        elif 'publisher' in  selected_display_fields:
-            query_end = query_end + ", publisher"
             
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
@@ -536,8 +524,6 @@ def construct_DR_query_with_wizard():
             platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
-        elif 'platform' in  selected_display_fields:
-            query_end = query_end + ", platform"
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -546,8 +532,6 @@ def construct_DR_query_with_wizard():
             data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
             log.debug(f"The data type filter statement is {data_type_filter_statement}.")
             query = query + f"AND ({data_type_filter_statement})\n"
-        elif 'data_type' in selected_display_fields:
-            query_end = query_end + ", data_type"
         
         #Subsection: Add `access_method` as Filter or Groupby Group
         if form.access_method_filter.data:
@@ -556,8 +540,6 @@ def construct_DR_query_with_wizard():
             access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
-        elif 'access_method' in selected_display_fields:
-            query_end = query_end + ", access_method"
         
         #Subsection: Add `metric_type` as Filter or Groupby Group
         if form.metric_type_filter.data:
@@ -565,11 +547,11 @@ def construct_DR_query_with_wizard():
             metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
             log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
             query = query + f"AND ({metric_type_filter_statement})\n"
-        elif 'metric_type' in selected_display_fields:
-            query_end = query_end + ", metric_type"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -636,8 +618,7 @@ def construct_TR_query_with_wizard():
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
-        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning of the query is:\n{query}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -646,8 +627,6 @@ def construct_TR_query_with_wizard():
             resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
-        elif 'resource_name' in selected_display_fields:
-            query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
@@ -655,8 +634,6 @@ def construct_TR_query_with_wizard():
             publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
-        elif 'publisher' in selected_display_fields:
-            query_end = query_end + ", publisher"
         
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
@@ -664,27 +641,18 @@ def construct_TR_query_with_wizard():
             platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
-        elif 'platform' in selected_display_fields:
-            query_end = query_end + ", platform"
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
             ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
             query = query + ISBN_filter_option_statement
-        elif 'ISBN' in selected_display_fields:
-            query_end = query_end + ", ISBN"
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
             ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
             query = query + ISSN_filter_option_statement
-        elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
-            if 'print_ISSN' in selected_display_fields:
-                query_end = query_end + ", print_ISSN"
-            if 'online_ISSN' in selected_display_fields:
-                query_end = query_end + ", online_ISSN"
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -693,8 +661,6 @@ def construct_TR_query_with_wizard():
             data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
             log.debug(f"The data type filter statement is {data_type_filter_statement}.")
             query = query + f"AND ({data_type_filter_statement})\n"
-        elif 'data_type' in selected_display_fields:
-            query_end = query_end + ", data_type"
         
         #Subsection: Add `section_type` as Filter or Groupby Group
         if form.section_type_filter.data:
@@ -703,8 +669,6 @@ def construct_TR_query_with_wizard():
             section_type_filter_statement = section_type_filter_statement + " OR section_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {section_type_filter_statement}.")
             query = query + f"AND ({section_type_filter_statement})\n"
-        elif 'section_type' in selected_display_fields:
-            query_end = query_end + ", section_type"
         
         #Subsection: Add `access_type` as Filter or Groupby Group
         if form.access_type_filter.data:
@@ -713,8 +677,6 @@ def construct_TR_query_with_wizard():
             access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
-        elif 'access_type' in selected_display_fields:
-            query_end = query_end + ", access_type"
         
         #Subsection: Add `access_method` as Filter or Groupby Group
         if form.access_method_filter.data:
@@ -723,8 +685,6 @@ def construct_TR_query_with_wizard():
             access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
-        elif 'access_method' in selected_display_fields:
-            query_end = query_end + ", access_method"
         
         #Subsection: Add `metric_type` as Filter or Groupby Group
         if form.metric_type_filter.data:
@@ -732,8 +692,6 @@ def construct_TR_query_with_wizard():
             metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
             log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
             query = query + f"AND ({metric_type_filter_statement})\n"
-        elif 'metric_type' in selected_display_fields:
-            query_end = query_end + ", metric_type"
         
         #Section: Add Date-Based Filters
         #Subsection: Add `YOP` as Filter or Groupby Group
@@ -741,11 +699,11 @@ def construct_TR_query_with_wizard():
             YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND YOP<='{form.YOP_end_filter.data}'\n"
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
             query = query + YOP_filter_option_statement
-        elif 'YOP' in selected_display_fields:
-            query_end = query_end + ", YOP"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
@@ -812,8 +770,7 @@ def construct_IR_query_with_wizard():
                 report_type='IR'
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
-        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning of the query is:\n{query}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -822,8 +779,6 @@ def construct_IR_query_with_wizard():
             resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
-        elif 'resource_name' in selected_display_fields:
-            query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
@@ -831,8 +786,6 @@ def construct_IR_query_with_wizard():
             publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
-        elif 'publisher' in selected_display_fields:
-            query_end = query_end + ", publisher"
 
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
@@ -840,8 +793,6 @@ def construct_IR_query_with_wizard():
             platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
-        elif 'platform' in selected_display_fields:
-            query_end = query_end + ", platform"
         
         #Subsection: Add `parent_title` as Filter or Groupby Group
         if form.parent_title_filter.data:
@@ -849,46 +800,30 @@ def construct_IR_query_with_wizard():
             parent_title_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
             log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
             query = query + f"AND ({parent_title_filter_option_statement})\n"
-        elif 'parent_title' in selected_display_fields:
-            query_end = query_end + ", parent_title"
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
             ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
             query = query + ISBN_filter_option_statement
-        elif 'ISBN' in selected_display_fields:
-            query_end = query_end + ", ISBN"
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
             ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
             query = query + ISSN_filter_option_statement
-        elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
-            if 'print_ISSN' in selected_display_fields:
-                query_end = query_end + ", print_ISSN"
-            if 'online_ISSN' in selected_display_fields:
-                query_end = query_end + ", online_ISSN"
         
         #Subsection: Add `parent_ISBN` as Filter or Groupby Group
         if form.parent_ISBN_filter.data:
             parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
             log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
             query = query + parent_ISBN_filter_option_statement
-        elif 'parent_ISBN' in selected_display_fields:
-            query_end = query_end + ", parent_ISBN"
         
         #Subsection: Add `parent_ISSN` as Filter or Groupby Groups
         if form.parent_ISSN_filter.data:
             parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
             log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
             query = query + parent_ISSN_filter_option_statement
-        elif 'parent_print_ISSN' in selected_display_fields or 'parent_online_ISSN' in selected_display_fields:
-            if 'parent_print_ISSN' in selected_display_fields:
-                query_end = query_end + ", parent_print_ISSN"
-            if 'parent_online_ISSN' in selected_display_fields:
-                query_end = query_end + ", parent_online_ISSN"
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -897,8 +832,6 @@ def construct_IR_query_with_wizard():
             data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
             log.debug(f"The data type filter statement is {data_type_filter_statement}.")
             query = query + f"AND ({data_type_filter_statement})\n"
-        elif 'data_type' in selected_display_fields:
-            query_end = query_end + ", data_type"
         
         #Subsection: Add `access_type` as Filter or Groupby Group
         if form.access_type_filter.data:
@@ -907,8 +840,6 @@ def construct_IR_query_with_wizard():
             access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
-        elif 'access_type' in selected_display_fields:
-            query_end = query_end + ", access_type"
         
         #Subsection: Add `access_method` as Filter or Groupby Group
         if form.access_method_filter.data:
@@ -917,8 +848,6 @@ def construct_IR_query_with_wizard():
             access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
-        elif 'access_method' in selected_display_fields:
-            query_end = query_end + ", access_method"
         
         #Subsection: Add `metric_type` as Filter or Groupby Group
         if form.metric_type_filter.data:
@@ -926,8 +855,6 @@ def construct_IR_query_with_wizard():
             metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
             log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
             query = query + f"AND ({metric_type_filter_statement})\n"
-        elif 'metric_type' in selected_display_fields:
-            query_end = query_end + ", metric_type"
         
         #Section: Add Date-Based Filters
         #Subsection: Add `publication_date` as Filter or Groupby Group
@@ -935,19 +862,17 @@ def construct_IR_query_with_wizard():
             publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'\n"
             log.debug(f"The publication date filter statement is {publication_date_option_statement}.")
             query = query + publication_date_option_statement
-        elif 'publication_date' in selected_display_fields:
-            query_end = query_end + ", publication_date"
         
         #Subsection: Add `YOP` as Filter or Groupby Group
         if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
             YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND YOP<='{form.YOP_end_filter.data}'\n"
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
             query = query + YOP_filter_option_statement
-        elif 'YOP' in selected_display_fields:
-            query_end = query_end + ", YOP"
         
         #Section: Finish SQL Query Construction
-        query = query + query_end + ";"
+        groupby_fields = selected_display_fields + ['metric_type'] + ['usage_date']
+        groupby_fields = ", ".join([f"{field}" for field in groupby_fields])
+        query = f"{query}GROUP BY {groupby_fields};"
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
