@@ -11,6 +11,7 @@ relation_name = pyip.inputMenu(
     prompt="Enter the number of the test data dataframe that should be output to a CSV.\n",
     choices=[
         "fiscalYears_relation",
+        "annualStatistics_relation",
         "vendors_relation",
         "vendorNotes_relation",
         "statisticsSources_relation",
@@ -26,6 +27,8 @@ relation_name = pyip.inputMenu(
 
 if relation_name == "fiscalYears_relation":
     relation_data = relations.fiscalYears_relation()
+elif relation_name == "annualStatistics_relation":
+    relation_data = relations.annualStatistics_relation()
 elif relation_name == "vendors_relation":
     relation_data = relations.vendors_relation()
 elif relation_name == "vendorNotes_relation":

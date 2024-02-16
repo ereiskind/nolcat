@@ -49,20 +49,13 @@ def PATH_TO_CREDENTIALS_FILE():
 
 
 class FiscalYears(db.Model):
-    """The class representation of the `fiscalYears` relation, which contains a list of the fiscal years with data in the database as well as information about the national reporting aggregate statistics for the given fiscal year.
+    """The class representation of the `fiscalYears` relation, which contains a list of the fiscal years with data in the database.
     
     Attributes:
         self.fiscal_year_ID (int): the primary key
         self.fiscal_year (string): the fiscal year in "yyyy" format; the ending year of the range is used
         self.start_date (datetime64[ns]): the first day of the fiscal year
         self.end_date (datetime64[ns]) the last day of the fiscal year
-        self.depreciated_ACRL_60b (Int64): the reported value for depreciated ACRL 60b
-        self.depreciated_ACRL_63 (Int64): the reported value for depreciated ACRL 63
-        self.ACRL_61a (Int64): the reported value for ACRL 61a
-        self.ACRL_61b (Int64): the reported value for 61b
-        self.ARL_18 (Int64): the reported value for ARL 18
-        self.ARL_19 (Int64): the reported value for ARL 19
-        self.ARL_20 (Int64): the reported value for ARL 20
         self.notes_on_statisticsSources_used (text): notes on data sources used to collect ARL and ACRL/IPEDS numbers
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
@@ -84,17 +77,11 @@ class FiscalYears(db.Model):
     fiscal_year = db.Column(db.String(4), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    depreciated_ACRL_60b = db.Column(db.Integer)
-    depreciated_ACRL_63 = db.Column(db.Integer)
-    ACRL_61a = db.Column(db.Integer)
-    ACRL_61b = db.Column(db.Integer)
-    ARL_18 = db.Column(db.Integer)
-    ARL_19 = db.Column(db.Integer)
-    ARL_20 = db.Column(db.Integer)
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
     FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='fiscalYears')
+    FK_in_AnnualStatistics = db.relationship('AnnualStatistics', backref='fiscalYears')
 
 
     def __repr__(self):
@@ -111,13 +98,6 @@ class FiscalYears(db.Model):
             "fiscal_year": 'string',
             "start_date": 'datetime64[ns]',
             "end_date": 'datetime64[ns]',
-            "depreciated_ACRL_60b": 'Int64',
-            "depreciated_ACRL_63": 'Int64',
-            "ACRL_61a": 'Int64',
-            "ACRL_61b": 'Int64',
-            "ARL_18": 'Int64',
-            "ARL_19": 'Int64',
-            "ARL_20": 'Int64',
             "notes_on_statisticsSources_used": 'string',
             "notes_on_corrections_after_submission": 'string',
         }
@@ -127,7 +107,7 @@ class FiscalYears(db.Model):
     def calculate_depreciated_ACRL_60b(self):
         """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
-        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 60b
@@ -189,7 +169,7 @@ class FiscalYears(db.Model):
     def calculate_depreciated_ACRL_63(self):
         """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
-        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 63
@@ -217,7 +197,7 @@ class FiscalYears(db.Model):
     def calculate_ACRL_61a(self):
         """This method calculates the value of ACRL question 61a for the given fiscal year.
 
-        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database."
+        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 61a
@@ -263,7 +243,7 @@ class FiscalYears(db.Model):
     def calculate_ACRL_61b(self):
         """This method calculates the value of ACRL question 61b for the given fiscal year.
 
-        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage.
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage. This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ACRL 61b, OA included
@@ -291,7 +271,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_18(self):
         """This method calculates the value of ARL question 18 for the given fiscal year.
 
-        ARL 18 is the "Number of successful full-text article requests (journals)."
+        ARL 18 is the "Number of successful full-text article requests (journals)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 18
@@ -319,7 +299,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_19(self):
         """This method calculates the value of ARL question 19 for the given fiscal year.
 
-        ARL 19 is the "Number of regular searches (databases)."
+        ARL 19 is the "Number of regular searches (databases)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 19
@@ -347,7 +327,7 @@ class FiscalYears(db.Model):
     def calculate_ARL_20(self):
         """This method calculates the value of ARL question 20 for the given fiscal year.
 
-        ARL 20 is the "Number of federated searches (databases)."
+        ARL 20 is the "Number of federated searches (databases)." This method doesn't load the answer into the database.
 
         Returns:
             int: the answer to ARL 20
@@ -532,6 +512,46 @@ class FiscalYears(db.Model):
         return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
 
 
+class AnnualStatistics(db.Model):
+    """The class representation of the `annualStatistics` relation, which contains a list of the national reporting aggregate statistics.
+    
+    Attributes:
+        self.fiscal_year_ID (int): part of the composite primary key; the foreign key for `fiscalYears`
+        self.question (str): part of the composite primary key; the survey and question number
+        self.count (int): the value answering the given question for the given fiscal year
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
+        add_annual_statistic_value: This method adds a record to the `annualStatistics` relation.
+    """
+    __tablename__ = 'annualStatistics'
+
+    fiscal_year_ID = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True, autoincrement=False)
+    question = db.Column(db.String(20), primary_key=True, autoincrement=False)
+    count = db.Column(db.Integer, nullable=False)
+
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            "count": 'Int64',
+        }
+
+
+    @hybrid_method
+    def add_annual_statistic_value():
+        """This method adds a record to the `annualStatistics` relation."""
+        pass
+
+
 class Vendors(db.Model):
     """The class representation of the `vendors` relation, which contains a list of entities that provide access to either electronic resources or usage statistics.
     
@@ -555,6 +575,8 @@ class Vendors(db.Model):
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
     FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
+
+    vendor_name_index = db.Index('vendor_name_index', vendor_name, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
@@ -712,6 +734,8 @@ class StatisticsSources(db.Model):
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
     FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='statisticsSources')
     FK_in_COUNTERData = db.relationship('COUNTERData', backref='statisticsSources')
+
+    statistics_source_name_index = db.Index('statistics_source_name_index', statistics_source_name, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):
@@ -1225,6 +1249,8 @@ class ResourceSources(db.Model):
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
 
+    resource_source_name_index = db.Index('resource_source_name_index', resource_source_name, mysql_prefix='FULLTEXT')
+
 
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
@@ -1662,7 +1688,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(message)
             return message
         message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
-        log.debug(message)
+        log.info(message)
         return message
     
 
@@ -1781,6 +1807,11 @@ class COUNTERData(db.Model):
     usage_date = db.Column(db.Date, nullable=False)
     usage_count = db.Column(db.Integer, nullable=False)
     report_creation_date = db.Column(db.DateTime)
+
+    resource_name_index = db.Index('resource_name_index', resource_name, mysql_prefix='FULLTEXT')
+    publisher_index = db.Index('publisher_index', publisher, mysql_prefix='FULLTEXT')
+    platform_index = db.Index('platform_index', platform, mysql_prefix='FULLTEXT')
+    parent_title_index = db.Index('parent_title_index', parent_title, mysql_prefix='FULLTEXT')
 
 
     def __repr__(self):

@@ -11,7 +11,7 @@ from wtforms.validators import InputRequired
 from wtforms.validators import Optional
 from wtforms.validators import Regexp
 
-from nolcat.app import *
+from ..app import *
 
 
 #Section: Report Attribute Lists

@@ -18,6 +18,7 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
 Iteration 2: Add Historical Data
 ================================
@@ -105,6 +106,8 @@ Iteration 4: Show and Edit Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
+* Write ``nolcat.models.AnnualStatistics.add_annual_statistic_value()``
+* Write ``tests.test_AnnualStatistics_test_add_annual_statistic_value()``
 
 Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
@@ -126,13 +129,10 @@ Open Source Iterations
 **********************
 These iterations contain updates necessary for NoLCAT to be used as an open source program.
 
-Iteration 1: Make Initialization Forms Downloadable
-===================================================
-* Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
-
-Iteration 2: Write ``__repr__`` Methods
+Iteration 1: Write ``__repr__`` Methods
 =======================================
 * Write ``nolcat.models.FiscalYears.__repr__()``
+* Write ``nolcat.models.AnnualStatistics.__repr__()``
 * Write ``nolcat.models.Vendors.__repr__()``
 * Write ``nolcat.models.VendorNotes.__repr__()``
 * Write ``nolcat.models.StatisticsSourceNotes.__repr__()``
@@ -142,24 +142,16 @@ Iteration 2: Write ``__repr__`` Methods
 * Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
 * Write ``nolcat.models.COUNTERData.__repr__()``
 
-Iteration 3: Formalize Documentation
+Iteration 2: Formalize Documentation
 ====================================
 * Update and flesh out README according to best practices
 * Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
 * Organize custom documentation pages on Sphinx index
 
-Iteration 4: Display Data Uploaded at End of Initialization
+Iteration 3: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
 * Write ``tests.test_bp_initialization.test_data_load_complete()``
-
-Iteration 5: Correct 500 Error Function
-=======================================
-* Get HTTP 500 error handler to work
-
-Iteration 6: Confirm Flask-SQLAlchemy Enum
-==========================================
-* Confirm that ``nolcat.models.AnnualUsageCollectionTracking.collection_status`` properly creates and behaves as an enum
 
 Aspirational Iterations
 ***********************

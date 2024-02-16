@@ -35,7 +35,7 @@ log = logging.getLogger(__name__)
 def engine():
     """Creates a SQLAlchemy engine for testing.
     
-    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database. This fixture is used in `tests.test_app`, `tests.test_bp_ingest_usage`, `tests.test_bp_initialization`, `tests.test_FiscalYears`, `tests.test_StatisticsSources`, and later in this module.
+    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
 
     Yields:
         sqlalchemy.engine.Engine: a SQLAlchemy engine
@@ -52,7 +52,7 @@ def engine():
 def app():
     """Creates an instance of the Flask object for the test session.
     
-    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection. This fixture is used in `tests.test_app` and later in this module.
+    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
 
     Yields:
         flask.Flask: a Flask object
@@ -78,7 +78,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules. Additionally, this fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104).
+    The Flask test client lets tests make HTTP requests without running the server. This fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104).
 
     Args:
         app (flask.Flask): a Flask object
@@ -130,6 +130,16 @@ def fiscalYears_relation():
         dataframe: a relation of test data
     """
     yield relations.fiscalYears_relation()
+
+
+@pytest.fixture
+def annualStatistics_relation():
+    """Creates a dataframe that can be loaded into the `annualStatistics` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.annualStatistics_relation()
 
 
 @pytest.fixture
@@ -526,8 +536,8 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
-    if isinstance(response, str):
-        pytest.skip(f"The SUSHI call for the list of reports raised the error {response}.")
+    if isinstance(response[0], str):
+        pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []

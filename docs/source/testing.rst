@@ -61,6 +61,7 @@ This folder contains all the Excel files, most of which are stored in one of thr
 This module contains the functions:
 
 * ``fiscalYears_relation()``: The dataframe of test data for the `fiscalYears` relation.
+* ``annualStatistics_relation()``: The dataframe of test data for the `annualStatistics` relation.
 * ``vendors_relation()``: The dataframe of test data for the `vendors` relation.
 * ``vendorNotes_relation()``: The dataframe of test data for the `vendorNotes` relation.
 * ``statisticsSources_relation()``: The dataframe of test data for the `statisticsSources` relation.
@@ -129,6 +130,7 @@ The preferred setup for testing database interactions involves performing all te
 
 4. Tests needing all test data in all relations and/or capable of running with data in all relations
 
+  * ``test_AnnualStatistics``
   * ``test_AnnualUsageCollectionTracking``
   * ``test_bp_annual_stats``
   * ``test_bp_login``
