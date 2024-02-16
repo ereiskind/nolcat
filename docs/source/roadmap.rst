@@ -18,6 +18,7 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
 Iteration 2: Add Historical Data
 ================================
