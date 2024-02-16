@@ -259,12 +259,12 @@ def PR_parameters(request):
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (MATCH(platform) AGAINST('EBSCOhost' IN NATURAL LANGUAGE MODE))
+                AND (MATCH(platform) AGAINST('EBSCO' IN NATURAL LANGUAGE MODE))
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY platform, metric_type, usage_date;
-        """
+        """  #ALERT: Test indicates `EBSCO` query parameter returns no data
         yield (form_input, query)
 
 
