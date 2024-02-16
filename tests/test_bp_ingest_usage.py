@@ -165,7 +165,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
     db_select_field_options = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
@@ -241,7 +241,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
     db_select_field_options = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
