@@ -531,7 +531,7 @@ def TR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY resource_name, metric_type, usage_date;
-        """
+        """  # The decode changes the markup in the title to actual punctuation (colon and space at start, nothing at end)
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
         form_input = {
