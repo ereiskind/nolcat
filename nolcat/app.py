@@ -580,16 +580,16 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
 
 
 def truncate_longer_lines(line):
-    """Truncates any string longer than 50 characters at 50 characters.
+    """Truncates any string longer than 150 characters at 150 characters.
 
     Args:
         line (str): a string to possibly truncate
     
     Returns:
-        str: a string of 50 characters at most
+        str: a string of 150 characters at most
     """
-    if len(line) > 50:
-        return line[:47] + "..."
+    if len(line) > 150:
+        return line[:147] + "..."
     else:
         return line
 

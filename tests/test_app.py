@@ -305,7 +305,7 @@ def test_create_AUCT_SelectField_options():
 def test_truncate_longer_lines():
     """Tests truncating aly string longer than 50 characters to just 50 characters including the ellipsis at the end."""
     assert truncate_longer_lines("This is shorter than 50 characters.") == "This is shorter than 50 characters."
-    assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
+    assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
 
 
 @pytest.fixture
