@@ -100,8 +100,9 @@ def upload_COUNTER_data():
             insert_statements = []
             for file in file_objects:
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
-                    if len(line) > 100:  # Size of lines on display limited to prevent memory errors due to overly long lines
-                        display_line = line[:100]
+                    log.info(f"type of `line` is {type(line)}")  #TEST: temp
+                    if len(line) > 10:  # Size of lines on display limited to prevent memory errors due to overly long lines
+                        display_line = line[:10]
                     else:
                         display_line = line
                     log.debug(f"The line starting `{display_line}` in the SQL file data is type {type(line)}.")
