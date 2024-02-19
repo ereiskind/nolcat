@@ -579,6 +579,21 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
         return (df, None)
 
 
+def truncate_longer_lines(line):
+    """Truncates any string longer than 50 characters at 50 characters.
+
+    Args:
+        line (str): a string to possibly truncate
+    
+    Returns:
+        str: a string of 50 characters at most
+    """
+    if len(line) > 50:
+        return line[:47] + "..."
+    else:
+        return line
+
+
 def update_database(update_statement, engine):
     """A wrapper for the `Engine.execute()` method that includes the error handling.
 
