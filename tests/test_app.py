@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-02-06 ##########
+########## Passing 2024-02-19 ##########
 
 import pytest
 import logging
@@ -300,6 +300,12 @@ def test_create_AUCT_SelectField_options():
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
+
+
+def test_truncate_longer_lines():
+    """Tests truncating aly string longer than 50 characters to just 50 characters including the ellipsis at the end."""
+    assert truncate_longer_lines("This is shorter than 50 characters.") == "This is shorter than 50 characters."
+    assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
 
 
 @pytest.fixture

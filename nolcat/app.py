@@ -579,6 +579,21 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
         return (df, None)
 
 
+def truncate_longer_lines(line):
+    """Truncates any string longer than 150 characters at 150 characters.
+
+    Args:
+        line (str): a string to possibly truncate
+    
+    Returns:
+        str: a string of 150 characters at most
+    """
+    if len(line) > 150:
+        return line[:147] + "..."
+    else:
+        return line
+
+
 def update_database(update_statement, engine):
     """A wrapper for the `Engine.execute()` method that includes the error handling.
 
@@ -591,15 +606,16 @@ def update_database(update_statement, engine):
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
     """
-    single_line_update_statement = update_statement.replace('\n', ' ')
-    log.info(f"Starting `update_database()` for the update statement {single_line_update_statement}.")
+    display_update_statement = update_statement.replace('\n', ' ')
+    display_update_statement = truncate_longer_lines(display_update_statement)
+    log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
     try:
         engine.execute(update_statement)
-        message = f"Successfully performed the update `{single_line_update_statement}`."
+        message = f"Successfully performed the update {display_update_statement}."
         log.info(message)
         return message
     except Exception as error:
-        message = f"Running the update statement `{single_line_update_statement}` raised the error {error}."
+        message = f"Running the update statement {display_update_statement} raised the error {error}."
         log.error(message)
         return message
 
