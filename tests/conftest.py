@@ -302,12 +302,15 @@ def remove_file_from_S3(path_to_sample_file):
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine, caplog):
+def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Both the test functions that call this fixture upload files to S3 with names based off of data from this fixture, so removing those files also requires data from this fixture. As a result, the teardown functionality that removes the files from S3 is in this fixture function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
     
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
@@ -340,6 +343,14 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
     )
     log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
+    file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.fixture
