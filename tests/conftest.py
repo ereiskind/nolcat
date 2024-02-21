@@ -277,24 +277,19 @@ def path_to_sample_file(request):
 
 
 @pytest.fixture
-def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload=None):
+def remove_file_from_S3(path_to_sample_file):
     """Removes a file loaded into S3.
 
-    This fixture creates a name for the file in S3 based either the name of the file or, in the case of the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method, a combination of the file name and class attributes. The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
+    The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
 
     Args:
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
-        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking, optional): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded; default is `None`
 
     Yields:
         None
     """
     log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
-    if non_COUNTER_AUCT_object_before_upload:
-        log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_before_upload", non_COUNTER_AUCT_object_before_upload))
-        file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    else:
-        file_name = f"test_{path_to_sample_file.name}"
+    file_name = f"test_{path_to_sample_file.name}"
     log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
@@ -307,12 +302,15 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine, caplog):
+def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Both the test functions that call this fixture upload files to S3 with names based off of data from this fixture, so removing those files also requires data from this fixture. As a result, the teardown functionality that removes the files from S3 is in this fixture function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
     
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
@@ -345,6 +343,14 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
     )
     log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
+    file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.fixture

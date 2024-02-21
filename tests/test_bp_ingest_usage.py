@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-02-06 ##########
+########## Passing 2024-02-21 ##########
 
 import pytest
 import logging
@@ -254,7 +254,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
@@ -298,7 +298,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
-    assert check_database_update.at[0,'collection_status'] == 'Collection complete'  #TEST: KeyError: 0
+    assert check_database_update.at[0,'collection_status'] == 'Collection complete'
     assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
 
     #Section: Check S3 for File
