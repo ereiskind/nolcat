@@ -281,6 +281,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(prepare_HTML_page_for_comparison(POST_response.data))  #TEST: temp
 
     #Subsection: Assert Statements
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
