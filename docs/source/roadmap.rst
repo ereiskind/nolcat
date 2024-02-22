@@ -22,8 +22,6 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Write "ingest_usage/upload-non-COUNTER-usage.html" page
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``

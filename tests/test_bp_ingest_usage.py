@@ -228,13 +228,12 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    #ToDo: Uncomment below when "ingest_usage/upload-non-COUNTER-usage.html" is finished
-    #GET_select_field_options = []
-    #for child in GET_soup.find(name='select', id='statistics_source').children:
-    #    GET_select_field_options.append((
-    #        int(child['value']),
-    #        str(child.string),
-    #    ))
+    GET_select_field_options = []
+    for child in GET_soup.find(name='select', id='statistics_source').children:
+        GET_select_field_options.append((
+            int(child['value']),
+            str(child.string),
+        ))
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'upload-non-COUNTER-usage.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -248,10 +247,10 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
-    #ToDo: `assert page.status == "200 OK"` when route is completed
+    assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
-    #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
+    assert GET_select_field_options == db_select_field_options
 
 
 def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
