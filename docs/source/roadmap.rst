@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms`` for use in ``initialization.views.upload_historical_non_COUNTER_usage()``
 * Write "initialization/initial-data-upload-4.html" page

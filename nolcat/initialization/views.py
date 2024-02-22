@@ -405,7 +405,6 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
         try:
             COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
@@ -441,7 +440,6 @@ def collect_AUCT_and_historical_COUNTER_data():
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
         log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
-        '''
 
         #Subsection: Load Data into Database
         annualUsageCollectionTracking_load_result = load_data_into_database(
@@ -454,7 +452,6 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
         COUNTERData_load_result = load_data_into_database(
             df=COUNTER_reports_df,
             relation='COUNTERData',
@@ -462,10 +459,8 @@ def collect_AUCT_and_historical_COUNTER_data():
             index_field_name='COUNTER_data_ID',
         )
         if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            #ToDo: Additional note about needing to upload all workbooks through `ingest_usage` blueprint
             messages_to_flash.append(COUNTERData_load_result)
-        '''
-
+            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
         flash(messages_to_flash)
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
