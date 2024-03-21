@@ -44,20 +44,22 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
-        #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
-        fields={
-            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-        },
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
+    form_submissions = []
+    for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
+        tuple_to_append = (
+            file.name,
+            open(file, 'rb'),
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        form_submissions.append(tuple_to_append)
+    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
+    # header_value['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
+        files=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
@@ -78,7 +80,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
+    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
 
 
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
