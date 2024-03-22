@@ -53,7 +53,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         )
         form_submissions.append(tuple_to_append)
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
-    # header_value['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
