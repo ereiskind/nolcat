@@ -124,7 +124,7 @@ ACRL/IPEDS 61a. Total E-book & E-media Usage
 
 ACRL/IPEDS 61b. E-serials Usage
 ===============================
-"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded...If available, include the count for open access e-journal usage if the title is accessible through the library’s catalog or discovery system." The instructions say to use TR_J1 "unique item requests" and add open access "if discoverable/available," which means not including the Access_Type filter traditionally included in the TR_J1.
+"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded...If available, include the count for open access e-journal usage if the title is accessible through the library’s catalog or discovery system." The instructions say to use TR_J1 "unique item requests" and add open access "if discoverable/available," which means not including the Access_Type filter traditionally included in the TR_J1 (for filtering purposes, this makes it a TR_J3).
 
 ARL 18. Number of successful full-text article requests (journals)
 ==================================================================
