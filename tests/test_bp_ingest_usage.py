@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-02-21 ##########
+########## Failing 2024-04-03 ##########
 
 import pytest
 import logging
@@ -61,12 +61,22 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
             '/ingest_usage/upload-COUNTER',
             follow_redirects=True,
             headers=header_value,
+            data=MultipartEncoder(
+                fields={
+                   'COUNTER_data': (
+                       '0_PR.json',
+                       open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '0_PR.json', 'rb'),
+                       'text/html; charset=utf-8',
+                   )
+                },
+                encoding='utf-8',
+            )
         )
     )
     log.info(f"`signature` (type {type(temp)}):\n{temp}")
     log.info(f"`signature.parameters` (type {type(temp.parameters)}):\n{temp.parameters}")
     #TEST: end temp
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -241,10 +251,12 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     
     page = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(page.data, 'lxml')
+    log.debug(f"Page soup data:\n{GET_soup}")  #TEST: temp
+    log.info(f"Soup find:\n{GET_soup.find(name='select', id='statistics_source')}")  #TEST: temp
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    for child in GET_soup.find(name='select', id='statistics_source').children:
+    for child in GET_soup.find(name='select', id='statistics_source').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
         GET_select_field_options.append((
             int(child['value']),
             str(child.string),
