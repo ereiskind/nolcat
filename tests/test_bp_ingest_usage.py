@@ -75,16 +75,15 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     )
     log.info(f"`signature` (type {type(temp)}):\n{temp}")
     log.info(f"`signature.parameters` (type {type(temp.parameters)}):\n{temp.parameters}")
-    #TEST: end temp
-    POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
-        '/ingest_usage/upload-COUNTER',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-        follow_redirects=True,
-        headers=header_value,
-        files=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    #TEST: end temp content, remainder temp commented out
+    #POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
+    #    '/ingest_usage/upload-COUNTER',
+    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+    #    follow_redirects=True,
+    #    headers=header_value,
+    #    files=form_submissions,
+    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
-    #TEST: temp commented out
     # This is the HTML file of the page the redirect goes to
     #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -251,12 +250,10 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     
     page = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(page.data, 'lxml')
-    log.debug(f"Page soup data:\n{GET_soup}")  #TEST: temp
-    log.info(f"Soup find:\n{GET_soup.find(name='select', id='statistics_source')}")  #TEST: temp
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    for child in GET_soup.find(name='select', id='statistics_source').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
+    for child in GET_soup.find(name='select', id='AUCT_option').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
         GET_select_field_options.append((
             int(child['value']),
             str(child.string),
