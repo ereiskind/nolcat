@@ -7,6 +7,7 @@ from random import choice
 from pathlib import Path
 import os
 import re
+from ast import literal_eval
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -251,7 +252,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='AUCT_option').children:
         GET_select_field_options.append((
-            child['value'],
+            literal_eval(child['value']),
             str(child.string),
         ))
 
