@@ -74,6 +74,10 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    try:
+        log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
+    except:
+        log.info(f"Final dataframe indexes:\n`COUNTERData_relation` records:\n{COUNTERData_relation.index}\n\n`COUNTERData_relation_data` records:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n")
     assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
 
 
