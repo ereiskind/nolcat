@@ -59,9 +59,18 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         headers=header_value,
         data=form_submissions,
     )
-    temp = signature(POST_response)
-    log.info(f"`signature` (type {type(temp)}):\n{temp}")
-    log.info(f"`signature.parameters` (type {type(temp.parameters)}):\n{temp.parameters}")
+    try:
+        log.info(f"`__dict__`:\n{POST_response.__dict__}")
+    except:
+        pass
+    try:
+        log.info(f"`vars()`:\n{POST_response.vars()}")
+    except:
+        pass
+    try:
+        log.info(f"`dir()`:\n{POST_response.dir()}")
+    except:
+        pass
     #TEST: end temp content, remainder temp commented out
     #form_submissions = []
     #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
@@ -251,9 +260,9 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    for child in GET_soup.find(name='select', id='AUCT_option').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
+    for child in GET_soup.find(name='select', id='AUCT_option').children:
         GET_select_field_options.append((
-            int(child['value']),
+            child['value'],  #TEST: ValueError: invalid literal for int() with base 10: '(5, 1)'
             str(child.string),
         ))
 
@@ -268,6 +277,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     if isinstance(db_select_field_options, str):
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
+    log.info(db_select_field_options)  #TEST: temp
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
