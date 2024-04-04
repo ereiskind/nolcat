@@ -251,7 +251,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='AUCT_option').children:
         GET_select_field_options.append((
-            str(child['value']),
+            child['value'],
             str(child.string),
         ))
 
