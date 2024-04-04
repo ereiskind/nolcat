@@ -45,14 +45,9 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = []
+    form_submissions = {}
     for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
-        tuple_to_append = (
-            file.name,
-            open(file, 'rb'),
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        )
-        form_submissions.append(tuple_to_append)
+        form_submissions[file.name] = open(file, 'rb')
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
     header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
     
@@ -60,7 +55,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         '/ingest_usage/upload-COUNTER',
         follow_redirects=True,
         headers=header_value,
-        files=form_submissions,
+        data=form_submissions,
     )
 
     # This is the HTML file of the page the redirect goes to
