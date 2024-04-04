@@ -49,7 +49,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         ('COUNTER_data', ('0_2017.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
         ('COUNTER_data', ('3_2019.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '3_2019.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
     ]
-    header_value['Content-Type'] = form_submissions.content_type
+    header_value['Content-Type'] = 'text/html; charset=utf-8'
     POST_response = client.post(
         'https://httpbin.org/post',
         headers=header_value,
