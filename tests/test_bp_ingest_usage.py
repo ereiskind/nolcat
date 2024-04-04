@@ -49,7 +49,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
     header_value['Content-Type'] = 'multipart/form-data'
     
-    POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
+    POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         follow_redirects=True,
         headers=header_value,
