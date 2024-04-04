@@ -275,7 +275,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='AUCT_option').children:
         GET_select_field_options.append((
-            child['value'],  #TEST: ValueError: invalid literal for int() with base 10: '(5, 1)'
+            str(child['value']),
             str(child.string),
         ))
 
@@ -307,9 +307,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     )
     if isinstance(db_select_field_options, str):
         pytest.skip(database_function_skip_statements(db_select_field_options))
-    log.info(f"`db_select_field_options` as df:\n{db_select_field_options}")  #TEST: temp
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
-    log.info(f"`db_select_field_options` as list\n:{db_select_field_options}")  #TEST: temp
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
