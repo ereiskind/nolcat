@@ -76,11 +76,10 @@ def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog
     }
     POST_response = client.post(
         '/view_usage/custom-query',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
@@ -113,11 +112,10 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
     }
     POST_response = client.post(
         '/view_usage/preset-query',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
@@ -171,10 +169,9 @@ def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
     """Tests the submission of the report type and date range to the query wizard."""
     POST_response = client.post(
         '/view_usage/query-wizard',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=start_query_wizard_form_data,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
     assert POST_response.status == "302 FOUND"  # This confirms there would've been a redirect if the `post()` method allowed it
     assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
@@ -186,11 +183,10 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
     """
     POST_response = client.post(
         '/view_usage/query-wizard',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=start_query_wizard_form_data,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     POST_soup = BeautifulSoup(POST_response.data, 'lxml')
     POST_response_title = POST_soup.head.title.string.encode('utf-8')
@@ -278,11 +274,10 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     POST_response = client.post(
         '/view_usage/query-wizard/PR',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
@@ -415,11 +410,10 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     POST_response = client.post(
         '/view_usage/query-wizard/DR',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
@@ -646,11 +640,10 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     POST_response = client.post(
         '/view_usage/query-wizard/TR',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
@@ -892,11 +885,10 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     POST_response = client.post(
         '/view_usage/query-wizard/IR',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
@@ -954,11 +946,10 @@ def construct_PR_query_with_wizard_without_string_match(client, header_value, ca
 
     POST_response = client.post(
         '/view_usage/query-wizard/PR',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
     assert POST_response.status == "200 OK"
     assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
 
@@ -1019,11 +1010,10 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     }
     POST_response = client.post(
         '/view_usage/non-COUNTER-downloads',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
     #ToDo: Read file at file_path
     

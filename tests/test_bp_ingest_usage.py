@@ -58,11 +58,10 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     
     #POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
     #    '/ingest_usage/upload-COUNTER',
-    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
     #    follow_redirects=True,
     #    headers=header_value,
     #    files=form_submissions,
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    #)
 
     # This is the HTML file of the page the redirect goes to
     #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
@@ -97,11 +96,10 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -206,11 +204,10 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     }
     POST_response = client.post(
         '/ingest_usage/harvest',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
@@ -297,11 +294,10 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-non-COUNTER',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Subsection: Assert Statements
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
