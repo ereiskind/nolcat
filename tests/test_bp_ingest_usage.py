@@ -60,15 +60,28 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         data=form_submissions,
     )
     try:
-        log.info(f"`__dict__`:\n{POST_response.__dict__}")
+        log.info(f"request `__dict__`:\n{POST_response.request.__dict__}")
     except:
         pass
     try:
-        log.info(f"`vars()`:\n{POST_response.vars()}")
+        log.info(f"request `vars()`:\n{POST_response.request.vars()}")
     except:
         pass
     try:
-        log.info(f"`dir()`:\n{POST_response.dir()}")
+        log.info(f"request `dir()`:\n{POST_response.request.dir()}")
+    except:
+        pass
+
+    try:
+        log.info(f"response `__dict__`:\n{POST_response.response.__dict__}")
+    except:
+        pass
+    try:
+        log.info(f"`response vars()`:\n{POST_response.response.vars()}")
+    except:
+        pass
+    try:
+        log.info(f"response `dir()`:\n{POST_response.response.dir()}")
     except:
         pass
     #TEST: end temp content, remainder temp commented out
@@ -294,8 +307,9 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     )
     if isinstance(db_select_field_options, str):
         pytest.skip(database_function_skip_statements(db_select_field_options))
-    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
-    log.info(db_select_field_options)  #TEST: temp
+    log.info(f"`db_select_field_options` as df:\n{db_select_field_options}")  #TEST: temp
+    db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
+    log.info(f"`db_select_field_options` as list\n:{db_select_field_options}")  #TEST: temp
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
