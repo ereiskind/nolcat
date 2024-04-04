@@ -45,23 +45,6 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    #TEST: temp
-    form_submissions = [
-        ('COUNTER_data', ('0_2017.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
-        ('COUNTER_data', ('3_2019.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '3_2019.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
-    ]
-    header_value['Content-Type'] = 'text/html; charset=utf-8'
-    POST_response = client.post(
-        'https://httpbin.org/post',
-        headers=header_value,
-        files=form_submissions,
-    )
-    log.info(f"`POST_response: {POST_response}")
-    try:
-        log.info(f"`POST_response.text`: {POST_response.text}")
-    except:
-        pass
-    #TEST: end temp content, remainder temp commented out
     #form_submissions = []
     #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
     #    tuple_to_append = (
@@ -289,8 +272,6 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
-    log.info(f"`GET_select_field_options`: {GET_select_field_options}")  #TEST: temp
-    log.info(f"`db_select_field_options`: {db_select_field_options}")  #TEST: temp
     assert GET_select_field_options == db_select_field_options
 
 
