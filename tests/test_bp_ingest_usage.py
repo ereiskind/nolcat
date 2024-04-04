@@ -45,43 +45,43 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    #form_submissions = []
-    #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
-    #    tuple_to_append = (
-    #        file.name,
-    #        open(file, 'rb'),
-    #        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    #    )
-    #    form_submissions.append(tuple_to_append)
-    #log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
-    #header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
+    form_submissions = []
+    for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
+        tuple_to_append = (
+            file.name,
+            open(file, 'rb'),
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        form_submissions.append(tuple_to_append)
+    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
+    header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
     
-    #POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
-    #    '/ingest_usage/upload-COUNTER',
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    files=form_submissions,
-    #)
+    POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
+        '/ingest_usage/upload-COUNTER',
+        follow_redirects=True,
+        headers=header_value,
+        files=form_submissions,
+    )
 
     # This is the HTML file of the page the redirect goes to
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
-    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    #COUNTERData_relation_data = query_database(
-    #    query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT {COUNTERData_relation.shape[0]};",
-    #    engine=engine,
-    #    index='COUNTER_data_ID',
-    #)
-    #if isinstance(COUNTERData_relation_data, str):
-    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    COUNTERData_relation_data = query_database(
+        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT {COUNTERData_relation.shape[0]};",
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(COUNTERData_relation_data, str):
+        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
 
-    #assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    #assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
-    #assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
+    assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
 
 
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
