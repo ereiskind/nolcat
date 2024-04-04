@@ -286,6 +286,8 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
+    log.info(f"`GET_select_field_options`: {GET_select_field_options}")  #TEST: temp
+    log.info(f"`db_select_field_options`: {db_select_field_options}")  #TEST: temp
     assert GET_select_field_options == db_select_field_options
 
 
