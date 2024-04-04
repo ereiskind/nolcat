@@ -45,46 +45,20 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     #TEST: temp
-    from inspect import signature
-    form_submissions = MultipartEncoder(
-        fields={
-            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-        },
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
-    POST_response = client.post(
-        '/ingest_usage/upload-COUNTER',
-        follow_redirects=True,
-        headers=header_value,
-        data=form_submissions,
-    )
+    log.info(f"`client.post (type{type(client.post)}):\n{client.post}")
     try:
-        log.info(f"request `__dict__`:\n{POST_response.request.__dict__}")
+        log.info(f"`client.post.__dict__`:\n{client.post.__dict__}")
     except:
         pass
     try:
-        log.info(f"request `vars()`:\n{POST_response.request.vars()}")
+        log.info(f"`client.post.vars()`:\n{client.post.vars()}")
     except:
         pass
     try:
-        log.info(f"request `dir()`:\n{POST_response.request.dir()}")
+        log.info(f"`client.post.dir()`:\n{client.post.dir()}")
     except:
         pass
-
-    try:
-        log.info(f"response `__dict__`:\n{POST_response.response.__dict__}")
-    except:
-        pass
-    try:
-        log.info(f"`response vars()`:\n{POST_response.response.vars()}")
-    except:
-        pass
-    try:
-        log.info(f"response `dir()`:\n{POST_response.response.dir()}")
-    except:
-        pass
-    #TEST: end temp content, remainder temp commented out
+    #TEST: end temp content, remainder temp commented out   
     #form_submissions = []
     #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
     #    tuple_to_append = (
