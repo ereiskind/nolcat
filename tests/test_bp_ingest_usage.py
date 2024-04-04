@@ -271,7 +271,25 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
     db_select_field_options = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
