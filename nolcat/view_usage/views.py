@@ -919,7 +919,7 @@ def download_non_COUNTER_usage():
     log.info("Starting `download_non_COUNTER_usage()`.")
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
-        file_name_format = re.compile(r"\d*_\d{4}\.\w{3,4}")
+        file_name_format = re.compile(r"\d+_\d{4}\.\w{3,4}")
         log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder(), False))
         for file in create_downloads_folder().iterdir():
             if file_name_format.fullmatch(str(file.name)):

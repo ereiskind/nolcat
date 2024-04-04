@@ -102,7 +102,7 @@ def upload_COUNTER_data():
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
                     display_line = truncate_longer_lines(line)  # Size of lines on display limited to prevent memory errors due to overly long lines
                     log.debug(f"The line starting `{display_line}` in the SQL file data is type {type(line)}.")
-                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
+                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO `COUNTERData` (\(.+\) )?VALUES.+\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
                     if COUNTERData_insert_statement:
                         COUNTERData_insert_statement = COUNTERData_insert_statement.groups()[0].decode('utf-8')
                         log.debug(f"Adding the line starting `{display_line}` to the list of insert statements.")

@@ -68,7 +68,7 @@ class UploadCOUNTERReports:
                 continue
             
             try:
-                statistics_source_ID = int(re.search(r"(\d*)_.*\.xlsx", str(FileStorage_object.filename)).group(1))
+                statistics_source_ID = int(re.search(r"(\d+)_.+\.xlsx", str(FileStorage_object.filename)).group(1))
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
@@ -281,7 +281,7 @@ class UploadCOUNTERReports:
                 if re.fullmatch(r"PR1?", report_type) is None:
                     log.debug("About to remove total rows from non-platform reports.")
                     number_of_rows_with_totals = df.shape[0]
-                    common_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*", regex=True)  # `\w*` is because values besides `title` are used in various reports
+                    common_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ff]or\s[Aa]ll\s\w+", regex=True)  # `\w+` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ss]earches", regex=True)
                     summary_rows = common_summary_rows | uncommon_summary_rows
                     summary_rows.name = 'summary_rows'  # Before this, the series is named `resource_name`, just like the series it was filtered from

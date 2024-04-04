@@ -685,7 +685,7 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:
