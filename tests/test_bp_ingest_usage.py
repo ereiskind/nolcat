@@ -45,79 +45,19 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     #TEST: temp
-    import inspect
-    try:
-        log.info(f"`inspect.getsourcefile(client.post)`: {inspect.getsourcefile(client.post)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.getsource(client.post)`: {inspect.getsource(client.post)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(client.post)`: {inspect.Signature(client.post)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(client.post).parameters`: {inspect.Signature(client.post).parameters}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(client.post).bind`: {inspect.Signature(client.post).bind}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.formatargvalues(client.post)`: {inspect.formatargvalues(client.post)}")
-    except:
-        pass
-    try:
-        log.info(f"`hasattr(client.post, 'timeout')`: {hasattr(client.post, 'timeout')}")
-    except:
-        pass
-    try:
-        log.info(f"`hasattr(client.post, 'files')`: {hasattr(client.post, 'files')}")
-    except:
-        pass
-    form_submissions = MultipartEncoder(
-        fields={
-            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-        },
-        encoding='utf-8',
-    )
+    form_submissions = [
+        ('COUNTER_data', ('0_2017.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+        ('COUNTER_data', ('3_2019.xlsx', open(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests' / '3_2019.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+    ]
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
-        '/ingest_usage/upload-COUNTER',
-        follow_redirects=True,
+        'https://httpbin.org/post',
         headers=header_value,
-        data=form_submissions,
+        files=form_submissions,
     )
-    log.info(f"`POST_response.__dict__: {POST_response.__dict__}")
+    log.info(f"`POST_response: {POST_response}")
     try:
-        log.info(f"`POST_response.__dir__`: {POST_response.__dir__}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.getsourcefile(POST_response)`: {inspect.getsourcefile(POST_response)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.getsource(POST_response)`: {inspect.getsource(POST_response)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(POST_response)`: {inspect.Signature(POST_response)}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(POST_response).parameters`: {inspect.Signature(POST_response).parameters}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.Signature(POST_response).bind`: {inspect.Signature(POST_response).bind}")
-    except:
-        pass
-    try:
-        log.info(f"`inspect.formatargvalues(POST_response)`: {inspect.formatargvalues(POST_response)}")
+        log.info(f"`POST_response.text`: {POST_response.text}")
     except:
         pass
     #TEST: end temp content, remainder temp commented out
