@@ -44,38 +44,36 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = []
-    for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
-        tuple_to_append = (
-            file.name,
-            open(file, 'rb'),
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        )
-        form_submissions.append(tuple_to_append)
-    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
-    header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
     #TEST: temp
     from inspect import signature
-    temp = signature(
-        client.post(
-            '/ingest_usage/upload-COUNTER',
-            follow_redirects=True,
-            headers=header_value,
-            data=MultipartEncoder(
-                fields={
-                   'COUNTER_data': (
-                       '0_PR.json',
-                       open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '0_PR.json', 'rb'),
-                       'text/html; charset=utf-8',
-                   )
-                },
-                encoding='utf-8',
-            )
-        )
+    form_submissions = MultipartEncoder(
+        fields={
+            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+        },
+        encoding='utf-8',
     )
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/ingest_usage/upload-COUNTER',
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )
+    temp = signature(POST_response)
     log.info(f"`signature` (type {type(temp)}):\n{temp}")
     log.info(f"`signature.parameters` (type {type(temp.parameters)}):\n{temp.parameters}")
     #TEST: end temp content, remainder temp commented out
+    #form_submissions = []
+    #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
+    #    tuple_to_append = (
+    #        file.name,
+    #        open(file, 'rb'),
+    #        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    #    )
+    #    form_submissions.append(tuple_to_append)
+    #log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
+    #header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
+    
     #POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
     #    '/ingest_usage/upload-COUNTER',
     #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
