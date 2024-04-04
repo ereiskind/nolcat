@@ -349,7 +349,7 @@ def load_data_into_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r"[Ss]uccessfully loaded (\d*) records into the (.*) relation\.?")
+    return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
 
 
 def update_database_success_regex():
