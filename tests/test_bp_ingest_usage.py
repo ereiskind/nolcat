@@ -45,11 +45,17 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = {}
+    list_of_files = []
     for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
-        form_submissions[file.name] = open(file, 'rb')
+        list_of_files.append(open(file, 'rb'))
+    form_submissions = MultipartEncoder(
+        fields={
+            'COUNTER_data': list_of_files,
+        },
+        encoding='utf-8',
+    )
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
-    header_value['Content-Type'] = 'text/html; charset=utf-8'  # Based on header when flask app is used
+    header_value['Content-Type'] = form_submissions.content_type
     
     POST_response = client.post(  #TEST: TypeError: __init__() got an unexpected keyword argument 'files'
         '/ingest_usage/upload-COUNTER',
