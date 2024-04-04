@@ -45,20 +45,82 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     #TEST: temp
-    log.info(f"`client.post (type{type(client.post)}):\n{client.post}")
+    import inspect
     try:
-        log.info(f"`client.post.__dict__`:\n{client.post.__dict__}")
+        log.info(f"`inspect.getsourcefile(client.post)`: {inspect.getsourcefile(client.post)}")
     except:
         pass
     try:
-        log.info(f"`client.post.vars()`:\n{client.post.vars()}")
+        log.info(f"`inspect.getsource(client.post)`: {inspect.getsource(client.post)}")
     except:
         pass
     try:
-        log.info(f"`client.post.dir()`:\n{client.post.dir()}")
+        log.info(f"`inspect.Signature(client.post)`: {inspect.Signature(client.post)}")
     except:
         pass
-    #TEST: end temp content, remainder temp commented out   
+    try:
+        log.info(f"`inspect.Signature(client.post).parameters`: {inspect.Signature(client.post).parameters}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.Signature(client.post).bind`: {inspect.Signature(client.post).bind}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.formatargvalues(client.post)`: {inspect.formatargvalues(client.post)}")
+    except:
+        pass
+    try:
+        log.info(f"`hasattr(client.post, 'timeout')`: {hasattr(client.post, 'timeout')}")
+    except:
+        pass
+    try:
+        log.info(f"`hasattr(client.post, 'files')`: {hasattr(client.post, 'files')}")
+    except:
+        pass
+    form_submissions = MultipartEncoder(
+        fields={
+            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+        },
+        encoding='utf-8',
+    )
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/ingest_usage/upload-COUNTER',
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )
+    log.info(f"`POST_response.__dict__: {POST_response.__dict__}")
+    try:
+        log.info(f"`POST_response.__dir__`: {POST_response.__dir__}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.getsourcefile(POST_response)`: {inspect.getsourcefile(POST_response)}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.getsource(POST_response)`: {inspect.getsource(POST_response)}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.Signature(POST_response)`: {inspect.Signature(POST_response)}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.Signature(POST_response).parameters`: {inspect.Signature(POST_response).parameters}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.Signature(POST_response).bind`: {inspect.Signature(POST_response).bind}")
+    except:
+        pass
+    try:
+        log.info(f"`inspect.formatargvalues(POST_response)`: {inspect.formatargvalues(POST_response)}")
+    except:
+        pass
+    #TEST: end temp content, remainder temp commented out
     #form_submissions = []
     #for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir():
     #    tuple_to_append = (
