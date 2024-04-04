@@ -42,7 +42,7 @@ def test_ingest_usage_homepage(client):
 
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    caplog.set_level(logging.WARNING, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`  #TEST: temp
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]}
