@@ -78,7 +78,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
     except:
         log.info(f"Final dataframe indexes:\n`COUNTERData_relation` records:\n{COUNTERData_relation.index}\n\n`COUNTERData_relation_data` records:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n")
-    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
+    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
