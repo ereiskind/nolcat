@@ -39,7 +39,7 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
 
-
+@pytest.mark.dependency()
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
@@ -95,6 +95,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
+@pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])  # SQL files used in this test has hardcoded values based off the number of records that should be loaded by the test this test depends on
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
