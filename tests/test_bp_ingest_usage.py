@@ -68,6 +68,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     )
     if isinstance(COUNTERData_relation_data, str):
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
