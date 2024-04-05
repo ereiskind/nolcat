@@ -75,9 +75,9 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    log.info(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")
-    log.info(f"`COUNTERData_relation_data`:\n{return_string_of_dataframe_info(COUNTERData_relation_data)}")
-    log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
+    log.info(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")  #TEST: temp
+    log.info(f"`COUNTERData_relation_data`:\n{return_string_of_dataframe_info(COUNTERData_relation_data)}")  #TEST: temp
+    log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")  #TEST: temp
     assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
