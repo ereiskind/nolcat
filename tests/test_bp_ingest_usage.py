@@ -77,16 +77,9 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     try:
         log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
     except:
-        try:
-            COUNTERData_relation.index = COUNTERData_relation.index.astype('Int64')
-            log.info(f"Final dataframe comparison after `COUNTERData_relation.index.astype('Int64')`:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
-        except:
-            a = COUNTERData_relation.copy()
-            b = COUNTERData_relation.copy()
-            a.index = a.index.astype('Int64Index')
-            log.info(f"`COUNTERData_relation.index.astype('Int64Index')`:\n{a.index}")
-            b.index = b.index.astype('Int64')
-            log.info(f"`COUNTERData_relation.index.astype('Int64')`:\n{b.index}")
+        b = COUNTERData_relation.copy()
+        b.index = b.index.astype('Int64')
+        log.info(f"`COUNTERData_relation.index.astype('Int64')`:\n{b.index}")
     assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
