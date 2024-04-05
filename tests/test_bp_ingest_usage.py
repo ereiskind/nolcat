@@ -62,7 +62,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     COUNTERData_relation_data = query_database(
-        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT {COUNTERData_relation.shape[0]};",
+        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
         engine=engine,
         index='COUNTER_data_ID',
     )
