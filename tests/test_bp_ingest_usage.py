@@ -47,8 +47,8 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     
     #TEST: form_submissions = {'COUNTER_data': [open(file, 'rb') for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]}
     form_submissions = {'COUNTER_data': [  #TEST: temp
-        open(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx', 'rb'),
-        open(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests', '2_2020.xlsx', 'rb'),
+        open(Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'),
+        open(Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests', '2_2020.xlsx'), 'rb'),
     ]}
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
     header_value['Content-Type'] = 'multipart/form-data'
