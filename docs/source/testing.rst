@@ -49,7 +49,6 @@ Test Data Folders and Modules
 ----------------
 This folder contains all the Excel files, most of which are stored in one of three subfolders:
 
-* "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx": This workbook contains all the records from all the workbooks in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" in the order in which they would be ingested.
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
