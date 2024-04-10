@@ -332,6 +332,16 @@ def workbook_0_2020_relation():
 
 
 @pytest.fixture
+def workbook_1_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2020_relation()
+
+
+@pytest.fixture
 def COUNTERData_relation():
     """Creates a dataframe that can be loaded into the `COUNTERData` relation.
     
