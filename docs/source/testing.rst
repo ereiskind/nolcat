@@ -91,8 +91,8 @@ Create Tabular COUNTER Reports
 Create `COUNTERData` Relations Fixture Data
 -------------------------------------------
 1. For each workbook in "\\tests\\bin\\COUNTER_workbooks_for_tests\\", load its worksheets into OpenRefine to create projects.
-2. Run the module at "\\tests\\data\\create_transformed_test_data.py" to create a "\\tests\\data\\transform_test_data.json" for each project, then apply that JSON to the project.
-3. Download the project in Excel, then use the ``df`` field and the other field headings to create the relation named for the workbook in "\\tests\\data\\relations.py".
+2. Use the notebook at "\\tests\\data\\create_transformed_test_data.ipynb" to create a "\\tests\\data\\transform_test_data_<report_type>.json" for each project, then apply that JSON to the project for the specified report type.
+3. Download the projects in Excel, then use the ``df`` fields from all the projects and the other field headings to create the relation named for the workbook in "\\tests\\data\\relations.py".
 
 Create R5 SUSHI Response JSON Reports
 -------------------------------------
