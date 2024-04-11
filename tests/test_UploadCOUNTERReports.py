@@ -43,9 +43,11 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     #TEST: temp
     try:
         log.info(f"Dataframe compare:\n{df.compare(COUNTERData_relation)}")
+        log.info(f"Dataframe compare with keep_equal:\n{df.compare(COUNTERData_relation, keep_equal=True)}")
     except:
         try:
             log.info(f"Dataframe compare with adjusted field order:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
+            log.info(f"Dataframe compare with adjusted field order and keep equal:\n{df.compare(COUNTERData_relation[df.columns.tolist()], keep_equal=True)}")
         except:
             log.info(f"Fields:\n`df`:\n{df.columns}\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n")
             log.info(f"Record indexes:\n`df`:\n{df.index}\n`COUNTERData_relation`:\n{COUNTERData_relation.index}")
