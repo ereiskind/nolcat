@@ -384,20 +384,20 @@ def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, wor
     Yields:
         dataframe: a relation of test data
     """
-    yield pd.concat([
+    yield pd.concat([  # Dataframes are ordered to match file management system
         workbook_0_2017_relation,
-        workbook_1_2017_relation,
-        workbook_2_2017_relation,
         workbook_0_2018_relation,
-        workbook_1_2018_relation,
-        workbook_2_2018_relation,
         workbook_0_2019_relation,
-        workbook_1_2019_relation,
-        workbook_2_2019_relation,
-        workbook_3_2019_relation,
         workbook_0_2020_relation,
+        workbook_1_2017_relation,
+        workbook_1_2018_relation,
+        workbook_1_2019_relation,
         workbook_1_2020_relation,
+        workbook_2_2017_relation,
+        workbook_2_2018_relation,
+        workbook_2_2019_relation,
         workbook_2_2020_relation,
+        workbook_3_2019_relation,
         workbook_3_2020_relation,
     ], ignore_index=True)
 
