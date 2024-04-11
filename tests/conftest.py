@@ -362,13 +362,44 @@ def workbook_3_2020_relation():
 
 
 @pytest.fixture
-def COUNTERData_relation():
-    """Creates a dataframe that can be loaded into the `COUNTERData` relation.
-    
+def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
+    """Creates a dataframe containing all the test COUNTER data.
+
+    Args:
+        workbook_0_2017_relation (dataframe): a relation of test data
+        workbook_1_2017_relation (dataframe): a relation of test data
+        workbook_2_2017_relation (dataframe): a relation of test data
+        workbook_0_2018_relation (dataframe): a relation of test data
+        workbook_1_2018_relation (dataframe): a relation of test data
+        workbook_2_2018_relation (dataframe): a relation of test data
+        workbook_0_2019_relation (dataframe): a relation of test data
+        workbook_1_2019_relation (dataframe): a relation of test data
+        workbook_2_2019_relation (dataframe): a relation of test data
+        workbook_3_2019_relation (dataframe): a relation of test data
+        workbook_0_2020_relation (dataframe): a relation of test data
+        workbook_1_2020_relation (dataframe): a relation of test data
+        workbook_2_2020_relation (dataframe): a relation of test data
+        workbook_3_2020_relation (dataframe): a relation of test data
+
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.COUNTERData_relation()
+    yield pd.concat([
+        workbook_0_2017_relation,
+        workbook_1_2017_relation,
+        workbook_2_2017_relation,
+        workbook_0_2018_relation,
+        workbook_1_2018_relation,
+        workbook_2_2018_relation,
+        workbook_0_2019_relation,
+        workbook_1_2019_relation,
+        workbook_2_2019_relation,
+        workbook_3_2019_relation,
+        workbook_0_2020_relation,
+        workbook_1_2020_relation,
+        workbook_2_2020_relation,
+        workbook_3_2020_relation,
+    ], ignore_index=True)
 
 
 #Section: Fixtures for File I/O
