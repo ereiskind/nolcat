@@ -80,7 +80,7 @@ class UploadCOUNTERReports:
                     data_not_in_dataframes.append(f"Worksheet {report_type} in workbook {str(FileStorage_object.filename)}")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
-                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")
+                log.warning(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")  #TEST: level=info
 
 
                 #Section: Identify the Header Row
