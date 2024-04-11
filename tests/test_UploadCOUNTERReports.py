@@ -40,4 +40,5 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
+    log.info(df.compare(COUNTERData_relation))  #TEST: temp
     assert_frame_equal(df, COUNTERData_relation, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
