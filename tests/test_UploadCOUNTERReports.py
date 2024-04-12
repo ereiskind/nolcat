@@ -98,7 +98,7 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
                 records_set[z[0][0][0]].append((z[0][0][1], z[1][0][1]))
             else:
                 records_set[z[0][0][0]] = [(z[0][0][1], z[1][0][1])]
-    for k, v in records_set:
+    for k, v in records_set.items():
         for i in v:
             log.warning(f"Location {k}, {i}:\n`x_df.iloc` is {x_df.iloc[k,i]}\n`y_df.iloc` is {y_df.iloc[k,i]}\n\n")
     #TEST: end temp
