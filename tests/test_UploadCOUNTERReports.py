@@ -64,14 +64,17 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     x_df = df[(df.publication_date.isnull()) | (df.parent_publication_date.isnull())]
     y_df = COUNTERData_relation[df.columns.tolist()]
     y_df = y_df[(y_df.publication_date.isnull()) | (y_df.parent_publication_date.isnull())]
-    log.warning(return_string_of_dataframe_info(x_df))
-    log.warning(return_string_of_dataframe_info(y_df))
-    log.warning(f"Complete Compare:\n{x_df.compare(y_df)}")
     x = [x_df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(x_df)))]
     y = [y_df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(y_df)))]
     for z in list(enumerate(zip(x,y))):
-        log.warning(f"`z` is {z}")
-        log.warning(f"`x_df.iloc` is {x_df.iloc[z[0]]}")
-        log.warning(f"`y_df.iloc` is {y_df.iloc[z[0]]}")
+        if z[1][0] is pd.NA and z[1][1] is pd.NA:
+            continue
+        else:
+            log.warning(f"`z` is {z}")
+            #log.warning(f"`x_df.iloc` is {x_df.iloc[z[0]]}")
+            #log.warning(f"`y_df.iloc` is {y_df.iloc[z[0]]}")
+    log.warning(return_string_of_dataframe_info(x_df))
+    log.warning(return_string_of_dataframe_info(y_df))
+    log.warning(f"Complete compare:\n{x_df.compare(y_df)}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
