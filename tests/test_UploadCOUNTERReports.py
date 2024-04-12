@@ -50,6 +50,9 @@ def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, w
     COUNTERData_relation = workbooks_and_relations[sample_COUNTER_report_workbook[0].filename]
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbook).create_dataframe()
     assert isinstance(data_not_in_df, list)
+    log.warning(f"`df` index: {df.index}")  #TEST: temp
+    log.warning(f"`COUNTERData_relation` index: {COUNTERData_relation.index}")  #TEST: temp
+    log.warning(f"`COUNTERData_relation[df.columns.tolist()]` index: {COUNTERData_relation[df.columns.tolist()].index}")  #TEST: temp
     log.warning(f"Complete compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")  #TEST: temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
 
