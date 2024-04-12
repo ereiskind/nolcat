@@ -32,7 +32,7 @@ def sample_COUNTER_report_workbook():
     yield file_path_and_name
 
 
-def test_create_dataframe_from_single_workbook():
+def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook):
     """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe."""
     pass
 
