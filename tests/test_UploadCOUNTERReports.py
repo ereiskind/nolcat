@@ -86,15 +86,15 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     y_df = y_df[(y_df.publication_date.isnull()) | (y_df.parent_publication_date.isnull())]
     x = [(i, x_df.iloc[i,j]) for i,j in zip(*np.where(pd.isnull(x_df)))]
     y = [(i, y_df.iloc[i,j]) for i,j in zip(*np.where(pd.isnull(y_df)))]
+    records_set = set()
     for z in zip(x,y):
-        log.warning(f"`z` is {z}")
-        log.warning(f"`z[0]` is {z[0]}")
-        log.warning(f"`z[0][0]` is {z[0][0]}")
-        #if z[1][0] is pd.NA and z[1][1] is pd.NA:
-        #    continue
-        #else:
-        #    log.warning(f"`z` is {z}")
-        #    log.warning(f"`x_df.iloc` is {x_df.iloc[z[0]]}")
-        #    log.warning(f"`y_df.iloc` is {y_df.iloc[z[0]]}")
+        if z[0][1] is pd.NA and z[1][1] is pd.NA:
+            continue  # Both null values are `pd.NA`
+        else:
+            records_set.add(z[0][0])
+    log.warning(f"{len(records_set)} records have a null mismatch")
+    for r in records_set:
+        log.warning(f"`x_df.iloc` is {x_df.iloc[r]}")
+        log.warning(f"`y_df.iloc` is {y_df.iloc[r]}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
