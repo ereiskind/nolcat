@@ -41,13 +41,4 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
-    #TEST: temp
-    try:
-        log.warning(f"Dataframe compare:\n{df.compare(COUNTERData_relation)}")
-        log.warning(f"Dataframe compare with keep_equal:\n{df.compare(COUNTERData_relation, keep_equal=True)}")
-    except:
-        log.warning(f"Fields are equal: {df.columns == COUNTERData_relation.columns}")
-        log.warning(f"Sorted fields are equal: {df.columns.sort_values() == COUNTERData_relation.columns.sort_values()}")
-        log.warning(f"Record indexes are equal: {df.index == COUNTERData_relation.index}")
-    #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
