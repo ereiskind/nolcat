@@ -63,13 +63,11 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
     #TEST: temp
-    log.warning(f"Dataframe compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
-    log.warning(return_string_of_dataframe_info(df))
-    log.warning(return_string_of_dataframe_info(COUNTERData_relation))
-    temp_df = df.drop(columns=['usage_date', 'publication_date', 'parent_publication_date'])
-    temp_COUNTERData_relation = COUNTERData_relation.drop(columns=['usage_date', 'publication_date', 'parent_publication_date'])
-    temp_df = temp_df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
-    temp_COUNTERData_relation = temp_COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
-    assert_frame_equal(temp_df, temp_COUNTERData_relation[df.columns.tolist()])
+    import numpy as np
+    x = [df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(df)))]
+    log.warning(f"`df` null values:\n{x}")
+    y_df = COUNTERData_relation[df.columns.tolist()]
+    y = [y_df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(y_df)))]
+    log.warning(f"`COUNTERData_relation` null values:\n{y}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
