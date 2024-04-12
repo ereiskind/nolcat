@@ -45,11 +45,8 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
         log.warning(f"Dataframe compare:\n{df.compare(COUNTERData_relation)}")
         log.warning(f"Dataframe compare with keep_equal:\n{df.compare(COUNTERData_relation, keep_equal=True)}")
     except:
-        try:
-            log.warning(f"Dataframe compare with adjusted field order:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
-            log.warning(f"Dataframe compare with adjusted field order and keep equal:\n{df.compare(COUNTERData_relation[df.columns.tolist()], keep_equal=True)}")
-        except:
-            log.warning(f"Fields:\n`df`:\n{df.columns}\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n")
-            log.warning(f"Record indexes:\n`df`:\n{df.index}\n`COUNTERData_relation`:\n{COUNTERData_relation.index}")
+        log.warning(f"Fields are equal: {df.columns == COUNTERData_relation.columns}")
+        log.warning(f"Sorted fields are equal: {df.columns.sort() == COUNTERData_relation.columns.sort()}")
+        log.warning(f"Record indexes are equal: {df.index == COUNTERData_relation.index}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
