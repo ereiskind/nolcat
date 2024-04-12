@@ -26,12 +26,7 @@ def sample_COUNTER_report_workbook():
         list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
     """
     file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
-    #TEST: temp
-    temp = mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))
-    log.warning(f"`sample_COUNTER_report_workbook` yields {temp} (type {type(temp)})")
-    yield temp
-    #TEST: end temp
-    #TEST: yield mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))
+    yield mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))
 
 
 def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook):
