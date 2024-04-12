@@ -59,8 +59,11 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     assert isinstance(data_not_in_df, list)
     #TEST: temp
     log.info(f"Dataframe compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
-    temp_df = df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
-    temp_COUNTERData_relation = COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
+    dtypes = {k:'object' for k in df.columns.tolist()}
+    temp_df = df.astype(dtypes)
+    temp_COUNTERData_relation = COUNTERData_relation.astype(dtypes)
+    temp_df = temp_df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
+    temp_COUNTERData_relation = temp_COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
     assert_frame_equal(temp_df, temp_COUNTERData_relation[df.columns.tolist()])
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
