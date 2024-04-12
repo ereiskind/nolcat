@@ -65,9 +65,12 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     #TEST: temp
     import numpy as np
     x = [df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(df)))]
-    log.warning(f"`df` null values:\n{x}")
+    log.warning(f"`df` has {len(x)} null values")
     y_df = COUNTERData_relation[df.columns.tolist()]
     y = [y_df.iloc[i,j] for i,j in zip(*np.where(pd.isnull(y_df)))]
-    log.warning(f"`COUNTERData_relation` null values:\n{y}")
+    log.warning(f"`COUNTERData_relation` has {len(y)} null values")
+    for z in enumerate(zip(z,y)):
+        if z[1][0] != z[1][1]:
+            log.warning(f"Null values {int(z[0]) + 1} are {z[1]}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
