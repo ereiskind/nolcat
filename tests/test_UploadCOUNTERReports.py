@@ -60,10 +60,10 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     #TEST: temp
     log.info(f"Dataframe compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
     from nolcat.app import return_string_of_dataframe_info
-    log.info(return_string_of_dataframe_info(temp_df))
-    log.info(return_string_of_dataframe_info(temp_COUNTERData_relation))
-    temp_df = temp_df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
-    temp_COUNTERData_relation = temp_COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
+    log.info(return_string_of_dataframe_info(df))
+    log.info(return_string_of_dataframe_info(COUNTERData_relation))
+    temp_df = df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
+    temp_COUNTERData_relation = COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
     assert_frame_equal(temp_df, temp_COUNTERData_relation[df.columns.tolist()])
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
