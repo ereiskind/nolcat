@@ -4,7 +4,6 @@
 import pytest
 import logging
 from pathlib import Path
-import os
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
@@ -15,7 +14,25 @@ from nolcat.app import *
 log = logging.getLogger(__name__)
 
 
-#Section: Fixture
+#Section: Test Uploading Single Workbook
+@pytest.fixture
+def sample_COUNTER_report_workbook():
+    """Creates a mock_FileStorage_object object enclosed in a list for use in testing the `UploadCOUNTERReports` class.
+    
+    The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
+
+    Yields:
+        list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
+    """
+    pass
+
+
+def test_create_dataframe_from_single_workbook():
+    """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe."""
+    pass
+
+
+#Section: Test Uploading All Workbooks
 @pytest.fixture
 def sample_COUNTER_report_workbooks():
     """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
@@ -33,7 +50,6 @@ def sample_COUNTER_report_workbooks():
     yield fixture
 
 
-#Section: Test
 def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation):
     """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe.
     
