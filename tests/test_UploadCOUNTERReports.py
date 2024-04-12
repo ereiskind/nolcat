@@ -100,6 +100,11 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
                 records_set[z[0][0][0]] = [(z[0][0][1], z[1][0][1])]
     for k, v in records_set.items():
         for i in v:
-            log.warning(f"Location {k}, {i}:\n`x_df.iloc` is {x_df.iloc[k,i]}\n`y_df.iloc` is {y_df.iloc[k,i]}\n\n")
+            log.warning(f"Location {k}, {i}")
+            log.warning(x_df.iloc[k,i])
+            log.warning(y_df.iloc[k,i])
+    log.warning(f"`df` index: {df.index}")
+    log.warning(f"`COUNTERData_relation` index: {COUNTERData_relation.index}")
+    log.warning(f"`COUNTERData_relation[df.columns.tolist()]` index: {COUNTERData_relation[df.columns.tolist()].index}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
