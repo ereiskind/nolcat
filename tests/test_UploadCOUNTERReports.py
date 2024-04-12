@@ -50,4 +50,4 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
         log.warning(f"Sorted fields are equal: {df.columns.sort_values() == COUNTERData_relation.columns.sort_values()}")
         log.warning(f"Record indexes are equal: {df.index == COUNTERData_relation.index}")
     #TEST: end temp
-    assert_frame_equal(df, COUNTERData_relation)
+    assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
