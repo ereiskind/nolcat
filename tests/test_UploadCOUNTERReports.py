@@ -4,6 +4,7 @@
 import pytest
 import logging
 from pathlib import Path
+from random import choice
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
@@ -24,7 +25,11 @@ def sample_COUNTER_report_workbook():
     Yields:
         list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
     """
-    pass
+    file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    log.warning(f"`path_to_sample_file()` yields {file_path_and_name} (type {type(file_path_and_name)}).")  #TEST: Level `info`
+    yield file_path_and_name
 
 
 def test_create_dataframe_from_single_workbook():
