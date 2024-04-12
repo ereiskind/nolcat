@@ -10,6 +10,7 @@ from pandas.testing import assert_frame_equal
 # `conftest.py` fixtures are imported automatically
 from conftest import mock_FileStorage_object  # Direct import is required because it isn't a fixture
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
+from nolcat.app import *
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ def sample_COUNTER_report_workbooks():
     Yields:
         list: a list of mock_FileStorage_object object(s) simulating multiple files selected in a MultipleFileField field
     """
-    folder_path = Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests'
+    folder_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
     fixture = []
     for workbook in folder_path.iterdir():
         fixture.append(mock_FileStorage_object(folder_path / workbook))
