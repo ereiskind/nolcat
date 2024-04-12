@@ -26,7 +26,7 @@ def sample_COUNTER_report_workbook():
         list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
     """
     file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
-    yield mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))
+    yield [mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))]
 
 
 def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
