@@ -94,17 +94,12 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
         if z[0][1] is pd.NA and z[1][1] is pd.NA:
             continue  # Both null values are `pd.NA`
         else:
-            log.warning(f"`z` is {z}")
-            log.warning(f"`z[0]` is {z[0]}")
-            log.warning(f"`z[0][0]` is {z[0][0]}")
-            log.warning(f"`z[0][0][0]` is {z[0][0][0]}")
-    #        if records_set.get(z[0][0][0]):
-    #            records_set[z[0][0][0]].append((z[0][0][1], z[1][0][1]))
-    #        else:
-    #            records_set[z[0][0][0]] = [(z[0][0][1], z[1][0][1])]
-    #for k, v in records_set.items():
-    #    log.warning(f"`k` is {k} and `v` is {v}")
-    #    #log.warning(f"`x_df.iloc` is {x_df.iloc[]}")
-    #    #log.warning(f"`y_df.iloc` is {y_df.iloc[]}")
+            if records_set.get(z[0][0][0]):
+                records_set[z[0][0][0]].append((z[0][0][1], z[1][0][1]))
+            else:
+                records_set[z[0][0][0]] = [(z[0][0][1], z[1][0][1])]
+    for k, v in records_set:
+        for i in v:
+            log.warning(f"Location {k}, {i}:\n`x_df.iloc` is {x_df.iloc[k,i]}\n`y_df.iloc` is {y_df.iloc[k,i]}\n\n")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
