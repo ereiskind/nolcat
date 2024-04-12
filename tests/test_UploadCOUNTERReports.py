@@ -29,9 +29,28 @@ def sample_COUNTER_report_workbook():
     yield mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))
 
 
-def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook):
+def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
     """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe."""
-    pass
+    workbooks_and_relations = {
+        '0_2017.xlsx': workbook_0_2017_relation,
+        '1_2017.xlsx': workbook_1_2017_relation,
+        '2_2017.xlsx': workbook_2_2017_relation,
+        '0_2018.xlsx': workbook_0_2018_relation,
+        '1_2018.xlsx': workbook_1_2018_relation,
+        '2_2018.xlsx': workbook_2_2018_relation,
+        '0_2019.xlsx': workbook_0_2019_relation,
+        '1_2019.xlsx': workbook_1_2019_relation,
+        '2_2019.xlsx': workbook_2_2019_relation,
+        '3_2019.xlsx': workbook_3_2019_relation,
+        '0_2020.xlsx': workbook_0_2020_relation,
+        '1_2020.xlsx': workbook_1_2020_relation,
+        '2_2020.xlsx': workbook_2_2020_relation,
+        '3_2020.xlsx': workbook_3_2020_relation,
+    }
+    COUNTERData_relation = workbooks_and_relations[sample_COUNTER_report_workbook.filename]
+    df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbook).create_dataframe()
+    assert isinstance(data_not_in_df, list)
+    assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
 
 
 #Section: Test Uploading All Workbooks
