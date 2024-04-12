@@ -58,10 +58,10 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
     #TEST: temp
-    log.info(f"Dataframe compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
+    log.warning(f"Dataframe compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
     from nolcat.app import return_string_of_dataframe_info
-    log.info(return_string_of_dataframe_info(df))
-    log.info(return_string_of_dataframe_info(COUNTERData_relation))
+    log.warning(return_string_of_dataframe_info(df))
+    log.warning(return_string_of_dataframe_info(COUNTERData_relation))
     temp_df = df.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
     temp_COUNTERData_relation = COUNTERData_relation.applymap(lambda cell_value: None if cell_value.isnull() else cell_value)
     assert_frame_equal(temp_df, temp_COUNTERData_relation[df.columns.tolist()])
