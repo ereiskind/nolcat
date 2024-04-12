@@ -101,8 +101,8 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     for k, v in records_set.items():
         for i in v:
             log.warning(f"Location {k}, {i}")
-            log.warning(x_df.iloc[k,i])
-            log.warning(y_df.iloc[k,i])
+            log.warning(x_df.iloc[k,i[0]])
+            log.warning(y_df.iloc[k,i[1]])
     log.warning(f"`df` index: {df.index}")
     log.warning(f"`COUNTERData_relation` index: {COUNTERData_relation.index}")
     log.warning(f"`COUNTERData_relation[df.columns.tolist()]` index: {COUNTERData_relation[df.columns.tolist()].index}")
