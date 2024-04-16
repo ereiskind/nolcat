@@ -228,7 +228,11 @@ def workbook_0_2017_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_0_2017_relation()
+    #TEST: temp
+    temp = relations.workbook_0_2017_relation()
+    log.warning(f"`workbook_0_2017_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -238,7 +242,11 @@ def workbook_1_2017_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_1_2017_relation()
+    #TEST: temp
+    temp = relations.workbook_1_2017_relation()
+    log.warning(f"`workbook_1_2017_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -248,7 +256,11 @@ def workbook_2_2017_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_2_2017_relation()
+    #TEST: temp
+    temp = relations.workbook_2_2017_relation()
+    log.warning(f"`workbook_2_2017_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -258,7 +270,11 @@ def workbook_0_2018_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_0_2018_relation()
+    #TEST: temp
+    temp = relations.workbook_0_2018_relation()
+    log.warning(f"`workbook_0_2018_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -268,7 +284,11 @@ def workbook_1_2018_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_1_2018_relation()
+    #TEST: temp
+    temp = relations.workbook_1_2018_relation()
+    log.warning(f"`workbook_1_2018_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -278,7 +298,11 @@ def workbook_2_2018_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_2_2018_relation()
+    #TEST: temp
+    temp = relations.workbook_2_2018_relation()
+    log.warning(f"`workbook_2_2018_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -288,7 +312,11 @@ def workbook_0_2019_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_0_2019_relation()
+    #TEST: temp
+    temp = relations.workbook_0_2019_relation()
+    log.warning(f"`workbook_0_2019_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -298,7 +326,11 @@ def workbook_1_2019_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_1_2019_relation()
+    #TEST: temp
+    temp = relations.workbook_1_2019_relation()
+    log.warning(f"`workbook_1_2019_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -308,7 +340,11 @@ def workbook_2_2019_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_2_2019_relation()
+    #TEST: temp
+    temp = relations.workbook_2_2019_relation()
+    log.warning(f"`workbook_2_2019_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -318,7 +354,11 @@ def workbook_3_2019_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_3_2019_relation()
+    #TEST: temp
+    temp = relations.workbook_3_2019_relation()
+    log.warning(f"`workbook_3_2019_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -328,7 +368,11 @@ def workbook_0_2020_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_0_2020_relation()
+    #TEST: temp
+    temp = relations.workbook_0_2020_relation()
+    log.warning(f"`workbook_0_2020_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -338,7 +382,11 @@ def workbook_1_2020_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_1_2020_relation()
+    #TEST: temp
+    temp = relations.workbook_1_2020_relation()
+    log.warning(f"`workbook_1_2020_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -348,7 +396,11 @@ def workbook_2_2020_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_2_2020_relation()
+    #TEST: temp
+    temp = relations.workbook_2_2020_relation()
+    log.warning(f"`workbook_2_2020_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -358,7 +410,11 @@ def workbook_3_2020_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.workbook_3_2020_relation()
+    #TEST: temp
+    temp = relations.workbook_3_2020_relation()
+    log.warning(f"`workbook_3_2020_relation`:\n{return_string_of_dataframe_info(temp)}")
+    yield temp
+    #TEST: end temp
 
 
 @pytest.fixture
@@ -400,7 +456,7 @@ def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, wor
         workbook_3_2019_relation,
         workbook_3_2020_relation,
     ], ignore_index=True)
-    log.warning(f"`temp` index: {temp.index}")  #TEST: temp
+    log.warning(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(temp)}")  #TEST: temp
     yield temp  #TEST: temp
 
 
