@@ -40,7 +40,7 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 @pytest.mark.dependency()
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog, workbook_0_2017_relation, workbook_2_2020_relation):  #TEST: last two fixtures are temp
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
@@ -66,7 +66,8 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     COUNTERData_relation_data = query_database(
-        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
+        #TEST: query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
+        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID;",  #TEST: temp
         engine=engine,
         index='COUNTER_data_ID',
     )
@@ -74,14 +75,27 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
 
+    #TEST: temp
+    COUNTERData_relation = pd.concat([  # Dataframes are ordered to match file management system
+        workbook_0_2017_relation,
+        workbook_2_2020_relation,
+    ], ignore_index=True)
+    COUNTERData_relation.index.name = "COUNTER_data_ID"
+    log.info(f"Overwritten `COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")
+    #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    log.info(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")  #TEST: temp
     log.info(f"`COUNTERData_relation_data`:\n{return_string_of_dataframe_info(COUNTERData_relation_data)}")  #TEST: temp
-    log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")  #TEST: temp
+    #TEST: temp
+    try:
+        log.info(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
+    except:
+        log.info(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n`COUNTERData_relation_data`:\n{COUNTERData_relation_data.columns}\n")
+        log.info(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation.index}\n\n`COUNTERData_relation_data`:\n{COUNTERData_relation_data.index}\n")
+    #TEST: end temp
     assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
