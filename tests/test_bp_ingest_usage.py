@@ -90,9 +90,12 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
-@pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])  # SQL file used in this test has hardcoded values based off the number of records that should be loaded by the test this test depends on
+@pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
-    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
+    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
+    
+    This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
+    """
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
