@@ -657,14 +657,14 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
-    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
-    if 'publication_date' in df.columns.to_list():
+    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
+    if 'publication_date' in df.columns.tolist():
         df["publication_date"] = pd.to_datetime(
             df["publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
             infer_datetime_format=True,
         )
-    if 'parent_publication_date' in df.columns.to_list():
+    if 'parent_publication_date' in df.columns.tolist():
         df["parent_publication_date"] = pd.to_datetime(
             df["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
