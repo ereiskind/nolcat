@@ -384,7 +384,7 @@ def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, wor
     Yields:
         dataframe: a relation of test data
     """
-    yield pd.concat([  # Dataframes are ordered to match file management system
+    temp = pd.concat([  # Dataframes are ordered to match file management system  #TEST: temp
         workbook_0_2017_relation,
         workbook_0_2018_relation,
         workbook_0_2019_relation,
@@ -400,6 +400,8 @@ def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, wor
         workbook_3_2019_relation,
         workbook_3_2020_relation,
     ], ignore_index=True)
+    log.warning(f"`temp` index: {temp.index}")  #TEST: temp
+    yield temp  #TEST: temp
 
 
 #Section: Fixtures for File I/O

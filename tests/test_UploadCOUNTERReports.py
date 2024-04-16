@@ -88,7 +88,13 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     y_df = COUNTERData_relation[df.columns.tolist()]
     x_coordinates = [(i, j) for i,j in zip(*np.where(pd.isnull(x_df)))]
     y_coordinates = [(i, j) for i,j in zip(*np.where(pd.isnull(y_df)))]
-    log.warning(f"Nulls in `df` not in `COUNTERData_relation`:\n{list(set(x_coordinates)-set(y_coordinates))}")
-    log.warning(f"Nulls in `COUNTERData_relation` not in `df`:\n{list(set(y_coordinates)-set(x_coordinates))}")
+    mismatch_records = set()
+    x_only = list(set(x_coordinates)-set(y_coordinates))
+    y_only = list(set(y_coordinates)-set(x_coordinates))
+    for a in x_only + y_only:
+        mismatch_records.add(a[0])
+    for b in mismatch_records:
+        log.warning(x_df.iloc[b])
+        log.warning(y_df.iloc[b])
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
