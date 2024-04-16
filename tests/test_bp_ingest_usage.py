@@ -55,6 +55,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         headers=header_value,
         data=form_submissions,
     )
+    COUNTERData_relation['report_creation_date'] = pd.to_datetime(None)  # The route function adds the `report_creation_date` field, which isn't in the fixture, to the uploaded workbooks
 
     # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
