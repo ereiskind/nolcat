@@ -84,27 +84,11 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     assert isinstance(data_not_in_df, list)
     #TEST: temp
     import numpy as np
-    x_df = df[(df.publication_date.isnull()) | (df.parent_publication_date.isnull())]
+    x_df = df.copy()
     y_df = COUNTERData_relation[df.columns.tolist()]
-    y_df = y_df[(y_df.publication_date.isnull()) | (y_df.parent_publication_date.isnull())]
-    x = [((i, j), x_df.iloc[i,j]) for i,j in zip(*np.where(pd.isnull(x_df)))]
-    y = [((i, j), y_df.iloc[i,j]) for i,j in zip(*np.where(pd.isnull(y_df)))]
-    records_set = {}
-    for z in zip(x,y):
-        if z[0][1] is pd.NA and z[1][1] is pd.NA:
-            continue  # Both null values are `pd.NA`
-        else:
-            if records_set.get(z[0][0][0]):
-                records_set[z[0][0][0]].append((z[0][0][1], z[1][0][1]))
-            else:
-                records_set[z[0][0][0]] = [(z[0][0][1], z[1][0][1])]
-    for k, v in records_set.items():
-        for i in v:
-            log.warning(f"Location {k}, {i}")
-            log.warning(x_df.iloc[k,i[0]])
-            log.warning(y_df.iloc[k,i[1]])
-    log.warning(f"`df` index: {df.index}")
-    log.warning(f"`COUNTERData_relation` index: {COUNTERData_relation.index}")
-    log.warning(f"`COUNTERData_relation[df.columns.tolist()]` index: {COUNTERData_relation[df.columns.tolist()].index}")
+    x_coordinates = [(i, j) for i,j in zip(*np.where(pd.isnull(x_df)))]
+    y_coordinates = [(i, j) for i,j in zip(*np.where(pd.isnull(y_df)))]
+    log.warning(f"Nulls in `df` not in `COUNTERData_relation`:\n{list(set(x_coordinates)-set(y_coordinates))}")
+    log.warning(f"Nulls in `COUNTERData_relation` not in `df`:\n{list(set(y_coordinates)-set(x_coordinates))}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
