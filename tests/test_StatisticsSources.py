@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-04-12 ##########
 
 import pytest
 import logging
@@ -351,7 +351,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
         by=field_order,
         ignore_index=True,
     )
-    assert_frame_equal(records_loaded_by_method[field_order], df, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(records_loaded_by_method[field_order], df)
 
 
 #Section: Test `StatisticsSources.add_note()`

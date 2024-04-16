@@ -136,8 +136,6 @@ dmypy.json
 .scratch/
 .scratch/*
 
-# Log file
+# Variable Test-Related Files
 tests/logs/*
-
-# Faux Environmental Variables
-*nolcat_secrets.py
+tests/data/transform_test_data*.json

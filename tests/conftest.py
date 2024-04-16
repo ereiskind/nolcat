@@ -222,13 +222,186 @@ def annualUsageCollectionTracking_relation():
 
 
 @pytest.fixture
-def COUNTERData_relation():
-    """Creates a dataframe that can be loaded into the `COUNTERData` relation.
+def workbook_0_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2017.xlsx` workbook.
     
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.COUNTERData_relation()
+    yield relations.workbook_0_2017_relation()
+
+
+@pytest.fixture
+def workbook_1_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2017.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2017_relation()
+
+
+@pytest.fixture
+def workbook_2_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2017.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2017_relation()
+
+
+@pytest.fixture
+def workbook_0_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2018_relation()
+
+
+@pytest.fixture
+def workbook_1_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2018_relation()
+
+
+@pytest.fixture
+def workbook_2_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2018_relation()
+
+
+@pytest.fixture
+def workbook_0_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2019_relation()
+
+
+@pytest.fixture
+def workbook_1_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2019_relation()
+
+
+@pytest.fixture
+def workbook_2_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2019_relation()
+
+
+@pytest.fixture
+def workbook_3_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `3_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_3_2019_relation()
+
+
+@pytest.fixture
+def workbook_0_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2020_relation()
+
+
+@pytest.fixture
+def workbook_1_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2020_relation()
+
+
+@pytest.fixture
+def workbook_2_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2020_relation()
+
+
+@pytest.fixture
+def workbook_3_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `3_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_3_2020_relation()
+
+
+@pytest.fixture
+def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
+    """Creates a dataframe containing all the test COUNTER data.
+
+    Args:
+        workbook_0_2017_relation (dataframe): a relation of test data
+        workbook_1_2017_relation (dataframe): a relation of test data
+        workbook_2_2017_relation (dataframe): a relation of test data
+        workbook_0_2018_relation (dataframe): a relation of test data
+        workbook_1_2018_relation (dataframe): a relation of test data
+        workbook_2_2018_relation (dataframe): a relation of test data
+        workbook_0_2019_relation (dataframe): a relation of test data
+        workbook_1_2019_relation (dataframe): a relation of test data
+        workbook_2_2019_relation (dataframe): a relation of test data
+        workbook_3_2019_relation (dataframe): a relation of test data
+        workbook_0_2020_relation (dataframe): a relation of test data
+        workbook_1_2020_relation (dataframe): a relation of test data
+        workbook_2_2020_relation (dataframe): a relation of test data
+        workbook_3_2020_relation (dataframe): a relation of test data
+
+    Yields:
+        dataframe: a relation of test data
+    """
+    df = pd.concat([  # Dataframes are ordered to match file management system
+        workbook_0_2017_relation,
+        workbook_0_2018_relation,
+        workbook_0_2019_relation,
+        workbook_0_2020_relation,
+        workbook_1_2017_relation,
+        workbook_1_2018_relation,
+        workbook_1_2019_relation,
+        workbook_1_2020_relation,
+        workbook_2_2017_relation,
+        workbook_2_2018_relation,
+        workbook_2_2019_relation,
+        workbook_2_2020_relation,
+        workbook_3_2019_relation,
+        workbook_3_2020_relation,
+    ], ignore_index=True)
+    df.index.name = "COUNTER_data_ID"  # To restore the index name
+    yield df
 
 
 #Section: Fixtures for File I/O
