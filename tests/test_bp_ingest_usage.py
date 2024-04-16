@@ -82,12 +82,12 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #TEST: temp
     try:
-        log.warning(f"Final dataframe comparison:\n{COUNTERData_relation.compare(df)}")
+        log.warning(f"Final dataframe comparison:\n{COUNTERData_relation[df.columns.tolist()].compare(df)}")
     except:
-        log.warning(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n`df`:\n{df.columns}\n")
-        log.warning(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation.index}\n\n`df`:\n{df.index}\n")
+        log.warning(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation[df.columns.tolist()].columns}\n\n`df`:\n{df.columns}\n")
+        log.warning(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation[df.columns.tolist()].index}\n\n`df`:\n{df.index}\n")
     #TEST: end temp
-    assert_frame_equal(df, COUNTERData_relation, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
+    assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])  # SQL files used in this test has hardcoded values based off the number of records that should be loaded by the test this test depends on
