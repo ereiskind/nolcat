@@ -39,6 +39,7 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
 
+
 @pytest.mark.dependency()
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
