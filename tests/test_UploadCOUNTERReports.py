@@ -49,6 +49,7 @@ def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, w
     }
     COUNTERData_relation = workbooks_and_relations[sample_COUNTER_report_workbook[0].filename]
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbook).create_dataframe()
+    df.index.name = COUNTERData_relation.index.name
     assert isinstance(data_not_in_df, list)
     log.warning(f"`df` index: {df.index}")  #TEST: temp
     log.warning(f"`COUNTERData_relation` index: {COUNTERData_relation.index}")  #TEST: temp
@@ -81,5 +82,6 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     The order of the possible delimiters means the existence of the delimiter characters in a string field is tested, but the possibility of a delimiter character as the first character in a string field isn't covered by this test.
     """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
+    df.index.name = COUNTERData_relation.index.name
     assert isinstance(data_not_in_df, list)
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()])
