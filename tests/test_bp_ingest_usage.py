@@ -62,18 +62,18 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    COUNTERData_relation_data = query_database(
+    df = query_database(
         query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
         engine=engine,
         index='COUNTER_data_ID',
     )
-    if isinstance(COUNTERData_relation_data, str):
-        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
-    COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.astype(COUNTERData.state_data_types())
 
     #TEST: temp
     log.warning(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")
-    log.warning(f"`COUNTERData_relation_data`:\n{return_string_of_dataframe_info(COUNTERData_relation_data)}")
+    log.warning(f"`df`:\n{return_string_of_dataframe_info(df)}")
     #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
@@ -82,12 +82,12 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #TEST: temp
     try:
-        log.warning(f"Final dataframe comparison:\n{COUNTERData_relation.compare(COUNTERData_relation_data)}")
+        log.warning(f"Final dataframe comparison:\n{COUNTERData_relation.compare(df)}")
     except:
-        log.warning(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n`COUNTERData_relation_data`:\n{COUNTERData_relation_data.columns}\n")
-        log.warning(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation.index}\n\n`COUNTERData_relation_data`:\n{COUNTERData_relation_data.index}\n")
+        log.warning(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation.columns}\n\n`df`:\n{df.columns}\n")
+        log.warning(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation.index}\n\n`df`:\n{df.index}\n")
     #TEST: end temp
-    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
+    assert_frame_equal(df, COUNTERData_relation, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])  # SQL files used in this test has hardcoded values based off the number of records that should be loaded by the test this test depends on
@@ -118,14 +118,14 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     )
     if isinstance(check_relation_size, str):
         pytest.skip(database_function_skip_statements(check_relation_size))
-    check_database_update = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+    df = query_database(
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
         engine=engine,
     )
-    if isinstance(check_database_update, str):
-        pytest.skip(database_function_skip_statements(check_database_update))
-    check_database_update = check_database_update.astype(COUNTERData.state_data_types())
-    check_database_update = check_database_update.drop(columns='COUNTER_data_ID')
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.astype(COUNTERData.state_data_types())
+    df = df.drop(columns='COUNTER_data_ID')
     insert_statement_data = pd.DataFrame(
         [  # These records are in reverse order from the SQL file because getting the last seven records requires a SQL query that places the most recently loaded (aka last) records at the top
             [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
@@ -148,7 +148,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
-    assert_frame_equal(check_database_update, insert_statement_data)
+    assert_frame_equal(df, insert_statement_data)
 
 
 # Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
@@ -173,13 +173,13 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
+    df = query_database(
         query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
-        pytest.skip(database_function_skip_statements(db_select_field_options))
-    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    db_select_field_options = list(df.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -197,13 +197,13 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     
-    primary_key_list = query_database(
+    df = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(primary_key_list, str):
-        pytest.skip(database_function_skip_statements(primary_key_list))
-    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').to_list()
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
@@ -247,7 +247,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
+    df = query_database(
         query=f"""
             SELECT
                 annualUsageCollectionTracking.AUCT_statistics_source,
@@ -269,9 +269,9 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         """,
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
-        pytest.skip(database_function_skip_statements(db_select_field_options))
-    db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    db_select_field_options = create_AUCT_SelectField_options(df)
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -318,12 +318,12 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Database Update
-    check_database_update = query_database(
+    df = query_database(
         query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
-    assert check_database_update.at[0,'collection_status'] == 'Collection complete'
-    assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    assert df.at[0,'collection_status'] == 'Collection complete'
+    assert df.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
 
     #Section: Check S3 for File
     list_objects_response = s3_client.list_objects_v2(
