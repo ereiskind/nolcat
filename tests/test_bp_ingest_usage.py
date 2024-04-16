@@ -50,7 +50,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, workbooks_a
     COUNTERData_relation = pd.concat([workbooks_and_relations[file.name] for file in list_of_workbook_paths], ignore_index=True)
     COUNTERData_relation.index.name = "COUNTER_data_ID"
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in list_of_workbook_paths]}
-    log.warning(f"The files being uploaded to the database are:\n{form_submissions}")  #TEST: temp level (reset to debug)
+    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
@@ -74,22 +74,11 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, workbooks_a
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
 
-    #TEST: temp
-    log.warning(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")
-    log.warning(f"`df`:\n{return_string_of_dataframe_info(df)}")
-    #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #TEST: temp
-    try:
-        log.warning(f"Final dataframe comparison:\n{COUNTERData_relation[df.columns.tolist()].compare(df)}")
-    except:
-        log.warning(f"Fields:\n`COUNTERData_relation`:\n{COUNTERData_relation[df.columns.tolist()].columns}\n\n`df`:\n{df.columns}\n")
-        log.warning(f"Record index:\n`COUNTERData_relation`:\n{COUNTERData_relation[df.columns.tolist()].index}\n\n`df`:\n{df.index}\n")
-    #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
