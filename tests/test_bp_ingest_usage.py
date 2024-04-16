@@ -46,7 +46,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = {'COUNTER_data': [open(file, 'rb') for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir().sort()]}
+    form_submissions = {'COUNTER_data': [open(file, 'rb') for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()].sort()}
     log.warning(f"The files being uploaded to the database are:\n{form_submissions}")  #TEST: temp level (reset to debug)
     header_value['Content-Type'] = 'multipart/form-data'
     
