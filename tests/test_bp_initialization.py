@@ -576,7 +576,11 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
-            'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
+            'COUNTER_reports': [(
+                file.name,
+                open(file, 'rb'),
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ) for file in create_COUNTERData_workbook_iterdir_list],
             #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
