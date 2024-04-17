@@ -41,15 +41,14 @@ def test_ingest_usage_homepage(client):
 
 
 @pytest.mark.dependency()
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, workbooks_and_relations, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, workbooks_and_relations, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    list_of_workbook_paths = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
-    COUNTERData_relation = pd.concat([workbooks_and_relations[file.name] for file in list_of_workbook_paths], ignore_index=True)
+    COUNTERData_relation = pd.concat([workbooks_and_relations[file.name] for file in create_COUNTERData_workbook_iterdir_list], ignore_index=True)
     COUNTERData_relation.index.name = "COUNTER_data_ID"
-    form_submissions = {'COUNTER_data': [open(file, 'rb') for file in list_of_workbook_paths]}
+    form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
     log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(

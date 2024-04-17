@@ -402,6 +402,18 @@ def workbooks_and_relations(workbook_0_2017_relation, workbook_1_2017_relation, 
     }
 
 
+@pytest.fixture(scope='session')
+def create_COUNTERData_workbook_iterdir_list():
+    """A list of pathlib.Path objects for each of the workbooks containing test data.
+
+    The `iterdir()` method, by definition, returns the files in an arbitrary order, but many test functions rely upon both an `iterdir()` method to get all of the workbooks in the `COUNTER_workbooks_for_tests` folder and a specific order of records in a `COUNTERData_relation` fixture compared to the output of the function being tested. To keep the arbitrary order of `iterdir()` from causing problems, this fixture runs the method once for a test session; the order of workbooks returned in this fixture is used throughout the test session.
+
+    Yields:
+        list: the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+    """
+    yield [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
+
+
 @pytest.fixture
 def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
     """Creates a dataframe containing all the test COUNTER data.

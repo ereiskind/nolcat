@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 #Section: Test Uploading Single Workbook
 @pytest.fixture
-def sample_COUNTER_report_workbook():
+def sample_COUNTER_report_workbook(create_COUNTERData_workbook_iterdir_list):
     """Creates a mock_FileStorage_object object enclosed in a list for use in testing the `UploadCOUNTERReports` class.
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
@@ -25,8 +25,7 @@ def sample_COUNTER_report_workbook():
     Yields:
         list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
     """
-    file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
-    yield [mock_FileStorage_object(file_path / choice([file.name for file in file_path.iterdir()]))]
+    yield [mock_FileStorage_object(choice(create_COUNTERData_workbook_iterdir_list))]
 
 
 def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, workbooks_and_relations):
@@ -39,7 +38,7 @@ def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, w
 
 #Section: Test Uploading All Workbooks
 @pytest.fixture
-def sample_COUNTER_report_workbooks():
+def sample_COUNTER_report_workbooks(create_COUNTERData_workbook_iterdir_list):
     """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
@@ -47,10 +46,9 @@ def sample_COUNTER_report_workbooks():
     Yields:
         list: a list of mock_FileStorage_object object(s) simulating multiple files selected in a MultipleFileField field
     """
-    folder_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
     fixture = []
-    for workbook in folder_path.iterdir():
-        fixture.append(mock_FileStorage_object(folder_path / workbook))
+    for workbook in create_COUNTERData_workbook_iterdir_list:
+        fixture.append(mock_FileStorage_object(workbook))
     fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)  # Modifying list in place returns `None`, so making modification in `return` statement makes fixture value `None`
     yield fixture
 
