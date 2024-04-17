@@ -121,7 +121,7 @@ def session(engine, db):
 
 
 #Section: Test Data for Relations
-@pytest.fixture
+@pytest.fixture(scope='session')
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation.
     
@@ -131,7 +131,7 @@ def fiscalYears_relation():
     yield relations.fiscalYears_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def annualStatistics_relation():
     """Creates a dataframe that can be loaded into the `annualStatistics` relation.
     
@@ -141,7 +141,7 @@ def annualStatistics_relation():
     yield relations.annualStatistics_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def vendors_relation():
     """Creates a dataframe that can be loaded into the `vendors` relation.
     
@@ -151,7 +151,7 @@ def vendors_relation():
     yield relations.vendors_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def vendorNotes_relation():
     """Creates a dataframe that can be loaded into the `vendorNotes` relation.
     
@@ -161,7 +161,7 @@ def vendorNotes_relation():
     yield relations.vendorNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsSources_relation():
     """Creates a dataframe that can be loaded into the `statisticsSources` relation.
     
@@ -171,7 +171,7 @@ def statisticsSources_relation():
     yield relations.statisticsSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation.
     
@@ -181,7 +181,7 @@ def statisticsSourceNotes_relation():
     yield relations.statisticsSourceNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def resourceSources_relation():
     """Creates a dataframe that can be loaded into the `resourceSources` relation.
     
@@ -191,7 +191,7 @@ def resourceSources_relation():
     yield relations.resourceSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def resourceSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation.
     
@@ -201,7 +201,7 @@ def resourceSourceNotes_relation():
     yield relations.resourceSourceNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsResourceSources_relation():
     """Creates a series that can be loaded into the `statisticsResourceSources` relation.
     
@@ -211,7 +211,7 @@ def statisticsResourceSources_relation():
     yield relations.statisticsResourceSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def annualUsageCollectionTracking_relation():
     """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation.
     
@@ -221,7 +221,7 @@ def annualUsageCollectionTracking_relation():
     yield relations.annualUsageCollectionTracking_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_0_2017_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_2017.xlsx` workbook.
     
@@ -231,7 +231,7 @@ def workbook_0_2017_relation():
     yield relations.workbook_0_2017_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_1_2017_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `1_2017.xlsx` workbook.
     
@@ -241,7 +241,7 @@ def workbook_1_2017_relation():
     yield relations.workbook_1_2017_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_2_2017_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `2_2017.xlsx` workbook.
     
@@ -251,7 +251,7 @@ def workbook_2_2017_relation():
     yield relations.workbook_2_2017_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_0_2018_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_2018.xlsx` workbook.
     
@@ -261,7 +261,7 @@ def workbook_0_2018_relation():
     yield relations.workbook_0_2018_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_1_2018_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `1_2018.xlsx` workbook.
     
@@ -271,7 +271,7 @@ def workbook_1_2018_relation():
     yield relations.workbook_1_2018_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_2_2018_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `2_2018.xlsx` workbook.
     
@@ -281,7 +281,7 @@ def workbook_2_2018_relation():
     yield relations.workbook_2_2018_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_0_2019_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_2019.xlsx` workbook.
     
@@ -291,7 +291,7 @@ def workbook_0_2019_relation():
     yield relations.workbook_0_2019_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_1_2019_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `1_2019.xlsx` workbook.
     
@@ -301,7 +301,7 @@ def workbook_1_2019_relation():
     yield relations.workbook_1_2019_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_2_2019_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `2_2019.xlsx` workbook.
     
@@ -311,7 +311,7 @@ def workbook_2_2019_relation():
     yield relations.workbook_2_2019_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_3_2019_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_2019.xlsx` workbook.
     
@@ -321,7 +321,7 @@ def workbook_3_2019_relation():
     yield relations.workbook_3_2019_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_0_2020_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_2020.xlsx` workbook.
     
@@ -331,7 +331,7 @@ def workbook_0_2020_relation():
     yield relations.workbook_0_2020_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_1_2020_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `1_2020.xlsx` workbook.
     
@@ -341,7 +341,7 @@ def workbook_1_2020_relation():
     yield relations.workbook_1_2020_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_2_2020_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `2_2020.xlsx` workbook.
     
@@ -351,7 +351,7 @@ def workbook_2_2020_relation():
     yield relations.workbook_2_2020_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def workbook_3_2020_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_2020.xlsx` workbook.
     
