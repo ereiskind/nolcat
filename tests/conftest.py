@@ -361,6 +361,47 @@ def workbook_3_2020_relation():
     yield relations.workbook_3_2020_relation()
 
 
+@pytest.fixture(scope='session')
+def workbooks_and_relations(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
+    """A dictionary connecting the name of individual workbooks in the `COUNTER_workbooks_for_tests` folder to the relations containing the given workbook's data.
+
+    Args:
+        workbook_0_2017_relation (dataframe): a relation of test data
+        workbook_1_2017_relation (dataframe): a relation of test data
+        workbook_2_2017_relation (dataframe): a relation of test data
+        workbook_0_2018_relation (dataframe): a relation of test data
+        workbook_1_2018_relation (dataframe): a relation of test data
+        workbook_2_2018_relation (dataframe): a relation of test data
+        workbook_0_2019_relation (dataframe): a relation of test data
+        workbook_1_2019_relation (dataframe): a relation of test data
+        workbook_2_2019_relation (dataframe): a relation of test data
+        workbook_3_2019_relation (dataframe): a relation of test data
+        workbook_0_2020_relation (dataframe): a relation of test data
+        workbook_1_2020_relation (dataframe): a relation of test data
+        workbook_2_2020_relation (dataframe): a relation of test data
+        workbook_3_2020_relation (dataframe): a relation of test data
+
+    Yields:
+        dict: key-value pairs of workbook names and fixture names for the data in the given workbook
+    """
+    yield {
+        '0_2017.xlsx': workbook_0_2017_relation,
+        '1_2017.xlsx': workbook_1_2017_relation,
+        '2_2017.xlsx': workbook_2_2017_relation,
+        '0_2018.xlsx': workbook_0_2018_relation,
+        '1_2018.xlsx': workbook_1_2018_relation,
+        '2_2018.xlsx': workbook_2_2018_relation,
+        '0_2019.xlsx': workbook_0_2019_relation,
+        '1_2019.xlsx': workbook_1_2019_relation,
+        '2_2019.xlsx': workbook_2_2019_relation,
+        '3_2019.xlsx': workbook_3_2019_relation,
+        '0_2020.xlsx': workbook_0_2020_relation,
+        '1_2020.xlsx': workbook_1_2020_relation,
+        '2_2020.xlsx': workbook_2_2020_relation,
+        '3_2020.xlsx': workbook_3_2020_relation,
+    }
+
+
 @pytest.fixture
 def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
     """Creates a dataframe containing all the test COUNTER data.
@@ -402,47 +443,6 @@ def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, wor
     ], ignore_index=True)
     df.index.name = "COUNTER_data_ID"  # To restore the index name
     yield df
-
-
-@pytest.fixture
-def workbooks_and_relations(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
-    """A dictionary connecting the name of individual workbooks in the `COUNTER_workbooks_for_tests` folder to the relations containing the given workbook's data.
-
-    Args:
-        workbook_0_2017_relation (dataframe): a relation of test data
-        workbook_1_2017_relation (dataframe): a relation of test data
-        workbook_2_2017_relation (dataframe): a relation of test data
-        workbook_0_2018_relation (dataframe): a relation of test data
-        workbook_1_2018_relation (dataframe): a relation of test data
-        workbook_2_2018_relation (dataframe): a relation of test data
-        workbook_0_2019_relation (dataframe): a relation of test data
-        workbook_1_2019_relation (dataframe): a relation of test data
-        workbook_2_2019_relation (dataframe): a relation of test data
-        workbook_3_2019_relation (dataframe): a relation of test data
-        workbook_0_2020_relation (dataframe): a relation of test data
-        workbook_1_2020_relation (dataframe): a relation of test data
-        workbook_2_2020_relation (dataframe): a relation of test data
-        workbook_3_2020_relation (dataframe): a relation of test data
-
-    Yields:
-        dict: key-value pairs of workbook names and fixture names for the data in the given workbook
-    """
-    yield {
-        '0_2017.xlsx': workbook_0_2017_relation,
-        '1_2017.xlsx': workbook_1_2017_relation,
-        '2_2017.xlsx': workbook_2_2017_relation,
-        '0_2018.xlsx': workbook_0_2018_relation,
-        '1_2018.xlsx': workbook_1_2018_relation,
-        '2_2018.xlsx': workbook_2_2018_relation,
-        '0_2019.xlsx': workbook_0_2019_relation,
-        '1_2019.xlsx': workbook_1_2019_relation,
-        '2_2019.xlsx': workbook_2_2019_relation,
-        '3_2019.xlsx': workbook_3_2019_relation,
-        '0_2020.xlsx': workbook_0_2020_relation,
-        '1_2020.xlsx': workbook_1_2020_relation,
-        '2_2020.xlsx': workbook_2_2020_relation,
-        '3_2020.xlsx': workbook_3_2020_relation,
-    }
 
 
 #Section: Fixtures for File I/O
