@@ -49,7 +49,6 @@ def sample_COUNTER_report_workbooks(create_COUNTERData_workbook_iterdir_list):
     fixture = []
     for workbook in create_COUNTERData_workbook_iterdir_list:
         fixture.append(mock_FileStorage_object(workbook))
-    fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)  # Modifying list in place returns `None`, so making modification in `return` statement makes fixture value `None`
     yield fixture
 
 
