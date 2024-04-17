@@ -567,23 +567,21 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
-    #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
-            #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
-            #'COUNTER_reports': #Test: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
+            'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
             #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
     )
-    header_value['Content-Type'] = form_submissions.content_type
+    header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/initialization/initialization-page-3',
         follow_redirects=True,
