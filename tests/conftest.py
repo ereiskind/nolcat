@@ -415,44 +415,19 @@ def create_COUNTERData_workbook_iterdir_list():
 
 
 @pytest.fixture
-def COUNTERData_relation(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
+def COUNTERData_relation(create_COUNTERData_workbook_iterdir_list, workbooks_and_relations):
     """Creates a dataframe containing all the test COUNTER data.
 
+    The order in which the the data from the workbook fixtures is added to the dataframe is determined by the `create_COUNTERData_workbook_iterdir_list()` fixture because the dataframes this fixture is being compared against use that same order.
+
     Args:
-        workbook_0_2017_relation (dataframe): a relation of test data
-        workbook_1_2017_relation (dataframe): a relation of test data
-        workbook_2_2017_relation (dataframe): a relation of test data
-        workbook_0_2018_relation (dataframe): a relation of test data
-        workbook_1_2018_relation (dataframe): a relation of test data
-        workbook_2_2018_relation (dataframe): a relation of test data
-        workbook_0_2019_relation (dataframe): a relation of test data
-        workbook_1_2019_relation (dataframe): a relation of test data
-        workbook_2_2019_relation (dataframe): a relation of test data
-        workbook_3_2019_relation (dataframe): a relation of test data
-        workbook_0_2020_relation (dataframe): a relation of test data
-        workbook_1_2020_relation (dataframe): a relation of test data
-        workbook_2_2020_relation (dataframe): a relation of test data
-        workbook_3_2020_relation (dataframe): a relation of test data
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        workbooks_and_relations (dict): key-value pairs of workbook names and fixture names for the data in the given workbook
 
     Yields:
         dataframe: a relation of test data
     """
-    df = pd.concat([  # Dataframes are ordered to match file management system
-        workbook_0_2017_relation,
-        workbook_0_2018_relation,
-        workbook_0_2019_relation,
-        workbook_0_2020_relation,
-        workbook_1_2017_relation,
-        workbook_1_2018_relation,
-        workbook_1_2019_relation,
-        workbook_1_2020_relation,
-        workbook_2_2017_relation,
-        workbook_2_2018_relation,
-        workbook_2_2019_relation,
-        workbook_2_2020_relation,
-        workbook_3_2019_relation,
-        workbook_3_2020_relation,
-    ], ignore_index=True)
+    df = pd.concat([workbooks_and_relations[file.name] for file in create_COUNTERData_workbook_iterdir_list], ignore_index=True)
     df.index.name = "COUNTER_data_ID"  # To restore the index name
     yield df
 
