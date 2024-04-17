@@ -59,11 +59,4 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
-    #TEST: temp
-    try:
-        log.warning(df.compare(COUNTERData_relation[df.columns.tolist()]))
-    except:
-        log.warning(f"`df` index: {df.index}")
-        log.warning(f"`COUNTERData_relation[df.columns.tolist()]` index: {COUNTERData_relation[df.columns.tolist()].index}")
-    #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_names=False)  # `check_names` argument allows test to pass if indexes don't have the same name
