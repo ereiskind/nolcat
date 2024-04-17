@@ -355,26 +355,6 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
     os.remove(tmp_path / 'annualUsageCollectionTracking_relation.csv')
 
 
-@pytest.fixture
-def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
-    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test.
-    
-    Args:
-        tmp_path (pathlib.Path): a temporary directory created just for running tests
-        COUNTERData_relation (dataframe): a relation of test data
-    
-    Yields:
-        CSV: a CSV file corresponding to a relation in the test data
-    """
-    yield COUNTERData_relation.to_csv(
-        tmp_path / 'COUNTERData_relation.csv',
-        index_label="COUNTER_data_ID",
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    os.remove(tmp_path / 'COUNTERData_relation.csv')
-
-
 #Section: Tests
 def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
