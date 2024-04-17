@@ -573,18 +573,17 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
-    form_submissions = MultipartEncoder(
-        fields={
-            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
-            'COUNTER_reports': [(
+    form_submissions = [('annualUsageCollectionTracking_CSV', ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'))]
+    for file in create_COUNTERData_workbook_iterdir_list:  #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
+        form_submissions.append((
+            'COUNTER_reports',
+            (
                 file.name,
                 open(file, 'rb'),
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ) for file in create_COUNTERData_workbook_iterdir_list],
-            #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
-        },
-        encoding='utf-8',
-    )
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ),
+        ))
+    log.warning(f"`form_submissions`:\n{form_submissions}")  #TEST: temp
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/initialization/initialization-page-3',
