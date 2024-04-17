@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 #Section: Fixtures for Connecting to the Database
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def engine():
     """Creates a SQLAlchemy engine for testing.
     
