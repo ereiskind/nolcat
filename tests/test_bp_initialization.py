@@ -577,14 +577,13 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     from conftest import mock_FileStorage_object
     f1 = create_COUNTERData_workbook_iterdir_list[0]
     f2 = create_COUNTERData_workbook_iterdir_list[1]
-    form_submissions = MultipartEncoder(
-        fields=[
-            ('annualUsageCollectionTracking_CSV', ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv')),
-            ('COUNTER_reports', (f1.name, open(f1, 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
-            ('COUNTER_reports', (f2.name, open(f2, 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+    form_submissions = {
+        'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
+        'COUNTER_reports': [
+            open(f1, 'rb'),
+            open(f2, 'rb'),
         ],
-        encoding='utf-8',
-    )
+    }
     #TEST: end temp
     #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
     log.warning(f"`form_submissions`:\n{form_submissions}")  #TEST: temp
