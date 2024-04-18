@@ -603,10 +603,10 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     if isinstance(COUNTERData_relation_data, str):
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
+    COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
     COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
-    COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
