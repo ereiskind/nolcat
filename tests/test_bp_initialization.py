@@ -578,7 +578,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     f1 = create_COUNTERData_workbook_iterdir_list[0]
     f2 = create_COUNTERData_workbook_iterdir_list[1]
     form_submissions = {
-        'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
+        'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
         'COUNTER_reports': [
             open(f1, 'rb'),
             open(f2, 'rb'),
