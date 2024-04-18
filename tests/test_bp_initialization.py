@@ -596,18 +596,18 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    #COUNTERData_relation_data = query_database(
-    #    query="SELECT * FROM COUNTERData;",
-    #    engine=engine,
-    #    index="COUNTER_data_ID",
-    #)
-    #if isinstance(COUNTERData_relation_data, str):
-    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
-    #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
-    #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
-    #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
-    #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
-    #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
+    COUNTERData_relation_data = query_database(
+        query="SELECT * FROM COUNTERData;",
+        engine=engine,
+        index="COUNTER_data_ID",
+    )
+    if isinstance(COUNTERData_relation_data, str):
+        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
+    COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
+    COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
+    COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+    COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
@@ -620,7 +620,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #assert HTML_file_title in POST_response.data
     #assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
+    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
