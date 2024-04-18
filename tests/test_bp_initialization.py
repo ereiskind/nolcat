@@ -577,7 +577,6 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
         'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
     }
-    log.warning(f"`form_submissions`:\n{form_submissions}")  #TEST: temp
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/initialization/initialization-page-3',
@@ -624,8 +623,12 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     try:
         log.warning(COUNTERData_relation_data.compare(COUNTERData_relation))
     except:
-        if COUNTERData_relation_data.columns == COUNTERData_relation.columns:
-            log.warning("Fields match")
+        if len(COUNTERData_relation_data.columns) == len(COUNTERData_relation.columns):
+            if COUNTERData_relation_data.columns == COUNTERData_relation.columns:
+                log.warning("Fields match")
+            else:
+                log.warning(f"`COUNTERData_relation_data` not in `COUNTERData_relation`: {[f for f in COUNTERData_relation_data.columns.tolist() if f not in COUNTERData_relation.columns.tolist()]}")
+                log.warning(f"`COUNTERData_relation` not in `COUNTERData_relation_data`: {[f for f in COUNTERData_relation.columns.tolist() if f not in COUNTERData_relation_data.columns.tolist()]}")
         else:
             log.warning(f"`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n")
             log.warning(f"`COUNTERData_relation_data` not in `COUNTERData_relation`: {[f for f in COUNTERData_relation_data.columns.tolist() if f not in COUNTERData_relation.columns.tolist()]}")
