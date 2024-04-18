@@ -623,18 +623,14 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     try:
         log.warning(COUNTERData_relation_data.compare(COUNTERData_relation))
     except:
-        if len(COUNTERData_relation_data.columns) == len(COUNTERData_relation.columns):
-            if COUNTERData_relation_data.columns == COUNTERData_relation.columns:
-                log.warning("Fields match")
-            else:
-                log.warning(f"`COUNTERData_relation_data` not in `COUNTERData_relation`: {[f for f in COUNTERData_relation_data.columns.tolist() if f not in COUNTERData_relation.columns.tolist()]}")
-                log.warning(f"`COUNTERData_relation` not in `COUNTERData_relation_data`: {[f for f in COUNTERData_relation.columns.tolist() if f not in COUNTERData_relation_data.columns.tolist()]}")
+        if COUNTERData_relation_data.columns.equals(COUNTERData_relation.columns):
+            log.warning("Fields match")
         else:
             log.warning(f"`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n")
             log.warning(f"`COUNTERData_relation_data` not in `COUNTERData_relation`: {[f for f in COUNTERData_relation_data.columns.tolist() if f not in COUNTERData_relation.columns.tolist()]}")
             log.warning(f"`COUNTERData_relation` not in `COUNTERData_relation_data`: {[f for f in COUNTERData_relation.columns.tolist() if f not in COUNTERData_relation_data.columns.tolist()]}")
         
-        if COUNTERData_relation_data.index == COUNTERData_relation.index:
+        if COUNTERData_relation_data.index.equals(COUNTERData_relation.index):
             log.warning(f"Record indexes match")
         else:
             log.warning(f"`COUNTERData_relation_data` record index:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` record index:\n{COUNTERData_relation.index}\n\n")
