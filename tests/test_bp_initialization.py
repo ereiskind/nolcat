@@ -578,11 +578,11 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     f1 = create_COUNTERData_workbook_iterdir_list[0]
     f2 = create_COUNTERData_workbook_iterdir_list[1]
     form_submissions = MultipartEncoder(
-        fields=(
+        fields=[
             ('annualUsageCollectionTracking_CSV', ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv')),
-            ('COUNTER_reports', mock_FileStorage_object(f1)),
-            ('COUNTER_reports', mock_FileStorage_object(f2)),
-        ),
+            ('COUNTER_reports', (f1.name, open(f1, 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+            ('COUNTER_reports', (f2.name, open(f2, 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+        ],
         encoding='utf-8',
     )
     #TEST: end temp
