@@ -573,19 +573,10 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
-    #TEST: temp
-    from conftest import mock_FileStorage_object
-    f1 = create_COUNTERData_workbook_iterdir_list[0]
-    f2 = create_COUNTERData_workbook_iterdir_list[1]
     form_submissions = {
         'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
-        'COUNTER_reports': [
-            open(f1, 'rb'),
-            open(f2, 'rb'),
-        ],
+        'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
     }
-    #TEST: end temp
-    #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
     log.warning(f"`form_submissions`:\n{form_submissions}")  #TEST: temp
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
