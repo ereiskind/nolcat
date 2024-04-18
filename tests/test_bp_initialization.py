@@ -622,10 +622,17 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #TEST: temp
     try:
-        log.warning(COUNTERData_relation_data.compare(COUNTERData_relation))
+        log.warning(COUNTERData_relation_data.compare(COUNTERData_relation[COUNTERData_relation_data.columns.tolist()]))
     except:
-        log.warning(f"`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n")
-        log.warning(f"`COUNTERData_relation_data` record index:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` record index:\n{COUNTERData_relation.index}\n\n")
+        if COUNTERData_relation_data.columns == COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].columns:
+            log.warning("Fields match")
+        else:
+            log.warning(f"`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n`COUNTERData_relation[COUNTERData_relation_data.columns.tolist()]` fields:\n{COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].columns}\n\n")
+        
+        if COUNTERData_relation_data.index == COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].index:
+            log.warning(f"Record indexes match")
+        else:
+            log.warning(f"`COUNTERData_relation_data` record index:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation[COUNTERData_relation_data.columns.tolist()]` record index:\n{COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].index}\n\n")
     #TEST: end temp
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
