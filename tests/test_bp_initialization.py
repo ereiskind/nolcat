@@ -610,7 +610,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-5.html', 'br') as HTML_file:  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:  #ToDo: Change `show-loaded-data` to `initialization-page-4` during Planned Iteration 3
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
