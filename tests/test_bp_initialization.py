@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-04-19 ##########
 
 import pytest
 import logging
@@ -355,26 +355,6 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
     os.remove(tmp_path / 'annualUsageCollectionTracking_relation.csv')
 
 
-@pytest.fixture
-def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
-    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test.
-    
-    Args:
-        tmp_path (pathlib.Path): a temporary directory created just for running tests
-        COUNTERData_relation (dataframe): a relation of test data
-    
-    Yields:
-        CSV: a CSV file corresponding to a relation in the test data
-    """
-    yield COUNTERData_relation.to_csv(
-        tmp_path / 'COUNTERData_relation.csv',
-        index_label="COUNTER_data_ID",
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    os.remove(tmp_path / 'COUNTERData_relation.csv')
-
-
 #Section: Tests
 def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
@@ -411,11 +391,10 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     fiscalYears_relation_data = query_database(
@@ -493,11 +472,10 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     statisticsSources_relation_data = query_database(
@@ -589,30 +567,23 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
-    #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
-    form_submissions = MultipartEncoder(
-        fields={
-            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
-            #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
-            #'COUNTER_reports': #Test: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
-            #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
-        },
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
+    form_submissions = {
+        'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
+        'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
+    }
+    header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/initialization/initialization-page-3',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     annualUsageCollectionTracking_relation_data = query_database(
@@ -624,31 +595,31 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    #COUNTERData_relation_data = query_database(
-    #    query="SELECT * FROM COUNTERData;",
-    #    engine=engine,
-    #    index="COUNTER_data_ID",
-    #)
-    #if isinstance(COUNTERData_relation_data, str):
-    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
-    #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
-    #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
-    #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
-    #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
-    #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
+    COUNTERData_relation_data = query_database(
+        query="SELECT * FROM COUNTERData;",
+        engine=engine,
+        index="COUNTER_data_ID",
+    )
+    if isinstance(COUNTERData_relation_data, str):
+        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
+    COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
+    COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
+    COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
+    COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-5.html', 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
-    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:  #ToDo: Change `show-loaded-data` to `initialization-page-4` during Planned Iteration 3
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
+    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database

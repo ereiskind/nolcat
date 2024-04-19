@@ -183,7 +183,7 @@ def create_app():
         """
         log.info(f"Starting `create_app.download_file()` for file at path {file_path} (type {type(file_path)}).")
         file_path = Path(  # Just using the `Path()` constructor creates a relative path; relative paths in `send_file()` are considered in relation to CWD
-            *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
+            TOP_NOLCAT_DIRECTORY,
             *Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
         )
         log.info(f"`file_path` after type juggling is '{file_path}' (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
@@ -685,7 +685,7 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:

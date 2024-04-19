@@ -49,7 +49,6 @@ Test Data Folders and Modules
 ----------------
 This folder contains all the Excel files, most of which are stored in one of three subfolders:
 
-* "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx": This workbook contains all the records from all the workbooks in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" in the order in which they would be ingested.
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
@@ -88,13 +87,13 @@ Create Tabular COUNTER Reports
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_data.py".
-4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
 
-Create `COUNTERData` Relation Fixture Data
-------------------------------------------
-1. Load the sole worksheet in "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" into OpenRefine to create project "nolcat_test_data".
-2. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
-3. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
+Create `COUNTERData` Relations Fixture Data
+-------------------------------------------
+1. For each workbook in "\\tests\\bin\\COUNTER_workbooks_for_tests\\", load its worksheets into OpenRefine to create projects.
+2. Use the notebook at "\\tests\\data\\create_transformed_test_data.ipynb" to create a "\\tests\\data\\transform_test_data_<report_type>.json" for each project, then apply that JSON to the project for the specified report type.
+3. Download the projects in Excel, then use the ``df`` fields from all the projects and the other field headings to create the relation named for the workbook in "\\tests\\data\\relations.py".
+4. Escape the quotation marks (") within certain resource name values (replace ``"`` with ``/"``).
 
 Create R5 SUSHI Response JSON Reports
 -------------------------------------

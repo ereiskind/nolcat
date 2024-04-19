@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-04-17 ##########
 
 import pytest
 import logging
@@ -7,6 +7,7 @@ from random import choice
 from pathlib import Path
 import os
 import re
+from ast import literal_eval
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -39,50 +40,51 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
+@pytest.mark.dependency()
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
-    form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
-        #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
-        fields={
-            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-        },
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
+    form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
+    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
+    header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+        data=form_submissions,
+    )
 
     # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    COUNTERData_relation_data = query_database(
-        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT {COUNTERData_relation.shape[0]};",
+    df = query_database(
+        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
         engine=engine,
         index='COUNTER_data_ID',
     )
-    if isinstance(COUNTERData_relation_data, str):
-        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.astype(COUNTERData.state_data_types())
+    df = df.drop(columns=['report_creation_date'])
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
+    assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
+@pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])
 def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
-    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
+    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
+    
+    This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
+    """
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
@@ -93,11 +95,10 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -109,14 +110,14 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     )
     if isinstance(check_relation_size, str):
         pytest.skip(database_function_skip_statements(check_relation_size))
-    check_database_update = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+    df = query_database(
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
         engine=engine,
     )
-    if isinstance(check_database_update, str):
-        pytest.skip(database_function_skip_statements(check_database_update))
-    check_database_update = check_database_update.astype(COUNTERData.state_data_types())
-    check_database_update = check_database_update.drop(columns='COUNTER_data_ID')
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.astype(COUNTERData.state_data_types())
+    df = df.drop(columns='COUNTER_data_ID')
     insert_statement_data = pd.DataFrame(
         [  # These records are in reverse order from the SQL file because getting the last seven records requires a SQL query that places the most recently loaded (aka last) records at the top
             [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
@@ -139,7 +140,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
-    assert_frame_equal(check_database_update, insert_statement_data)
+    assert_frame_equal(df, insert_statement_data)
 
 
 # Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
@@ -164,13 +165,13 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
+    df = query_database(
         query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
-        pytest.skip(database_function_skip_statements(db_select_field_options))
-    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    db_select_field_options = list(df.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -188,13 +189,13 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     
-    primary_key_list = query_database(
+    df = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(primary_key_list, str):
-        pytest.skip(database_function_skip_statements(primary_key_list))
-    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').to_list()
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
@@ -202,11 +203,10 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     }
     POST_response = client.post(
         '/ingest_usage/harvest',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
@@ -229,9 +229,9 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    for child in GET_soup.find(name='select', id='statistics_source').children:
+    for child in GET_soup.find(name='select', id='AUCT_option').children:
         GET_select_field_options.append((
-            int(child['value']),
+            literal_eval(child['value']),
             str(child.string),
         ))
 
@@ -239,13 +239,31 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
-        pytest.skip(database_function_skip_statements(db_select_field_options))
-    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    db_select_field_options = create_AUCT_SelectField_options(df)
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -275,11 +293,10 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-non-COUNTER',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Subsection: Assert Statements
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
@@ -290,15 +307,15 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(r"Usage file for .*--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Database Update
-    check_database_update = query_database(
+    df = query_database(
         query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
-    assert check_database_update.at[0,'collection_status'] == 'Collection complete'
-    assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    assert df.at[0,'collection_status'] == 'Collection complete'
+    assert df.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
 
     #Section: Check S3 for File
     list_objects_response = s3_client.list_objects_v2(

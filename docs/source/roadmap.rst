@@ -32,7 +32,6 @@ Iteration 2: Add Historical Data
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Finish ``tests.conftest.function sample_COUNTER_reports_for_MultipartEncoder()`` and use it in the designated test functions/Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
 * Add check of contents of file uploaded to S3 against original file to ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Get failing test ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to pass

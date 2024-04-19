@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-04-12 ##########
 
 import pytest
 import logging
@@ -341,7 +341,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     df = harvest_R5_SUSHI_result[0]
     # The fields and records in the two dataframes are in different orders; they need to be consistent for `assert_frame_equal()` to work
-    field_order = df.columns.to_list()
+    field_order = df.columns.tolist()
     records_loaded_by_method = records_loaded_by_method[field_order]
     df = df.sort_values(
         by=field_order,
@@ -351,7 +351,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
         by=field_order,
         ignore_index=True,
     )
-    assert_frame_equal(records_loaded_by_method[field_order], df, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(records_loaded_by_method[field_order], df)
 
 
 #Section: Test `StatisticsSources.add_note()`
