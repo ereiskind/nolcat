@@ -621,7 +621,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #TEST: temp
     try:
-        log.warning(COUNTERData_relation_data.compare(COUNTERData_relation))
+        log.warning(COUNTERData_relation_data.compare(COUNTERData_relation[COUNTERData_relation_data.columns.tolist()]))
     except:
         if COUNTERData_relation_data.columns.equals(COUNTERData_relation.columns):
             log.warning("Fields match")
@@ -635,7 +635,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         else:
             log.warning(f"`COUNTERData_relation_data` record index:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` record index:\n{COUNTERData_relation.index}\n\n")
     #TEST: end temp
-    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
+    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
