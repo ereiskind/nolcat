@@ -619,22 +619,6 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #assert HTML_file_title in POST_response.data
     #assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    #TEST: temp
-    try:
-        log.warning(COUNTERData_relation_data.compare(COUNTERData_relation[COUNTERData_relation_data.columns.tolist()]))
-    except:
-        if COUNTERData_relation_data.columns.equals(COUNTERData_relation.columns):
-            log.warning("Fields match")
-        else:
-            log.warning(f"`COUNTERData_relation_data` fields:\n{COUNTERData_relation_data.columns}\n\n`COUNTERData_relation` fields:\n{COUNTERData_relation.columns}\n\n")
-            log.warning(f"`COUNTERData_relation_data` not in `COUNTERData_relation`: {[f for f in COUNTERData_relation_data.columns.tolist() if f not in COUNTERData_relation.columns.tolist()]}")
-            log.warning(f"`COUNTERData_relation` not in `COUNTERData_relation_data`: {[f for f in COUNTERData_relation.columns.tolist() if f not in COUNTERData_relation_data.columns.tolist()]}")
-        
-        if COUNTERData_relation_data.index.equals(COUNTERData_relation.index):
-            log.warning(f"Record indexes match")
-        else:
-            log.warning(f"`COUNTERData_relation_data` record index:\n{COUNTERData_relation_data.index}\n\n`COUNTERData_relation` record index:\n{COUNTERData_relation.index}\n\n")
-    #TEST: end temp
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
