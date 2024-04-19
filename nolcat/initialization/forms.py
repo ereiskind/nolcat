@@ -25,3 +25,11 @@ class AUCTAndCOUNTERForm(FlaskForm):
     """Creates a form for uploading the `annualUsageCollectionTracking` relation data and Excel workbooks containing COUNTER reports."""
     annualUsageCollectionTracking_CSV = FileField("Select the filled out \"initialize_annualUsageCollectionTracking.csv\" file here.", validators=[DataRequired()])
     COUNTER_reports = MultipleFileField("Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.")
+
+
+class HistoricalNonCOUNTERForm(FlaskForm):
+    """Creates a form field for uploading a file containing non-COUNTER usage data.
+    
+    This form is actually created through iterating this field for each statistics source and fiscal year combination calling for non-COUNTER usage data.
+    """
+    usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.")

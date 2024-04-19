@@ -479,8 +479,8 @@ def upload_historical_non_COUNTER_usage():
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
+    form = HistoricalNonCOUNTERForm()
     '''
-    form = FormClass()
     if request.method == 'GET':
         #Alert: Below directly from `ingest_usage`
         non_COUNTER_files_needed = query_database(
