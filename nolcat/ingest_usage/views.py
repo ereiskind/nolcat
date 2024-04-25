@@ -32,7 +32,7 @@ def upload_COUNTER_data():
     """The route function for uploading COUNTER data into the `COUNTERData` relation."""
     log.info("Starting `upload_COUNTER_data()`.")
     form = COUNTERDataForm()
-    log.warning(f"`COUNTERDataForm()` is {COUNTERDataForm()}")
+    log.warning(f"`COUNTERDataForm().var()` is {form.var()}")
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
