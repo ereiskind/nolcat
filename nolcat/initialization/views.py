@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import re
 from flask import render_template
 from flask import redirect
 from flask import url_for
@@ -512,6 +513,32 @@ def upload_historical_non_COUNTER_usage():
         flash_error_messages = dict()
         log.warning(f"Submitted `{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
         for file in form.usage_files.data:
+            statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\d{3,4}", file['usage_file'].filename).group(1, 2)
+            df = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        fiscalYears.fiscal_year_ID,
+                        annualUsageCollectionTracking.usage_is_being_collected,
+                        annualUsageCollectionTracking.manual_collection_required,
+                        annualUsageCollectionTracking.collection_via_email,
+                        annualUsageCollectionTracking.is_COUNTER_compliant,
+                        annualUsageCollectionTracking.collection_status,
+                        annualUsageCollectionTracking.usage_file_path,
+                        annualUsageCollectionTracking.notes
+                    FROM annualUsageCollectionTracking
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
+                        fiscalYears.fiscal_year='{fiscal_year}';
+                """,
+                engine=db.engine,
+            )
+            if isinstance(df, str):
+                message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
+                log.error(message)
+                flash_error_messages[file['usage_file'].filename] = message
+                continue
             #TEST: temp
             for k, v in file.items():
                 log.warning(f"Key is (type {type(k)}): {k}")
@@ -519,15 +546,6 @@ def upload_historical_non_COUNTER_usage():
                 log.warning(f"`{v}.__dict__`: {v.__dict__}")
             #TEST: end temp
             '''
-            df = query_database(
-                query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={form.name_of_field_which_captured_the_AUCT_statistics_source.data} AND AUCT_fiscal_year={form.name_of_field_which_captured_the_AUCT_fiscal_year.data};",
-                engine=db.engine,
-            )
-            if isinstance(df, str):
-                message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
-                log.error(message)
-                list_of_flash_error_messages.append(message)  #ToDo: Change name and data type
-                continue
             AUCT_object = AnnualUsageCollectionTracking(
                 AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
                 AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
