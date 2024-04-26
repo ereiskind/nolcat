@@ -507,9 +507,7 @@ def upload_historical_non_COUNTER_usage():
     list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
-        '''
-        #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
-        '''
+        form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         '''
