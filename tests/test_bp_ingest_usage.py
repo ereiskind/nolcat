@@ -56,7 +56,6 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         data=form_submissions,
     )
 
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -208,7 +207,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         data=form_input,
     )
 
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')

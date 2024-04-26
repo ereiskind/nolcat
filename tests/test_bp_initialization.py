@@ -438,7 +438,6 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-2.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -529,7 +528,6 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-3.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -609,7 +607,6 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:  #ToDo: Change `show-loaded-data` to `initialization-page-4` during Planned Iteration 3
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
