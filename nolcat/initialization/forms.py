@@ -34,7 +34,7 @@ class HistoricalNonCOUNTERFormField(FlaskForm):
     
     This field is called iteratively in `HistoricalNonCOUNTERForm` to create a form. This iterative form setup is taken from https://stackoverflow.com/a/28378186.
     """
-    usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.")
+    usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year below:")
 
 
 class HistoricalNonCOUNTERForm(FlaskForm):
