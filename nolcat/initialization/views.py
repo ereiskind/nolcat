@@ -462,8 +462,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(COUNTERData_load_result)
             messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
         flash(messages_to_flash)
-        # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
-        return redirect(url_for('initialization.data_load_complete'))
+        return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
 
     else:
         message = Flask_error_statement(form.errors)
