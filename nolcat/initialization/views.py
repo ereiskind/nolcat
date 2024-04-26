@@ -511,7 +511,6 @@ def upload_historical_non_COUNTER_usage():
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         flash_error_messages = dict()
-        log.warning(f"Submitted `{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
         for file in form.usage_files.data:
             if file['usage_file']:
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\d{3,4}", file['usage_file'].filename).group(1, 2)
@@ -540,12 +539,7 @@ def upload_historical_non_COUNTER_usage():
                     log.error(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
-            #TEST: temp
-            for k, v in file.items():
-                log.warning(f"Key is (type {type(k)}): {k}")
-                log.warning(f"Value is (type {type(v)}): {v}")
-                log.warning(f"`{v}.__dict__`: {v.__dict__}")
-            #TEST: end temp
+                log.info(f"`df`:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp
             '''
             AUCT_object = AnnualUsageCollectionTracking(
                 AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
