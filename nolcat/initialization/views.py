@@ -539,18 +539,19 @@ def upload_historical_non_COUNTER_usage():
                     log.error(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
+                AUCT_object = AnnualUsageCollectionTracking(
+                    AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+                    AUCT_fiscal_year=df.at[0,'fiscal_year_ID'],
+                    usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+                    manual_collection_required=df.at[0,'manual_collection_required'],
+                    collection_via_email=df.at[0,'collection_via_email'],
+                    is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+                    collection_status=df.at[0,'collection_status'],
+                    usage_file_path=df.at[0,'usage_file_path'],
+                    notes=df.at[0,'notes'],
+                )
+            log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
             '''
-            AUCT_object = AnnualUsageCollectionTracking(
-                AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
-                AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
-                usage_is_being_collected=df.at[0,'usage_is_being_collected'],
-                manual_collection_required=df.at[0,'manual_collection_required'],
-                collection_via_email=df.at[0,'collection_via_email'],
-                is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
-                collection_status=df.at[0,'collection_status'],
-                usage_file_path=df.at[0,'usage_file_path'],
-                notes=df.at[0,'notes'],
-            )
             response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
             if upload_file_to_S3_bucket_success_regex().match(response) and update_database_success_regex().find(response):  #ToDo: Double check that first regex method is from start of string and second is from anywhere in string
                 message = response
