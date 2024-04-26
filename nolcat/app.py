@@ -58,11 +58,11 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.WARNING,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line  #TEST: temp--revert to `DEBUG`
+        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)  #TEST: temp--revert to `INFO`
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
     #Test: SQLAlchemy logging statements appear when when no live log output is requested--investigate and determine if related to the to-do below
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     #ToDo: `pd.to_sql()` logging output begins with multiple setup statements with messages of just a pair of parentheses in between; some parentheses-only logging statements also appear in the `pd.read_sql()` output. Is there a way to remove those statements from the logging output?
