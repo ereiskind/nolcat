@@ -505,29 +505,20 @@ def upload_historical_non_COUNTER_usage():
         return redirect(url_for('initialization.data_load_complete'))
     list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
     form = HistoricalNonCOUNTERForm()
-    #TEST: temp
-    log.warning(f"`{form}.__dict__`: {form.__dict__}")
-    try:
-        log.warning(f"`{form}.usage_files.data`: {form.usage_files.data}")
-    except:
-        pass
-    #TEST: end temp
+    log.warning(f"`{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
     if request.method == 'GET':
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
-        #TEST: temp
-        log.warning(f"Revised `{form}.__dict__`: {form.__dict__}")
-        log.warning(f"Revised `{form}.data`: {form.data}")
-        try:
-            log.warning(f"Revised `{form}.usage_files`: {form.usage_files}")
-        except:
-            pass
-        try:
-            log.warning(f"Revised `{form}.usage_files.data`: {form.usage_files.data}")
-        except:
-            pass
-        #TEST: end temp
+        log.warning(f"Revised `{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
+        #TEST: temp
+        log.warning(f"Submitted `{form}.usage_files.data`: {form.usage_files.data}")
+        if isinstance(form.usage_files.data, dict):
+            for k, v in form.usage_files.data.items():
+                log.warning(f"Key is (type {type(k)}): {k}")
+                log.warning(f"Value is (type {type(v)}): {v}")
+                log.warning(f"`{v}.__dict__`: {v.__dict__}")
+        #TEST: end temp
         '''
         #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
         #ToDo: For each FileField in the form
