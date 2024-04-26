@@ -551,8 +551,9 @@ def upload_historical_non_COUNTER_usage():
                     notes=df.at[0,'notes'],
                 )
             log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
+            response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
+            log.info(f"`response`: {response}")  #TEST: temp
             '''
-            response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
             if upload_file_to_S3_bucket_success_regex().match(response) and update_database_success_regex().find(response):  #ToDo: Double check that first regex method is from start of string and second is from anywhere in string
                 message = response
                 log.debug(message)
