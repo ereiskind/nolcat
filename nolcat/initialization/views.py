@@ -479,34 +479,35 @@ def upload_historical_non_COUNTER_usage():
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
+    non_COUNTER_files_needed = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(non_COUNTER_files_needed, str):
+        flash(database_query_fail_statement(non_COUNTER_files_needed))
+        return redirect(url_for('initialization.data_load_complete'))
+    list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
         '''
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):
-            flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
-            return redirect(url_for('homepage'))
         #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
         '''
         return render_template('initialization/initial-data-upload-4.html', form=form)
