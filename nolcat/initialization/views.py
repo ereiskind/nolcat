@@ -540,13 +540,18 @@ def upload_historical_non_COUNTER_usage():
                 notes=df.at[0,'notes'],
             )
             response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
-            if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                #ToDo: Do any other actions need to be taken?
-                log.error(response)
-                #ToDo: Add `message` to error message list in some form
+            if upload_file_to_S3_bucket_success_regex().match(response) and update_database_success_regex().find(response):  #ToDo: Double check that first regex method is from start of string and second is from anywhere in string
+                message = response
+                log.debug(message)
                 continue
-            message = f"message using `AUCT_object` to indicate that the file was uploaded successfully"
-            log.debug(message)
+            elif response == add_data_success_and_update_database_fail_statement(form.name_of_field_which_captured_the_file_data.data, response to upload_file_to_S3_bucket() not matching upload_file_to_S3_bucket_success_regex()):
+                #logging_message in above possibly r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.'
+                #ToDo: How should this be handled? the upload went through, but without the database update which failed, there's no way to get the file back with the web app
+            else:
+                message = response
+                log.warning(message)
+                list_of_flash_error_messages.append(message)  #ToDo: Change name and data type
+                continue
             '''
         return redirect(url_for('initialization.data_load_complete'))
     else:
