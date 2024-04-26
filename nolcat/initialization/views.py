@@ -513,32 +513,33 @@ def upload_historical_non_COUNTER_usage():
         flash_error_messages = dict()
         log.warning(f"Submitted `{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
         for file in form.usage_files.data:
-            statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\d{3,4}", file['usage_file'].filename).group(1, 2)
-            df = query_database(
-                query=f"""
-                    SELECT
-                        annualUsageCollectionTracking.AUCT_statistics_source,
-                        fiscalYears.fiscal_year_ID,
-                        annualUsageCollectionTracking.usage_is_being_collected,
-                        annualUsageCollectionTracking.manual_collection_required,
-                        annualUsageCollectionTracking.collection_via_email,
-                        annualUsageCollectionTracking.is_COUNTER_compliant,
-                        annualUsageCollectionTracking.collection_status,
-                        annualUsageCollectionTracking.usage_file_path,
-                        annualUsageCollectionTracking.notes
-                    FROM annualUsageCollectionTracking
-                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                    WHERE
-                        annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
-                        fiscalYears.fiscal_year='{fiscal_year}';
-                """,
-                engine=db.engine,
-            )
-            if isinstance(df, str):
-                message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
-                log.error(message)
-                flash_error_messages[file['usage_file'].filename] = message
-                continue
+            if file['usage_file']:
+                statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\d{3,4}", file['usage_file'].filename).group(1, 2)
+                df = query_database(
+                    query=f"""
+                        SELECT
+                            annualUsageCollectionTracking.AUCT_statistics_source,
+                            fiscalYears.fiscal_year_ID,
+                            annualUsageCollectionTracking.usage_is_being_collected,
+                            annualUsageCollectionTracking.manual_collection_required,
+                            annualUsageCollectionTracking.collection_via_email,
+                            annualUsageCollectionTracking.is_COUNTER_compliant,
+                            annualUsageCollectionTracking.collection_status,
+                            annualUsageCollectionTracking.usage_file_path,
+                            annualUsageCollectionTracking.notes
+                        FROM annualUsageCollectionTracking
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                        WHERE
+                            annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
+                            fiscalYears.fiscal_year='{fiscal_year}';
+                    """,
+                    engine=db.engine,
+                )
+                if isinstance(df, str):
+                    message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
+                    log.error(message)
+                    flash_error_messages[file['usage_file'].filename] = message
+                    continue
             #TEST: temp
             for k, v in file.items():
                 log.warning(f"Key is (type {type(k)}): {k}")
