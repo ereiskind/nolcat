@@ -511,6 +511,7 @@ def upload_historical_non_COUNTER_usage():
         log.warning(f"Revised `{form}.usage_files.data`: {form.usage_files.data}")  #TEST: temp
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
+        flash_error_messages = dict()
         #TEST: temp
         log.warning(f"Submitted `{form}.usage_files.data`: {form.usage_files.data}")
         if isinstance(form.usage_files.data, dict):
@@ -520,8 +521,7 @@ def upload_historical_non_COUNTER_usage():
                 log.warning(f"`{v}.__dict__`: {v.__dict__}")
         #TEST: end temp
         '''
-        #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
-        #ToDo: For each FileField in the form
+        for each file uploaded in the form:
             df = query_database(
                 query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={form.name_of_field_which_captured_the_AUCT_statistics_source.data} AND AUCT_fiscal_year={form.name_of_field_which_captured_the_AUCT_fiscal_year.data};",
                 engine=db.engine,
@@ -529,7 +529,7 @@ def upload_historical_non_COUNTER_usage():
             if isinstance(df, str):
                 message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
                 log.error(message)
-                #ToDo: Add `message` to error message list in some form
+                list_of_flash_error_messages.append(message)  #ToDo: Change name and data type
                 continue
             AUCT_object = AnnualUsageCollectionTracking(
                 AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
