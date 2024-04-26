@@ -513,7 +513,6 @@ def upload_historical_non_COUNTER_usage():
         flash_error_messages = dict()
         for file in form.usage_files.data:
             if file['usage_file']:
-                log.info(f"`{file['usage_file']}.__dict__`: {file['usage_file'].__dict__}")  #TEST: temp
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
                 df = query_database(
                     query=f"""
@@ -540,7 +539,6 @@ def upload_historical_non_COUNTER_usage():
                     log.error(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
-                log.info(f"`df`:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp
             '''
             AUCT_object = AnnualUsageCollectionTracking(
                 AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
