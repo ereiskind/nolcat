@@ -480,9 +480,8 @@ def upload_historical_non_COUNTER_usage():
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     form = HistoricalNonCOUNTERForm()
-    '''
     if request.method == 'GET':
-        #Alert: Below directly from `ingest_usage`
+        '''
         non_COUNTER_files_needed = query_database(
             query=f"""
                 SELECT
@@ -509,8 +508,10 @@ def upload_historical_non_COUNTER_usage():
             flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('homepage'))
         #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
+        '''
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
+        '''
         #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
         #ToDo: For each FileField in the form
             df = query_database(
@@ -541,14 +542,13 @@ def upload_historical_non_COUNTER_usage():
                 continue
             message = f"message using `AUCT_object` to indicate that the file was uploaded successfully"
             log.debug(message)
-        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
+        '''
+        return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
         flash(message)
         return abort(404)
-    '''
-    pass
 
 
 @bp.route('/initialization-page-5', methods=['GET', 'POST'])
