@@ -504,15 +504,28 @@ def upload_historical_non_COUNTER_usage():
         flash(database_query_fail_statement(non_COUNTER_files_needed))
         return redirect(url_for('initialization.data_load_complete'))
     list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
-    log.warning(f"`list_of_non_COUNTER_usage`: {list_of_non_COUNTER_usage}")  #TEST: temp
     form = HistoricalNonCOUNTERForm()
-    log.warning(f"`{form}.__dict__`: {form.__dict__}")  #TEST: temp
-    log.warning(f"`{form}.usage_files.__dict__`: {form.usage_files.__dict__}")  #TEST: temp
+    #TEST: temp
+    log.warning(f"`{form}.__dict__`: {form.__dict__}")
+    try:
+        log.warning(f"`{form}.usage_files.data`: {form.usage_files.data}")
+    except:
+        pass
+    #TEST: end temp
     if request.method == 'GET':
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
-        log.warning(f"Revised `{form}.__dict__`: {form.__dict__}")  #TEST: temp
-        log.warning(f"Revised `{form}.usage_files.__dict__`: {form.usage_files.__dict__}")  #TEST: temp
-        log.warning(f"Revised `{form}.data`: {form.data}")  #TEST: temp
+        #TEST: temp
+        log.warning(f"Revised `{form}.__dict__`: {form.__dict__}")
+        log.warning(f"Revised `{form}.data`: {form.data}")
+        try:
+            log.warning(f"Revised `{form}.usage_files`: {form.usage_files}")
+        except:
+            pass
+        try:
+            log.warning(f"Revised `{form}.usage_files.data`: {form.usage_files.data}")
+        except:
+            pass
+        #TEST: end temp
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         '''
