@@ -140,7 +140,7 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     yield COUNTER_reports_offered_by_statistics_source(
         StatisticsSources_fixture.statistics_source_name,
         SUSHI_data['URL'],
-        {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
+        {k: v for (k, v) in SUSHI_data.items() if k != "URL"},
     )
 
 
@@ -193,7 +193,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
-            {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
         )
@@ -221,7 +221,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
-            {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
