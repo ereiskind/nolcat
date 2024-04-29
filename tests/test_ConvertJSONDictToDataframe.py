@@ -23,7 +23,7 @@ def sample_SUSHI_PR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -35,7 +35,7 @@ def sample_SUSHI_DR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -47,7 +47,7 @@ def sample_SUSHI_TR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -59,7 +59,7 @@ def sample_SUSHI_IR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 

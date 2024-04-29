@@ -455,8 +455,8 @@ def download_destination():
 
 
 @pytest.fixture(params=[
-    Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
-    Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
+    TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests',
+    TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'sample_COUNTER_R4_reports',
 ])
 def path_to_sample_file(request):
     """A parameterized function returning absolute paths to randomly selected files for use in testing file I/O operations.

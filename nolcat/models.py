@@ -1658,7 +1658,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
 
         #Section: Use Temp File to Upload File to S3
-        temp_file_path = Path(__file__).parent / f"temp{file_extension}"
+        temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
         file.save(temp_file_path)
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,

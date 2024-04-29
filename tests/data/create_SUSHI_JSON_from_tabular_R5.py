@@ -16,8 +16,7 @@ import pandas as pd
 
 log = logging.getLogger(__name__)
 
-absolute_path_to_tests_directory = Path(__file__).parent
-directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'
+directory_with_final_JSONs = Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests'
 
 
 def return_string_of_dataframe_info(df):
