@@ -724,14 +724,53 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage():
+def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
     """Tests uploading the files with non-COUNTER usage statistics."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
+
     #Section: Submit Forms via HTTP POST
-    #ToDo: Get PKs and user-friendly names for AUCT records which need non-COUNTER usage files
-    #ToDo: Turn the results of the above into the form fields
-    #ToDo: Pick some records to use--not all need be used
-    #ToDo: Get files to load--specific files not needed
-    #ToDo: Use `client.post` to submit the files
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
+    list_of_possible_submission_fields = [f"usage_files-{i}-usage_file" for i in range(len(list_of_AUCT_submission_fields))]
+    all_submission_fields_and_AUCT_records = {k: v for (k, v) in zip(list_of_possible_submission_fields, list_of_AUCT_submission_fields)}
+    list_of_used_submission_fields = random.choices(list_of_possible_submission_fields, k=len(files_for_test_upload_historical_non_COUNTER_usage))
+    used_submission_fields_and_file_paths = {k: v for (k, v) in zip(list_of_used_submission_fields, files_for_test_upload_historical_non_COUNTER_usage)}
+    form_submissions_fields = {k: ((v.name, open(v, 'rb')) if v.suffix == ".xlsx" else (v.name, open(v, 'rt'))) for k, v in used_submission_fields_and_file_paths.items()}
+    log.info(f"Submitting the following field and form combinations:\n{form_submissions_fields}")
+    form_submissions = MultipartEncoder(
+        fields=form_submissions_fields,
+        encoding='utf-8',
+    )
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/initialization/initialization-page-4',
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )
 
     #Section: Get Relations from Database for Comparison
     #ToDo: Query database to get AUCT records of records used above
@@ -739,12 +778,11 @@ def test_upload_historical_non_COUNTER_usage():
 
     #Section: Assert Statements
     #ToDo: Get the HTML file for the page a successful result should go to
-    #ToDo: assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    #ToDo: assert POST_response.status == "200 OK"
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
     #ToDo: assert HTML_file_title in POST_response.data
     #ToDo: assert HTML_file_page_title in POST_response.data
     #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
-    pass
 
 
 def test_data_load_complete():
