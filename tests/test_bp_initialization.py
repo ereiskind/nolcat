@@ -777,11 +777,14 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
 
     #Section: Assert Statements
-    #ToDo: Get the HTML file for the page a successful result should go to
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    #ToDo: assert HTML_file_title in POST_response.data
-    #ToDo: assert HTML_file_page_title in POST_response.data
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
 
 
