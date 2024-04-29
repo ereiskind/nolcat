@@ -406,41 +406,45 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        try:
-            COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-            COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-            if data_not_in_df:
-                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
-        except Exception as error:
-            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
-            log.error(message)
-            flash(message)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
+        if len(form.COUNTER_reports.data) == 0:
+            log.info(f"No COUNTER files were provided for upload.")
+            COUNTER_reports_df = None
+        else:
+            try:
+                COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+                COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+                if data_not_in_df:
+                    messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+            except Exception as error:
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                log.error(message)
+                flash(message)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
 
-        try:
-            COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
-        except Exception as error:
-            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-            log.error(message)
-            flash(message)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if COUNTER_reports_df is None:
-            flash(message_to_flash)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if message_to_flash:
-            messages_to_flash.append(message_to_flash)
-        
-        try:
-            COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            log.warning(message)
-            messages_to_flash.append(message)
-            flash(messages_to_flash)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
-        log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
+            try:
+                COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
+            except Exception as error:
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                log.error(message)
+                flash(message)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            if COUNTER_reports_df is None:
+                flash(message_to_flash)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            if message_to_flash:
+                messages_to_flash.append(message_to_flash)
+            
+            try:
+                COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+            except Exception as error:
+                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
+            log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
 
         #Subsection: Load Data into Database
         annualUsageCollectionTracking_load_result = load_data_into_database(
@@ -453,15 +457,16 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        COUNTERData_load_result = load_data_into_database(
-            df=COUNTER_reports_df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            messages_to_flash.append(COUNTERData_load_result)
-            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
+        if COUNTER_reports_df:
+            COUNTERData_load_result = load_data_into_database(
+                df=COUNTER_reports_df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+                messages_to_flash.append(COUNTERData_load_result)
+                messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
         if messages_to_flash:
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
