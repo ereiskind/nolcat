@@ -5,6 +5,7 @@ import pytest
 import logging
 from pathlib import Path
 import os
+import random
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -671,30 +672,55 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 
 @pytest.fixture()
-def files_for_test_upload_historical_non_COUNTER_usage():
+def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     """A function returning absolute paths to randomly selected files for use in testing `test_upload_historical_non_COUNTER_usage` and then removing those files at the completion of the test.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary. Additionally, since fixtures can neither take arguments when called in test functions nor be called iteratively, a singular fixture providing paths to all the files needed for `test_upload_historical_non_COUNTER_usage` and then removing all those files from S3 consolidates the ability to randomly get varying numbers of files and to removes those same files from S3. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
     Args:
-        #
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         list: a list of absolute pathlib.Path objects to randomly selected files
     """
-    #ToDo: Query database to get number of fields
-    #ToDo: Randomly get number between 2 and max number of fields
-    #ToDo: For half of the above range
-        #ToDo: Choose that number of file paths from TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests'
-    #ToDo: For the other half of the above range or half plus 1 if odd
-        #ToDo: Choose that number of file paths from TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'sample_COUNTER_R4_reports'
-    #ToDo: Combine file path lists
-    #ToDo: log.info(fixture_variable_value_declaration_statement("name_of_variable", name_of_variable))
-    #ToDo: yield combined list
-    #ToDo: try:
-        #ToDo: s3_client.delete_object()
-    #ToDo: except botocore.exceptions as error:
-        #ToDo: Unable to delete file from S3 error
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    df = query_database(
+        query=f"""
+            SELECT COUNT(*)
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    number_of_uploads = random.randint(2, int(df.iloc[0][0]))
+    JSON_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests')], k=number_of_uploads//2)
+    if number_of_uploads % 2 == 1:
+        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports')], k=(number_of_uploads//2)+1)
+    else:
+        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports')], k=number_of_uploads//2)
+    files_to_upload = JSON_files + Excel_files
+    log.info(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))
+    yield files_to_upload
+    for file in files_to_upload:
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=PATH_WITHIN_BUCKET + file.name
+            )
+        except botocore.exceptions as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database

@@ -522,7 +522,7 @@ def upload_historical_non_COUNTER_usage():
         for file in form.usage_files.data:
             if file['usage_file']:
                 files_submitted_for_upload += 1
-                statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
+                statistics_source_ID, fiscal_year = re.fullmatch(r"(test_)?(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(2, 3)  # The first group allows files created by `tests.test_bp_initialization.files_for_test_upload_historical_non_COUNTER_usage()` to pass
                 df = query_database(
                     query=f"""
                         SELECT
