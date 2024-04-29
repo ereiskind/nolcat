@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import re
 from flask import render_template
 from flask import redirect
 from flask import url_for
@@ -405,41 +406,45 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        try:
-            COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-            COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-            if data_not_in_df:
-                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
-        except Exception as error:
-            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
-            log.error(message)
-            flash(message)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
+        if len(form.COUNTER_reports.data) == 0:
+            log.info(f"No COUNTER files were provided for upload.")
+            COUNTER_reports_df = None
+        else:
+            try:
+                COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+                COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+                if data_not_in_df:
+                    messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+            except Exception as error:
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                log.error(message)
+                flash(message)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
 
-        try:
-            COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
-        except Exception as error:
-            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-            log.error(message)
-            flash(message)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if COUNTER_reports_df is None:
-            flash(message_to_flash)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if message_to_flash:
-            messages_to_flash.append(message_to_flash)
-        
-        try:
-            COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            log.warning(message)
-            messages_to_flash.append(message)
-            flash(messages_to_flash)
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
-        log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
+            try:
+                COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
+            except Exception as error:
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                log.error(message)
+                flash(message)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            if COUNTER_reports_df is None:
+                flash(message_to_flash)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            if message_to_flash:
+                messages_to_flash.append(message_to_flash)
+            
+            try:
+                COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+            except Exception as error:
+                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
+            log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
 
         #Subsection: Load Data into Database
         annualUsageCollectionTracking_load_result = load_data_into_database(
@@ -452,18 +457,19 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        COUNTERData_load_result = load_data_into_database(
-            df=COUNTER_reports_df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            messages_to_flash.append(COUNTERData_load_result)
-            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
-        flash(messages_to_flash)
-        # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
-        return redirect(url_for('initialization.data_load_complete'))
+        if COUNTER_reports_df:
+            COUNTERData_load_result = load_data_into_database(
+                df=COUNTER_reports_df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+                messages_to_flash.append(COUNTERData_load_result)
+                messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
+        if messages_to_flash:
+            flash(messages_to_flash)
+        return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
 
     else:
         message = Flask_error_statement(form.errors)
@@ -479,76 +485,98 @@ def upload_historical_non_COUNTER_usage():
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
+    non_COUNTER_files_needed = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(non_COUNTER_files_needed, str):
+        flash(database_query_fail_statement(non_COUNTER_files_needed))
+        return redirect(url_for('initialization.data_load_complete'))
+    list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
     form = HistoricalNonCOUNTERForm()
-    '''
     if request.method == 'GET':
-        #Alert: Below directly from `ingest_usage`
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):
-            flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
-            return redirect(url_for('homepage'))
-        #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
+        form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
-        #ToDo: For each FileField in the form
-            df = query_database(
-                query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={form.name_of_field_which_captured_the_AUCT_statistics_source.data} AND AUCT_fiscal_year={form.name_of_field_which_captured_the_AUCT_fiscal_year.data};",
-                engine=db.engine,
-            )
-            if isinstance(df, str):
-                message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
-                log.error(message)
-                #ToDo: Add `message` to error message list in some form
-                continue
-            AUCT_object = AnnualUsageCollectionTracking(
-                AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
-                AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
-                usage_is_being_collected=df.at[0,'usage_is_being_collected'],
-                manual_collection_required=df.at[0,'manual_collection_required'],
-                collection_via_email=df.at[0,'collection_via_email'],
-                is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
-                collection_status=df.at[0,'collection_status'],
-                usage_file_path=df.at[0,'usage_file_path'],
-                notes=df.at[0,'notes'],
-            )
-            response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
-            if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                #ToDo: Do any other actions need to be taken?
-                log.error(response)
-                #ToDo: Add `message` to error message list in some form
-                continue
-            message = f"message using `AUCT_object` to indicate that the file was uploaded successfully"
-            log.debug(message)
-        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
+        flash_error_messages = dict()
+        files_submitted_for_upload = 0
+        files_uploaded = 0
+        for file in form.usage_files.data:
+            if file['usage_file']:
+                files_submitted_for_upload += 1
+                statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
+                df = query_database(
+                    query=f"""
+                        SELECT
+                            annualUsageCollectionTracking.AUCT_statistics_source,
+                            fiscalYears.fiscal_year_ID,
+                            annualUsageCollectionTracking.usage_is_being_collected,
+                            annualUsageCollectionTracking.manual_collection_required,
+                            annualUsageCollectionTracking.collection_via_email,
+                            annualUsageCollectionTracking.is_COUNTER_compliant,
+                            annualUsageCollectionTracking.collection_status,
+                            annualUsageCollectionTracking.usage_file_path,
+                            annualUsageCollectionTracking.notes
+                        FROM annualUsageCollectionTracking
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                        WHERE
+                            annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
+                            fiscalYears.fiscal_year='{fiscal_year}';
+                    """,
+                    engine=db.engine,
+                )
+                if isinstance(df, str):
+                    message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
+                    log.error(message)
+                    flash_error_messages[file['usage_file'].filename] = message
+                    continue
+                AUCT_object = AnnualUsageCollectionTracking(
+                    AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+                    AUCT_fiscal_year=df.at[0,'fiscal_year_ID'],
+                    usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+                    manual_collection_required=df.at[0,'manual_collection_required'],
+                    collection_via_email=df.at[0,'collection_via_email'],
+                    is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+                    collection_status=df.at[0,'collection_status'],
+                    usage_file_path=df.at[0,'usage_file_path'],
+                    notes=df.at[0,'notes'],
+                )
+                log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
+                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
+                if upload_nonstandard_usage_file_success_regex().fullmatch(response):
+                    log.debug(response)
+                    files_uploaded += 1
+                elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
+                    log.warning(response)
+                    flash_error_messages[file['usage_file'].filename] = response
+                else:
+                    log.warning(response)
+                    flash_error_messages[file['usage_file'].filename] = response
+        log.info(f"Successfully uploaded {files_submitted_for_upload} of {files_uploaded} files.")
+        return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
         flash(message)
         return abort(404)
-    '''
-    pass
 
 
 @bp.route('/initialization-page-5', methods=['GET', 'POST'])
