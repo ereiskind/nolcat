@@ -313,8 +313,8 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = update_statement.replace('\n', ' ')
-    return f"{load_data_response[:-1]}, but updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+    update_statement = database_update_fail_statement(update_statement)
+    return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
 
 
 def database_function_skip_statements(return_value, is_test_function=True, SUSHI_error=False, no_data=False):
