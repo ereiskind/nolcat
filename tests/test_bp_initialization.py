@@ -673,7 +673,23 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_upload_historical_non_COUNTER_usage():
     """Tests uploading the files with non-COUNTER usage statistics."""
-    #ToDo: Get the file paths out of the AUCT relation
+    #Section: Submit Forms via HTTP POST
+    #ToDo: Get PKs and user-friendly names for AUCT records which need non-COUNTER usage files
+    #ToDo: Turn the results of the above into the form fields
+    #ToDo: Pick some records to use--not all need be used
+    #ToDo: Get files to load--specific files not needed
+    #ToDo: Use `client.post` to submit the files
+
+    #Section: Get Relations from Database for Comparison
+    #ToDo: Query database to get AUCT records of records used above
+    #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
+
+    #Section: Assert Statements
+    #ToDo: Get the HTML file for the page a successful result should go to
+    #ToDo: assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    #ToDo: assert POST_response.status == "200 OK"
+    #ToDo: assert HTML_file_title in POST_response.data
+    #ToDo: assert HTML_file_page_title in POST_response.data
     #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
     pass
 
