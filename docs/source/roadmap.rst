@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` from existing psuedocode
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 
