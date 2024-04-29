@@ -773,6 +773,15 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     )
 
     #Section: Get Relations from Database for Comparison
+    AUCT_of_submission_fields = {k: v for (k, v) in all_submission_fields_and_AUCT_records.items() if k in list_of_used_submission_fields}
+    #TEST: temp
+    for k, v in used_submission_fields_and_file_paths.items():
+        log.info(f"`used_submission_fields_and_file_paths` key is {k}")
+        log.info(f"`used_submission_fields_and_file_paths` value is {v}")
+    for k, v in AUCT_of_submission_fields.items():
+        log.info(f"`AUCT_of_submission_fields` key is {k}")
+        log.info(f"`AUCT_of_submission_fields` value is {v}")
+    #TEST: end temp
     #ToDo: Query database to get AUCT records of records used above
     #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
 
