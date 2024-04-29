@@ -670,6 +670,33 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     assert file_inputs == df.shape[0]
 
 
+@pytest.fixture()
+def files_for_test_upload_historical_non_COUNTER_usage():
+    """A function returning absolute paths to randomly selected files for use in testing `test_upload_historical_non_COUNTER_usage` and then removing those files at the completion of the test.
+
+    To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary. Additionally, since fixtures can neither take arguments when called in test functions nor be called iteratively, a singular fixture providing paths to all the files needed for `test_upload_historical_non_COUNTER_usage` and then removing all those files from S3 consolidates the ability to randomly get varying numbers of files and to removes those same files from S3. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        #
+
+    Yields:
+        list: a list of absolute pathlib.Path objects to randomly selected files
+    """
+    #ToDo: Query database to get number of fields
+    #ToDo: Randomly get number between 2 and max number of fields
+    #ToDo: For half of the above range
+        #ToDo: Choose that number of file paths from TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests'
+    #ToDo: For the other half of the above range or half plus 1 if odd
+        #ToDo: Choose that number of file paths from TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'sample_COUNTER_R4_reports'
+    #ToDo: Combine file path lists
+    #ToDo: log.info(fixture_variable_value_declaration_statement("name_of_variable", name_of_variable))
+    #ToDo: yield combined list
+    #ToDo: try:
+        #ToDo: s3_client.delete_object()
+    #ToDo: except botocore.exceptions as error:
+        #ToDo: Unable to delete file from S3 error
+
+
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_upload_historical_non_COUNTER_usage():
     """Tests uploading the files with non-COUNTER usage statistics."""
