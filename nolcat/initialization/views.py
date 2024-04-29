@@ -512,17 +512,11 @@ def upload_historical_non_COUNTER_usage():
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         flash_error_messages = dict()
-        #TEST: temp
-        count_file_usage_file = 0
-        count_success = 0
-        try:
-            log.info(f"`len(form.usage_files.data)`: {len(form.usage_files.data)}")
-        except:
-            pass
-        #TEST: end temp
+        files_submitted_for_upload = 0
+        files_uploaded = 0
         for file in form.usage_files.data:
             if file['usage_file']:
-                count_file_usage_file += 1  #TEST: temp
+                files_submitted_for_upload += 1
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
                 df = query_database(
                     query=f"""
@@ -562,23 +556,16 @@ def upload_historical_non_COUNTER_usage():
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
-                log.info(f"`response`: {response}")  #TEST: temp
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)
-                    count_success += 1  #TEST: temp
+                    files_uploaded += 1
                 elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
                     log.warning(response)
                     flash_error_messages[file['usage_file'].filename] = response
                 else:
                     log.warning(response)
                     flash_error_messages[file['usage_file'].filename] = response
-        #TEST: temp
-        try:
-            log.info(f"`count_file_usage_file`: {count_file_usage_file}")
-            log.info(f"`count_success`: {count_success}")
-        except:
-            pass
-        #TEST: end temp
+        log.info(f"Successfully uploaded {files_submitted_for_upload} of {files_uploaded} files.")
         return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)
