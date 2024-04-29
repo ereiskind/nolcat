@@ -620,11 +620,54 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_GET_request_for_upload_historical_non_COUNTER_usage():
+def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
-    #ToDo: Render the page
-    #ToDo: Compare the fields in the form on the page to a static list of the test data values that meet the requirements
-    pass
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    page = client.get('/initialization/')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+    file_inputs = 0
+    for file_input in GET_soup.find(name='input', type='file'):
+        log.info(file_input)  #TEST: temp
+        file_inputs =+ 1
+    
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    log.info(df)  #TEST: temp
+
+    assert page.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
+    assert file_inputs == df.shape[0]
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
