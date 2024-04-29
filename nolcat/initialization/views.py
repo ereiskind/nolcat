@@ -553,20 +553,14 @@ def upload_historical_non_COUNTER_usage():
             log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
             response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
             log.info(f"`response`: {response}")  #TEST: temp
-            '''
-            if upload_file_to_S3_bucket_success_regex().match(response) and update_database_success_regex().find(response):  #ToDo: Double check that first regex method is from start of string and second is from anywhere in string
-                message = response
-                log.debug(message)
-                continue
-            elif response == add_data_success_and_update_database_fail_statement(form.name_of_field_which_captured_the_file_data.data, response to upload_file_to_S3_bucket() not matching upload_file_to_S3_bucket_success_regex()):
-                #logging_message in above possibly r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.'
-                #ToDo: How should this be handled? the upload went through, but without the database update which failed, there's no way to get the file back with the web app
+            if upload_nonstandard_usage_file_success_regex.fullmatch(response):
+                log.debug(response)
+            elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
+                log.warning(response)
+                flash_error_messages[file['usage_file'].filename] = response
             else:
-                message = response
-                log.warning(message)
-                list_of_flash_error_messages.append(message)  #ToDo: Change name and data type
-                continue
-            '''
+                log.warning(response)
+                flash_error_messages[file['usage_file'].filename] = response
         return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)
