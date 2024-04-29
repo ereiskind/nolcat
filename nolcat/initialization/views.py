@@ -563,7 +563,7 @@ def upload_historical_non_COUNTER_usage():
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
                 log.info(f"`response`: {response}")  #TEST: temp
-                if upload_nonstandard_usage_file_success_regex.fullmatch(response):
+                if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)
                     count_success += 1  #TEST: temp
                 elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
