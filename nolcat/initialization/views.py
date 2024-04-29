@@ -462,7 +462,8 @@ def collect_AUCT_and_historical_COUNTER_data():
         if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
             messages_to_flash.append(COUNTERData_load_result)
             messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
-        flash(messages_to_flash)
+        if messages_to_flash:
+            flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
 
     else:
