@@ -631,11 +631,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     file_inputs = 0
-    #TEST: temp
-    log.warning(GET_soup.find_all(True))
-    log.warning(GET_soup.find_all(name='input'))
-    log.warning([x.repr() for x in GET_soup.find_all(name='input')])
-    #TEST: end temp
+    log.warning(GET_soup.find_all(name='input', type='file'))  #TEST: temp
     for file_input in GET_soup.find(name='input', type='file'):
         log.warning(file_input)  #TEST: temp
         file_inputs =+ 1
