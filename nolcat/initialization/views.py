@@ -519,6 +519,14 @@ def upload_historical_non_COUNTER_usage():
         files_submitted_for_upload = 0
         files_uploaded = 0
         for file in form.usage_files.data:
+            #TEST: temp
+            log.warning(file)
+            log.warning(file['usage_file'])
+            try:
+                log.warning(file['usage_file'].__dict__)
+            except:
+                log.warning("no __dict__")
+            #TEST: end temp
             if file['usage_file']:
                 files_submitted_for_upload += 1
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(test_)?(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(2, 3)  # The first group allows files created by `tests.test_bp_initialization.files_for_test_upload_historical_non_COUNTER_usage()` to pass
