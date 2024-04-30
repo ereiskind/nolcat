@@ -311,7 +311,7 @@ def database_update_fail_statement(update_statement):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = " ".join(re.split(r"\n\s+", update_statement))
+    update_statement = remove_IDE_spacing_from_statement(update_statement)
     return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 

@@ -60,7 +60,7 @@ def filter_empty_parentheses(log_statement):
     if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
         return False
     elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
-        log_statement.msg = " ".join(re.split(r"\n\s+", log_statement.msg))
+        log_statement.msg = remove_IDE_spacing_from_statement(log_statement.msg)
         return True
     else:
         return True
@@ -485,7 +485,7 @@ def query_database(query, engine, index=None):
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
     """
-    log.info(f"Starting `query_database()` for query {query}.")
+    log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
         df = pd.read_sql(
             sql=query,
@@ -493,13 +493,13 @@ def query_database(query, engine, index=None):
             index_col=index,
         )
         if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{query}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         else:
-            log.info(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        message = f"Running the query `{query}` raised the error {error}."
+        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
 
@@ -627,7 +627,7 @@ def update_database(update_statement, engine):
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
     """
-    display_update_statement = update_statement.replace('\n', ' ')
+    display_update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
     try:
