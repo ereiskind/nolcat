@@ -58,8 +58,10 @@ def test_remove_IDE_spacing_from_statement():
     """
     #TEST: temp
     import difflib
-    diff = difflib.ndiff(remove_IDE_spacing_from_statement(statement).splitlines(keepends=True), " SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );".splitlines(keepends=True))
+    diff = difflib.ndiff(remove_IDE_spacing_from_statement(statement).split(), " SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );".split())
     info=''.join(diff)
     log.info(f"\n{info}")
+    log.info(type(remove_IDE_spacing_from_statement(statement)))
+    log.info(type(" SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"))
     #TEST: end temp
     assert remove_IDE_spacing_from_statement(statement) == " SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"
