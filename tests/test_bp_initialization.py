@@ -767,7 +767,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     all_submission_fields_and_AUCT_records = {k: v for (k, v) in zip(list_of_possible_submission_fields, list_of_AUCT_submission_fields)}
     list_of_used_submission_fields = random.choices(list_of_possible_submission_fields, k=len(files_for_test_upload_historical_non_COUNTER_usage))
     used_submission_fields_and_file_paths = {k: v for (k, v) in zip(list_of_used_submission_fields, files_for_test_upload_historical_non_COUNTER_usage)}
-    form_submissions_fields = {k: ((v.name, open(v, 'rb')) if v.suffix == ".xlsx" else v) for k, v in used_submission_fields_and_file_paths.items()}
+    form_submissions_fields = {k: ((v.name, open(v, 'rb')) if v.suffix == ".xlsx" else v.name) for k, v in used_submission_fields_and_file_paths.items()}
     log.warning(f"Submitting the following field and form combinations:\n{form_submissions_fields}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields,
