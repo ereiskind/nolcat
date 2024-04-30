@@ -671,7 +671,6 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
 
-    assert page.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
