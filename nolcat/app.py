@@ -60,8 +60,8 @@ def filter_empty_parentheses(log_statement):
     if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
         return False
     elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
-        print(re.split(r"\n\s+", log_statement.msg))  #TEST: temp
-        #ToDo: If possible, remove newlines and spaces after
+        log_statement.msg = " ".join(re.split(r"\n\s+", log_statement.msg))
+        print(log_statement.__dict__)  #TEST: temp
         return True
     else:
         return True
