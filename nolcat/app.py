@@ -52,28 +52,19 @@ def filter_empty_parentheses(log_statement):
     SQLAlchemy logging has lines for outputting query parameters, but since pandas doesn't use parameters, these lines always appear in stdout as empty parentheses. This function and its use in `nolcat.app.create_logging()` is based upon information at https://stackoverflow.com/a/58583082.
 
     Args:
-        log_statement (_type_): _description_object
+        log_statement (logging.LogRecord): a Python logging statement
 
     Returns:
         bool: if `log_statement` should go to stdout
     """
-    #TEST: temp
-    print(type(log_statement))
-    print(log_statement)
-    try:
-        print(f"`log_statement.__dict__`: {log_statement.__dict__}")
-    except:
-        pass
-    try:
-        print(f"`log_statement.dir()`: {log_statement.dir()}")
-    except:
-        pass
-    try:
-        print(f"`log_statement.var()`: {log_statement.var()}")
-    except:
-        pass
-    #TEST: end temp
-    pass
+    if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
+        return False
+    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
+        print(re.search(r"\n\s+", log_statement.msg))  #TEST: temp
+        #ToDo: If possible, remove newlines and spaces after
+        return True
+    else:
+        return True
 
 
 def configure_logging(app):
