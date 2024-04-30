@@ -705,11 +705,11 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     number_of_uploads = random.randint(2, int(df.iloc[0][0]))
-    JSON_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests')], k=number_of_uploads//2)
+    JSON_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
     if number_of_uploads % 2 == 1:
-        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports')], k=(number_of_uploads//2)+1)
+        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports').iterdir()], k=(number_of_uploads//2)+1)
     else:
-        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports')], k=number_of_uploads//2)
+        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports').iterdir()], k=number_of_uploads//2)
     files_to_upload = JSON_files + Excel_files
     log.warning(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))  #TEST: temp level, should be `info`
     yield files_to_upload
