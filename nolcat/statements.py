@@ -56,7 +56,7 @@ def remove_IDE_spacing_from_statement(statement):
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
-    return " ".join(re.split(r"\n\s+", statement))
+    return " ".join(re.split(r"\n\s+", statement)).strip()
 
 
 #Section: General Statements
