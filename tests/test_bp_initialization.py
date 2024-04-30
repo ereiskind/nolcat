@@ -713,12 +713,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     else:
         Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'sample_COUNTER_R4_reports').iterdir()], k=number_of_uploads//2)
     original_files_to_upload = JSON_files + Excel_files
-    log.warning(fixture_variable_value_declaration_statement("original_files_to_upload", original_files_to_upload))  #TEST: temp level, should be `debug`
+    log.debug(fixture_variable_value_declaration_statement("original_files_to_upload", original_files_to_upload))
 
     files_to_upload = [tmp_path / f"test_{file.name}" for file in original_files_to_upload]
     for old_file, new_file in zip(original_files_to_upload, files_to_upload):
         copy(old_file, new_file)
-    log.warning(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))  #TEST: temp level, should be `info`
+    log.info(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))
     yield files_to_upload
 
     for file in files_to_upload:
