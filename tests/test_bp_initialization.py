@@ -626,10 +626,18 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     page = client.get('/initialization/')
+    #TEST: temp
+    log.warning(page.history)
+    try:
+        log.warning(page.history.__dict__)
+    except:
+        pass
+    #TEST: end temp
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     file_inputs = 0
+    log.warning(GET_soup.find(name='input', type='file'))  #TEST: temp
     for file_input in GET_soup.find(name='input', type='file'):
         log.warning(file_input)  #TEST: temp
         file_inputs =+ 1
@@ -662,7 +670,6 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     )
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
-    log.warning(df)  #TEST: temp
 
     assert page.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert page.status == "200 OK"
