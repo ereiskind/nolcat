@@ -47,6 +47,18 @@ def format_list_for_stdout(stdout_list):
     return '\n'.join([str(file_path) for file_path in stdout_list])
 
 
+def remove_IDE_spacing_from_statement(statement):
+    """Removes from a SQL statement the newlines and spaces used to for readability in the IDE.
+
+    Args:
+        statement (str): a SQL statement
+
+    Returns:
+        str: the same SQL statement on a single line without multi-space gaps
+    """
+    return " ".join(re.split(r"\n\s+", statement)).strip()
+
+
 #Section: General Statements
 #Subsection: Logging/Output Statements
 def initialize_relation_class_object_statement(relation_class_name, object_value):
@@ -299,7 +311,7 @@ def database_update_fail_statement(update_statement):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = update_statement.replace('\n', ' ')
+    update_statement = remove_IDE_spacing_from_statement(update_statement)
     return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 

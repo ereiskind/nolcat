@@ -46,6 +46,26 @@ PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within 
 TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
 
 
+def filter_empty_parentheses(log_statement):
+    """A filter removing log statements containing only empty parentheses.
+
+    SQLAlchemy logging has lines for outputting query parameters, but since pandas doesn't use parameters, these lines always appear in stdout as empty parentheses. This function and its use in `nolcat.app.create_logging()` is based upon information at https://stackoverflow.com/a/58583082.
+
+    Args:
+        log_statement (logging.LogRecord): a Python logging statement
+
+    Returns:
+        bool: if `log_statement` should go to stdout
+    """
+    if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
+        return False
+    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
+        log_statement.msg = remove_IDE_spacing_from_statement(log_statement.msg)
+        return True
+    else:
+        return True
+
+
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
@@ -62,10 +82,10 @@ def configure_logging(app):
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    #Test: SQLAlchemy logging statements appear when when no live log output is requested--investigate and determine if related to the to-do below
+    # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."; name below used because `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another
+    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Statements appear when when no live log output is requested
+    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
-    #ToDo: `pd.to_sql()` logging output begins with multiple setup statements with messages of just a pair of parentheses in between; some parentheses-only logging statements also appear in the `pd.read_sql()` output. Is there a way to remove those statements from the logging output?
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
     if app.debug:
@@ -465,7 +485,7 @@ def query_database(query, engine, index=None):
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
     """
-    log.info(f"Starting `query_database()` for query {query}.")
+    log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
         df = pd.read_sql(
             sql=query,
@@ -473,13 +493,13 @@ def query_database(query, engine, index=None):
             index_col=index,
         )
         if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{query}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         else:
-            log.info(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        message = f"Running the query `{query}` raised the error {error}."
+        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
 
@@ -607,7 +627,7 @@ def update_database(update_statement, engine):
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
     """
-    display_update_statement = update_statement.replace('\n', ' ')
+    display_update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
     try:

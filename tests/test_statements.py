@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-04-17 ##########
+########## Passing 2024-04-30 ##########
 
 import pytest
 import logging
@@ -38,3 +38,22 @@ def test_format_list_for_stdout_with_generator(create_COUNTERData_workbook_iterd
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2019.xlsx" in result
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2020.xlsx" in result
     assert len(result.split('\n')) == 14
+
+
+def test_remove_IDE_spacing_from_statement():
+    """Test removing newlines and indentations from SQL statements."""
+    statement = """
+        SELECT
+            a,
+            b,
+            c
+        FROM relation
+            JOIN anotherRelation ON relation.a=anotherRelation.a
+        WHERE
+            a > 10 AND
+            (
+                b='spam' OR
+                b='eggs'
+            );
+    """
+    assert remove_IDE_spacing_from_statement(statement) == "SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"
