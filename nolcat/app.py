@@ -46,6 +46,36 @@ PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within 
 TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
 
 
+def filter_empty_parentheses(log_statement):
+    """A filter removing log statements containing only empty parentheses.
+
+    SQLAlchemy logging has lines for outputting query parameters, but since pandas doesn't use parameters, these lines always appear in stdout as empty parentheses. This function and its use in `nolcat.app.create_logging()` is based upon information at https://stackoverflow.com/a/58583082.
+
+    Args:
+        log_statement (_type_): _description_object
+
+    Returns:
+        bool: if `log_statement` should go to stdout
+    """
+    #TEST: temp
+    print(type(log_statement))
+    print(log_statement)
+    try:
+        print(f"`log_statement.__dict__`: {log_statement.__dict__}")
+    except:
+        pass
+    try:
+        print(f"`log_statement.dir()`: {log_statement.dir()}")
+    except:
+        pass
+    try:
+        print(f"`log_statement.var()`: {log_statement.var()}")
+    except:
+        pass
+    #TEST: end temp
+    pass
+
+
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
@@ -62,7 +92,7 @@ def configure_logging(app):
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Logger `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another; empty parentheses are for displaying query parameters, which pandas doesn't employ; statements appear when when no live log output is requested
+    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Logger `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another; statements appear when when no live log output is requested
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
