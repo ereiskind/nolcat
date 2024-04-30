@@ -630,11 +630,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    file_inputs = 0
-    log.warning(GET_soup.find_all(name='input', type='file'))  #TEST: temp
-    for file_input in GET_soup.find(name='input', type='file'):
-        log.warning(file_input)  #TEST: temp
-        file_inputs =+ 1
+    number_of_file_fields = len(GET_soup.find_all(name='input', type='file'))
     
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -668,7 +664,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
-    assert file_inputs == df.shape[0]
+    assert number_of_file_fields == df.shape[0]
 
 
 @pytest.fixture()
