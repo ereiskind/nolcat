@@ -631,7 +631,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     GET_response_page_title = GET_soup.body.h1
     file_inputs = 0
     for file_input in GET_soup.find(name='input', type='file'):
-        log.info(file_input)  #TEST: temp
+        log.warning(file_input)  #TEST: temp
         file_inputs =+ 1
     
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
@@ -662,7 +662,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     )
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
-    log.info(df)  #TEST: temp
+    log.warning(df)  #TEST: temp
 
     assert page.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert page.status == "200 OK"
@@ -711,7 +711,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     else:
         Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'sample_COUNTER_R4_reports')], k=number_of_uploads//2)
     files_to_upload = JSON_files + Excel_files
-    log.info(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))
+    log.warning(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))  #TEST: temp level, should be `info`
     yield files_to_upload
     for file in files_to_upload:
         try:
@@ -759,7 +759,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     list_of_used_submission_fields = random.choices(list_of_possible_submission_fields, k=len(files_for_test_upload_historical_non_COUNTER_usage))
     used_submission_fields_and_file_paths = {k: v for (k, v) in zip(list_of_used_submission_fields, files_for_test_upload_historical_non_COUNTER_usage)}
     form_submissions_fields = {k: ((v.name, open(v, 'rb')) if v.suffix == ".xlsx" else (v.name, open(v, 'rt'))) for k, v in used_submission_fields_and_file_paths.items()}
-    log.info(f"Submitting the following field and form combinations:\n{form_submissions_fields}")
+    log.warning(f"Submitting the following field and form combinations:\n{form_submissions_fields}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields,
         encoding='utf-8',
@@ -776,11 +776,11 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     AUCT_of_submission_fields = {k: v for (k, v) in all_submission_fields_and_AUCT_records.items() if k in list_of_used_submission_fields}
     #TEST: temp
     for k, v in used_submission_fields_and_file_paths.items():
-        log.info(f"`used_submission_fields_and_file_paths` key is {k}")
-        log.info(f"`used_submission_fields_and_file_paths` value is {v}")
+        log.warning(f"`used_submission_fields_and_file_paths` key is {k}")
+        log.warning(f"`used_submission_fields_and_file_paths` value is {v}")
     for k, v in AUCT_of_submission_fields.items():
-        log.info(f"`AUCT_of_submission_fields` key is {k}")
-        log.info(f"`AUCT_of_submission_fields` value is {v}")
+        log.warning(f"`AUCT_of_submission_fields` key is {k}")
+        log.warning(f"`AUCT_of_submission_fields` value is {v}")
     #TEST: end temp
     #ToDo: Query database to get AUCT records of records used above
     #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
