@@ -92,7 +92,9 @@ def configure_logging(app):
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Logger `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another; statements appear when when no live log output is requested
+    # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."; name below used because `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another
+    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Statements appear when when no live log output is requested
+    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
