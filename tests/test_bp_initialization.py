@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import os
 import random
+from shutil import copy
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -671,18 +672,20 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 
 @pytest.fixture()
-def files_for_test_upload_historical_non_COUNTER_usage(caplog):
+def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     """A function returning absolute paths to randomly selected files for use in testing `test_upload_historical_non_COUNTER_usage` and then removing those files at the completion of the test.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary. Additionally, since fixtures can neither take arguments when called in test functions nor be called iteratively, a singular fixture providing paths to all the files needed for `test_upload_historical_non_COUNTER_usage` and then removing all those files from S3 consolidates the ability to randomly get varying numbers of files and to removes those same files from S3. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
     Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         list: a list of absolute pathlib.Path objects to randomly selected files
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
     df = query_database(
         query=f"""
             SELECT COUNT(*)
@@ -704,15 +707,22 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     number_of_uploads = random.randint(2, int(df.iloc[0][0]))
-    JSON_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
+    JSON_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
     if number_of_uploads % 2 == 1:
-        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'sample_COUNTER_R4_reports').iterdir()], k=(number_of_uploads//2)+1)
+        Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'sample_COUNTER_R4_reports').iterdir()], k=(number_of_uploads//2)+1)
     else:
-        Excel_files = random.choices([file.parent / f"test_{file.name}" for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'sample_COUNTER_R4_reports').iterdir()], k=number_of_uploads//2)
-    files_to_upload = JSON_files + Excel_files
+        Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'sample_COUNTER_R4_reports').iterdir()], k=number_of_uploads//2)
+    original_files_to_upload = JSON_files + Excel_files
+    log.warning(fixture_variable_value_declaration_statement("original_files_to_upload", original_files_to_upload))  #TEST: temp level, should be `debug`
+
+    files_to_upload = [tmp_path / f"test_{file.name}" for file in original_files_to_upload]
+    for old_file, new_file in zip(original_files_to_upload, files_to_upload):
+        copy(old_file, new_file)
     log.warning(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))  #TEST: temp level, should be `info`
     yield files_to_upload
+
     for file in files_to_upload:
+        file.unlink()
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
