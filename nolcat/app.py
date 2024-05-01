@@ -635,9 +635,14 @@ def update_database(update_statement, engine):
     INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
     TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
     if UPDATE_regex:
-        #ToDo: query = f"SELECT * FROM {UPDATE_regex.group(1)}{UPDATE_regex.group(2)};"
-        #ToDo: query_database()
-        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
+        query = f"SELECT * FROM {UPDATE_regex.group(1)}{UPDATE_regex.group(2)};"
+        before_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(before_df, str):
+            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
         #ToDo: query = f"SELECT * FROM {INSERT_regex.group(1)}{INSERT_regex.group(2)};"
         #ToDo: query_database()
@@ -654,11 +659,18 @@ def update_database(update_statement, engine):
         log.error(message)
         return message
     
-    if UPDATE_regex:
-        #ToDo: query_database(query)
-        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
-        #ToDo: Compare result to previous query result, if dataframes are the same:
-            #ToDo: return error message that execute statement ran but update didn't occur
+    if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
+        after_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(after_df, str):
+            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        log.debug(f"The records after being updated:\n{after_df}")
+        if before_df.equals(after_df):
+            message = f"The update statement {display_update_statement} executed but there was no change in the database."
+            log.warning(message)
+            return message
     elif INSERT_regex:
         #ToDo: query_database(query)
         #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
