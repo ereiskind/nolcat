@@ -630,15 +630,50 @@ def update_database(update_statement, engine):
     display_update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
+
+    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)
+    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
+    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
+    if UPDATE_regex:
+        #ToDo: query = f"SELECT * FROM {UPDATE_regex.group(1)}{UPDATE_regex.group(2)};"
+        #ToDo: query_database()
+        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
+    elif INSERT_regex:
+        #ToDo: query = f"SELECT * FROM {INSERT_regex.group(1)}{INSERT_regex.group(2)};"
+        #ToDo: query_database()
+        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
+    elif TRUNCATE_regex:
+        #ToDo: log.info(#ToDo: no need for before, since after condition is absolute, not relative)
+    else:
+        #ToDo: log.info(#ToDo: unable to check that update worked)
+
     try:
         engine.execute(update_statement)
-        message = f"Successfully performed the update {display_update_statement}."
-        log.info(message)
-        return message
     except Exception as error:
         message = f"Running the update statement {display_update_statement} raised the error {error}."
         log.error(message)
         return message
+    
+    if UPDATE_regex:
+        #ToDo: query_database(query)
+        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
+        #ToDo: Compare result to previous query result, if dataframes are the same:
+            #ToDo: return error message that execute statement ran but update didn't occur
+    elif INSERT_regex:
+        #ToDo: query_database(query)
+        #ToDo: If `query_database()` returns str, continue with warning about ability to confirm update success
+        #ToDo: Compare result to previous query result, if dataframes have the same number of records:
+            #ToDo: return error message that execute statement ran but update didn't occur
+    elif TRUNCATE_regex:
+        #ToDo: query = f"SELECT COUNT(*) FROM{TRUNCATE_regex.group(1)};"
+        #ToDo: query_database()
+        #ToDo: If result of query isn't 0:
+            #ToDo: return error message that execute statement ran but update didn't occur
+    else:
+        #ToDo: log.info(#ToDo: unable to check that update worked)
+    message = f"Successfully performed the update {display_update_statement}."
+    log.info(message)
+    return message
 
 
 def save_unconverted_data_via_upload(data, file_name_stem):
