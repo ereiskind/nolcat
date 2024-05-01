@@ -656,7 +656,7 @@ def update_database(update_statement, engine):
     elif TRUNCATE_regex:
         log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
     else:
-        #ToDo: log.info(#ToDo: unable to check that update worked)
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
 
     try:
         engine.execute(update_statement)
@@ -702,7 +702,7 @@ def update_database(update_statement, engine):
             log.warning(message)
             return message
     else:
-        #ToDo: log.info(#ToDo: unable to check that update worked)
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
     log.info(message)
     return message
