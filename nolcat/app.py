@@ -654,7 +654,7 @@ def update_database(update_statement, engine):
         before_number = before_df.shape[0]
         log.debug(f"There are {before_number} records in the relation to be updated.")
     elif TRUNCATE_regex:
-        #ToDo: log.info(#ToDo: no need for before, since after condition is absolute, not relative)
+        log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
     else:
         #ToDo: log.info(#ToDo: unable to check that update worked)
 
@@ -691,10 +691,16 @@ def update_database(update_statement, engine):
             log.warning(message)
             return message
     elif TRUNCATE_regex:
-        #ToDo: query = f"SELECT COUNT(*) FROM{TRUNCATE_regex.group(1)};"
-        #ToDo: query_database()
-        #ToDo: If result of query isn't 0:
-            #ToDo: return error message that execute statement ran but update didn't occur
+        df = query_database(
+            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex.group(1)};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
+        if df.iloc[0][0] > 0:
+            message = f"The update statement {display_update_statement} executed but there was no change in the database."
+            log.warning(message)
+            return message
     else:
         #ToDo: log.info(#ToDo: unable to check that update worked)
     message = f"Successfully performed the update {display_update_statement}."
