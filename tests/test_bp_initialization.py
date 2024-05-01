@@ -794,16 +794,18 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     )
 
     #Section: Get Relations from Database for Comparison
-    AUCT_of_submission_fields = {k: v for (k, v) in all_submission_fields_and_AUCT_records.items() if k in list_of_used_submission_fields}
-    #TEST: temp
-    for k, v in used_submission_fields_and_file_paths.items():
-        log.warning(f"`used_submission_fields_and_file_paths` key is {k}")
-        log.warning(f"`used_submission_fields_and_file_paths` value is {v}")
-    for k, v in AUCT_of_submission_fields.items():
-        log.warning(f"`AUCT_of_submission_fields` key is {k}")
-        log.warning(f"`AUCT_of_submission_fields` value is {v}")
-    #TEST: end temp
-    #ToDo: Query database to get AUCT records of records used above
+    AUCT_PK_for_submission_fields = {k: v[0] for (k, v) in all_submission_fields_and_AUCT_records.items() if k in list_of_used_submission_fields}
+    collection_status_and_file_path = {}
+    for k, v in AUCT_PK_for_submission_fields.items():
+        df = query_database(
+            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {v[0]} AND AUCT_fiscal_year = {v[1]};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            pytest.skip(database_function_skip_statements(df))
+        collection_status_and_file_path[k] = (df.at[0,'collection_status'], df.at[0,'usage_file_path'])
+    log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{collection_status_and_file_path}")  #TEST: temp level, should be `info`
+    log.warning(f"`zip_dicts_by_common_keys()`:\n{used_submission_fields_and_file_paths, collection_status_and_file_path}")  #TEST: temp
     #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
 
     #Section: Assert Statements
@@ -815,6 +817,9 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
+    for v in collection_status_and_file_path.values():
+        assert v[0] == 'Collection complete'
+    #ToDo: Check that each v[1] in collection_status_and_file_path.values() is f"{AUCT_statistics_source}_{AUCT_fiscal_year}{file_path.suffix}"
     #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
 
 
