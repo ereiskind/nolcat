@@ -635,7 +635,7 @@ def update_database(update_statement, engine):
     INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
     TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
     if UPDATE_regex:
-        query = f"SELECT * FROM {UPDATE_regex.group(1)}{UPDATE_regex.group(2)};"
+        query = f"SELECT * FROM {UPDATE_regex[0]}{UPDATE_regex[1]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
@@ -644,7 +644,7 @@ def update_database(update_statement, engine):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
-        query = f"SELECT * FROM {INSERT_regex.group(1)}{INSERT_regex.group(2)};"
+        query = f"SELECT * FROM {INSERT_regex[0]}{INSERT_regex[1]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
@@ -692,7 +692,7 @@ def update_database(update_statement, engine):
             return message
     elif TRUNCATE_regex:
         df = query_database(
-            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex.group(1)};",
+            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0]};",
             engine=db.engine,
         )
         if isinstance(df, str):
