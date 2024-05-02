@@ -246,6 +246,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
         columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
+    log.info(retrieved_data.compare(expected_output_data))  #TEST: temp
     
     regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
     assert regex_match_object is not None
