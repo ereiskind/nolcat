@@ -630,15 +630,83 @@ def update_database(update_statement, engine):
     display_update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
+
+    # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
+    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)
+    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
+    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
+    if UPDATE_regex:
+        query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
+        before_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(before_df, str):
+            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        log.debug(f"The records to be updated:\n{before_df}")
+    elif INSERT_regex:
+        query = f"SELECT * FROM {INSERT_regex[0][0]}{INSERT_regex[0][1]};"
+        before_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(before_df, str):
+            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        before_number = before_df.shape[0]
+        log.debug(f"There are {before_number} records in the relation to be updated.")
+    elif TRUNCATE_regex:
+        log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
+    else:
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
+
     try:
         engine.execute(update_statement)
-        message = f"Successfully performed the update {display_update_statement}."
-        log.info(message)
-        return message
     except Exception as error:
         message = f"Running the update statement {display_update_statement} raised the error {error}."
         log.error(message)
         return message
+    
+    if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
+        after_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(after_df, str):
+            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        log.debug(f"The records after being updated:\n{after_df}")
+        if before_df.equals(after_df):
+            message = f"The update statement {display_update_statement} executed but there was no change in the database."
+            log.warning(message)
+            return message
+    elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
+        after_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(after_df, str):
+            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        after_number = after_df.shape[0]
+        log.debug(f"There are {after_number} records in the relation that was updated.")
+        if before_number >= after_number:
+            message = f"The update statement {display_update_statement} executed but there was no change in the database."
+            log.warning(message)
+            return message
+    elif TRUNCATE_regex:
+        df = query_database(
+            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
+        if df.iloc[0][0] > 0:
+            message = f"The update statement {display_update_statement} executed but there was no change in the database."
+            log.warning(message)
+            return message
+    else:
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
+    message = f"Successfully performed the update {display_update_statement}."
+    log.info(message)
+    return message
 
 
 def save_unconverted_data_via_upload(data, file_name_stem):

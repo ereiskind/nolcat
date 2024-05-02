@@ -1127,7 +1127,7 @@ class StatisticsSources(db.Model):
             else:
                 log.warning(f"There were records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database; {month_being_checked.strftime('%Y-%m')} won't be included in the harvested date range.")
         
-        log.debug(f"The months to harvest are {months_to_harvest}.")
+        log.info(f"The months to harvest are {months_to_harvest}.")
         if months_in_date_range == months_to_harvest:
             return None  # Indicating the complete date range should be harvested
         else:
