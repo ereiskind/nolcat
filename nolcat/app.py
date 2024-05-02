@@ -631,9 +631,9 @@ def update_database(update_statement, engine):
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
 
-    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)
-    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
-    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
+    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)[0]  # Method alone returns a tuple wrapped in a list; the index operator removes the list
+    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)[0]
+    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)[0]
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0]}{UPDATE_regex[1]};"
         before_df = query_database(
