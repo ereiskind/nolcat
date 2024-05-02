@@ -631,11 +631,12 @@ def update_database(update_statement, engine):
     display_update_statement = truncate_longer_lines(display_update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
 
-    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)[0]  # Method alone returns a tuple wrapped in a list; the index operator removes the list
-    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)[0]
-    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)[0]
+    # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
+    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", display_update_statement)
+    INSERT_regex = re.findall(r"INSERT (\w+) .+;", display_update_statement)
+    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", display_update_statement)
     if UPDATE_regex:
-        query = f"SELECT * FROM {UPDATE_regex[0]}{UPDATE_regex[1]};"
+        query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
@@ -644,7 +645,7 @@ def update_database(update_statement, engine):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
-        query = f"SELECT * FROM {INSERT_regex[0]}{INSERT_regex[1]};"
+        query = f"SELECT * FROM {INSERT_regex[0][0]}{INSERT_regex[0][1]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
@@ -692,7 +693,7 @@ def update_database(update_statement, engine):
             return message
     elif TRUNCATE_regex:
         df = query_database(
-            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0]};",
+            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
             engine=db.engine,
         )
         if isinstance(df, str):
