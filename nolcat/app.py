@@ -628,7 +628,7 @@ def update_database(update_statement, engine):
         str: a message indicating success or including the error raised by the attempt to update the data
     """
     update_statement = remove_IDE_spacing_from_statement(update_statement)
-    display_update_statement = truncate_longer_lines(display_update_statement)
+    display_update_statement = truncate_longer_lines(update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
 
     # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
