@@ -473,6 +473,8 @@ class SUSHICallAndResponse:
     def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
+        For the messages, the report type is added to the start of the sentence in `_handle_SUSHI_exceptions()`.
+
         Args:
             error_contents (dict): the contents of the error message
         
@@ -522,7 +524,7 @@ class SUSHICallAndResponse:
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         #Section: Handle Error
-        message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
+        message = f" request raised error {error_code}: {error_contents['Message']}."
         if error_contents.get('Data'):
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         
