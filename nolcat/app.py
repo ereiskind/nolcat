@@ -8,6 +8,7 @@ import re
 from datetime import date
 import calendar
 from sqlalchemy import log as SQLAlchemy_log
+from sqlalchemy import text
 from flask import Flask
 from flask import render_template
 from flask import send_file
@@ -647,7 +648,7 @@ def update_database(update_statement, engine):
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
 
     try:
-        engine.execute(update_statement)
+        engine.execute(text(update_statement))
     except Exception as error:
         message = f"Running the update statement {display_update_statement} raised the error {error}."
         log.error(message)
