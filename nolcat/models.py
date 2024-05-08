@@ -474,7 +474,8 @@ class FiscalYears(db.Model):
                 all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
             if isinstance(df, str):
                 continue
-            dfs.append(df)
+            if not df.empty:
+                dfs.append(df)
             where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
             log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
         
@@ -972,7 +973,8 @@ class StatisticsSources(db.Model):
                 elif isinstance(SUSHI_data_response, str):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
-                custom_report_dataframes.append(SUSHI_data_response)
+                if not SUSHI_data_response.empty:
+                    custom_report_dataframes.append(SUSHI_data_response)
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 log.warning(message)
@@ -1059,7 +1061,8 @@ class StatisticsSources(db.Model):
                 df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
-                individual_month_dfs.append(df)
+                if not df.empty:
+                    individual_month_dfs.append(df)
                 log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
                 return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:

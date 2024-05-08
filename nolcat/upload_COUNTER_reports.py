@@ -235,7 +235,6 @@ class UploadCOUNTERReports:
                     df[field] = pd.to_datetime(
                         df[field],
                         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                        infer_datetime_format=True,
                         utc=True,  # This must be set to `True` to convert timezone-aware datetime objects
                     )
                     df[field] = df[field].dt.tz_localize(None)
@@ -244,7 +243,7 @@ class UploadCOUNTERReports:
 
                 #Section: Make Pre-Stacking Updates
                 df = df.replace(r"\n", "", regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
-                df = df.applymap(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
+                df = df.map(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
 
                 #Subsection: Make Publication Dates Date Only ISO Strings
                 # At this point, dates can be in multiple formats and data types, but NoLCAT doesn't need time or timezone data, and since all the metadata values are combined into a larger string as part of the unstacking process, using ISO strings or the null placeholder string is appropriate
@@ -381,12 +380,8 @@ class UploadCOUNTERReports:
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
                 log.debug(f"Dataframe immediately after stacking:\n{df}")
-                df = df.reset_index()
-                df = df.rename(columns={
-                    'level_1': 'usage_date',
-                    0: 'usage_count',
-                })
-                log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
+                df = df.reset_index(names=['usage_date', 'usage_count'])
+                log.warning(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
 
                 #Subsection: Recreate Metadata Fields
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index at the chosen delimiter into their own fields and applies the appropriate names to those fields
@@ -483,13 +478,11 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(
                 combined_df['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
 

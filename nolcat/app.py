@@ -219,20 +219,6 @@ def create_app():
     return app
 
 
-def date_parser(dates):
-    """The function for parsing dates as part of converting ingested data into a dataframe.
-    
-    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
-
-    Args:
-        dates (date, datetime, string): a value in a data file being read into a pandas dataframe being interpreted as a date
-
-    Returns:
-        datetime64[ns]: a datetime value pandas inherits from numpy
-    """
-    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
-
-
 def last_day_of_month(first_day_of_month):
     """The function for returning the last day of a given month.
 
@@ -444,7 +430,7 @@ def create_AUCT_SelectField_options(df):
 def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is).
+    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
 
     Args:
         df (dataframe): the data to load into the database
@@ -457,14 +443,14 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     """
     log.info(f"Starting `load_data_into_database()` for relation {relation}.")
     try:
-        df.to_sql(
+        number_of_records = df.to_sql(
             name=relation,
             con=engine,
             if_exists='append',
             chunksize=1000,
             index_label=index_field_name,
         )
-        message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
+        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
         log.info(message)
         return message
     except Exception as error:
@@ -569,7 +555,8 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
                 (df['report_type']==instance['report_type']) &
                 (df['usage_date']==instance['usage_date'])
             ]
-            records_to_remove.append(to_remove)
+            if not to_remove.empty:
+                records_to_remove.append(to_remove)
 
             statistics_source_name = query_database(
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",

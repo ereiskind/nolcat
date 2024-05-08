@@ -41,7 +41,7 @@ def collect_FY_and_vendor_data():
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
             parse_dates=['start_date', 'end_date'],
-            date_parser=date_parser,
+            date_format='ISO8601',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -49,7 +49,7 @@ def collect_FY_and_vendor_data():
             log.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
-        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -67,7 +67,7 @@ def collect_FY_and_vendor_data():
             log.error("The `annualStatistics` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualStatistics`")
         
-        annualStatistics_dataframe = annualStatistics_dataframe.astype({k: v for (k, v) in AnnualStatistics.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        annualStatistics_dataframe = annualStatistics_dataframe.astype({k: v for (k, v) in AnnualStatistics.state_data_types().items()})
         log.debug(f"`annualStatistics` dataframe dtypes before encoding conversions:\n{annualStatistics_dataframe.dtypes}\n")
         annualStatistics_dataframe = annualStatistics_dataframe.reset_index()
         annualStatistics_dataframe['question'] = annualStatistics_dataframe['question'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -96,7 +96,7 @@ def collect_FY_and_vendor_data():
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
             parse_dates=['date_written'],
-            date_parser=date_parser,
+            date_format='ISO8601',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -104,7 +104,7 @@ def collect_FY_and_vendor_data():
             log.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
-        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -190,14 +190,14 @@ def collect_sources_data():
             form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
             parse_dates=['date_written'],
-            date_parser=date_parser,
+            date_format='ISO8601',
             encoding_errors='backslashreplace',
         )
         if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
             log.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
-        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -208,7 +208,7 @@ def collect_sources_data():
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
             parse_dates=['access_stop_date'],
-            date_parser=date_parser,
+            date_format='ISO8601',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -216,7 +216,7 @@ def collect_sources_data():
             log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
-        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -226,7 +226,7 @@ def collect_sources_data():
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
-            date_parser=date_parser,
+            date_format='ISO8601',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -234,7 +234,7 @@ def collect_sources_data():
             log.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
-        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
+        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
