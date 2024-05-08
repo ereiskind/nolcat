@@ -11,8 +11,8 @@ openpyxl==3.0.3
 pandas[aws, performance, pyarrow]==2.2.2
 pyinputplus==0.2.12
 PyMySQL==0.10.1
-pytest==6.2.5
-pytest-dependency==0.5.1
+pytest==8.2.0
+pytest-dependency==0.6.0
 pytest-session2file==0.1.11
 requests==2.31.0
 requests-toolbelt==1.0.0
