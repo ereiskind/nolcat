@@ -3,7 +3,7 @@ boto3==1.26.141
 Flask==3.0.3
 Flask-SQLAlchemy==3.1.2
 Flask-WTF==1.2.1
-graphviz==0.17
+graphviz==0.20.3
 lxml==4.9.0
 mysql==0.0.3
 mysqlclient==2.1.1
