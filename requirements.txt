@@ -7,7 +7,7 @@ graphviz==0.20.3
 lxml==4.9.0
 mysql==0.0.3
 mysqlclient==2.1.1
-openpyxl==3.0.3
+openpyxl==3.1.2
 pandas[aws, performance, pyarrow]==2.2.2
 pyinputplus==0.2.12
 PyMySQL==0.10.1
