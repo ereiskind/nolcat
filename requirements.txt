@@ -2,7 +2,7 @@ beautifulsoup4==4.11.1
 boto3==1.26.141
 Flask==3.0.3
 Flask-SQLAlchemy==3.1.2
-Flask-WTF==0.15.1
+Flask-WTF==1.2.1
 graphviz==0.17
 lxml==4.9.0
 mysql==0.0.3
