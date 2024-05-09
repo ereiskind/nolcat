@@ -651,7 +651,6 @@ def update_database(update_statement, engine):
 
     try:
         with engine.connect() as connection:
-            log.warning(f"`connection`: {connection}")  #TEST: temp
             try:
                 connection.execute(text(update_statement))
             except Exception as error:
@@ -668,6 +667,7 @@ def update_database(update_statement, engine):
             query=query,
             engine=db.engine,
         )
+        log.warning(f"`after_df`: {after_df}")  #TEST: temp
         if isinstance(after_df, str):
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         log.debug(f"The records after being updated:\n{after_df}")
