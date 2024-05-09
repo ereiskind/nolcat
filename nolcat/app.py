@@ -280,7 +280,7 @@ def first_new_PK_value(relation):
         log.debug(f"The {relation} relation is empty.")
         return 0
     else:
-        largest_PK_value = largest_PK_value.iloc[0][0]
+        largest_PK_value = largest_PK_value.iloc[0, 0]
         log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
 
@@ -535,7 +535,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
         )
         if isinstance(number_of_matching_records, str):
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
-        number_of_matching_records = number_of_matching_records.iloc[0][0]
+        number_of_matching_records = number_of_matching_records.iloc[0, 0]
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
             matching_record_instances.append({
@@ -565,7 +565,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
             )
             if isinstance(statistics_source_name, str):
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
-            instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
+            instance['statistics_source_name'] = statistics_source_name.iloc[0, 0]
         
         #Subsection: Return Results
         records_to_remove = pd.concat(records_to_remove)
@@ -686,7 +686,7 @@ def update_database(update_statement, engine):
         )
         if isinstance(df, str):
             log.warning(database_query_fail_statement(df, "confirm success of change to database"))
-        if df.iloc[0][0] > 0:
+        if df.iloc[0, 0] > 0:
             message = f"The update statement {display_update_statement} executed but there was no change in the database."
             log.warning(message)
             return message

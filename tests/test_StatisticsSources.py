@@ -427,7 +427,7 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
     )
     if isinstance(number_of_records, str):
         pytest.skip(database_function_skip_statements(number_of_records))
-    if number_of_records.iloc[0][0] == 0:
+    if number_of_records.iloc[0, 0] == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     assert_frame_equal(df.reset_index(drop=True), non_duplicate_COUNTER_data.reset_index(drop=True))  # The `drop` argument handles the fact that `check_if_data_already_in_COUNTERData()` returns the matched records with the index values from the dataframe used as the function argument

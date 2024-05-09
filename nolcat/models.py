@@ -127,7 +127,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_B1_sum = TR_B1_df.iloc[0][0]
+            TR_B1_sum = TR_B1_df.iloc[0, 0]
             log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
@@ -143,7 +143,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            IR_M1_sum = IR_M1_df.iloc[0][0]
+            IR_M1_sum = IR_M1_df.iloc[0, 0]
             log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         TR_J1_df = query_database(
@@ -159,7 +159,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_J1_sum = TR_J1_df.iloc[0][0]
+            TR_J1_sum = TR_J1_df.iloc[0, 0]
             log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
@@ -188,7 +188,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ACRL_63 = df.iloc[0][0]
+        ACRL_63 = df.iloc[0, 0]
         log.debug(return_value_from_query_statement(ACRL_63))
         return ACRL_63
     
@@ -217,7 +217,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_B1_sum = TR_B1_df.iloc[0][0]
+            TR_B1_sum = TR_B1_df.iloc[0, 0]
             log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
@@ -233,7 +233,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            IR_M1_sum = IR_M1_df.iloc[0][0]
+            IR_M1_sum = IR_M1_df.iloc[0, 0]
             log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
@@ -262,7 +262,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ACRL_61b = df.iloc[0][0]
+        ACRL_61b = df.iloc[0, 0]
         log.debug(return_value_from_query_statement(ACRL_61b))
         return ACRL_61b
 
@@ -290,7 +290,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_18= df.iloc[0][0]
+        ARL_18= df.iloc[0, 0]
         log.debug(return_value_from_query_statement(ARL_18))
         return ARL_18
 
@@ -318,7 +318,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_19= df.iloc[0][0]
+        ARL_19= df.iloc[0, 0]
         log.debug(return_value_from_query_statement(ARL_19))
         return ARL_19
 
@@ -346,7 +346,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_20= df.iloc[0][0]
+        ARL_20= df.iloc[0, 0]
         log.debug(return_value_from_query_statement(ARL_20))
         return ARL_20
 
