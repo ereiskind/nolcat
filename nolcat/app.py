@@ -650,6 +650,24 @@ def update_database(update_statement, engine):
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
 
+    #TEST: temp
+    try:
+        log.warning(f"`engine`:\n{engine}")
+    except:
+        pass
+    try:
+        log.warning(f"`engine.__dict__`:\n{engine.__dict__}")
+    except:
+        pass
+    try:
+        log.warning(f"`engine.dir()`:\n{engine.dir()}")
+    except:
+        pass
+    try:
+        log.warning(f"`engine.var()`:\n{engine.var()}")
+    except:
+        pass
+    #TEST: end temp
     try:
         engine.execute(text(update_statement))
     except Exception as error:
