@@ -331,15 +331,12 @@ def restore_boolean_values_to_boolean_field(series):
     Returns:
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
-    s = series.astype('object')
-    log.warning(s)  #TEST: temp
-    s2 = s.replace({
+    series = series.astype('object')
+    series = series.replace({
         0: False,
         1: True,
     })
-    log.warning(s2)  #TEST: temp
-    log.warning(s2.astype('boolean'))  #TEST: temp
-    return s2.astype('boolean')
+    return series.astype('boolean')
 
 
 def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
