@@ -323,13 +323,13 @@ class UploadCOUNTERReports:
                 df = df.fillna("`None`")
                 log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
-                    to_replace='^\s*$',
+                    to_replace=r'^\s*$',
                     # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
                     value="`None`",
                     regex=True
                 )
 
-                log.debug(f"Dataframe with pre-stacking changes:\n{df}\n{return_string_of_dataframe_info(df)}")
+                log.warning(f"Dataframe with pre-stacking changes:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
 
 
                 #Section: Stack Dataframe
