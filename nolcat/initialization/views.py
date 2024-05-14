@@ -387,7 +387,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
-        log.debug(f"The `annualUsageCollectionTracking` FileField data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
+        log.debug(f"The `annualUsageCollectionTracking` FileField data: {form.annualUsageCollectionTracking_CSV.data}")
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
             index_col=['AUCT_statistics_source', 'AUCT_fiscal_year'],
