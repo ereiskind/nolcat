@@ -382,8 +382,7 @@ class UploadCOUNTERReports:
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
                 log.debug(f"Dataframe immediately after stacking:\n{df}")
                 log.warning(f"Dataframe immediately after stacking:\n{df.index}\n{return_string_of_dataframe_info(df)}")  #TEST: temp
-                df = df.reset_index(name='usage_count')
-                df = df.rename(columns={"level_1": "usage_date"})
+                df = df.reset_index(name='usage_count').rename(columns={"level_1": "usage_date"})
                 log.warning(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
 
                 #Subsection: Recreate Metadata Fields
