@@ -380,6 +380,7 @@ class UploadCOUNTERReports:
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
                 log.warning(f"Dataframe immediately after stacking:\n{df}")  #TEST: temp level, usually `debug`
+                log.warning(f"Dataframe immediately after stacking:\n{df.index}\n{return_string_of_dataframe_info(df)}")  #TEST: temp
                 df = df.reset_index(names=['usage_date', 'usage_count'])
                 log.warning(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
 
