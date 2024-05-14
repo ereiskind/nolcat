@@ -373,16 +373,16 @@ class UploadCOUNTERReports:
                     axis='columns'
                 )
                 df = df.drop(columns=df_non_date_field_names)
-                log.warning(f"Dataframe with without metadata columns:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
+                log.debug(f"Dataframe with without metadata columns:\n{df}\n{return_string_of_dataframe_info(df)}")
                 df = df.set_index('temp_index')
-                log.warning(f"Dataframe with new index column:\n{df}")  #TEST: temp level, usually `debug`
+                log.debug(f"Dataframe with new index column:\n{df}")
 
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
                 log.warning(f"Dataframe immediately after stacking:\n{df}")  #TEST: temp level, usually `debug`
                 log.warning(f"Dataframe immediately after stacking:\n{df.index}\n{return_string_of_dataframe_info(df)}")  #TEST: temp
                 df = df.reset_index(names=['usage_date', 'usage_count'])
-                log.warning(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
+                log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index at the chosen delimiter into their own fields and applies the appropriate names to those fields
