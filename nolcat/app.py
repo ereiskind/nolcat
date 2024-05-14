@@ -653,6 +653,14 @@ def update_database(update_statement, engine):
         with engine.connect() as connection:
             try:
                 connection.execute(text(update_statement))
+                #TEST: temp
+                log.warning("temp")
+                temp = query_database(
+                    query=query,
+                    engine=db.engine,
+                )
+                #TEST: end temp
+                connection.commit()
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
