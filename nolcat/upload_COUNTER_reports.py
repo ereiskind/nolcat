@@ -373,9 +373,9 @@ class UploadCOUNTERReports:
                     axis='columns'
                 )
                 df = df.drop(columns=df_non_date_field_names)
-                log.warning(f"Dataframe with without metadata columns:\n{df}\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, usually `debug`
+                log.debug(f"Dataframe with without metadata columns:\n{df}\n{return_string_of_dataframe_info(df)}")
                 df = df.set_index('temp_index')
-                log.warning(f"Dataframe with new index column:\n{df}")  #TEST: temp level, usually `debug`
+                log.debug(f"Dataframe with new index column:\n{df}")
 
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
