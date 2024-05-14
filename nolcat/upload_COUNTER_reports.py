@@ -324,7 +324,7 @@ class UploadCOUNTERReports:
                 log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
                     to_replace=r'^\s*$',
-                    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
+                    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is considered invalid by libraries not used in this class, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
                     value="`None`",
                     regex=True
                 )
