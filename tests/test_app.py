@@ -440,3 +440,9 @@ def test_last_day_of_month():
     assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
     assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
     assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
+
+
+def test_extract_value_from_single_value_df():
+    """Tests extracting the value from a dataframe containing a single value."""
+    assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
+    assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"

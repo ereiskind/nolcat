@@ -718,7 +718,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     )
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
-    number_of_uploads = random.randint(2, int(df.iloc[0, 0]))
+    number_of_uploads = random.randint(2, int(extract_value_from_single_value_df(df)))
     JSON_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
     if number_of_uploads % 2 == 1:
         Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()], k=(number_of_uploads//2)+1)

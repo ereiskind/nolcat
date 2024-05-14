@@ -390,9 +390,9 @@ class SUSHICallAndResponse:
             return database_query_fail_statement(statistics_source_ID, "return requested value")
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
-            file_name_stem=f"{statistics_source_ID.iloc[0, 0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
-            file_name_stem=f"{statistics_source_ID.iloc[0, 0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
         log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 bucket {BUCKET_NAME}"))
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
