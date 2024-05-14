@@ -135,7 +135,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     )
     if isinstance(database_update_check, str):
         pytest.skip(database_function_skip_statements(database_update_check))
-    database_update_check = database_update_check.iloc[0, 0]
+    database_update_check = extract_value_from_single_value_df(database_update_check)
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
@@ -203,7 +203,7 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
     )
     if isinstance(usage_file_path_in_database, str):
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
-    usage_file_path_in_database = usage_file_path_in_database.iloc[0, 0]
+    usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))
     assert file_name == usage_file_path_in_database
 
