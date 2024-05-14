@@ -813,3 +813,15 @@ def last_day_of_month(original_date):
         original_date.month,
         calendar.monthrange(original_date.year, original_date.month)[1],
     )
+
+
+def extract_value_from_single_value_df(df):
+    """The value in a dataframe containing a single value.
+
+    Args:
+        df (dataframe): a dataframe with a single value
+    
+    Returns:
+        int or str: the value in the dataframe
+    """
+    return df.iloc[0].iloc[0]
