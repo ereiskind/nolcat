@@ -79,7 +79,7 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
+        level=logging.INFO,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line  #TEST: temp level, reset to `DEBUG`
         format= "%(levelname)s[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"  #TEST: `%(levelname)s` is temp
         datefmt="%Y-%m-%d %H:%M:%S",
     )
