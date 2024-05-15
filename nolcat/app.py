@@ -80,7 +80,7 @@ def configure_logging(app):
     """
     logging.basicConfig(
         level=logging.INFO,
-        format= "%(levelname)s[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"  #TEST: `%(levelname)s` is temp
+        format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
         encoding="utf-8",
     )
