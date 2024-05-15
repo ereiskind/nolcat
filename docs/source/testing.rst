@@ -3,22 +3,23 @@ Testing
 
 Running Tests
 *************
-There are two ways to run the test suite:
 
 Running Tests From the CLI
 ==========================
 Test modules are designed to be run from the root folder with the command ``python -m pytest``.
 
-* To view logging statements in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To view the logging statements with the default logging levels (``warning`` for running tests, ``info`` for showing errors) in the pytest output, add ``-s`` to the command. (The ``-s`` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To view logging statements with a specified logging level in the pytest output, add ``-s --log-cli-level="LEVEL"`` to the command where ``LEVEL`` is the name of the desired logging level. 
 * To save the pytest output to stdout, add ``-p pytest_session2file --session2file=logfile_name`` to the command, where ``logfile_name`` is the name of the logfile, including the file extension and the relative path from the root folder (the folder in which the command is being run) for the desired location.
 
   * In stdout, the test functions are reproduced until the point of the error, at which point the error is stated; in the log files, these reproductions contain a fair number of extra characters with no discernable meaning that can be removed by replacing the regex ``\[[\d;]*m`` with no characters.
+  * Pytest has a built-in argument for saving logging to a file, but it saves only the logging; the session2file extension copies the complete pytest output to stdout, including the stack trace.
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
 Working with the Database Within the Container
-----------------------------------------------
-The MySQL command line is accessible through the instance command line with the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate), but the data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
+==============================================
+In addition to the established tests, it's possible to interact with the data through the MySQL command line via the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate). The data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
 
 1. Enter the Python command line with ``python``
 2. Import the needed SQLAlchemy methods with ``from sqlalchemy import create_engine`` and ``from sqlalchemy.orm import sessionmaker``
