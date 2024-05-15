@@ -70,7 +70,7 @@ def filter_empty_parentheses(log_statement):
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
-    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/. The logging level and format set in `logging.basicConfig` are used when directly running NoLCAT in the container; the `nolcat/pytest.ini` supplies that information when using pytest. The module `sqlalchemy.engine.base.Engine` is used for the SQLAlchemy logger instead of the more common `sqlalchemy.engine` because the latter includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another.
 
     Args:
         app (flask.Flask): the Flask object
@@ -79,14 +79,13 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.INFO,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line  #TEST: temp level, reset to `DEBUG`
+        level=logging.INFO,
         format= "%(levelname)s[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"  #TEST: `%(levelname)s` is temp
         datefmt="%Y-%m-%d %H:%M:%S",
         encoding="utf-8",
     )
-    # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."; name below used because `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another
     logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Statements appear when when no live log output is requested
-    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)
+    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)  # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
