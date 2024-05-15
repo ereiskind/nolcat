@@ -80,7 +80,7 @@ def configure_logging(app):
     """
     logging.basicConfig(
         level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
-        format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
+        format= "%(levelname)s[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"  #TEST: `%(levelname)s` is temp
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."; name below used because `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another
