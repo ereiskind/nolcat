@@ -354,8 +354,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
-    #ALERT: On 2024-01-11, this function doesn't work when FileStorage objects are being passed in from `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` when testing `nolcat.ingest_usage.views.upload_non_COUNTER_reports()`
     log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
@@ -493,7 +491,7 @@ def query_database(query, engine, index=None):
         return message
 
 
-def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
+def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
