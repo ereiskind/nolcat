@@ -635,14 +635,14 @@ def update_database(update_statement, engine):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
-        query = f"SELECT * FROM {INSERT_regex[0][0]}{INSERT_regex[0][1]};"
+        query = f"SELECT COUNT(*) FROM {INSERT_regex[0][0]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(before_df, str):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
-        before_number = before_df.shape[0]
+        before_number = extract_value_from_single_value_df(before_df)
         log.debug(f"There are {before_number} records in the relation to be updated.")
     elif TRUNCATE_regex:
         log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
