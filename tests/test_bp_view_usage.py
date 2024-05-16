@@ -174,7 +174,7 @@ def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
         data=start_query_wizard_form_data,
     )
     assert POST_response.status == "302 FOUND"  # This confirms there would've been a redirect if the `post()` method allowed it
-    assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
+    assert POST_response.headers['Location'] == f"/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
 def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard_form_data):
