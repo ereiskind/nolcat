@@ -948,8 +948,8 @@ def download_non_COUNTER_usage():
     elif form.validate_on_submit():
         log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
-        AUCT_object = pd.read_sql(
-            sql=f"""
+        AUCT_object = query_database(
+            query=f"""
                 SELECT
                     usage_is_being_collected,
                     manual_collection_required,
@@ -961,8 +961,11 @@ def download_non_COUNTER_usage():
                 FROM annualUsageCollectionTracking
                 WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(AUCT_object, str):
+            flash(database_query_fail_statement(AUCT_object))
+            return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
         AUCT_object['manual_collection_required'] = restore_boolean_values_to_boolean_field(AUCT_object['manual_collection_required'])
         AUCT_object['collection_via_email'] = restore_boolean_values_to_boolean_field(AUCT_object['collection_via_email'])

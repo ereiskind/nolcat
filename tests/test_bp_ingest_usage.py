@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-05-02 ##########
+########## Passing 2024-05-16 ##########
 
 import pytest
 import logging
@@ -138,7 +138,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
+    assert extract_value_from_single_value_df(check_relation_size) > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
     assert_frame_equal(df, insert_statement_data)
 
 

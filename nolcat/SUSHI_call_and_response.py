@@ -390,9 +390,9 @@ class SUSHICallAndResponse:
             return database_query_fail_statement(statistics_source_ID, "return requested value")
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
-            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
-            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
         log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 bucket {BUCKET_NAME}"))
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
@@ -473,6 +473,8 @@ class SUSHICallAndResponse:
     def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
+        For the messages, the report type is added to the start of the sentence in `_handle_SUSHI_exceptions()`.
+
         Args:
             error_contents (dict): the contents of the error message
         
@@ -522,7 +524,7 @@ class SUSHICallAndResponse:
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         #Section: Handle Error
-        message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
+        message = f" request raised error {error_code}: {error_contents['Message']}."
         if error_contents.get('Data'):
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         

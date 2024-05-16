@@ -127,7 +127,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_B1_sum = TR_B1_df.iloc[0][0]
+            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
             log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
@@ -143,7 +143,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            IR_M1_sum = IR_M1_df.iloc[0][0]
+            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
             log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         TR_J1_df = query_database(
@@ -159,7 +159,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_J1_sum = TR_J1_df.iloc[0][0]
+            TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
             log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
@@ -188,7 +188,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ACRL_63 = df.iloc[0][0]
+        ACRL_63 = extract_value_from_single_value_df(df)
         log.debug(return_value_from_query_statement(ACRL_63))
         return ACRL_63
     
@@ -217,7 +217,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            TR_B1_sum = TR_B1_df.iloc[0][0]
+            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
             log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
@@ -233,7 +233,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         else:
-            IR_M1_sum = IR_M1_df.iloc[0][0]
+            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
             log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
@@ -262,7 +262,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ACRL_61b = df.iloc[0][0]
+        ACRL_61b = extract_value_from_single_value_df(df)
         log.debug(return_value_from_query_statement(ACRL_61b))
         return ACRL_61b
 
@@ -290,7 +290,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_18= df.iloc[0][0]
+        ARL_18 = extract_value_from_single_value_df(df)
         log.debug(return_value_from_query_statement(ARL_18))
         return ARL_18
 
@@ -318,7 +318,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_19= df.iloc[0][0]
+        ARL_19 = extract_value_from_single_value_df(df)
         log.debug(return_value_from_query_statement(ARL_19))
         return ARL_19
 
@@ -346,7 +346,7 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
-        ARL_20= df.iloc[0][0]
+        ARL_20 = extract_value_from_single_value_df(df)
         log.debug(return_value_from_query_statement(ARL_20))
         return ARL_20
 
@@ -474,7 +474,8 @@ class FiscalYears(db.Model):
                 all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
             if isinstance(df, str):
                 continue
-            dfs.append(df)
+            if not df.empty:
+                dfs.append(df)
             where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
             log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
         
@@ -972,7 +973,8 @@ class StatisticsSources(db.Model):
                 elif isinstance(SUSHI_data_response, str):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
-                custom_report_dataframes.append(SUSHI_data_response)
+                if not SUSHI_data_response.empty:
+                    custom_report_dataframes.append(SUSHI_data_response)
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 log.warning(message)
@@ -1059,7 +1061,8 @@ class StatisticsSources(db.Model):
                 df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
-                individual_month_dfs.append(df)
+                if not df.empty:
+                    individual_month_dfs.append(df)
                 log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
                 return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
@@ -1120,7 +1123,7 @@ class StatisticsSources(db.Model):
             )
             if isinstance(number_of_records, str):
                 return database_query_fail_statement(number_of_records, "return requested value")
-            number_of_records = number_of_records.iloc[0][0]
+            number_of_records = extract_value_from_single_value_df(number_of_records)
             log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
                 months_to_harvest.append(month_being_checked)

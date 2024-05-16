@@ -718,7 +718,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     )
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
-    number_of_uploads = random.randint(2, int(df.iloc[0][0]))
+    number_of_uploads = random.randint(2, int(extract_value_from_single_value_df(df)))
     JSON_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
     if number_of_uploads % 2 == 1:
         Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()], k=(number_of_uploads//2)+1)
@@ -825,7 +825,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     for v in collection_status_and_file_path.values():
-        assert v[0] == 'Collection complete'
+        assert v[0] == 'Collection complete'  #TEST: AssertionError: assert 'Collection i...s (see notes)' == 'Collection complete'
     #ToDo: Check that each v[1] in collection_status_and_file_path.values() is f"{AUCT_statistics_source}_{AUCT_fiscal_year}{file_path.suffix}"
     #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
 

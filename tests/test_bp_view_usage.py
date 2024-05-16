@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2024-05-01 ##########
+########## Passing 2024-05-16 ##########
 
 import pytest
 import logging
@@ -122,7 +122,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
         COUNTER_download_CSV,
         index_col=None,
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
-        date_parser=date_parser,
+        date_format='ISO8601',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -174,7 +174,7 @@ def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
         data=start_query_wizard_form_data,
     )
     assert POST_response.status == "302 FOUND"  # This confirms there would've been a redirect if the `post()` method allowed it
-    assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
+    assert POST_response.headers['Location'] == f"/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
 def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard_form_data):
@@ -285,7 +285,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         COUNTER_download_CSV,
         index_col=None,
         parse_dates=['usage_date'],
-        date_parser=date_parser,
+        date_format='ISO8601',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -421,7 +421,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         COUNTER_download_CSV,
         index_col=None,
         parse_dates=['usage_date'],
-        date_parser=date_parser,
+        date_format='ISO8601',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -651,7 +651,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         COUNTER_download_CSV,
         index_col=None,
         parse_dates=['usage_date'],
-        date_parser=date_parser,
+        date_format='ISO8601',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -896,7 +896,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         COUNTER_download_CSV,
         index_col=None,
         parse_dates=['usage_date'],
-        date_parser=date_parser,
+        date_format='ISO8601',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )

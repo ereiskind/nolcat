@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-05-01 ##########
+########## Passing 2024-05-14 ##########
 
 import pytest
 import logging
@@ -7,6 +7,7 @@ import json
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from random import choice
 import re
 import pandas as pd
@@ -204,7 +205,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -251,7 +252,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -267,7 +268,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -426,7 +427,7 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
     )
     if isinstance(number_of_records, str):
         pytest.skip(database_function_skip_statements(number_of_records))
-    if number_of_records.iloc[0][0] == 0:
+    if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     assert_frame_equal(df.reset_index(drop=True), non_duplicate_COUNTER_data.reset_index(drop=True))  # The `drop` argument handles the fact that `check_if_data_already_in_COUNTERData()` returns the matched records with the index values from the dataframe used as the function argument

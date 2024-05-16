@@ -8,6 +8,7 @@ import re
 from datetime import date
 import calendar
 from sqlalchemy import log as SQLAlchemy_log
+from sqlalchemy import text
 from flask import Flask
 from flask import render_template
 from flask import send_file
@@ -69,7 +70,7 @@ def filter_empty_parentheses(log_statement):
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
-    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/. The logging level and format set in `logging.basicConfig` are used when directly running NoLCAT in the container; the `nolcat/pytest.ini` supplies that information when using pytest. The module `sqlalchemy.engine.base.Engine` is used for the SQLAlchemy logger instead of the more common `sqlalchemy.engine` because the latter includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another.
 
     Args:
         app (flask.Flask): the Flask object
@@ -78,13 +79,13 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
+        level=logging.INFO,
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
+        encoding="utf-8",
     )
-    # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."; name below used because `sqlalchemy.engine` includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another
     logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Statements appear when when no live log output is requested
-    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)
+    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)  # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
@@ -219,20 +220,6 @@ def create_app():
     return app
 
 
-def date_parser(dates):
-    """The function for parsing dates as part of converting ingested data into a dataframe.
-    
-    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
-
-    Args:
-        dates (date, datetime, string): a value in a data file being read into a pandas dataframe being interpreted as a date
-
-    Returns:
-        datetime64[ns]: a datetime value pandas inherits from numpy
-    """
-    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
-
-
 def last_day_of_month(first_day_of_month):
     """The function for returning the last day of a given month.
 
@@ -293,7 +280,7 @@ def first_new_PK_value(relation):
         log.debug(f"The {relation} relation is empty.")
         return 0
     else:
-        largest_PK_value = largest_PK_value.iloc[0][0]
+        largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
         log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
 
@@ -344,10 +331,7 @@ def restore_boolean_values_to_boolean_field(series):
     Returns:
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
-    return series.replace({
-        0: False,
-        1: True,
-    }).astype('boolean')
+    return series.astype('boolean')
 
 
 def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
@@ -365,8 +349,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
-    #ALERT: On 2024-01-11, this function doesn't work when FileStorage objects are being passed in from `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` when testing `nolcat.ingest_usage.views.upload_non_COUNTER_reports()`
     log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
@@ -444,7 +426,7 @@ def create_AUCT_SelectField_options(df):
 def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is).
+    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
 
     Args:
         df (dataframe): the data to load into the database
@@ -457,14 +439,14 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     """
     log.info(f"Starting `load_data_into_database()` for relation {relation}.")
     try:
-        df.to_sql(
+        number_of_records = df.to_sql(
             name=relation,
             con=engine,
             if_exists='append',
             chunksize=1000,
             index_label=index_field_name,
         )
-        message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
+        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
         log.info(message)
         return message
     except Exception as error:
@@ -504,7 +486,7 @@ def query_database(query, engine, index=None):
         return message
 
 
-def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
+def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
@@ -548,7 +530,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
         )
         if isinstance(number_of_matching_records, str):
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
-        number_of_matching_records = number_of_matching_records.iloc[0][0]
+        number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
             matching_record_instances.append({
@@ -569,7 +551,8 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
                 (df['report_type']==instance['report_type']) &
                 (df['usage_date']==instance['usage_date'])
             ]
-            records_to_remove.append(to_remove)
+            if not to_remove.empty:
+                records_to_remove.append(to_remove)
 
             statistics_source_name = query_database(
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
@@ -577,7 +560,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
             )
             if isinstance(statistics_source_name, str):
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
-            instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
+            instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name)
         
         #Subsection: Return Results
         records_to_remove = pd.concat(records_to_remove)
@@ -633,7 +616,7 @@ def update_database(update_statement, engine):
 
     # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
     UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
-    INSERT_regex = re.findall(r"INSERT (\w+) .+;", update_statement)
+    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
     TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
@@ -643,26 +626,35 @@ def update_database(update_statement, engine):
         )
         if isinstance(before_df, str):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
-        log.debug(f"The records to be updated:\n{before_df}")
+        else:
+            log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
-        query = f"SELECT * FROM {INSERT_regex[0][0]}{INSERT_regex[0][1]};"
+        query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(before_df, str):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
-        before_number = before_df.shape[0]
-        log.debug(f"There are {before_number} records in the relation to be updated.")
+        else:
+            before_number = extract_value_from_single_value_df(before_df)
+            log.debug(f"There are {before_number} records in the relation to be updated.")
     elif TRUNCATE_regex:
         log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
 
     try:
-        engine.execute(update_statement)
+        with engine.connect() as connection:
+            try:
+                connection.execute(text(update_statement))
+                connection.commit()
+            except Exception as error:
+                message = f"Running the update statement {display_update_statement} raised the error {error}."
+                log.error(message)
+                return message
     except Exception as error:
-        message = f"Running the update statement {display_update_statement} raised the error {error}."
+        message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
         return message
     
@@ -673,11 +665,12 @@ def update_database(update_statement, engine):
         )
         if isinstance(after_df, str):
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
-        log.debug(f"The records after being updated:\n{after_df}")
-        if before_df.equals(after_df):
-            message = f"The update statement {display_update_statement} executed but there was no change in the database."
-            log.warning(message)
-            return message
+        else:
+            log.debug(f"The records after being updated:\n{after_df}")
+            if before_df.equals(after_df):
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
         after_df = query_database(
             query=query,
@@ -685,12 +678,13 @@ def update_database(update_statement, engine):
         )
         if isinstance(after_df, str):
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
-        after_number = after_df.shape[0]
-        log.debug(f"There are {after_number} records in the relation that was updated.")
-        if before_number >= after_number:
-            message = f"The update statement {display_update_statement} executed but there was no change in the database."
-            log.warning(message)
-            return message
+        else:
+            after_number = extract_value_from_single_value_df(after_df)
+            log.debug(f"There are {after_number} records in the relation that was updated.")
+            if before_number >= after_number:
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
     elif TRUNCATE_regex:
         df = query_database(
             query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
@@ -698,10 +692,11 @@ def update_database(update_statement, engine):
         )
         if isinstance(df, str):
             log.warning(database_query_fail_statement(df, "confirm success of change to database"))
-        if df.iloc[0][0] > 0:
-            message = f"The update statement {display_update_statement} executed but there was no change in the database."
-            log.warning(message)
-            return message
+        else:
+            if extract_value_from_single_value_df(df) > 0:
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
@@ -816,3 +811,15 @@ def last_day_of_month(original_date):
         original_date.month,
         calendar.monthrange(original_date.year, original_date.month)[1],
     )
+
+
+def extract_value_from_single_value_df(df):
+    """The value in a dataframe containing a single value.
+
+    Args:
+        df (dataframe): a dataframe with a single value
+    
+    Returns:
+        int or str: the value in the dataframe
+    """
+    return df.iloc[0].iloc[0]

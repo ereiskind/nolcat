@@ -130,8 +130,7 @@ def Flask_error_statement(error_statement):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    formatted_dict = '\n'.join([f"{k}: {v}" for k, v in error_statement.items()])
-    return f"The form submission failed because of the following error(s):\n{formatted_dict}"
+    return f"The form submission failed because of the following error(s):\n{'\n'.join([f"{k}: {v}" for k, v in error_statement.items()])}"
 
 
 #Section: Files, File Organization, and File I/O
@@ -311,8 +310,7 @@ def database_update_fail_statement(update_statement):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = remove_IDE_spacing_from_statement(update_statement)
-    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
 
 
 def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
