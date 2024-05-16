@@ -331,11 +331,6 @@ def restore_boolean_values_to_boolean_field(series):
     Returns:
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
-    series = series.astype('object')
-    series = series.replace({
-        0: False,
-        1: True,
-    })
     return series.astype('boolean')
 
 
