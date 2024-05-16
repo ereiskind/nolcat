@@ -629,7 +629,7 @@ def update_database(update_statement, engine):
         else:
             log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
-        query = f"SELECT COUNT(*) FROM {INSERT_regex[0][0]};"
+        query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
         before_df = query_database(
             query=query,
             engine=db.engine,
