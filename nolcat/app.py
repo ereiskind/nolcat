@@ -629,7 +629,11 @@ def update_database(update_statement, engine):
         else:
             log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
+        log.warning(f"`INSERT_regex`: {INSERT_regex}")  #TEST: temp
+        log.warning(f"`INSERT_regex[0]`: {INSERT_regex[0]}")  #TEST: temp
+        log.warning(f"`INSERT_regex[0][0]`: {INSERT_regex[0][0]}")  #TEST: temp
         query = f"SELECT COUNT(*) FROM {INSERT_regex[0][0]};"
+        log.warning(f"`query`: {query}")  #TEST: temp
         before_df = query_database(
             query=query,
             engine=db.engine,
