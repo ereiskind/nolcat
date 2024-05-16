@@ -623,7 +623,7 @@ def update_database(update_statement, engine):
 
     # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
     UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
-    INSERT_regex = re.findall(r"INSERT (\w+) .+;", update_statement)
+    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
     TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
