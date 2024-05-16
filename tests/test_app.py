@@ -309,7 +309,7 @@ def test_truncate_longer_lines():
 
 
 @pytest.fixture
-def updated_vendors_relation():
+def vendors_relation_after_test_update_database():
     """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
 
     Yields:
@@ -350,6 +350,52 @@ def test_update_database(engine, updated_vendors_relation):
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
+
+
+@pytest.fixture
+def vendors_relation_after_test_update_database_with_insert_statement():
+    """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+            ["A Vendor", None],
+            ["Another Vendor", "1"],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
+
+
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
+    """Tests adding records to the database through a SQL insert statement."""
+    update_result = update_database(
+        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+        engine=engine,
+    )
+    retrieved_updated_vendors_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
+    )
+    if isinstance(retrieved_updated_vendors_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
