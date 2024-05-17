@@ -14,6 +14,7 @@ from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
@@ -318,7 +319,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Section: Check S3 for File
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
     files_in_bucket = []
     log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
@@ -326,7 +327,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in files_in_bucket]
+        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
         assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     else:
         assert False  # Nothing in bucket

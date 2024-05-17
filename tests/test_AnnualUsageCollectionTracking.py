@@ -8,6 +8,7 @@ from pandas.testing import assert_frame_equal
 from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from conftest import match_direct_SUSHI_harvest_result
 from nolcat.app import *
 from nolcat.models import *
@@ -186,14 +187,14 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
     #Subsection: Check File Upload to S3
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=PATH_WITHIN_BUCKET,
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
-    log.debug(f"Raw list of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{list_objects_response} (type {type(list_objects_response)}).")
+    log.debug(f"Raw list of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{list_objects_response} (type {type(list_objects_response)}).")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET, "") for file_name in bucket_contents]
-    log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{format_list_for_stdout(bucket_contents)}")
+    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
+    log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{format_list_for_stdout(bucket_contents)}")
     assert file_name in bucket_contents
     
     #Subsection: Check Database Update

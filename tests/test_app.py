@@ -15,6 +15,7 @@ import sqlalchemy
 import flask
 
 # `conftest.py` fixtures are imported automatically
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
@@ -257,12 +258,12 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_",
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
     #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
 
@@ -436,7 +437,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
@@ -453,12 +454,12 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_",
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "test_") for file_name in bucket_contents]  # `test_` prefix retained to match file name from `file_name_stem_and_data()` fixture
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_", "test_") for file_name in bucket_contents]  # `test_` prefix retained to match file name from `file_name_stem_and_data()` fixture
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:
