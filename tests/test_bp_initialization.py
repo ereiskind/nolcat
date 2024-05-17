@@ -775,7 +775,8 @@ def test_upload_historical_non_COUNTER_usage(caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
-    #ToDo: Select random number of records returned by above query for loading files
+    fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, random.randint(2, df.shape[0]))
+    log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
     #ToDo: Place all the above in a MultipartEncoder
     #ToDo: `client.post` to '/initialization/initialization-page-4'
