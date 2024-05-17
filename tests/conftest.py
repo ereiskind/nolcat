@@ -541,8 +541,9 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
+    log.warning(initialize_relation_class_object_statement("StatisticsSources", yield_object))  #TEST: temp level, should be `info`
     yield yield_object
+    log.warning(f"`yield_object` at start of teardown: {yield_object}")  #TEST: temp
     file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     try:
         s3_client.delete_object(
@@ -586,7 +587,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
+    log.warning(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))  #TEST: temp level, should be `info`
     yield yield_object
 
 
@@ -611,6 +612,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
+    log.warning(f"`non_COUNTER_AUCT_object_after_upload.usage_file_path` just before teardown: {non_COUNTER_AUCT_object_after_upload.usage_file_path}")  #TEST: temp
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
