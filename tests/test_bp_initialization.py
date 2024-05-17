@@ -761,7 +761,7 @@ def test_upload_historical_non_COUNTER_usage(caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
-    fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, random.randint(2, df.shape[0]))
+    fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, k=random.randint(2, df.shape[0]))
     log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     #TEST: temp for testing fixture
     temp_list = []
