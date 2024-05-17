@@ -697,11 +697,10 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
     """
     files_to_upload = []
 
-    def _files_for_test_upload_historical_non_COUNTER_usage(tmp_path, field_data):
+    def _files_for_test_upload_historical_non_COUNTER_usage(field_data):
         """A function returning a single absolute file path to a randomly selected file.
 
         Args:
-            tmp_path (pathlib.Path): a temporary directory created just for running tests
             field_data (tuple): an option from the `create_AUCT_SelectField_options()` function, containing a tuple with the primary key values from `annualUsageCollectionTracking` and a string showing the matching statistics source name and fiscal year
 
         Returns:
