@@ -68,7 +68,7 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog):
+def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     form_input = {
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
@@ -912,7 +912,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def construct_PR_query_with_wizard_without_string_match(client, header_value, caplog):
+def construct_PR_query_with_wizard_without_string_match(client, header_value):
     """Tests using the PR query wizard with a string that won't return any matches."""
     form_input = {
         'begin_date': date.fromisoformat('2019-01-01'),
@@ -989,7 +989,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3):
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method

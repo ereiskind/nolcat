@@ -113,7 +113,7 @@ def test_query_database(engine, vendors_relation):
 
 
 @pytest.mark.dependency(depends=['test_query_database'])
-def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation, caplog):
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
