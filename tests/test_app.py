@@ -251,19 +251,21 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
-        f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
+        path_to_sample_file.name,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_",
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
+    log.warning(f"`list_objects_response`: {list_objects_response}")  #TEST: temp
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_", "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
     #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
 
@@ -427,7 +429,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     """
     data = request.param
     log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
-    file_name_stem = f"test_1_reports-{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().isoformat()}"  # This is the format used for usage reports, which are the most frequently type of saved report
+    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().isoformat()}"  # This is the format used for usage reports, which are the most frequently type of saved report
     log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     if isinstance(data, dict):
@@ -454,12 +456,12 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_",
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}test_", "test_") for file_name in bucket_contents]  # `test_` prefix retained to match file name from `file_name_stem_and_data()` fixture
+    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:

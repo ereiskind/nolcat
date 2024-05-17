@@ -994,7 +994,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
-    POST_response = client.post(
+    POST_response = client.post(  #ToDo: Is there a way to differentiate between a POST request delivered this way vs. a browser for selecting the bucket path in the route?
         '/view_usage/non-COUNTER-downloads',
         follow_redirects=True,
         headers=header_value,

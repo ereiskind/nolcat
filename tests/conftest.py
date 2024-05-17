@@ -492,16 +492,14 @@ def remove_file_from_S3(path_to_sample_file):
         None
     """
     log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
-    file_name = f"test_{path_to_sample_file.name}"
-    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
 @pytest.fixture
@@ -609,6 +607,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):

@@ -984,7 +984,10 @@ def download_non_COUNTER_usage():
         )
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
-        file_path = AUCT_object.download_nonstandard_usage_file(create_downloads_folder())
+        file_path = AUCT_object.download_nonstandard_usage_file(
+            create_downloads_folder(),
+            #ToDo: Change bucket path
+            )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         return send_file(

@@ -1666,6 +1666,7 @@ class AnnualUsageCollectionTracking(db.Model):
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             file_name,
+            #ToDo: Change bucket path
         )
         temp_file_path.unlink()
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):

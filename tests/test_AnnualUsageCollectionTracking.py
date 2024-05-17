@@ -66,7 +66,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`  #ToDo: Change bucket path
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
 
     record = query_database(
@@ -165,7 +165,7 @@ def sample_FileStorage_object(path_to_sample_file):
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`  #ToDo: Change bucket path
 
     #Section: Make Function Call
     with client:
@@ -210,7 +210,10 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):
     """Test downloading a file in S3 to a local computer."""
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
-    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
+    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(
+        download_destination,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()
