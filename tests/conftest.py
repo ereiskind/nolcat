@@ -20,11 +20,14 @@ from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard beca
 from nolcat.app import create_app
 from nolcat.app import configure_logging
 from nolcat.app import s3_client
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME
 from nolcat.models import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
+
+
+PATH_WITHIN_BUCKET_FOR_TESTS = "raw-vendor-reports/tests/"
 
 log = logging.getLogger(__name__)
 
