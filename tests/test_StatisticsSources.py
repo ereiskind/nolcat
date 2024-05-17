@@ -214,7 +214,6 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range starts with the last month covered by the test data; for efficiency, the date range only goes another two months past that point.
     """
-    #TEST: Error `TypeError: cannot unpack non-iterable NoneType object` raised for statistics_source_ID 1 and report type DR, but other combinations were fine; no logs requested to stdout made it impossible to find the source of the problem
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`

@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-05-02 ##########
+########## Failing 2024-05-17 ##########
 
 import pytest
 import logging
@@ -111,7 +111,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
     yield yield_object
 
 
-def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):  #TEST: Always skipped--does this test need adjustment?
+def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
@@ -176,7 +176,9 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
         upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object)
 
     #Section: Check Results with Assert Statements
-    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{sample_FileStorage_object.filename.suffix}"
+    log.warning(f"`sample_FileStorage_object`: {sample_FileStorage_object}")  #TEST: temp
+    log.warning(f"`sample_FileStorage_object.filename`: {sample_FileStorage_object.filename} (type {type(sample_FileStorage_object.filename)})")  #TEST: temp
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{sample_FileStorage_object.filename.suffix}"  #TEST: AttributeError: 'str' object has no attribute 'suffix'
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
