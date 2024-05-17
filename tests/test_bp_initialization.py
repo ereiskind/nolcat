@@ -683,55 +683,38 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     assert number_of_file_fields == df.shape[0]
 
 
-@pytest.fixture()
-def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
-    """A function returning absolute paths to randomly selected files for use in testing `test_upload_historical_non_COUNTER_usage` and then removing those files at the completion of the test.
+@pytest.fixture
+def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
+    """A function returning absolute paths to randomly selected files to use in testing `test_upload_historical_non_COUNTER_usage` and then removing those files from S3 at the completion of the test.
 
-    To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary. Additionally, since fixtures can neither take arguments when called in test functions nor be called iteratively, a singular fixture providing paths to all the files needed for `test_upload_historical_non_COUNTER_usage` and then removing all those files from S3 consolidates the ability to randomly get varying numbers of files and to removes those same files from S3. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+    To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
     Args:
         tmp_path (pathlib.Path): a temporary directory created just for running tests
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         list: a list of absolute pathlib.Path objects to randomly selected files
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    files_to_upload = []
 
-    df = query_database(
-        query=f"""
-            SELECT COUNT(*)
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=db.engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
-    number_of_uploads = random.randint(2, int(extract_value_from_single_value_df(df)))
-    JSON_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()], k=number_of_uploads//2)
-    if number_of_uploads % 2 == 1:
-        Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()], k=(number_of_uploads//2)+1)
-    else:
-        Excel_files = random.choices([file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()], k=number_of_uploads//2)
-    original_files_to_upload = JSON_files + Excel_files
-    log.debug(fixture_variable_value_declaration_statement("original_files_to_upload", original_files_to_upload))
+    def _files_for_test_upload_historical_non_COUNTER_usage(tmp_path, field_data):
+        """A function returning a single absolute file path to a randomly selected file.
 
-    files_to_upload = [tmp_path / f"test_{file.name}" for file in original_files_to_upload]
-    for old_file, new_file in zip(original_files_to_upload, files_to_upload):
-        copy(old_file, new_file)
-    log.info(fixture_variable_value_declaration_statement("files_to_upload", files_to_upload))
-    yield files_to_upload
+        Args:
+            tmp_path (pathlib.Path): a temporary directory created just for running tests
+            field_data (tuple): an option from the `create_AUCT_SelectField_options()` function, containing a tuple with the primary key values from `annualUsageCollectionTracking` and a string showing the matching statistics source name and fiscal year
+
+        Returns:
+            pathlib.Path: an absolute pathlib.Path objects to a randomly selected file
+        """
+        test = random.randint(1, 20)  #TEST: this is for testing the relation between the inner function return value and the list value
+        #ToDo: file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
+        #ToDo: file = random.choice(file_options)
+        #ToDo: new_file = tmp_path / f"test_{file.name}"
+        files_to_upload.append(test)  #TEST: change after testing
+        return str(test) + "hi"  #TEST: change after testing
+
+    yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in files_to_upload:
         file.unlink()
