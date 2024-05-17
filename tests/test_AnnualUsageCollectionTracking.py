@@ -65,10 +65,9 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()` and for `query_database()`
-    caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
 
     record = query_database(
         query=f"""
@@ -119,7 +118,6 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     with client:
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
@@ -168,8 +166,6 @@ def sample_FileStorage_object(path_to_sample_file):
 def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
-    caplog.set_level(logging.INFO, logger='botocore')
 
     #Section: Make Function Call
     with client:
@@ -213,7 +209,6 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
 
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):
     """Test downloading a file in S3 to a local computer."""
-    caplog.set_level(logging.INFO, logger='botocore')
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))

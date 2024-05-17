@@ -187,7 +187,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` called in `StatisticsSources.collect_usage_statistics()` and for `query_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     
     df = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
