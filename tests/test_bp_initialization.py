@@ -695,10 +695,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
     Yields:
         list: a list of absolute pathlib.Path objects to randomly selected files
     """
-    files_to_upload = []
+    for_removal = []
 
     def _files_for_test_upload_historical_non_COUNTER_usage(field_data):
         """A function returning a single absolute file path to a randomly selected file.
+
+        The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
 
         Args:
             field_data (tuple): an option from the `create_AUCT_SelectField_options()` function, containing a tuple with the primary key values from `annualUsageCollectionTracking` and a string showing the matching statistics source name and fiscal year
@@ -706,19 +708,15 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
         Returns:
             pathlib.Path: an absolute pathlib.Path objects to a randomly selected file
         """
-        log.warning(f"`files_to_upload` before append: {files_to_upload}")  #TEST: temp
-        test = random.randint(1, 20)  #TEST: this is for testing the relation between the inner function return value and the list value
         #ToDo: file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         #ToDo: file = random.choice(file_options)
         #ToDo: new_file = tmp_path / f"test_{file.name}"
-        files_to_upload.append(test)  #TEST: change after testing
-        log.warning(f"`files_to_upload` after append: {files_to_upload}")  #TEST: temp
-        return str(test) + "hi"  #TEST: change after testing
+        #ToDo: for_removal.append(new_file)
+        #ToDo: return above?
 
-    log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage`: {_files_for_test_upload_historical_non_COUNTER_usage}")  #TEST: temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
-    for file in files_to_upload:
+    for file in for_removal:
         file.unlink()
         try:
             s3_client.delete_object(
@@ -762,13 +760,6 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, k=random.randint(2, df.shape[0]))
     log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
-    #TEST: temp for testing fixture
-    temp_list = []
-    for field in fields_being_uploaded:
-        temp_list.append(files_for_test_upload_historical_non_COUNTER_usage(field))
-        log.warning(f"After appending {field} to `temp_list`, its value is:\n{temp_list}")
-    log.warning(f"Final value of `temp_list`:\n{temp_list}")
-    #TEST: end temp
     #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
     #ToDo: Place all the above in a MultipartEncoder
     #ToDo: `client.post` to '/initialization/initialization-page-4'
