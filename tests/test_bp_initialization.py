@@ -745,89 +745,68 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
+def test_upload_historical_non_COUNTER_usage():
     """Tests uploading the files with non-COUNTER usage statistics."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
 
     #Section: Submit Forms via HTTP POST
-    df = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=db.engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
-    list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
-    list_of_possible_submission_fields = [f"usage_files-{i}-usage_file" for i in range(len(list_of_AUCT_submission_fields))]
-    all_submission_fields_and_AUCT_records = {k: v for (k, v) in zip(list_of_possible_submission_fields, list_of_AUCT_submission_fields)}
-    list_of_used_submission_fields = random.choices(list_of_possible_submission_fields, k=len(files_for_test_upload_historical_non_COUNTER_usage))
-    used_submission_fields_and_file_paths = {k: v for (k, v) in zip(list_of_used_submission_fields, files_for_test_upload_historical_non_COUNTER_usage)}
-    form_submissions_fields = {k: ((v.name, open(v, 'rb')) if v.suffix == ".xlsx" else v.name) for k, v in used_submission_fields_and_file_paths.items()}
-    #TEST: temp
-    log.warning(f"`list_of_AUCT_submission_fields`: {list_of_AUCT_submission_fields}")
-    log.warning(f"`list_of_possible_submission_fields`: {list_of_possible_submission_fields}")
-    log.warning(f"`all_submission_fields_and_AUCT_records`: {all_submission_fields_and_AUCT_records}")
-    log.warning(f"`list_of_used_submission_fields`: {list_of_used_submission_fields}")
-    log.warning(f"`used_submission_fields_and_file_paths`: {used_submission_fields_and_file_paths}")
-    #TEST: end temp
-    log.warning(f"Submitting the following field and form combinations:\n{form_submissions_fields}")  #TEST: temp level, should be `info`
-    form_submissions = MultipartEncoder(
-        fields=form_submissions_fields,
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
-    POST_response = client.post(
-        '/initialization/initialization-page-4',
-        follow_redirects=True,
-        headers=header_value,
-        data=form_submissions,
-    )
+    #ToDo: Use query below to get primary keys and human-readable information for non-COUNTER AUCT records that don't have files uploaded
+    #f"""
+    #    SELECT
+    #        annualUsageCollectionTracking.AUCT_statistics_source,
+    #        annualUsageCollectionTracking.AUCT_fiscal_year,
+    #        statisticsSources.statistics_source_name,
+    #        fiscalYears.fiscal_year
+    #    FROM annualUsageCollectionTracking
+    #    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+    #    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+    #    WHERE
+    #        annualUsageCollectionTracking.usage_is_being_collected=true AND
+    #        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+    #        annualUsageCollectionTracking.usage_file_path IS NULL AND
+    #        (
+    #            annualUsageCollectionTracking.collection_status='Collection not started' OR
+    #            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+    #            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+    #        );
+    #"""
+    #ToDo: Select random number of records returned by above query for loading files
+    #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
+    #ToDo: Place all the above in a MultipartEncoder
+    #ToDo: `client.post` to '/initialization/initialization-page-4'
 
-    #Section: Get Relations from Database for Comparison
-    AUCT_PK_for_submission_fields = {k: v[0] for (k, v) in all_submission_fields_and_AUCT_records.items() if k in list_of_used_submission_fields}
-    collection_status_and_file_path = {}
-    for k, v in AUCT_PK_for_submission_fields.items():
-        df = query_database(
-            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {v[0]} AND AUCT_fiscal_year = {v[1]};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):
-            pytest.skip(database_function_skip_statements(df))
-        collection_status_and_file_path[k] = (df.at[0,'collection_status'], df.at[0,'usage_file_path'])
-    log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{collection_status_and_file_path}")  #TEST: temp level, should be `info`
-    log.warning(f"`zip_dicts_by_common_keys()`:\n{used_submission_fields_and_file_paths, collection_status_and_file_path}")  #TEST: temp
-    #ToDo: `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` to retrieve the downloaded files
+    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
+    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
+    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
+    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    #assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    #assert POST_response.status == "200 OK"
+    #assert HTML_file_title in POST_response.data
+    #assert HTML_file_page_title in POST_response.data
 
-    #Section: Assert Statements
-    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
-        file_soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = file_soup.head.title.string.encode('utf-8')
-        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
-    for v in collection_status_and_file_path.values():
-        assert v[0] == 'Collection complete'  #TEST: AssertionError: assert 'Collection i...s (see notes)' == 'Collection complete'
-    #ToDo: Check that each v[1] in collection_status_and_file_path.values() is f"{AUCT_statistics_source}_{AUCT_fiscal_year}{file_path.suffix}"
-    #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
+    #Section: Confirm Successful Database Update
+    #ToDo: Get primary keys for records selected above
+    #ToDo: For each record, use query below to get values of fields that should have changed
+    #f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {} AND AUCT_fiscal_year = {};"
+    #ToDo: assert `collection_status` == 'Collection complete'
+    #ToDo: assert usage_file_path is not None
+
+    #Section: Confirm Successful S3 Upload
+    #ToDo: Confirm that files uploaded into S3
+    #ToDo: If possible, confirm contents of files match those of files of origin
+    #list_objects_response = s3_client.list_objects_v2(
+    #    Bucket=BUCKET_NAME,
+    #    Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+    #)
+    #files_in_bucket = []
+    #log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
+    #bucket_contents = list_objects_response.get('Contents')
+    #if bucket_contents:
+    #    for contents_dict in bucket_contents:
+    #        files_in_bucket.append(contents_dict['Key'])
+    #    files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in files_in_bucket]
+    #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
+    #else:
+    #    assert False  # Nothing in bucket
 
 
 def test_data_load_complete():
