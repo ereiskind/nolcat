@@ -745,30 +745,36 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage():
+def test_upload_historical_non_COUNTER_usage(caplog):
     """Tests uploading the files with non-COUNTER usage statistics."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
 
     #Section: Submit Forms via HTTP POST
-    #ToDo: Use query below to get primary keys and human-readable information for non-COUNTER AUCT records that don't have files uploaded
-    #f"""
-    #    SELECT
-    #        annualUsageCollectionTracking.AUCT_statistics_source,
-    #        annualUsageCollectionTracking.AUCT_fiscal_year,
-    #        statisticsSources.statistics_source_name,
-    #        fiscalYears.fiscal_year
-    #    FROM annualUsageCollectionTracking
-    #    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-    #    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-    #    WHERE
-    #        annualUsageCollectionTracking.usage_is_being_collected=true AND
-    #        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-    #        annualUsageCollectionTracking.usage_file_path IS NULL AND
-    #        (
-    #            annualUsageCollectionTracking.collection_status='Collection not started' OR
-    #            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-    #            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-    #        );
-    #"""
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     #ToDo: Select random number of records returned by above query for loading files
     #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
     #ToDo: Place all the above in a MultipartEncoder
