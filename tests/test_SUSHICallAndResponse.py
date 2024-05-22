@@ -79,7 +79,7 @@ def SUSHI_credentials_fixture():
 @pytest.mark.dependency()
 def test_status_call(client, SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
@@ -95,7 +95,7 @@ def test_status_call(client, SUSHI_credentials_fixture, caplog):
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
 def test_status_call_validity(client, SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
@@ -110,7 +110,7 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, caplog):
 @pytest.mark.dependency()
 def test_reports_call(client, SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
@@ -126,7 +126,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, caplog):
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
 def test_reports_call_validity(client, SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
@@ -161,7 +161,7 @@ def list_of_reports(SUSHI_credentials_fixture):
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "PR" not in list_of_reports:
         pytest.skip("PR not offered by this statistics source.")
@@ -180,7 +180,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "DR" not in list_of_reports:
         pytest.skip("DR not offered by this statistics source.")
@@ -199,7 +199,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "TR" not in list_of_reports:
         pytest.skip("TR not offered by this statistics source.")
@@ -218,7 +218,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "IR" not in list_of_reports:
         pytest.skip("IR not offered by this statistics source.")
@@ -240,7 +240,7 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog
     
     There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
