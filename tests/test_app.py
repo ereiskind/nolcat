@@ -261,7 +261,6 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         Bucket=BUCKET_NAME,
         Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
-    log.warning(f"`list_objects_response`: {list_objects_response}")  #TEST: temp
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
