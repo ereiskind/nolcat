@@ -432,17 +432,19 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().isoformat()}"  # This is the format used for usage reports, which are the most frequently type of saved report
     log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
-    if isinstance(data, dict):
-        file_name = file_name_stem + '.json'
-    else:
-        file_name = file_name_stem + '.txt'
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+    #TEST: temp
+    #if isinstance(data, dict):
+    #    file_name = file_name_stem + '.json'
+    #else:
+    #    file_name = file_name_stem + '.txt'
+    #try:
+    #    s3_client.delete_object(
+    #        Bucket=BUCKET_NAME,
+    #        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+    #    )
+    #except botocore.exceptions as error:
+    #    log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+    #TEST: end temp
 
 
 def test_save_unconverted_data_via_upload(file_name_stem_and_data):
