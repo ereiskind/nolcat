@@ -172,9 +172,7 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
         upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object)
 
     #Section: Check Results with Assert Statements
-    log.warning(f"`sample_FileStorage_object`: {sample_FileStorage_object}")  #TEST: temp
-    log.warning(f"`sample_FileStorage_object.filename`: {sample_FileStorage_object.filename} (type {type(sample_FileStorage_object.filename)})")  #TEST: temp
-    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{sample_FileStorage_object.filename.suffix}"  #TEST: AttributeError: 'str' object has no attribute 'suffix'
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{Path(sample_FileStorage_object.filename).suffix}"
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
