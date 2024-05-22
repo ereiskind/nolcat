@@ -704,7 +704,7 @@ def update_database(update_statement, engine):
     return message
 
 
-def save_unconverted_data_via_upload(data, file_name_stem):  #ToDo: Change bucket path
+def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
     """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
 
     Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
@@ -764,6 +764,8 @@ def save_unconverted_data_via_upload(data, file_name_stem):  #ToDo: Change bucke
     logging_message = upload_file_to_S3_bucket(
         temp_file_path,
         file_name,
+        bucket,
+        bucket_path,
     )
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()

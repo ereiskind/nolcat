@@ -453,6 +453,7 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     logging_message = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
