@@ -1637,11 +1637,12 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self, file):
+    def upload_nonstandard_usage_file(self, file, bucket_path=PATH_WITHIN_BUCKET):
         """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
 
         Args:
             file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
@@ -1666,7 +1667,7 @@ class AnnualUsageCollectionTracking(db.Model):
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             file_name,
-            #ToDo: Change bucket path
+            bucket_path,
         )
         temp_file_path.unlink()
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
