@@ -169,11 +169,11 @@ def sample_FileStorage_object(path_to_sample_file):
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
 
     #Section: Make Function Call
     with client:
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object)
+        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
 
     #Section: Check Results with Assert Statements
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{Path(sample_FileStorage_object.filename).suffix}"
