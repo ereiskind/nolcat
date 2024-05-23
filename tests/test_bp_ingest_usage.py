@@ -271,7 +271,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
 
 def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
     #Section: Create Form Submission
     if path_to_sample_file.suffix == '.json':
