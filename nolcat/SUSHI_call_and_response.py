@@ -372,11 +372,12 @@ class SUSHICallAndResponse:
         return (API_response, [])
     
 
-    def _save_raw_Response_text(self, Response_text):
+    def _save_raw_Response_text(self, Response_text, bucket_path=PATH_WITHIN_BUCKET):
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             str: an error message to flash indicating the creation of the bailout file
@@ -395,8 +396,9 @@ class SUSHICallAndResponse:
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
         log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 bucket {BUCKET_NAME}"))
         logging_message = save_unconverted_data_via_upload(
-            data=Response_text,
-            file_name_stem=file_name_stem,
+            Response_text,
+            file_name_stem,
+            bucket_path,
         )
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"

@@ -991,7 +991,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date):
+    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date, bucket_path=PATH_WITHIN_BUCKET):
         """Makes a single API call for a customizable report with all possible attributes.
 
         Args:
@@ -1000,6 +1000,7 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
             start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -1045,8 +1046,9 @@ class StatisticsSources(db.Model):
                     log.warning(message)
                     file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
                     logging_message = save_unconverted_data_via_upload(
-                        data=SUSHI_data_response,
-                        file_name_stem=file_name_stem,
+                        SUSHI_data_response,
+                        file_name_stem,
+                        bucket_path,
                     )
                     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                         message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
@@ -1079,8 +1081,9 @@ class StatisticsSources(db.Model):
                 log.warning(message)
                 file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
                 logging_message = save_unconverted_data_via_upload(
-                    data=SUSHI_data_response,
-                    file_name_stem=file_name_stem,
+                    SUSHI_data_response,
+                    file_name_stem,
+                    bucket_path,
                 )
                 if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                     message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
