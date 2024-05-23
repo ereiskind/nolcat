@@ -349,7 +349,11 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
-    SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
+        month_before_month_like_most_recent_month_with_usage[0],
+        month_before_month_like_most_recent_month_with_usage[1],
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
