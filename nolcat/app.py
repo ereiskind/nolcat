@@ -393,11 +393,11 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
             log.info(message)
             return message
         else:
-            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
+            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
             log.error(message)
             return message
     except AttributeError as error:
-        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
+        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
 
