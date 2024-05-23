@@ -496,3 +496,10 @@ def test_extract_value_from_single_value_df():
     """Tests extracting the value from a dataframe containing a single value."""
     assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
     assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"
+
+
+def test_S3_file_name_timestamp():
+    """Tests formatting a datetime value with the given format code."""
+    assert datetime(2022, 1, 12, 23, 59, 59).strftime(S3_file_name_timestamp()) == "2022-01-12T23.59.59"
+    assert datetime(2024, 7, 4, 2, 45, 8).strftime(S3_file_name_timestamp()) == "2024-07-04T02.45.08"
+    assert datetime(1999, 11, 27, 13, 18, 27).strftime(S3_file_name_timestamp()) == "1999-11-27T13.18.27"

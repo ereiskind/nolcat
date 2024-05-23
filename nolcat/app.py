@@ -827,3 +827,14 @@ def extract_value_from_single_value_df(df):
         int or str: the value in the dataframe
     """
     return df.iloc[0].iloc[0]
+
+
+def S3_file_name_timestamp():
+    """The string with the `strftime()` format code to use in S3 file names.
+
+    ISO format cannot be used for timestamps in S3 file names because S3 file names can't contain colons.
+    
+    Returns:
+        str: Python datetime format code
+    """
+    return '%Y-%m-%dT%H.%M.%S'
