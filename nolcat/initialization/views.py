@@ -477,11 +477,15 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-4', methods=['GET', 'POST'])
-def upload_historical_non_COUNTER_usage():
+@bp.route('/initialization-page-4/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+@bp.route('/initialization-page-4/<str:bucket_path>', methods=['GET', 'POST'])
+def upload_historical_non_COUNTER_usage(bucket_path):
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
+
+    Args:
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     non_COUNTER_files_needed = query_database(
@@ -559,7 +563,7 @@ def upload_historical_non_COUNTER_usage():
                     notes=df.at[0,'notes'],
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
-                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
+                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)
                     files_uploaded += 1
