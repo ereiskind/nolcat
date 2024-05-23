@@ -334,7 +334,7 @@ def restore_boolean_values_to_boolean_field(series):
     return series.astype('boolean')
 
 
-def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH_WITHIN_BUCKET):
     """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
@@ -343,17 +343,16 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
         client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
-        bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{bucket}/{bucket_path}`.")
+    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
-        check_for_bucket = s3_client.head_bucket(Bucket=bucket)
+        check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
         message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
         log.error(message)
@@ -361,7 +360,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{BUCKET_NAME}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
@@ -369,11 +368,11 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         try:
             client.upload_fileobj(
                 Fileobj=file_object,
-                Bucket=bucket,
+                Bucket=BUCKET_NAME,
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
+            message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
             log.info(message)
             return message
         except Exception as error:
@@ -387,10 +386,10 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         if file.is_file():
             client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,
-                Bucket=bucket,
+                Bucket=BUCKET_NAME,
                 Key=bucket_path + file_name,
             )
-            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
+            message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
             log.info(message)
             return message
         else:
@@ -704,7 +703,7 @@ def update_database(update_statement, engine):
     return message
 
 
-def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
     """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
 
     Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
@@ -712,13 +711,12 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, b
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
-        bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
     """
-    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{bucket}/{bucket_path}`.")
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
 
     #Section: Create Temporary File
     #Subsection: Create File Path
@@ -766,8 +764,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, b
     logging_message = upload_file_to_S3_bucket(
         temp_file_path,
         file_name,
-        bucket,
-        bucket_path,
+        bucket_path=bucket_path,
     )
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
