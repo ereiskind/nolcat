@@ -205,9 +205,14 @@ def harvest_SUSHI_statistics(bucket_path):
         return abort(404)
 
 
-@bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports():
-    """The route function for uploading files containing non-COUNTER data into the container."""
+@bp.route('/upload-non-COUNTER/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+@bp.route('/upload-non-COUNTER/<str:bucket_path>', methods=['GET', 'POST'])
+def upload_non_COUNTER_reports(bucket_path):
+    """The route function for uploading files containing non-COUNTER data into the container.
+
+    Args:
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+    """
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
@@ -278,7 +283,7 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
