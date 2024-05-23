@@ -349,7 +349,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
+    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{bucket}/{bucket_path}`.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
@@ -718,7 +718,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, b
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
     """
-    log.info(f"Starting `save_unconverted_data_via_upload()`.")
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name} and S3 location `{bucket}/{bucket_path}`.")
 
     #Section: Create Temporary File
     #Subsection: Create File Path
