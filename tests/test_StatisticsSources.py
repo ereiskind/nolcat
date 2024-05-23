@@ -247,7 +247,11 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
     with client:
-        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+            most_recent_month_with_usage[0],
+            most_recent_month_with_usage[1],
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -262,7 +266,12 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        choice(reports_offered_by_StatisticsSource_fixture),
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -275,7 +284,12 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
     end_date = begin_date - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
     end_date = last_day_of_month(end_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        choice(reports_offered_by_StatisticsSource_fixture),
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
