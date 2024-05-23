@@ -729,7 +729,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         URL,
         "reports",
         credentials,
-    ).make_SUSHI_call()
+    ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     if isinstance(response[0], str):
         pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))

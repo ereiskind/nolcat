@@ -10,6 +10,7 @@ import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from conftest import COUNTER_reports_offered_by_statistics_source
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.app import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
@@ -82,7 +83,7 @@ def test_status_call(client, SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)  # The argument "StatisticsSources.statistics_source_name" is a placeholder
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -98,7 +99,7 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
@@ -113,7 +114,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -129,7 +130,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     list_of_reports = [report for report in list(response[0].values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
@@ -166,7 +167,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
     if "PR" not in list_of_reports:
         pytest.skip("PR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -185,7 +186,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
     if "DR" not in list_of_reports:
         pytest.skip("DR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -204,7 +205,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
     if "TR" not in list_of_reports:
         pytest.skip("TR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -223,7 +224,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
     if "IR" not in list_of_reports:
         pytest.skip("IR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -244,7 +245,7 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     assert response[0].startswith(f"GET request to StatisticsSources.statistics_source_name raised")  # Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error--so matches are to the single-use error responses in `SUSHICallAndResponse._make_API_call()`
     assert isinstance(response[1], list)
