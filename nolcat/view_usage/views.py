@@ -913,9 +913,11 @@ def construct_IR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-@bp.route('/non-COUNTER-downloads/<str:bucket_path>', methods=['GET', 'POST'])
-def download_non_COUNTER_usage(bucket_path):
+#TEST: @bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+#TEST: @bp.route('/non-COUNTER-downloads/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: def download_non_COUNTER_usage(bucket_path):
+@bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
+def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
     
     Args:
@@ -991,7 +993,7 @@ def download_non_COUNTER_usage(bucket_path):
 
         file_path = AUCT_object.download_nonstandard_usage_file(
             create_downloads_folder(),
-            bucket_path=bucket_path,
+            #TEST: bucket_path=bucket_path,
             )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")

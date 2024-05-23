@@ -132,9 +132,11 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/harvest/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-@bp.route('/harvest/<str:bucket_path>', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics(bucket_path):
+#TEST: @bp.route('/harvest/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+#TEST: @bp.route('/harvest/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: def harvest_SUSHI_statistics(bucket_path):
+@bp.route('/harvest', methods=['GET', 'POST'])
+def harvest_SUSHI_statistics():
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
@@ -181,12 +183,13 @@ def harvest_SUSHI_statistics(bucket_path):
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(
-                begin_date,
-                end_date,
-                report_to_harvest,
-                bucket_path,
-            )
+            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            #TEST: result_message, flash_messages = statistics_source.collect_usage_statistics(
+            #TEST:     begin_date,
+            #TEST:     end_date,
+            #TEST:     report_to_harvest,
+            #TEST:     bucket_path,
+            #TEST: )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
                 flash(flash_messages)
@@ -205,9 +208,11 @@ def harvest_SUSHI_statistics(bucket_path):
         return abort(404)
 
 
-@bp.route('/upload-non-COUNTER/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-@bp.route('/upload-non-COUNTER/<str:bucket_path>', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports(bucket_path):
+#TEST: @bp.route('/upload-non-COUNTER/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+#TEST: @bp.route('/upload-non-COUNTER/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: def upload_non_COUNTER_reports(bucket_path):
+@bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
+def upload_non_COUNTER_reports():
     """The route function for uploading files containing non-COUNTER data into the container.
 
     Args:
@@ -283,7 +288,8 @@ def upload_non_COUNTER_reports(bucket_path):
             notes=df.at[0,'notes'],
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        #TEST: response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
