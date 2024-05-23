@@ -132,11 +132,15 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/harvest', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics():
+@bp.route('/harvest/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+@bp.route('/harvest/<str:bucket_path>', methods=['GET', 'POST'])
+def harvest_SUSHI_statistics(bucket_path):
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
+
+    Args:
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app` 
     """
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
@@ -177,7 +181,12 @@ def harvest_SUSHI_statistics():
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = statistics_source.collect_usage_statistics(
+                begin_date,
+                end_date,
+                report_to_harvest,
+                bucket_path,
+            )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
                 flash(flash_messages)
