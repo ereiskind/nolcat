@@ -718,7 +718,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, b
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
     """
-    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name} and S3 location `{bucket}/{bucket_path}`.")
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{bucket}/{bucket_path}`.")
 
     #Section: Create Temporary File
     #Subsection: Create File Path
