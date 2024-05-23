@@ -66,7 +66,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`  #ToDo: Change bucket path
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
 
     record = query_database(
@@ -99,7 +99,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
+        start_date,
+        end_date,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
     if isinstance(yield_object[0], str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object[0])

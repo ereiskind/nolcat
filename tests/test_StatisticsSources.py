@@ -332,7 +332,11 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    yield StatisticsSources_fixture._harvest_R5_SUSHI(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    yield StatisticsSources_fixture._harvest_R5_SUSHI(
+        month_before_month_like_most_recent_month_with_usage[0],
+        month_before_month_like_most_recent_month_with_usage[1],
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])

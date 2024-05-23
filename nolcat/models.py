@@ -1144,7 +1144,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1153,12 +1153,18 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
-        df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
+        df, flash_statements = self._harvest_R5_SUSHI(
+            usage_start_date,
+            usage_end_date,
+            report_to_harvest,
+            bucket_path,
+            )
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
@@ -1562,10 +1568,13 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self):
+    def collect_annual_usage_statistics(self, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+
+        Args:
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -1605,7 +1614,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path)
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
