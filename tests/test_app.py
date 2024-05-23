@@ -427,7 +427,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     """
     data = request.param
     log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
-    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().isoformat()}"  # This is the format used for usage reports, which are the most frequently type of saved report
+    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     #TEST: temp
