@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
@@ -196,6 +197,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -223,6 +225,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
