@@ -66,10 +66,13 @@ class SUSHICallAndResponse:
         pass
     
 
-    def make_SUSHI_call(self):
+    def make_SUSHI_call(self, bucket_path=PATH_WITHIN_BUCKET):
         """Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
 
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
+
+        Args:
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
 
         Returns:
             tuple: the API call response (dict) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -94,7 +97,7 @@ class SUSHICallAndResponse:
             message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
             messages_to_flash = [message]
-            flash_message = self._save_raw_Response_text(API_response.text)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
@@ -105,7 +108,7 @@ class SUSHICallAndResponse:
         if isinstance(API_response, Exception):
             message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
-            flash_message = self._save_raw_Response_text(API_response.text)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
