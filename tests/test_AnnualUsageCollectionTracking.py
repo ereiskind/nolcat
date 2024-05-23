@@ -124,7 +124,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     with client:
-        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
