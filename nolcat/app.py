@@ -712,6 +712,8 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket=BUCKET_NAME, b
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
+        bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
