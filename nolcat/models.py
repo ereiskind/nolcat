@@ -812,7 +812,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -821,6 +821,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -880,6 +881,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters,
                 usage_start_date,
                 usage_end_date,
+                bucket_path=bucket_path,
             )
             all_flashed_statements[report_to_harvest] = flash_message_list
             if isinstance(SUSHI_data_response, str):
@@ -961,6 +963,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters,
                     usage_start_date,
                     usage_end_date,
+                    bucket_path=bucket_path,
                 )
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
