@@ -3,10 +3,9 @@
 
 import pytest
 import logging
-from pathlib import Path
 from datetime import date
+from datetime import datetime
 from random import choice
-import re
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
