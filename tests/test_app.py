@@ -248,8 +248,6 @@ def test_restore_boolean_values_to_boolean_field():
 
 def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
-    log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
-    log.warning(f"`path_to_sample_file.name`: {path_to_sample_file.name}")  #TEST: temp
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
@@ -450,8 +448,6 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
 def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     """Tests saving data that can't be transformed for loading into the database to a file in S3."""
     file_name_stem, data = file_name_stem_and_data
-    log.warning(f"`data`: {data}")  #TEST: temp
-    log.warning(f"`file_name_stem`: {file_name_stem}")  #TEST: temp
     logging_message = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
