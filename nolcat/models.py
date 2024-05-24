@@ -1724,6 +1724,7 @@ class AnnualUsageCollectionTracking(db.Model):
             pathlib.Path: the absolute file path to the downloaded file
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
+        log.warning(f"Downloading from folder {web_app_download_folder} with contents:\n{format_list_for_stdout(web_app_download_folder.iterdir())}")  #TEST: temp
         file_download_path = web_app_download_folder / self.usage_file_path
         log.debug(file_IO_statement(self.usage_file_path, f"S3 bucket {BUCKET_NAME}", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
         s3_client.download_file(
