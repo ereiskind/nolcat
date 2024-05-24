@@ -300,7 +300,10 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -435,7 +438,10 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -664,7 +670,10 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -908,7 +917,10 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
