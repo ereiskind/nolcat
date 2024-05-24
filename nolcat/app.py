@@ -371,7 +371,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
+            message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
             log.info(message)
             return message
         except Exception as error:
@@ -389,7 +389,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
                     Bucket=BUCKET_NAME,
                     Key=bucket_path + file_name,
                 )
-                message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
+                message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
                 log.info(message)
                 return message
             except Exception as error:
@@ -764,7 +764,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITH
 
     #Section: Upload File to S3
     file_name = file_name_stem + temp_file_path.suffix
-    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
+    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 location `{BUCKET_NAME}/{bucket_path}`.")
     logging_message = upload_file_to_S3_bucket(
         temp_file_path,
         file_name,
