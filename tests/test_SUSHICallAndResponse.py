@@ -9,8 +9,8 @@ import re
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
-from conftest import COUNTER_reports_offered_by_statistics_source
 from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
+from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.app import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse

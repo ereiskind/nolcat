@@ -15,9 +15,9 @@ from pandas.testing import assert_frame_equal
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 # `conftest.py` fixtures are imported automatically
+from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
-from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
