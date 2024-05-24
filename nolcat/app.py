@@ -384,16 +384,21 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
     #Subsection: Upload File with `upload_file()`
     try:
         if file.is_file():
-            client.upload_file(  # This uploads `file` like a path-like object
-                Filename=file,
-                Bucket=BUCKET_NAME,
-                Key=bucket_path + file_name,
-            )
-            message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
-            log.info(message)
-            return message
+            try:
+                client.upload_file(  # This uploads `file` like a path-like object
+                    Filename=file,
+                    Bucket=BUCKET_NAME,
+                    Key=bucket_path + file_name,
+                )
+                message = f"Successfully loaded the file {file_name} into the {BUCKET_NAME} S3 bucket."
+                log.info(message)
+                return message
+            except Exception as error:
+                message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
+                log.error(message)
+                return message
         else:
-            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
+            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
             log.error(message)
             return message
     except AttributeError as error:
