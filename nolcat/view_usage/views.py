@@ -32,7 +32,7 @@ def create_COUNTER_fixed_vocab_list(form_selections):
     Returns:
         list: the argument list with all pipe-delimited strings separated into individual list items
     """
-    log.info("Starting `create_COUNTER_fixed_vocab_list()`.")
+    log.info(f"Starting `create_COUNTER_fixed_vocab_list()` for list {form_selections}.")
     return_value = []
     for item in form_selections:
         if "|" in item:
