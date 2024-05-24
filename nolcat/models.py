@@ -1679,6 +1679,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
         file.save(temp_file_path)
+        log.warning(f"iterdir for parent of {file} immediately after saving:\n{format_list_for_stdout(file.parent.iterdir())}")  #TEST: temp
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             file_name,
