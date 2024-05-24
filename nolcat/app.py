@@ -334,7 +334,7 @@ def restore_boolean_values_to_boolean_field(series):
     return series.astype('boolean')
 
 
-def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH_WITHIN_BUCKET):
+def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
     """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
@@ -342,7 +342,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
@@ -366,7 +365,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
         file_object = open(file, 'rb')
         log.debug(f"Successfully initialized {file_object} (type {type(file_object)}).")
         try:
-            client.upload_fileobj(
+            s3_client.upload_fileobj(
                 Fileobj=file_object,
                 Bucket=BUCKET_NAME,
                 Key=bucket_path + file_name,
@@ -385,7 +384,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
     try:
         if file.is_file():
             try:
-                client.upload_file(  # This uploads `file` like a path-like object
+                s3_client.upload_file(  # This uploads `file` like a path-like object
                     Filename=file,
                     Bucket=BUCKET_NAME,
                     Key=bucket_path + file_name,
