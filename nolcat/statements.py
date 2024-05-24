@@ -60,7 +60,7 @@ def remove_IDE_spacing_from_statement(statement):
     """
     statement = " ".join(re.split(r"\n\s+", statement)).strip()
     statement = " AND ".join(statement.split("\nAND ")).strip()
-    return " GROUP BY".join(statement.split("\nGROUP BY ")).strip()
+    return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
 
 
 #Section: General Statements
