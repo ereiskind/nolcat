@@ -1662,7 +1662,7 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
         """
-        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
+        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` for the file {file}.")
         #Section: Create S3 File Name
         try:
             file_path = Path(file)
