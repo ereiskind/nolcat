@@ -382,19 +382,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket_path=PATH
         log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
-    #TEST: temp
-    log.warning(f"iterdir for parent of {file}:\n{format_list_for_stdout(file.parent.iterdir())}")
-    log.warning(f"`exists`: {file.exists()}")
-    log.warning(f"`is_dir`: {file.is_dir()}")
-    log.warning(f"`is_file`: {file.is_file()}")
-    log.warning(f"`is_junction`: {file.is_junction()}")
-    log.warning(f"`is_mount`: {file.is_mount()}")
-    log.warning(f"`is_symlink`: {file.is_symlink()}")
-    log.warning(f"`is_socket`: {file.is_socket()}")
-    log.warning(f"`is_fifo`: {file.is_fifo()}")
-    log.warning(f"`is_block_device`: {file.is_block_device()}")
-    log.warning(f"`is_char_device`: {file.is_char_device()}")
-    #TEST: end temp
     try:
         if file.is_file():
             client.upload_file(  # This uploads `file` like a path-like object
