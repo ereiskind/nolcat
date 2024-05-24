@@ -1685,7 +1685,6 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path,
         )
         temp_file_path.unlink()
-        log.warning(f"{temp_file_path} removed: {temp_file_path in temp_file_path.parent.iterdir()}")  #TEST: temp
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
