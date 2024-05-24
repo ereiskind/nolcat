@@ -1713,12 +1713,11 @@ class AnnualUsageCollectionTracking(db.Model):
     
 
     @hybrid_method
-    def download_nonstandard_usage_file(self, web_app_download_folder, client=s3_client, bucket_path=PATH_WITHIN_BUCKET):
+    def download_nonstandard_usage_file(self, web_app_download_folder, bucket_path=PATH_WITHIN_BUCKET):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
             web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
-            client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
         
         Returns:
@@ -1728,7 +1727,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.warning(f"Downloading from folder {web_app_download_folder} with contents:\n{format_list_for_stdout(web_app_download_folder.iterdir())}")  #TEST: temp
         file_download_path = web_app_download_folder / self.usage_file_path
         log.debug(file_IO_statement(self.usage_file_path, f"S3 bucket {BUCKET_NAME}", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
-        client.download_file(
+        s3_client.download_file(
             Bucket=BUCKET_NAME,
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
