@@ -993,8 +993,8 @@ def download_non_COUNTER_usage():
 
         file_path = AUCT_object.download_nonstandard_usage_file(
             create_downloads_folder(),
-            #TEST: bucket_path=bucket_path,
-            )
+            #TEST: `bucket_path=bucket_path,` --> default here causes attempted retrieval of file in `raw-vendor-reports` when fixture has placed file in `raw-vendor-reports/tests`
+        )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         return send_file(

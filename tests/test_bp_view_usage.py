@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2024-05-16 ##########
+########## Failing 2024-05-24 ##########
 
 import pytest
 import logging
@@ -1006,7 +1006,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
-    POST_response = client.post(  #ToDo: Is there a way to differentiate between a POST request delivered this way vs. a browser for selecting the bucket path in the route?
+    POST_response = client.post(  #TEST: `botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found` raised because attempted retrieval of file in `raw-vendor-reports` when fixture has placed file in `raw-vendor-reports/tests`
         '/view_usage/non-COUNTER-downloads',
         follow_redirects=True,
         headers=header_value,

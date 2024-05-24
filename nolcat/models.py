@@ -1723,21 +1723,9 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
         """
-        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
+        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path + self.usage_file_path}.")
         file_download_path = web_app_download_folder / self.usage_file_path
         log.debug(file_IO_statement(self.usage_file_path, f"S3 bucket {BUCKET_NAME}", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
-        #TEST: temp
-        list_objects_response = s3_client.list_objects_v2(
-            Bucket=BUCKET_NAME,
-            Prefix=bucket_path,
-        )
-        bucket_contents = []
-        for contents_dict in list_objects_response['Contents']:
-            bucket_contents.append(contents_dict['Key'])
-        log.warning(f"List of `{BUCKET_NAME}/{bucket_path}` contents:\n{format_list_for_stdout(bucket_contents)}")
-        log.warning(f"`Key` argument (key to download from): {bucket_path + self.usage_file_path}")
-        log.warning(f"`Filename` argument (path to the file to download to): {self.usage_file_path}")
-        #TEST: end temp
         s3_client.download_file(
             Bucket=BUCKET_NAME,
             Key=bucket_path + self.usage_file_path,
