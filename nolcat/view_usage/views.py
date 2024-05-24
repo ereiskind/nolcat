@@ -914,7 +914,7 @@ def construct_IR_query_with_wizard():
 
 
 @bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-@bp.route('/non-COUNTER-downloads/<str:bucket_path>', methods=['GET', 'POST'])
+@bp.route('/non-COUNTER-downloads/<string:bucket_path>', methods=['GET', 'POST'])
 def download_non_COUNTER_usage(bucket_path):
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
     
