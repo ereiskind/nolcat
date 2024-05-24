@@ -1731,11 +1731,12 @@ class AnnualUsageCollectionTracking(db.Model):
             Bucket=BUCKET_NAME,
             Prefix=bucket_path,
         )
-        log.warning(f"Raw list of `{BUCKET_NAME}/{bucket_path}` contents (type {type(list_objects_response)}):\n{list_objects_response}")
         bucket_contents = []
         for contents_dict in list_objects_response['Contents']:
             bucket_contents.append(contents_dict['Key'])
         log.warning(f"List of `{BUCKET_NAME}/{bucket_path}` contents:\n{format_list_for_stdout(bucket_contents)}")
+        log.warning(f"`Key` argument (key to download from): {bucket_path + self.usage_file_path}")
+        log.warning(f"`Filename` argument (path to the file to download to): {self.usage_file_path}")
         #TEST: end temp
         s3_client.download_file(
             Bucket=BUCKET_NAME,
