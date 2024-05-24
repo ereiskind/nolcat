@@ -256,7 +256,7 @@ class SUSHICallAndResponse:
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 log.info(f"GET response code: {API_response}")
                 API_response.raise_for_status()
-            except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
+            except Timeout as error_after_timeout:
                 message = f"GET request to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
                 log.error(message)
                 return message
