@@ -133,7 +133,7 @@ def upload_COUNTER_data():
 
 
 #TEST: @bp.route('/harvest/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/harvest/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: @bp.route('/harvest/<string:bucket_path>', methods=['GET', 'POST'])
 #TEST: def harvest_SUSHI_statistics(bucket_path):
 @bp.route('/harvest', methods=['GET', 'POST'])
 def harvest_SUSHI_statistics():
@@ -209,7 +209,7 @@ def harvest_SUSHI_statistics():
 
 
 #TEST: @bp.route('/upload-non-COUNTER/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/upload-non-COUNTER/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: @bp.route('/upload-non-COUNTER/<string:bucket_path>', methods=['GET', 'POST'])
 #TEST: def upload_non_COUNTER_reports(bucket_path):
 @bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
 def upload_non_COUNTER_reports():

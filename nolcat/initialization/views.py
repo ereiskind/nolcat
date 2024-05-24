@@ -478,7 +478,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
 
 #TEST: @bp.route('/initialization-page-4/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/initialization-page-4/<str:bucket_path>', methods=['GET', 'POST'])
+#TEST: @bp.route('/initialization-page-4/<string:bucket_path>', methods=['GET', 'POST'])
 #TEST: def upload_historical_non_COUNTER_usage(bucket_path):
 @bp.route('/initialization-page-4', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage():
