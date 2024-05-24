@@ -50,13 +50,17 @@ def format_list_for_stdout(stdout_list):
 def remove_IDE_spacing_from_statement(statement):
     """Removes from a SQL statement the newlines and spaces used to for readability in the IDE.
 
+    The `view_usage.views` module has route functions that add AND and GROUP BY clauses to SQL statements on new lines but without spaces in front; the non-regex lines are designed to remove those newlines.
+
     Args:
         statement (str): a SQL statement
 
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
-    return " ".join(re.split(r"\n(AND|GROUP BY)?\s+", statement)).strip()
+    statement = " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " AND ".join(statement.split("\nAND ")).strip()
+    return " GROUP BY".join(statement.split("\nGROUP BY ")).strip()
 
 
 #Section: General Statements
