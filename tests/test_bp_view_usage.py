@@ -963,7 +963,10 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
  
-    page = client.get('/view_usage/non-COUNTER-downloads')
+    page = client.get(
+        '/view_usage/non-COUNTER-downloads',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
