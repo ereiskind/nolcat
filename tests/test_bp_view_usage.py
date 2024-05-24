@@ -1008,8 +1008,8 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
-    POST_response = client.post(  #TEST: `botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found` raised because attempted retrieval of file in `raw-vendor-reports` when fixture has placed file in `raw-vendor-reports/tests`
-        f'/view_usage/non-COUNTER-downloads',
+    POST_response = client.post(
+        f'/view_usage/non-COUNTER-downloads/{PATH_WITHIN_BUCKET_FOR_TESTS}',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
