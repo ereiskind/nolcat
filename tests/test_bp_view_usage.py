@@ -971,9 +971,8 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    log.warning(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #TEST: temp
-    log.warning(f"`GET_soup.find(name='select', id='AUCT_of_file_download').children` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download')).children}):\n{GET_soup.find(name='select', id='AUCT_of_file_download').children}")  #TEST: temp
     for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
+        log.warning(f"`child` (type {type(child)}): {child}")  #TEST: temp
         GET_select_field_options.append((
             literal_eval(child['value']),
             str(child.string),
