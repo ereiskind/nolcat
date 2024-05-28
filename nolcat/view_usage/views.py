@@ -913,7 +913,7 @@ def construct_IR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
+@bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': ""})
 @bp.route('/non-COUNTER-downloads/<string:bucket_path>', methods=['GET', 'POST'])
 def download_non_COUNTER_usage(bucket_path):
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
@@ -922,6 +922,7 @@ def download_non_COUNTER_usage(bucket_path):
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
     """
     log.info("Starting `download_non_COUNTER_usage()`.")
+    log.warning(f"With method {request.method}, `bucket_path` is {bucket_path}; empty string is production while a value is test")  #TEST: temp
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r"\d+_\d{4}\.\w{3,4}")
@@ -991,7 +992,7 @@ def download_non_COUNTER_usage(bucket_path):
 
         file_path = AUCT_object.download_nonstandard_usage_file(
             create_downloads_folder(),
-            bucket_path=bucket_path,
+            bucket_path=bucket_path,  #TEST: `bucket_path` will either be an empty string or `test`, causing an error at this point; no adjustments being made because what's being tested is earlier in the code
         )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
