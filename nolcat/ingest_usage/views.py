@@ -132,9 +132,9 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-#TEST: @bp.route('/harvest/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/harvest/<string:bucket_path>', methods=['GET', 'POST'])
-#TEST: def harvest_SUSHI_statistics(bucket_path):
+#ToDo: @bp.route('/harvest/', defaults={'testing': ""})
+#ToDo: @bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
+#ToDo: def harvest_SUSHI_statistics(testing):
 @bp.route('/harvest', methods=['GET', 'POST'])
 def harvest_SUSHI_statistics():
     """A page for initiating R5 SUSHI usage statistics harvesting.
@@ -142,7 +142,8 @@ def harvest_SUSHI_statistics():
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
 
     Args:
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app` 
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+        #ToDo: testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
@@ -156,6 +157,7 @@ def harvest_SUSHI_statistics():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
+        #ToDo: return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
         df = query_database(
             query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
@@ -182,14 +184,23 @@ def harvest_SUSHI_statistics():
             report_to_harvest = form.report_to_harvest.data
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
+        #ToDo: if testing == "":
+        #ToDo:     bucket_path = PATH_WITHIN_BUCKET
+        #ToDo: elif testing == "test":
+        #ToDo:     bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        #ToDo: else:
+        #ToDo:     message = f"The dynamic route featured the invalid value {testing}."
+        #ToDo:     log.error(message)
+        #ToDo:     flash(message)
+        #ToDo:     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         try:
             result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
-            #TEST: result_message, flash_messages = statistics_source.collect_usage_statistics(
-            #TEST:     begin_date,
-            #TEST:     end_date,
-            #TEST:     report_to_harvest,
-            #TEST:     bucket_path,
-            #TEST: )
+            #ToDo: result_message, flash_messages = statistics_source.collect_usage_statistics(
+            #ToDo:     begin_date,
+            #ToDo:     end_date,
+            #ToDo:     report_to_harvest,
+            #ToDo:     bucket_path,
+            #ToDo: )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
                 flash(flash_messages)
@@ -208,15 +219,16 @@ def harvest_SUSHI_statistics():
         return abort(404)
 
 
-#TEST: @bp.route('/upload-non-COUNTER/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/upload-non-COUNTER/<string:bucket_path>', methods=['GET', 'POST'])
-#TEST: def upload_non_COUNTER_reports(bucket_path):
+#ToDo: @bp.route('/upload-non-COUNTER/', defaults={'testing': ""})
+#ToDo: @bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
+#ToDo: def upload_non_COUNTER_reports(testing):
 @bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
 def upload_non_COUNTER_reports():
     """The route function for uploading files containing non-COUNTER data into the container.
 
     Args:
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+        #ToDo: testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
@@ -248,6 +260,7 @@ def upload_non_COUNTER_reports():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
+        #ToDo: return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
         df = query_database(
@@ -288,7 +301,16 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
-        #TEST: response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        #ToDo: if testing == "":
+        #ToDo:     bucket_path = PATH_WITHIN_BUCKET
+        #ToDo: elif testing == "test":
+        #ToDo:     bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        #ToDo: else:
+        #ToDo:     message = f"The dynamic route featured the invalid value {testing}."
+        #ToDo:     log.error(message)
+        #ToDo:     flash(message)
+        #ToDo:     return redirect(url_for('view_usage.view_usage_homepage'))
+        #ToDo: response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?

@@ -477,9 +477,9 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-#TEST: @bp.route('/initialization-page-4/', defaults={'bucket_path': PATH_WITHIN_BUCKET})
-#TEST: @bp.route('/initialization-page-4/<string:bucket_path>', methods=['GET', 'POST'])
-#TEST: def upload_historical_non_COUNTER_usage(bucket_path):
+#ToDo: @bp.route('/initialization-page-4/', defaults={'testing': ""})
+#ToDo: @bp.route('/initialization-page-4/<string:testing>', methods=['GET', 'POST'])
+#ToDo: def upload_historical_non_COUNTER_usage(testing):
 @bp.route('/initialization-page-4', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage():
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
@@ -488,6 +488,7 @@ def upload_historical_non_COUNTER_usage():
 
     Args:
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+        #ToDo: testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     non_COUNTER_files_needed = query_database(
@@ -520,6 +521,7 @@ def upload_historical_non_COUNTER_usage():
     if request.method == 'GET':
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form)
+        #ToDo: return render_template('initialization/initial-data-upload-4.html', form=form, testing=testing)
     elif form.validate_on_submit():
         flash_error_messages = dict()
         files_submitted_for_upload = 0
@@ -565,7 +567,16 @@ def upload_historical_non_COUNTER_usage():
                     notes=df.at[0,'notes'],
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
-                #TEST: response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
+                #ToDo: if testing == "":
+                #ToDo:     bucket_path = PATH_WITHIN_BUCKET
+                #ToDo: elif testing == "test":
+                #ToDo:     bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+                #ToDo: else:
+                #ToDo:     message = f"The dynamic route featured the invalid value {testing}."
+                #ToDo:     log.error(message)
+                #ToDo:     flash(message)
+                #ToDo:     return redirect(url_for('view_usage.view_usage_homepage'))
+                #ToDo: response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)
