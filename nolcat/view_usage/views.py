@@ -18,6 +18,7 @@ from .forms import *
 from ..app import *
 from ..models import *
 from ..statements import *
+from tests.conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 
 log = logging.getLogger(__name__)
 
@@ -989,9 +990,18 @@ def download_non_COUNTER_usage(testing):
         )
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.view_usage_homepage'))
         file_path = AUCT_object.download_nonstandard_usage_file(
             create_downloads_folder(),
-            bucket_path=bucket_path,  #TEST: `bucket_path` will either be an empty string or `test`, causing an error at this point; no adjustments being made because what's being tested is earlier in the code
+            bucket_path=bucket_path,
         )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
