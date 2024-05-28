@@ -1012,7 +1012,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
     POST_response = client.post(
-        f'/view_usage/non-COUNTER-downloads',  #TEST: Should be `f'/view_usage/non-COUNTER-downloads/{PATH_WITHIN_BUCKET_FOR_TESTS}',`
+        f'/view_usage/non-COUNTER-downloads/{PATH_WITHIN_BUCKET_FOR_TESTS}',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
