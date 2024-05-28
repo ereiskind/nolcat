@@ -1017,7 +1017,21 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         data=form_input,
     )
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
-    #ToDo: Read file at file_path
+    #TEST: temp
+    log.warning(f"`POST_response`: {POST_response}")
+    try:
+        log.warning(f"`POST_response.__dict__`: {POST_response.__dict__}")
+    except:
+        pass
+    try:
+        log.warning(f"`POST_response.dir()`: {POST_response.dir()}")
+    except:
+        pass
+    try:
+        log.warning(f"`POST_response.var()`: {POST_response.var()}")
+    except:
+        pass
+    #TEST: end temp
     assert POST_response.status == "200 OK"
     assert file_path.is_file()
     assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same
