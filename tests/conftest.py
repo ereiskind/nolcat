@@ -613,7 +613,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
-    log.debug(logging_message)
+    log.warning(logging_message)  #TEST: temp level, should be `debug`
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
