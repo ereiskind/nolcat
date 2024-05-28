@@ -967,6 +967,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         '/view_usage/non-COUNTER-downloads',
         follow_redirects=True,
     )
+    log.warning(f"`page.__dict__`: {page.__dict__}")  #TEST: temp
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
