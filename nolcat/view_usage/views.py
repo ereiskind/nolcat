@@ -913,16 +913,16 @@ def construct_IR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('/non-COUNTER-downloads/', defaults={'bucket_path': ""})
-@bp.route('/non-COUNTER-downloads/<string:bucket_path>', methods=['GET', 'POST'])
-def download_non_COUNTER_usage(bucket_path):
+@bp.route('/non-COUNTER-downloads/', defaults={'testing': ""})
+@bp.route('/non-COUNTER-downloads/<string:testing>', methods=['GET', 'POST'])
+def download_non_COUNTER_usage(testing):
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
     
     Args:
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `download_non_COUNTER_usage()`.")
-    log.warning(f"With method {request.method}, `bucket_path` is {bucket_path}; empty string is production while a value is test")  #TEST: temp
+    log.warning(f"With method {request.method}, `testing` is {testing}")  #TEST: temp
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r"\d+_\d{4}\.\w{3,4}")
@@ -950,7 +950,7 @@ def download_non_COUNTER_usage(bucket_path):
             flash(database_query_fail_statement(file_download_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
-        return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
+        return render_template('view_usage/download-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
