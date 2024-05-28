@@ -1002,6 +1002,36 @@ def download_non_COUNTER_usage(bucket_path):
             download_name=file_path.name,
             last_modified=datetime.today(),
         )
+    #TEST: temp
+    elif request.method == 'POST':
+        log.warning(f"`form.is_submitted()`: {form.is_submitted()}")
+        log.warning(f"`form.validate()`: {form.validate()}")
+        log.warning(f"`bucket_path`: {bucket_path}")
+        try:
+            log.warning(f"`request.__dict__` (type {type(request.__dict__)}):\n{request.__dict__}")
+        except:
+            pass
+        try:
+            log.warning(f"`request.dir()` (type {type(request.dir())}):\n{request.dir()}")
+        except:
+            pass
+        try:
+            log.warning(f"`request.var()` (type {type(request.var())}):\n{request.var()}")
+        except:
+            pass
+        try:
+            log.warning(f"`form.__dict__` (type {type(form.__dict__)}):\n{form.__dict__}")
+        except:
+            pass
+        try:
+            log.warning(f"`form.dir()` (type {type(form.dir())}):\n{form.dir()}")
+        except:
+            pass
+        try:
+            log.warning(f"`form.var()` (type {type(form.var())}):\n{form.var()}")
+        except:
+            pass
+    #TEST: end temp
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
