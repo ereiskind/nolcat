@@ -967,7 +967,6 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         '/view_usage/non-COUNTER-downloads',
         follow_redirects=True,
     )
-    log.warning(f"`page.__dict__`: {page.__dict__}")  #TEST: temp
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -1018,8 +1017,6 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         data=form_input,
     )
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
-    log.warning(f"`POST_response`: {POST_response}")  #TEST: temp
-    log.warning(f"`POST_response.__dict__`: {POST_response.__dict__}")  #TEST: temp
     assert POST_response.status == "200 OK"
     assert file_path.is_file()
     assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same
