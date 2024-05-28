@@ -913,7 +913,7 @@ def construct_IR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('/non-COUNTER-downloads/', defaults={'testing': ""})
+@bp.route('/non-COUNTER-downloads/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/non-COUNTER-downloads/<string:testing>', methods=['GET', 'POST'])
 def download_non_COUNTER_usage(testing):
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
