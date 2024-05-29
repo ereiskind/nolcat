@@ -18,7 +18,6 @@ from .forms import *
 from ..app import *
 from ..models import *
 from ..statements import *
-from tests.conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 
 log = logging.getLogger(__name__)
 

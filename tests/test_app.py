@@ -14,7 +14,6 @@ import sqlalchemy
 import flask
 
 # `conftest.py` fixtures are imported automatically
-from conftest import PATH_WITHIN_BUCKET_FOR_TESTS
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
