@@ -213,17 +213,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    #TEST: temp
-    log.warning(f"`POST_response: {POST_response}")
-    try:
-        log.warning(f"`POST_response.__dict__`:\n{POST_response.__dict__}")
-    except:
-        pass
-    try:
-        log.warning(f"`POST_response.var()`:\n{POST_response.var()}")
-    except:
-        pass
-    #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
@@ -316,17 +305,6 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    #TEST: temp
-    log.warning(f"`POST_response: {POST_response}")
-    try:
-        log.warning(f"`POST_response.__dict__`:\n{POST_response.__dict__}")
-    except:
-        pass
-    try:
-        log.warning(f"`POST_response.var()`:\n{POST_response.var()}")
-    except:
-        pass
-    #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
