@@ -149,7 +149,10 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     
-    page = client.get('/ingest_usage/harvest')
+    page = client.get(
+        '/ingest_usage/harvest',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -200,7 +203,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         'end_date': most_recent_month_with_usage[1],
     }
     POST_response = client.post(
-        '/ingest_usage/harvest',
+        f'/ingest_usage/harvest/{PATH_WITHIN_BUCKET_FOR_TESTS}',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
@@ -220,7 +223,10 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()` and `query_database()`
     
-    page = client.get('/ingest_usage/upload-non-COUNTER')
+    page = client.get(
+        '/ingest_usage/upload-non-COUNTER',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -288,7 +294,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Subsection: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
-        '/ingest_usage/upload-non-COUNTER',
+        f'/ingest_usage/upload-non-COUNTER/{PATH_WITHIN_BUCKET_FOR_TESTS}',
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,

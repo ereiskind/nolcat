@@ -22,8 +22,6 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Update ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`` to use alternate value in variable route
-* Update ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to use alternate value in variable route
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``, incorporating alternate value in variable route
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
