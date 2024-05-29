@@ -132,18 +132,15 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-#ToDo: @bp.route('/harvest/', defaults={'testing': ""})
-#ToDo: @bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
-#ToDo: def harvest_SUSHI_statistics(testing):
-@bp.route('/harvest', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics():
+@bp.route('/harvest/', defaults={'testing': ""})
+@bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
+def harvest_SUSHI_statistics(testing):
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
 
     Args:
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
-        #ToDo: testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
@@ -156,8 +153,7 @@ def harvest_SUSHI_statistics():
             flash(database_query_fail_statement(statistics_source_options))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
-        return render_template('ingest_usage/make-SUSHI-call.html', form=form)
-        #ToDo: return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
+        return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
         df = query_database(
             query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
@@ -184,23 +180,22 @@ def harvest_SUSHI_statistics():
             report_to_harvest = form.report_to_harvest.data
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
-        #ToDo: if testing == "":
-        #ToDo:     bucket_path = PATH_WITHIN_BUCKET
-        #ToDo: elif testing == "test":
-        #ToDo:     bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
-        #ToDo: else:
-        #ToDo:     message = f"The dynamic route featured the invalid value {testing}."
-        #ToDo:     log.error(message)
-        #ToDo:     flash(message)
-        #ToDo:     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
-            #ToDo: result_message, flash_messages = statistics_source.collect_usage_statistics(
-            #ToDo:     begin_date,
-            #ToDo:     end_date,
-            #ToDo:     report_to_harvest,
-            #ToDo:     bucket_path,
-            #ToDo: )
+            result_message, flash_messages = statistics_source.collect_usage_statistics(
+                begin_date,
+                end_date,
+                report_to_harvest,
+                bucket_path,
+            )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
                 flash(flash_messages)

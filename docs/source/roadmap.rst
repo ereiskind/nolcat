@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Update ``ingest_usage.views.harvest_SUSHI_statistics()`` to use variable route with default
 * Update ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`` to use alternate value in variable route
 * Update ``ingest_usage.views.upload_non_COUNTER_reports()`` to use variable route with default
 * Update ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to use alternate value in variable route
