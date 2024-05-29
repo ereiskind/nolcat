@@ -203,7 +203,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         'end_date': most_recent_month_with_usage[1],
     }
     POST_response = client.post(
-        f'/ingest_usage/harvest/{PATH_WITHIN_BUCKET_FOR_TESTS}',
+        f'/ingest_usage/harvest/test',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
@@ -305,7 +305,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Subsection: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
-        f'/ingest_usage/upload-non-COUNTER/{PATH_WITHIN_BUCKET_FOR_TESTS}',
+        f'/ingest_usage/upload-non-COUNTER/test',
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
