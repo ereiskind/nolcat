@@ -477,7 +477,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-4/', defaults={'testing': ""})
+@bp.route('/initialization-page-4/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/initialization-page-4/<string:testing>', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage(testing):
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.

@@ -132,7 +132,7 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/harvest/', defaults={'testing': ""})
+@bp.route('/harvest/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
 def harvest_SUSHI_statistics(testing):
     """A page for initiating R5 SUSHI usage statistics harvesting.
@@ -214,7 +214,7 @@ def harvest_SUSHI_statistics(testing):
         return abort(404)
 
 
-@bp.route('/upload-non-COUNTER/', defaults={'testing': ""})
+@bp.route('/upload-non-COUNTER/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
 def upload_non_COUNTER_reports(testing):
     """The route function for uploading files containing non-COUNTER data into the container.
