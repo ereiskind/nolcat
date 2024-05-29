@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2024-05-24 ##########
+########## Passing 2024-05-29 ##########
 
 import pytest
 import logging
@@ -1005,7 +1005,10 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
 
 
 def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3):
-    """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
+    """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form.
+    
+    The fixtures creating the annualUsageCollectionTracking instance called and creating the file that will be downloaded from S3 are separate, so the file extension, which is derived from the former, may not match the file, which comes from the latter.
+    """
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
