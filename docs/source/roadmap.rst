@@ -23,7 +23,6 @@ Planned Iterations
 Iteration 2: Add Historical Data
 ================================
 * Update ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`` to use alternate value in variable route
-* Update ``ingest_usage.views.upload_non_COUNTER_reports()`` to use variable route with default
 * Update ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to use alternate value in variable route
 * Update ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()`` to use variable route with default
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``, incorporating alternate value in variable route

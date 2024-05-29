@@ -214,16 +214,13 @@ def harvest_SUSHI_statistics(testing):
         return abort(404)
 
 
-#ToDo: @bp.route('/upload-non-COUNTER/', defaults={'testing': ""})
-#ToDo: @bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
-#ToDo: def upload_non_COUNTER_reports(testing):
-@bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports():
+@bp.route('/upload-non-COUNTER/', defaults={'testing': ""})
+@bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
+def upload_non_COUNTER_reports(testing):
     """The route function for uploading files containing non-COUNTER data into the container.
 
     Args:
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
-        #ToDo: testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
@@ -254,8 +251,7 @@ def upload_non_COUNTER_reports():
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
-        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
-        #ToDo: return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
+        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
         df = query_database(
@@ -296,17 +292,16 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
-        #ToDo: if testing == "":
-        #ToDo:     bucket_path = PATH_WITHIN_BUCKET
-        #ToDo: elif testing == "test":
-        #ToDo:     bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
-        #ToDo: else:
-        #ToDo:     message = f"The dynamic route featured the invalid value {testing}."
-        #ToDo:     log.error(message)
-        #ToDo:     flash(message)
-        #ToDo:     return redirect(url_for('view_usage.view_usage_homepage'))
-        #ToDo: response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
