@@ -708,6 +708,9 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
         The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
 
+        Note:
+            Log statements in this inner function don't got to stdout regardless of level. Unfortunately, the `yield` value in the outer function lacks methods and attributes suitable for logging to stdout.
+
         Args:
             field_data (tuple): a tuple containing the "usage_files-{i}-usage_file" value used as the ID for the individual fields in 'initialization/initial-data-upload-4.html' and the corresponding option from the `create_AUCT_SelectField_options()` function, another tuple consisting of a tuple with the primary key values from `annualUsageCollectionTracking` and a string showing the matching statistics source name and fiscal year
 
@@ -718,27 +721,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         file = random.choice(file_options)
         new_file = tmp_path / file.name
         copy(file, new_file)
-        log.warning(f"Created copy of file for upload at {new_file}: {new_file.is_file()}")  #TEST: temp level, should be `debug`
         for_removal.append(new_file)
         if new_file.suffix == ".xlsx":
             return {field_data[0]: (new_file.name, open(new_file, 'rb'))}
         else:
             return {field_data[0]: new_file.name}
 
-    #TEST: temp
-    try:
-        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.__dict__`:\n{_files_for_test_upload_historical_non_COUNTER_usage.__dict__}")
-    except:
-        pass
-    try:
-        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.dir()`:\n{_files_for_test_upload_historical_non_COUNTER_usage.dir()}")
-    except:
-        pass
-    try:
-        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.var()`:\n{_files_for_test_upload_historical_non_COUNTER_usage.var()}")
-    except:
-        pass
-    #TEST: end temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
