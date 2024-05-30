@@ -769,11 +769,13 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = ((f"usage_files-{i}-usage_file", AUCT_options) for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields))
+    log.warning(f"Uploads possible for the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `debug`
     fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, k=random.randint(2, df.shape[0]))
-    log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
-    form_submissions_fields = files_for_test_upload_historical_non_COUNTER_usage  #ToDo: This is the variable saving the value returned by the fixture
-    #ToDo: For each record in `fields_being_uploaded`
-        #ToDo: Call `files_for_test_upload_historical_non_COUNTER_usage`
+    log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
+    form_submissions_fields = []
+    for field in fields_being_uploaded:
+        form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(field))
+        # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields,
