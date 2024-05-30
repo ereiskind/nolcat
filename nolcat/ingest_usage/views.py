@@ -302,15 +302,6 @@ def upload_non_COUNTER_reports(testing):
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
-        #TEST: temp
-        log.warning(f"`upload_nonstandard_usage_file_success_regex()`: {upload_nonstandard_usage_file_success_regex()}")
-        temp = re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')
-        log.warning(f"`re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')`: {temp}")
-        log.warning(f"`upload_nonstandard_usage_file_success_regex() == re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')`: {upload_nonstandard_usage_file_success_regex() == temp}")
-        log.warning(f"`upload_nonstandard_usage_file_success_regex().match(response)`: {upload_nonstandard_usage_file_success_regex().match(response)}")
-        log.warning(f"`re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?').match(response)`: {temp.match(response)}")
-        log.warning(f"`re.match(r'', response)`: {re.match(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?', response)}")
-        #TEST: end temp
         if upload_nonstandard_usage_file_success_regex().match(response) is None:
             #ToDo: Do any other actions need to be taken?
             log.error(response)
