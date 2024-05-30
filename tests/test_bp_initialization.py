@@ -642,7 +642,10 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
-    page = client.get('/initialization/initialization-page-4')
+    page = client.get(
+        '/initialization/initialization-page-4',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
