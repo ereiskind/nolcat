@@ -290,7 +290,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         encoding='utf-8',
     )
 
-    #Section: Confirm File Upload to S3
+    #Section: Confirm HTTP POST
     #Subsection: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
@@ -311,7 +311,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert HTML_file_page_title in POST_response.data
     assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
     
-    #Section: Confirm Database Update
+    #Section: Confirm Successful Database Update
     df = query_database(
         query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
@@ -319,7 +319,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert df.at[0,'collection_status'] == 'Collection complete'
     assert df.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
 
-    #Section: Check S3 for File
+    #Section: Confirm Successful S3 Upload
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
