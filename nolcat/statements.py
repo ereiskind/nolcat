@@ -50,13 +50,17 @@ def format_list_for_stdout(stdout_list):
 def remove_IDE_spacing_from_statement(statement):
     """Removes from a SQL statement the newlines and spaces used to for readability in the IDE.
 
+    The `view_usage.views` module has route functions that add AND and GROUP BY clauses to SQL statements on new lines but without spaces in front; the non-regex lines are designed to remove those newlines.
+
     Args:
         statement (str): a SQL statement
 
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
-    return " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " AND ".join(statement.split("\nAND ")).strip()
+    return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
 
 
 #Section: General Statements
@@ -225,7 +229,7 @@ def upload_file_to_S3_bucket_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into the .+ S3 bucket\.?")
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
 
 
 def upload_nonstandard_usage_file_success_regex():
@@ -236,7 +240,7 @@ def upload_nonstandard_usage_file_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into the .+ S3 bucket and successfully performed the update (.+)\.", flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
 
 
 #Section: Database Interactions
@@ -304,13 +308,17 @@ def database_query_fail_statement(error_message, value_type="load requested page
 def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
 
+    The repetition of the statement in both a print statement and as the return value ensures the SQL UPDATE statement isn't truncated, which would happen if the statement only went to stdout via log statements. 
+
     Args:
         update_statement (str): the SQL update statement
 
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+    message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+    print(message)
+    return message
 
 
 def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):

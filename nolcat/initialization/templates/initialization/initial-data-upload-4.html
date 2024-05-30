@@ -20,7 +20,7 @@
     <ol>
         <li>Locate the folder from step 6.2 where all of the non-COUNTER files with the appropriate naming convention were saved.</li>
         <li>For each of the file selection fields below, select the non-COUNTER file corresponding to the given statistics source and fiscal year.
-            <form action="{{ url_for('initialization.upload_historical_non_COUNTER_usage') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url_for('initialization.upload_historical_non_COUNTER_usage', testing=testing) }}" method="POST" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 {% for file in form.usage_files %}
                     <label>

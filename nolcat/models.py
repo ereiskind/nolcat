@@ -812,7 +812,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -821,6 +821,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -839,7 +840,7 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call(bucket_path)
         all_flashed_statements['status'] = flash_message_list
         if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
@@ -880,6 +881,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters,
                 usage_start_date,
                 usage_end_date,
+                bucket_path=bucket_path,
             )
             all_flashed_statements[report_to_harvest] = flash_message_list
             if isinstance(SUSHI_data_response, str):
@@ -890,7 +892,7 @@ class StatisticsSources(db.Model):
             #Section: Get List of Resources
             #Subsection: Make API Call
             log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call(bucket_path)
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
@@ -961,6 +963,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters,
                     usage_start_date,
                     usage_end_date,
+                    bucket_path=bucket_path,
                 )
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
@@ -991,7 +994,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date):
+    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date, bucket_path=PATH_WITHIN_BUCKET):
         """Makes a single API call for a customizable report with all possible attributes.
 
         Args:
@@ -1000,6 +1003,7 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
             start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -1017,7 +1021,7 @@ class StatisticsSources(db.Model):
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
                 SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
                 if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
@@ -1043,10 +1047,11 @@ class StatisticsSources(db.Model):
                 if isinstance(df, str):
                     message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                     log.warning(message)
-                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
+                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
                     logging_message = save_unconverted_data_via_upload(
-                        data=SUSHI_data_response,
-                        file_name_stem=file_name_stem,
+                        SUSHI_data_response,
+                        file_name_stem,
+                        bucket_path,
                     )
                     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                         message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
@@ -1069,7 +1074,7 @@ class StatisticsSources(db.Model):
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
             if isinstance(SUSHI_data_response, str):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
@@ -1077,10 +1082,11 @@ class StatisticsSources(db.Model):
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)
-                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
+                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
                 logging_message = save_unconverted_data_via_upload(
-                    data=SUSHI_data_response,
-                    file_name_stem=file_name_stem,
+                    SUSHI_data_response,
+                    file_name_stem,
+                    bucket_path,
                 )
                 if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                     message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
@@ -1138,7 +1144,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1147,12 +1153,18 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
-        df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
+        df, flash_statements = self._harvest_R5_SUSHI(
+            usage_start_date,
+            usage_end_date,
+            report_to_harvest,
+            bucket_path,
+            )
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
@@ -1556,10 +1568,13 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self):
+    def collect_annual_usage_statistics(self, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+
+        Args:
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -1599,7 +1614,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path)
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
@@ -1637,16 +1652,17 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self, file):
+    def upload_nonstandard_usage_file(self, file, bucket_path=PATH_WITHIN_BUCKET):
         """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
 
         Args:
             file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
 
         Returns:
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
         """
-        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
+        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` for the file {file}.")
         #Section: Create S3 File Name
         try:
             file_path = Path(file)
@@ -1658,7 +1674,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.error(message)
             return message
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
-        log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+        log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
 
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
@@ -1666,6 +1682,7 @@ class AnnualUsageCollectionTracking(db.Model):
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             file_name,
+            bucket_path,
         )
         temp_file_path.unlink()
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
@@ -1696,23 +1713,21 @@ class AnnualUsageCollectionTracking(db.Model):
     
 
     @hybrid_method
-    def download_nonstandard_usage_file(self, web_app_download_folder, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+    def download_nonstandard_usage_file(self, web_app_download_folder, bucket_path=PATH_WITHIN_BUCKET):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
             web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
-            client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
-            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
         """
-        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
+        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path + self.usage_file_path}.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        log.debug(file_IO_statement(self.usage_file_path, f"S3 bucket {BUCKET_NAME}", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
-        client.download_file(
-            Bucket=bucket,
+        log.debug(file_IO_statement(self.usage_file_path, f"S3 location `{BUCKET_NAME}/{bucket_path}`", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
         )

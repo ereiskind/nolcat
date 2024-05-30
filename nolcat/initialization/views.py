@@ -477,11 +477,15 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-4', methods=['GET', 'POST'])
-def upload_historical_non_COUNTER_usage():
+@bp.route('/initialization-page-4/', defaults={'testing': ""}, methods=['GET', 'POST'])
+@bp.route('/initialization-page-4/<string:testing>', methods=['GET', 'POST'])
+def upload_historical_non_COUNTER_usage(testing):
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
+
+    Args:
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     non_COUNTER_files_needed = query_database(
@@ -513,7 +517,7 @@ def upload_historical_non_COUNTER_usage():
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
-        return render_template('initialization/initial-data-upload-4.html', form=form)
+        return render_template('initialization/initial-data-upload-4.html', form=form, testing=testing)
     elif form.validate_on_submit():
         flash_error_messages = dict()
         files_submitted_for_upload = 0
@@ -521,7 +525,7 @@ def upload_historical_non_COUNTER_usage():
         for file in form.usage_files.data:
             if file['usage_file']:
                 files_submitted_for_upload += 1
-                statistics_source_ID, fiscal_year = re.fullmatch(r"(test_)?(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(2, 3)  # The first group allows files created by `tests.test_bp_initialization.files_for_test_upload_historical_non_COUNTER_usage()` to pass
+                statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
                 df = query_database(
                     query=f"""
                         SELECT
@@ -559,7 +563,16 @@ def upload_historical_non_COUNTER_usage():
                     notes=df.at[0,'notes'],
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
-                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'])
+                if testing == "":
+                    bucket_path = PATH_WITHIN_BUCKET
+                elif testing == "test":
+                    bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+                else:
+                    message = f"The dynamic route featured the invalid value {testing}."
+                    log.error(message)
+                    flash(message)
+                    return redirect(url_for('view_usage.view_usage_homepage'))
+                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)
                     files_uploaded += 1

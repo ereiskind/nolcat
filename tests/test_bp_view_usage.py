@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2024-05-16 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -68,9 +68,8 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog):
+def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
     form_input = {
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
         'open_in_Excel': False,
@@ -88,7 +87,6 @@ def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog
 
 def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     query_options = choice((
@@ -268,7 +266,6 @@ def PR_parameters(request):
 
 def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = PR_parameters
@@ -303,7 +300,10 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -404,7 +404,6 @@ def DR_parameters(request):
 
 def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_DR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = DR_parameters
@@ -439,7 +438,10 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -634,7 +636,6 @@ def TR_parameters(request):
 
 def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_TR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = TR_parameters
@@ -669,7 +670,10 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -879,7 +883,6 @@ def IR_parameters(request):
 
 def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_IR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = IR_parameters
@@ -914,14 +917,15 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
-    assert_frame_equal(CSV_df, database_df)
+    assert_frame_equal(
+        CSV_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+        database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
+    )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def construct_PR_query_with_wizard_without_string_match(client, header_value, caplog):
+def construct_PR_query_with_wizard_without_string_match(client, header_value):
     """Tests using the PR query wizard with a string that won't return any matches."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
-
     form_input = {
         'begin_date': date.fromisoformat('2019-01-01'),
         'end_date': date.fromisoformat('2019-12-31'),
@@ -944,7 +948,6 @@ def construct_PR_query_with_wizard_without_string_match(client, header_value, ca
         ),
         'open_in_Excel': False,
     }
-
     POST_response = client.post(
         '/view_usage/query-wizard/PR',
         follow_redirects=True,
@@ -958,9 +961,11 @@ def construct_PR_query_with_wizard_without_string_match(client, header_value, ca
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
  
-    page = client.get('/view_usage/non-COUNTER-downloads')
+    page = client.get(
+        '/view_usage/non-COUNTER-downloads',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -999,22 +1004,21 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):
-    """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3):
+    """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form.
     
+    The fixtures creating the annualUsageCollectionTracking instance called and creating the file that will be downloaded from S3 are separate, so the file extension, which is derived from the former, may not match the file, which comes from the latter.
+    """
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
     POST_response = client.post(
-        '/view_usage/non-COUNTER-downloads',
+        '/view_usage/non-COUNTER-downloads/test',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
-    #ToDo: Read file at file_path
-    
     assert POST_response.status == "200 OK"
     assert file_path.is_file()
     assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same

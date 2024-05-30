@@ -22,7 +22,7 @@ Planned Iterations
 
 Iteration 2: Add Historical Data
 ================================
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
+* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``, incorporating alternate value in variable route
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
@@ -36,6 +36,8 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
+* Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
+* Write ``tests.test_app.test_COUNTER_reports_offered_by_statistics_source()``
 
 Basic Enhancement Iterations
 ****************************

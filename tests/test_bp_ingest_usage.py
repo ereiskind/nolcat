@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-05-16 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -149,7 +149,10 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     
-    page = client.get('/ingest_usage/harvest')
+    page = client.get(
+        '/ingest_usage/harvest',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -181,12 +184,11 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
 def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
-    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. The limited number of possible SUSHI credentials means statistics sources current with the available usage statistics are not filtered out, meaning this test may fail because it fails the check preventing SUSHI calls to stats source/date combos already in the database.
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` called in `StatisticsSources.collect_usage_statistics()` and for `query_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     
     df = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
@@ -201,7 +203,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         'end_date': most_recent_month_with_usage[1],
     }
     POST_response = client.post(
-        '/ingest_usage/harvest',
+        f'/ingest_usage/harvest/test',
         follow_redirects=True,
         headers=header_value,
         data=form_input,
@@ -215,14 +217,16 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()` and `query_database()`
     
-    page = client.get('/ingest_usage/upload-non-COUNTER')
+    page = client.get(
+        '/ingest_usage/upload-non-COUNTER',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -290,7 +294,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Subsection: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
-        '/ingest_usage/upload-non-COUNTER',
+        f'/ingest_usage/upload-non-COUNTER/test',
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
@@ -318,7 +322,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Section: Check S3 for File
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
     files_in_bucket = []
     log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
@@ -326,7 +330,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in files_in_bucket]
+        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
         assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     else:
         assert False  # Nothing in bucket

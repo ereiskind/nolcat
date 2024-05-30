@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-04-19 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -642,7 +642,10 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
-    page = client.get('/initialization/initialization-page-4')
+    page = client.get(
+        '/initialization/initialization-page-4',
+        follow_redirects=True,
+    )
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -721,7 +724,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=PATH_WITHIN_BUCKET + file.name
+                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file.name
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
@@ -762,7 +765,7 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
     #ToDo: Place all the above in a MultipartEncoder
-    #ToDo: `client.post` to '/initialization/initialization-page-4'
+    #ToDo: `client.post` to '/initialization/initialization-page-4/test'
 
     #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -785,7 +788,7 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     #ToDo: If possible, confirm contents of files match those of files of origin
     #list_objects_response = s3_client.list_objects_v2(
     #    Bucket=BUCKET_NAME,
-    #    Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+    #    Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     #)
     #files_in_bucket = []
     #log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
@@ -793,7 +796,7 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     #if bucket_contents:
     #    for contents_dict in bucket_contents:
     #        files_in_bucket.append(contents_dict['Key'])
-    #    files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in files_in_bucket]
+    #    files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     #else:
     #    assert False  # Nothing in bucket

@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-05-14 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -187,7 +187,6 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     with client:
@@ -197,6 +196,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -214,11 +214,9 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range starts with the last month covered by the test data; for efficiency, the date range only goes another two months past that point.
     """
-    #TEST: Error `TypeError: cannot unpack non-iterable NoneType object` raised for statistics_source_ID 1 and report type DR, but other combinations were fine; no logs requested to stdout made it impossible to find the source of the problem
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     with client:
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
@@ -226,6 +224,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -246,9 +245,12 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     with client:
-        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+            most_recent_month_with_usage[0],
+            most_recent_month_with_usage[1],
+            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -261,10 +263,14 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        choice(reports_offered_by_StatisticsSource_fixture),
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -277,7 +283,12 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
     end_date = begin_date - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
     end_date = last_day_of_month(end_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        choice(reports_offered_by_StatisticsSource_fixture),
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
@@ -317,11 +328,14 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     Yields:
         tuple: a dataframe containing all of the R5 COUNTER data; a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
     """
-    caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
-    caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
-    yield StatisticsSources_fixture._harvest_R5_SUSHI(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    yield StatisticsSources_fixture._harvest_R5_SUSHI(
+        month_before_month_like_most_recent_month_with_usage[0],
+        month_before_month_like_most_recent_month_with_usage[1],
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
@@ -333,9 +347,12 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
-    SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
+        month_before_month_like_most_recent_month_with_usage[0],
+        month_before_month_like_most_recent_month_with_usage[1],
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below

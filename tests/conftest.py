@@ -20,7 +20,7 @@ from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard beca
 from nolcat.app import create_app
 from nolcat.app import configure_logging
 from nolcat.app import s3_client
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.models import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
@@ -489,16 +489,14 @@ def remove_file_from_S3(path_to_sample_file):
         None
     """
     log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
-    file_name = f"test_{path_to_sample_file.name}"
-    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
 @pytest.fixture
@@ -547,7 +545,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
@@ -602,10 +600,11 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
-    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}`"))
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
@@ -614,7 +613,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
@@ -721,7 +720,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         URL,
         "reports",
         credentials,
-    ).make_SUSHI_call()
+    ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     if isinstance(response[0], str):
         pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))

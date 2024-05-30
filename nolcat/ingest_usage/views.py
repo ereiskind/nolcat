@@ -132,11 +132,15 @@ def upload_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/harvest', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics():
+@bp.route('/harvest/', defaults={'testing': ""}, methods=['GET', 'POST'])
+@bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
+def harvest_SUSHI_statistics(testing):
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
+
+    Args:
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
@@ -149,7 +153,7 @@ def harvest_SUSHI_statistics():
             flash(database_query_fail_statement(statistics_source_options))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
-        return render_template('ingest_usage/make-SUSHI-call.html', form=form)
+        return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
         df = query_database(
             query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
@@ -176,8 +180,22 @@ def harvest_SUSHI_statistics():
             report_to_harvest = form.report_to_harvest.data
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = statistics_source.collect_usage_statistics(
+                begin_date,
+                end_date,
+                report_to_harvest,
+                bucket_path,
+            )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
                 flash(flash_messages)
@@ -196,9 +214,14 @@ def harvest_SUSHI_statistics():
         return abort(404)
 
 
-@bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports():
-    """The route function for uploading files containing non-COUNTER data into the container."""
+@bp.route('/upload-non-COUNTER/', defaults={'testing': ""}, methods=['GET', 'POST'])
+@bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
+def upload_non_COUNTER_reports(testing):
+    """The route function for uploading files containing non-COUNTER data into the container.
+
+    Args:
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
+    """
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
@@ -228,7 +251,7 @@ def upload_non_COUNTER_reports():
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
-        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
+        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
         df = query_database(
@@ -269,8 +292,17 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
-        if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        if upload_nonstandard_usage_file_success_regex().match(response) is None:
             #ToDo: Do any other actions need to be taken?
             log.error(response)
             flash(response)
