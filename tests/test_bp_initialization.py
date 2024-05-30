@@ -731,11 +731,11 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_non_COUNTER_usage, caplog):
+def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
     """Tests uploading the files with non-COUNTER usage statistics."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
 
-    #Section: Submit Forms via HTTP POST
+    #Section: Create Form Submission
     df = query_database(
         query=f"""
             SELECT
@@ -761,31 +761,60 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
+    list_of_AUCT_submission_fields = ((f"usage_files-{i}-usage_file", AUCT_options) for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields))
     fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, k=random.randint(2, df.shape[0]))
     log.debug(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
-    #ToDo: For each record selected above, create a key-value pair representing the submission field and the file to be loaded into it--use "factory as fixture" for this
-    #ToDo: Place all the above in a MultipartEncoder
-    #ToDo: `client.post` to '/initialization/initialization-page-4/test'
+    form_submissions_fields = files_for_test_upload_historical_non_COUNTER_usage  #ToDo: This is the variable saving the value returned by the fixture
+    #ToDo: For each record in `fields_being_uploaded`
+        #ToDo: Call `files_for_test_upload_historical_non_COUNTER_usage`
+    log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
+    form_submissions = MultipartEncoder(
+        fields=form_submissions_fields,
+        encoding='utf-8',
+    )
 
+    #Section: Confirm HTTP POST
+    #Subsection: Submit Files via HTTP POST
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/initialization/initialization-page-4/test',
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )
+    POST_soup = BeautifulSoup(POST_response.data, 'lxml')
+    POST_response_title = POST_soup.head.title
+    POST_response_page_title = POST_soup.body.h1
+    #ToDo: Add searches for displayed loaded data when `nolcat.initialization.views.data_load_complete()`/'initialization/show-loaded-data.html' displays such data
+
+    #Subsection: Assert Statements
     #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     #assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     #assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
+    #assert HTML_file_title == POST_response_title
+    #assert HTML_file_page_title == POST_response_page_title
+    #ToDo: Add assert statements to match searches in above to-do
 
     #Section: Confirm Successful Database Update
-    #ToDo: Get primary keys for records selected above
-    #ToDo: For each record, use query below to get values of fields that should have changed
-    #f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {} AND AUCT_fiscal_year = {};"
-    #ToDo: assert `collection_status` == 'Collection complete'
-    #ToDo: assert usage_file_path is not None
+    #ToDo: Create iterator with primary keys, name of file uploaded for records in `fields_being_uploaded`
+    #ToDo: collection_status_and_file_path = empty group object to save `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values
+    #ToDo: For each item in above iterator
+        #df = query_database(
+        #    query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {} AND AUCT_fiscal_year = {};",
+        #    engine=db.engine,
+        #)
+        #if isinstance(df, str):
+        #    pytest.skip(database_function_skip_statements(df))
+        #ToDo: Add `df.at[0,'collection_status']` and `df.at[0,'usage_file_path']` to `collection_status_and_file_path`
+    #log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")  #TEST: temp level, should be `info`
+    #for record in collection_status_and_file_path:
+        #ToDo: assert `collection_status` == 'Collection complete'
+        #ToDo: assert `usage_file_path` is not None
 
     #Section: Confirm Successful S3 Upload
-    #ToDo: Confirm that files uploaded into S3
-    #ToDo: If possible, confirm contents of files match those of files of origin
     #list_objects_response = s3_client.list_objects_v2(
     #    Bucket=BUCKET_NAME,
     #    Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
@@ -800,3 +829,4 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     #else:
     #    assert False  # Nothing in bucket
+    #ToDo: If possible, confirm contents of files match those of files of origin
