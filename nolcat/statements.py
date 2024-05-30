@@ -308,13 +308,17 @@ def database_query_fail_statement(error_message, value_type="load requested page
 def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
 
+    The repetition of the statement in both a print statement and as the return value ensures the SQL UPDATE statement isn't truncated, which would happen if the statement only went to stdout via log statements. 
+
     Args:
         update_statement (str): the SQL update statement
 
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+    message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+    print(message)
+    return message
 
 
 def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
