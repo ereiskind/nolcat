@@ -141,7 +141,7 @@ Iteration 2: Formalize Documentation
 Iteration 3: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
-* Write ``tests.test_bp_initialization.test_data_load_complete()``
+* Update ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()`` to check for displayed data
 
 Aspirational Iterations
 ***********************

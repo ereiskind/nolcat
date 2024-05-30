@@ -800,9 +800,3 @@ def test_upload_historical_non_COUNTER_usage(files_for_test_upload_historical_no
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     #else:
     #    assert False  # Nothing in bucket
-
-
-def test_data_load_complete():
-    """Tests calling the route and subsequently rendering the page."""
-    #ToDo: Write test once this route contains content for displaying the newly uploaded data in the browser
-    pass
