@@ -773,7 +773,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = ((f"usage_files-{i}-usage_file", AUCT_options) for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields))
-    log.warning(f"Uploads possible for the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `debug`
+    log.warning(f"Uploads possible for the following fields:\n{format_list_for_stdout(list_of_AUCT_submission_fields)}")  #TEST: temp level, should be `debug`
     fields_being_uploaded = random.choices(list_of_AUCT_submission_fields, k=random.randint(2, df.shape[0]))
     log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
     form_submissions_fields = []
