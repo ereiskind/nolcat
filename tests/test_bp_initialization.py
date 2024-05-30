@@ -730,13 +730,15 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
     for file in for_removal:
         file.unlink()
-        try:
-            s3_client.delete_object(
-                Bucket=BUCKET_NAME,
-                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file.name
-            )
-        except botocore.exceptions as error:
-            log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
+        #TEST: temp
+        #try:
+        #    s3_client.delete_object(
+        #        Bucket=BUCKET_NAME,
+        #        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file.name
+        #    )
+        #except botocore.exceptions as error:
+        #    log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
+        #TEST: end temp
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
