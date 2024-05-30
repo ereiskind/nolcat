@@ -240,7 +240,7 @@ def upload_nonstandard_usage_file_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into the .+ S3 bucket and successfully performed the update (.+)\.", flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
 
 
 #Section: Database Interactions
