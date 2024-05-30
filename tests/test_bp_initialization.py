@@ -725,7 +725,20 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         else:
             return {field_data[0]: new_file.name}
 
-    log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage`: {_files_for_test_upload_historical_non_COUNTER_usage}")  #TEST: temp
+    #TEST: temp
+    try:
+        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.__dict__`:\n{_files_for_test_upload_historical_non_COUNTER_usage.__dict__}")
+    except:
+        pass
+    try:
+        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.dir()`:\n{_files_for_test_upload_historical_non_COUNTER_usage.dir()}")
+    except:
+        pass
+    try:
+        log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage.var()`:\n{_files_for_test_upload_historical_non_COUNTER_usage.var()}")
+    except:
+        pass
+    #TEST: end temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
