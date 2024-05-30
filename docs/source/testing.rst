@@ -124,7 +124,7 @@ The preferred setup for testing database interactions involves performing all te
 
   * ``test_bp_initialization``
 
-3. Tests needing data in all relations but ``COUNTERData`` -- *Does NOT load all test data into ``COUNTERData``*
+3. Tests needing data in all relations but ``COUNTERData``
 
   * ``test_bp_ingest_usage``
 

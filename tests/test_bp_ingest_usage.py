@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2024-05-24 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -333,4 +333,4 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
         assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     else:
-        assert False  # Nothing in bucket  #TEST: tests/test_bp_ingest_usage.py:333: AssertionError -- Files being uploaded to PATH_WITHIN_BUCKET, not PATH_WITHIN_BUCKET_FOR_TESTS
+        assert False  # Nothing in bucket

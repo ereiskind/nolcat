@@ -36,6 +36,8 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
+* Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
+* Write ``tests.test_app.test_COUNTER_reports_offered_by_statistics_source()``
 
 Basic Enhancement Iterations
 ****************************
