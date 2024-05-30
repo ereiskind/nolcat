@@ -490,15 +490,13 @@ def remove_file_from_S3(path_to_sample_file):
     """
     log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
     yield None
-    #TEST: temp
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
-    #TEST: end temp
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
+        )
+    except botocore.exceptions as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
 @pytest.fixture
@@ -543,16 +541,14 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     )
     log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
-    #TEST: temp
-    #file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
-    #TEST: end temp
+    file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.fixture
@@ -614,15 +610,13 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
-    #TEST: temp
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
-    #TEST: end temp
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        )
+    except botocore.exceptions as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
