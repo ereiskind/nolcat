@@ -714,16 +714,18 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         Returns:
             dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
         """
-        #ToDo: file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
-        #ToDo: file = random.choice(file_options)
-        #ToDo: new_file = tmp_path / file.name
-        #ToDo: shutil.copy(file, new_file)
-        #ToDo: for_removal.append(new_file)
-        #ToDo: if new_file.suffix == ".xlsx":
-        #ToDo:     return {field_data[0]: (new_file.name, open(new_file, 'rb'))}
-        #ToDo: else:
-        #ToDo:     return {field_data[0]: new_file.name}
+        file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
+        file = random.choice(file_options)
+        new_file = tmp_path / file.name
+        copy(file, new_file)
+        log.warning(f"Created copy of file for upload at {new_file}: {new_file.is_file()}")  #TEST: temp level, should be `debug`
+        for_removal.append(new_file)
+        if new_file.suffix == ".xlsx":
+            return {field_data[0]: (new_file.name, open(new_file, 'rb'))}
+        else:
+            return {field_data[0]: new_file.name}
 
+    log.warning(f"`_files_for_test_upload_historical_non_COUNTER_usage`: {_files_for_test_upload_historical_non_COUNTER_usage}")  #TEST: temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
