@@ -805,14 +805,14 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     #ToDo: Add searches for displayed loaded data when `nolcat.initialization.views.data_load_complete()`/'initialization/show-loaded-data.html' displays such data
 
     #Subsection: Assert Statements
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
-    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    #assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    #assert POST_response.status == "200 OK"
-    #assert HTML_file_title == POST_response_title
-    #assert HTML_file_page_title == POST_response_page_title
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title == POST_response_title
+    assert HTML_file_page_title == POST_response_page_title
     #ToDo: Add assert statements to match searches in above to-do
 
     #Section: Confirm Successful Database Update
