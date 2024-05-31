@@ -524,7 +524,9 @@ def upload_historical_non_COUNTER_usage(testing):
         files_submitted_for_upload = len(form.usage_files.data)
         files_uploaded = 0
         for file in form.usage_files.data:
+            log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
             if file['usage_file']:
+                log.warning(f"`file['usage_file']` (type {type(file['usage_file'])}): {file['usage_file']}")  #TEST: temp
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
                 df = query_database(
                     query=f"""
@@ -574,7 +576,7 @@ def upload_historical_non_COUNTER_usage(testing):
                     return redirect(url_for('view_usage.view_usage_homepage'))
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                    log.debug(response)
+                    log.warning(response)  #TEST: temp level, should be `debug`
                     files_uploaded += 1
                 elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
                     log.warning(response)
