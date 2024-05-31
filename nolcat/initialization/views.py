@@ -522,6 +522,7 @@ def upload_historical_non_COUNTER_usage(testing):
         flash_error_messages = dict()
         files_submitted_for_upload = 0
         files_uploaded = 0
+        log.warning(f"`form.usage_files.data` (type {type(form.usage_files.data)}):\n{form.usage_files.data}")  #TEST: temp
         for file in form.usage_files.data:
             if file['usage_file']:
                 files_submitted_for_upload += 1
