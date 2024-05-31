@@ -779,34 +779,6 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         list(list_of_AUCT_submission_fields.keys()),  # Using brackets to type juggle causes the complete list of keys to be repeated k times
         k=random.randint(2, len(list_of_AUCT_submission_fields)),
     )}
-    #TEST: temp
-    k = random.randint(2, len(list_of_AUCT_submission_fields))  #ToDo: number of items to select
-    log.warning(f"`k` (type {type(k)}): {k}")
-    try:
-        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.keys()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.keys()), k=k)}")
-    except:
-        pass
-    try:
-        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.values()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.values()), k=k)}")
-    except:
-        pass
-    try:
-        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.items()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.items()), k=k)}")
-    except:
-        pass
-    try:
-        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.keys()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.keys()), k=k)}")
-    except:
-        pass
-    try:
-        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.values()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.values()), k=k)}")
-    except:
-        pass
-    try:
-        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.items()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.items()), k=k)}")
-    except:
-        pass
-    #TEST: end temp
     log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
     form_submissions_fields = []
     for field in fields_being_uploaded:
