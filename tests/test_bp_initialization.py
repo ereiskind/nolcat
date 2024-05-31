@@ -486,6 +486,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         },
         encoding='utf-8',
     )
+    log.warning(f"`CSV_files`: {CSV_files}")  #TEST: temp
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
