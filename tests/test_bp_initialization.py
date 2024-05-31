@@ -795,7 +795,6 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         fields=form_submissions_fields,
         encoding='utf-8',
     )
-    log.warning(f"`form_submissions`: {form_submissions}")  #TEST: temp
 
     #Section: Confirm HTTP POST
     #Subsection: Submit Files via HTTP POST

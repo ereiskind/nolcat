@@ -519,7 +519,6 @@ def upload_historical_non_COUNTER_usage(testing):
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form, testing=testing)
     elif form.validate_on_submit():
-        log.warning(f"`form.usage_files` (type {type(form.usage_files)}):\n{form.usage_files}")  #TEST: temp
         log.warning(f"`form.usage_files.data` (type {type(form.usage_files.data)}):\n{form.usage_files.data}")  #TEST: temp
         flash_error_messages = dict()
         files_submitted_for_upload = len(form.usage_files.data)
