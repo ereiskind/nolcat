@@ -132,7 +132,7 @@ class SUSHICallAndResponse:
                 if flash_message_list:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
                     message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
@@ -156,7 +156,7 @@ class SUSHICallAndResponse:
             if flash_message_list:
                 for statement in flash_message_list:
                     messages_to_flash.append(statement)
-                log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
             if flash_message_list and SUSHI_exceptions:
                 message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                 log.warning(message)
@@ -176,7 +176,7 @@ class SUSHICallAndResponse:
                 if flash_message_list:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
                     message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
@@ -461,13 +461,13 @@ class SUSHICallAndResponse:
                             errors_list.add(report_type + SUSHI_exception)
                 if len(errors_list) == 1:  # One error indicating API calls should stop
                     return_value = (errors_list.pop(), flash_messages_list)
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return return_value
                 elif len(errors_list) > 1:  # Multiple errors indicating API calls should stop
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return (f"All of the following errors were raised:\n{format_list_for_stdout(errors_list)}", flash_messages_list)
                 else:  # API calls should continue
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return (None, flash_messages_list)
         else:
             message = f"SUSHI error handling method for a {report_type} accepted {repr(type(error_contents))} data, which is an invalid type."

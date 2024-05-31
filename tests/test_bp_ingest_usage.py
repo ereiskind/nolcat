@@ -47,7 +47,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
-    log.debug(f"The files being uploaded to the database are:\n{form_submissions}")
+    log.debug(f"The files being uploaded to the database are:\n{format_list_for_stdout(form_submissions)}")
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',

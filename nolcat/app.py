@@ -506,21 +506,21 @@ def check_if_data_already_in_COUNTERData(df):
     #Section: Get the Statistics Sources, Report Types, and Dates
     #Subsection: Get the Statistics Sources
     statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
-    log.debug(f"All statistics sources as a list:\n{statistics_sources_in_dataframe}")
+    log.debug(f"All statistics sources as a list:\n{format_list_for_stdout(statistics_sources_in_dataframe)}")
     statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
-    log.debug(f"All statistics sources as a deduped list:\n{statistics_sources_in_dataframe}")
+    log.debug(f"All statistics sources as a deduped list:\n{format_list_for_stdout(statistics_sources_in_dataframe)}")
 
     #Subsection: Get the Report Types
     report_types_in_dataframe = df['report_type'].tolist()
-    log.debug(f"All report types as a list:\n{report_types_in_dataframe}")
+    log.debug(f"All report types as a list:\n{format_list_for_stdout(report_types_in_dataframe)}")
     report_types_in_dataframe = list(set(report_types_in_dataframe))
-    log.debug(f"All report types as a deduped list:\n{report_types_in_dataframe}")
+    log.debug(f"All report types as a deduped list:\n{format_list_for_stdout(report_types_in_dataframe)}")
 
     #Subsection: Get the Dates
     dates_in_dataframe = df['usage_date'].tolist()
-    log.debug(f"All usage dates as a list:\n{dates_in_dataframe}")
+    log.debug(f"All usage dates as a list:\n{format_list_for_stdout(dates_in_dataframe)}")
     dates_in_dataframe = list(set(dates_in_dataframe))
-    log.debug(f"All usage dates as a deduped list:\n{dates_in_dataframe}")
+    log.debug(f"All usage dates as a deduped list:\n{format_list_for_stdout(dates_in_dataframe)}")
 
     #Section: Check Database for Combinations of Above
     combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
