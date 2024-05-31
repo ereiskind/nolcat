@@ -845,7 +845,6 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         pass
 
     log.warning(f"`set(d1.keys()) | set(d2.keys())`: {set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}")
-    log.warning(f"`set(d1.keys() + d2.keys())`: {set(fields_being_uploaded.keys() + form_submissions_fields.keys())}")
     log.warning(f"`set([d1.keys()] + [d2.keys()])`: {set([fields_being_uploaded.keys()] + [form_submissions_fields.keys()])}")
     log.warning(f"`set(list(d1.keys()) + list(d2.keys()))`: {set(list(fields_being_uploaded.keys()) + list(form_submissions_fields.keys()))}")
     log.warning(f"`(dic1.keys() | dic2.keys())`: {(fields_being_uploaded.keys() | form_submissions_fields.keys())}")
