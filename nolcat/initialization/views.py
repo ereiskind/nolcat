@@ -584,7 +584,7 @@ def upload_historical_non_COUNTER_usage(testing):
                 else:
                     log.warning(response)
                     flash_error_messages[file['usage_file'].filename] = response
-        log.info(f"Successfully uploaded {files_submitted_for_upload} of {files_uploaded} files.")
+        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload}files.")
         return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)
