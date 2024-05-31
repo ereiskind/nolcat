@@ -726,10 +726,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
     #TEST: temp
     log.warning(f"`for_removal`: {for_removal}")
-    try:
-        log.warning(f"Contents of `/tmp/pytest-of-root`:\n{format_list_for_stdout(Path('/tmp/pytest-of-root').iterdir())}")
-    except Exception as error:
-        log.warning(f"`Path('/tmp/pytest-of-root').iterdir())` raised {error}")
+    for folder, subfolders, files in Path('/tmp/pytest-of-root').walk():
+        log.warning(f"For the folder {folder}:")
+        for subfolder in subfolders:
+            log.warning(f"Folder {folder} - subfolder {subfolder}")
+        for file in files:
+            log.warning(f"Folder {folder} - file {file}")
     #TEST: end temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
