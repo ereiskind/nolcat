@@ -706,7 +706,13 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     caplog.set_level(logging.INFO, logger='botocore')
     
     for_removal = []
-    log.critical("test in outer fixture")  #TEST: temp
+    #TEST: temp
+    log.critical(f"critical, outer function")
+    log.error(f"error, outer function")
+    log.warning(f"warning, outer function")
+    log.info(f"info, outer function")
+    log.debug(f"debug, outer function")
+    #TEST: end temp
 
     def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
         """An inner fixture function returning a dictionary needed for MultipartEncoder to simulate uploading a randomly selected file to a given FileField.
@@ -722,7 +728,13 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         Returns:
             dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
         """
-        log.critical("test in inner fixture")  #TEST: temp
+        #TEST: temp
+        log.critical(f"critical, inner function")
+        log.error(f"error, inner function")
+        log.warning(f"warning, inner function")
+        log.info(f"info, inner function")
+        log.debug(f"debug, inner function")
+        #TEST: end temp
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
         new_file = tmp_path / file.name
