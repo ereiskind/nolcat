@@ -722,6 +722,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
+        log.info(f"Will remove {file}")  #TEST: temp
         #TEST: temp
         #try:
         #    s3_client.delete_object(
