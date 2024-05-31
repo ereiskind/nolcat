@@ -828,10 +828,23 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     except:
         pass
 
-    log.warning(f"`set(d1.keys()) | set(d2.keys())`: {set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}")
-    log.warning(f"`set([d1.keys()] + [d2.keys()])`: {set([fields_being_uploaded.keys()] + [form_submissions_fields.keys()])}")
-    log.warning(f"`set(list(d1.keys()) + list(d2.keys()))`: {set(list(fields_being_uploaded.keys()) + list(form_submissions_fields.keys()))}")
-    log.warning(f"`(dic1.keys() | dic2.keys())`: {(fields_being_uploaded.keys() | form_submissions_fields.keys())}")
+    try:
+        log.warning(f"`set(d1.keys()) | set(d2.keys())`: {set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}")
+    except:
+        pass
+    try:
+        log.warning(f"`set([d1.keys()] + [d2.keys()])`: {set([fields_being_uploaded.keys()] + [form_submissions_fields.keys()])}")
+    except:
+        pass
+    try:
+        log.warning(f"`set(list(d1.keys()) + list(d2.keys()))`: {set(list(fields_being_uploaded.keys()) + list(form_submissions_fields.keys()))}")
+    except:
+        pass
+    try:
+        log.warning(f"`(dic1.keys() | dic2.keys())`: {(fields_being_uploaded.keys() | form_submissions_fields.keys())}")
+    except:
+        pass
+
     try:
         x = {k: (d[k] for d in (fields_being_uploaded, form_submissions_fields) if k in d) for k in set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}
         log.warning(f"Try 2:\n{x}")
