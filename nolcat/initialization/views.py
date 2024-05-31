@@ -522,11 +522,10 @@ def upload_historical_non_COUNTER_usage(testing):
         log.warning(f"`form.usage_files` (type {type(form.usage_files)}):\n{form.usage_files}")  #TEST: temp
         log.warning(f"`form.usage_files.data` (type {type(form.usage_files.data)}):\n{form.usage_files.data}")  #TEST: temp
         flash_error_messages = dict()
-        files_submitted_for_upload = 0
+        files_submitted_for_upload = len(form.usage_files.data)
         files_uploaded = 0
         for file in form.usage_files.data:
             if file['usage_file']:
-                files_submitted_for_upload += 1
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
                 df = query_database(
                     query=f"""
