@@ -809,61 +809,9 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
 
     #Section: Confirm Successful Database Update
     #TEST: temp
-    log.warning(f"`fields_being_uploaded`:\n{format_list_for_stdout(fields_being_uploaded)}")
-    log.warning(f"`form_submissions_fields`:\n{format_list_for_stdout(form_submissions_fields)}")
-
     try:
-        ds = [fields_being_uploaded, form_submissions_fields]
-        d = {}
-        for k in fields_being_uploaded.keys():
-            d[k] = (d[k] for d in ds)
-        log.warning(f"Try 1:\n{d}")
-    except:
-        pass
-
-    try:
-        d = {}
-        for k in fields_being_uploaded.keys():
-            d[k] = (d[k] for d in [fields_being_uploaded, form_submissions_fields])
-        log.warning(f"Try 1a:\n{d}")
-    except:
-        pass
-
-    try:
-        log.warning(f"`set(d1.keys()) | set(d2.keys())`: {set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}")
-    except:
-        pass
-    try:
-        log.warning(f"`set([d1.keys()] + [d2.keys()])`: {set([fields_being_uploaded.keys()] + [form_submissions_fields.keys()])}")
-    except:
-        pass
-    try:
-        log.warning(f"`set(list(d1.keys()) + list(d2.keys()))`: {set(list(fields_being_uploaded.keys()) + list(form_submissions_fields.keys()))}")
-    except:
-        pass
-    try:
-        log.warning(f"`(dic1.keys() | dic2.keys())`: {(fields_being_uploaded.keys() | form_submissions_fields.keys())}")
-    except:
-        pass
-
-    try:
-        x = {k: (d[k] for d in (fields_being_uploaded, form_submissions_fields) if k in d) for k in set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}
-        log.warning(f"Try 2:\n{x}")
-    except:
-        pass
-
-    try:
-        x = {k: tuple(d[k] for d in (fields_being_uploaded, form_submissions_fields) if k in d) for k in set(fields_being_uploaded.keys()) | set(form_submissions_fields.keys())}
-        log.warning(f"Try 2a:\n{x}")
-    except:
-        pass
-
-    try:
-        r = {}
-        for key in (fields_being_uploaded.keys() | form_submissions_fields.keys()):
-            if key in fields_being_uploaded: r.setdefault(key, []).append(fields_being_uploaded[key])
-            if key in form_submissions_fields: r.setdefault(key, []).append(form_submissions_fields[key])
-        log.warning(f"Try 3:\n{r}")
+        x = {k: tuple(d[k] for d in (fields_being_uploaded, form_submissions_fields) if k in d) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
+        log.warning(f"Try 1:\n{x}")
     except:
         pass
 
@@ -872,28 +820,34 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             fields_being_uploaded.keys(),
             zip(
                 fields_being_uploaded.values(),
-                form_submissions_fields.values()
+                form_submissions_fields.values(),
             ),
         ))
-        log.warning(f"Try 4:\n{d}")
+        log.warning(f"Try 2:\n{d}")
     except:
         pass
 
     try:
-        d = {zip(
+        d = dict(zip(
             fields_being_uploaded.keys(),
             zip(
-                fields_being_uploaded.values(),
-                form_submissions_fields.values()
+                fields_being_uploaded.values()[0],
+                form_submissions_fields.values(),
             ),
-        )}
-        log.warning(f"Try 4a:\n{d}")
+        ))
+        log.warning(f"Try 2a:\n{d}")
     except:
         pass
 
     try:
         d = {k: (fields_being_uploaded[k], form_submissions_fields[k]) for k in fields_being_uploaded.keys()}
-        log.warning(f"Try 5:\n{d}")
+        log.warning(f"Try 3:\n{d}")
+    except:
+        pass
+
+    try:
+        d = {k: (fields_being_uploaded[k][0], form_submissions_fields[k]) for k in fields_being_uploaded.keys()}
+        log.warning(f"Try 3a:\n{d}")
     except:
         pass
     #TEST: end temp
