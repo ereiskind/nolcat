@@ -786,7 +786,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
-        fields=form_submissions_fields,
+        fields=form_submissions_fields[0],
         encoding='utf-8',
     )
 
