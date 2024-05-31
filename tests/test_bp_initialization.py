@@ -779,7 +779,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         list(list_of_AUCT_submission_fields.keys()),  # Using brackets to type juggle causes the complete list of keys to be repeated k times
         k=random.randint(2, len(list_of_AUCT_submission_fields)),
     )}
-    log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
+    log.info(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     form_submissions_fields = []
     for label_ID in fields_being_uploaded.keys():
         form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(label_ID))
