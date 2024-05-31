@@ -524,7 +524,6 @@ def upload_historical_non_COUNTER_usage(testing):
         files_submitted_for_upload = len(form.usage_files.data)
         files_uploaded = 0
         for file in form.usage_files.data:
-            log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
             if file['usage_file']:
                 log.warning(f"`file['usage_file']` (type {type(file['usage_file'])}): {file['usage_file']}")  #TEST: temp
                 statistics_source_ID, fiscal_year = re.fullmatch(r"(\d+)_(\d{4})\.\w{3,4}", file['usage_file'].filename).group(1, 2)
