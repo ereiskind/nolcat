@@ -688,7 +688,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 @pytest.fixture
 def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
-    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, returning the dictionary needed for MultipartEncoder to simulate uploading that file to a given FileField, and then removing that file from S3 at the completion of the test.
+    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance, and then removing that file from S3 at the completion of the test.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
@@ -703,19 +703,14 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     
     for_removal = []
 
-    def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
-        """An inner fixture function returning a dictionary needed for MultipartEncoder to simulate uploading a randomly selected file to a given FileField.
+    def _files_for_test_upload_historical_non_COUNTER_usage():
+        """An inner fixture function returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
         The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
 
-        Note:
-            Log statements in this inner function don't got to stdout regardless of level. Unfortunately, the `yield` value in the outer function lacks methods and attributes suitable for logging to stdout.
-
-        Args:
-            label_ID (str): the value used as the ID for the individual form fields in 'initialization/initial-data-upload-4.html'
-
         Returns:
-            dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
+            tuple: for Excel workbooks, a tuple with the file name and a FileIO object
+            str: for text files, the file name
         """
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
@@ -724,11 +719,10 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         log.warning(f"Created file {new_file}: {file.is_file()}")  #TEST: temp level, should be `debug`
         for_removal.append(new_file)
         log.warning(f"`for_removal` in inner function: {for_removal}")  #TEST: temp
-        log.info(f"Uploading file {new_file} to form field {label_ID}.")
         if new_file.suffix == ".xlsx":
-            return {label_ID: (new_file.name, open(new_file, 'rb'))}
+            return (new_file.name, open(new_file, 'rb'))
         else:
-            return {label_ID: new_file.name}
+            return new_file.name
 
     #TEST: temp
     log.warning(f"`for_removal`: {for_removal}")
