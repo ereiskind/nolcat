@@ -488,34 +488,34 @@ def upload_historical_non_COUNTER_usage(testing):
         testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
     """
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
-    non_COUNTER_files_needed = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=db.engine,
-    )
-    if isinstance(non_COUNTER_files_needed, str):
-        flash(database_query_fail_statement(non_COUNTER_files_needed))
-        return redirect(url_for('initialization.data_load_complete'))
-    list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
+        non_COUNTER_files_needed = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=db.engine,
+        )
+        if isinstance(non_COUNTER_files_needed, str):
+            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            return redirect(url_for('initialization.data_load_complete'))
+        list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form, testing=testing)
     elif form.validate_on_submit():
