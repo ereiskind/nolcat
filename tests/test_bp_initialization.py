@@ -779,27 +779,27 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     k = random.randint(2, len(list_of_AUCT_submission_fields))  #ToDo: number of items to select
     log.warning(f"`k` (type {type(k)}): {k}")
     try:
-        log.warning(f"`random.sample([dict.keys()], k=k)`: {random.sample([list_of_AUCT_submission_fields.keys()], k=k)}")
+        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.keys()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.keys()), k=k)}")
     except:
         pass
     try:
-        log.warning(f"`random.sample([dict.values()], k=k)`: {random.sample([list_of_AUCT_submission_fields.values()], k=k)}")
+        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.values()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.values()), k=k)}")
     except:
         pass
     try:
-        log.warning(f"`random.sample([dict.items()], k=k)`: {random.sample([list_of_AUCT_submission_fields.items()], k=k)}")
+        log.warning(f"`random.sample(list(list_of_AUCT_submission_fields.items()), k=k)`: {random.sample(list(list_of_AUCT_submission_fields.items()), k=k)}")
     except:
         pass
     try:
-        log.warning(f"`random.choices([dict.keys()], k=k)`: {random.choices([list_of_AUCT_submission_fields.keys()], k=k)}")
+        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.keys()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.keys()), k=k)}")
     except:
         pass
     try:
-        log.warning(f"`random.choices([dict.values()], k=k)`: {random.choices([list_of_AUCT_submission_fields.values()], k=k)}")
+        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.values()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.values()), k=k)}")
     except:
         pass
     try:
-        log.warning(f"`random.choices([dict.items()], k=k)`: {random.choices([list_of_AUCT_submission_fields.items()], k=k)}")
+        log.warning(f"`random.choices(list(list_of_AUCT_submission_fields.items()), k=k)`: {random.choices(list(list_of_AUCT_submission_fields.items()), k=k)}")
     except:
         pass
     #TEST: end temp
