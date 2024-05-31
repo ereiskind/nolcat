@@ -700,7 +700,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     """
     caplog.set_level(logging.INFO, logger='botocore')
     
-    for_removal = []
+    for_removal = []  # When invoked in a log statement before the yield statement, the list appears empty, but the teardown works as expected
 
     def _files_for_test_upload_historical_non_COUNTER_usage():
         """An inner fixture function returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
@@ -719,11 +719,9 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
         else:
             return file.name
 
-    log.warning(f"`for_removal`: {for_removal}")  #TEST: temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
-        log.warning(f"File in `for_removal`: {file}")  #TEST: temp
         #TEST: temp
         #try:
         #    s3_client.delete_object(
