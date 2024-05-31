@@ -723,13 +723,20 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         copy(file, new_file)
         log.warning(f"Created file {new_file}: {file.is_file()}")  #TEST: temp level, should be `debug`
         for_removal.append(new_file)
-        log.warning(f"Uploading file {new_file} to form field {label_ID}.")  #TEST: temp level, should be `info`
+        log.warning(f"`for_removal` in inner function: {for_removal}")  #TEST: temp
+        log.info(f"Uploading file {new_file} to form field {label_ID}.")
         if new_file.suffix == ".xlsx":
             return {label_ID: (new_file.name, open(new_file, 'rb'))}
         else:
             return {label_ID: new_file.name}
 
-    log.warning(f"`for_removal`: {for_removal}")  #TEST: temp
+    #TEST: temp
+    log.warning(f"`for_removal`: {for_removal}")
+    try:
+        log.warning(f"Contents of `/tmp/pytest-of-root`:\n{format_list_for_stdout(Path('/tmp/pytest-of-root').iterdir())}")
+    except Exception as error:
+        log.warning(f"`Path('/tmp/pytest-of-root').iterdir())` raised {error}")
+    #TEST: end temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
@@ -782,14 +789,14 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         list(list_of_AUCT_submission_fields.keys()),  # Using brackets to type juggle causes the complete list of keys to be repeated k times
         k=random.randint(2, len(list_of_AUCT_submission_fields)),
     )}
-    log.info(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
+    log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
     form_submissions_fields = []
     for label_ID in fields_being_uploaded.keys():
         form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(label_ID))
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
-    log.warning(f"type `form_submissions_fields`: {type(form_submissions_fields)}")  #TEST: temp
-    log.warning(f"type `form_submissions_fields[0]`: {type(form_submissions_fields[0])}")  #TEST: temp
+    log.warning(f"type `form_submissions_fields` {type(form_submissions_fields)}: {form_submissions_fields}")  #TEST: temp
+    log.warning(f"type `form_submissions_fields[0]` {type(form_submissions_fields[0])}: {form_submissions_fields[0]}")  #TEST: temp
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields[0],
         encoding='utf-8',
