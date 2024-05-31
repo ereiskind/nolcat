@@ -649,12 +649,16 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
+    log.warning(f"`GET_response_title`: {GET_response_title}")  #TEST: temp
+    log.warning(f"`GET_response_page_title`: {GET_response_page_title}")  #TEST: temp
     number_of_file_fields = len(GET_soup.find_all(name='input', type='file'))
     
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
+        log.warning(f"`HTML_file_title`: {HTML_file_title}")  #TEST: temp
+        log.warning(f"`HTML_file_page_title`: {HTML_file_page_title}")  #TEST: temp
     df = query_database(
         query=f"""
             SELECT
@@ -702,6 +706,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     caplog.set_level(logging.INFO, logger='botocore')
     
     for_removal = []
+    log.critical("test in outer fixture")  #TEST: temp
 
     def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
         """An inner fixture function returning a dictionary needed for MultipartEncoder to simulate uploading a randomly selected file to a given FileField.
@@ -717,6 +722,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         Returns:
             dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
         """
+        log.critical("test in inner fixture")  #TEST: temp
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
         new_file = tmp_path / file.name
@@ -784,11 +790,12 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     for label_ID in fields_being_uploaded.keys():
         form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(label_ID))
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
-    log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
+    log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields[0],
         encoding='utf-8',
     )
+    log.warning(f"`form_submissions`: {form_submissions}")  #TEST: temp
 
     #Section: Confirm HTTP POST
     #Subsection: Submit Files via HTTP POST
@@ -802,6 +809,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     POST_soup = BeautifulSoup(POST_response.data, 'lxml')
     POST_response_title = POST_soup.head.title
     POST_response_page_title = POST_soup.body.h1
+    log.warning(f"`POST_response_title`: {POST_response_title}")  #TEST: temp
+    log.warning(f"`POST_response_page_title`: {POST_response_page_title}")  #TEST: temp
     #ToDo: Add searches for displayed loaded data when `nolcat.initialization.views.data_load_complete()`/'initialization/show-loaded-data.html' displays such data
 
     #Subsection: Assert Statements
@@ -809,6 +818,12 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+        #TEST: temp
+        log.warning(f"`file_soup.head.title.string.encode('utf-8')`: {file_soup.head.title.string.encode('utf-8')}")
+        log.warning(f"`file_soup.head.title`: {file_soup.head.title}")
+        log.warning(f"`file_soup.body.h1.string.encode('utf-8')`: {file_soup.body.h1.string.encode('utf-8')}")
+        log.warning(f"`file_soup.body.h1`: {file_soup.body.h1}")
+        #TEST: end temp
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title == POST_response_title
