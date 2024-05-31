@@ -703,7 +703,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     
     for_removal = []
 
-    def _files_for_test_upload_historical_non_COUNTER_usage(field_data):
+    def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
         """An inner fixture function returning a dictionary needed for MultipartEncoder to simulate uploading a randomly selected file to a given FileField.
 
         The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
@@ -712,7 +712,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
             Log statements in this inner function don't got to stdout regardless of level. Unfortunately, the `yield` value in the outer function lacks methods and attributes suitable for logging to stdout.
 
         Args:
-            field_data (tuple): a tuple containing the "usage_files-{i}-usage_file" value used as the ID for the individual fields in 'initialization/initial-data-upload-4.html' and the corresponding option from the `create_AUCT_SelectField_options()` function, another tuple consisting of a tuple with the primary key values from `annualUsageCollectionTracking` and a string showing the matching statistics source name and fiscal year
+            label_ID (str): the value used as the ID for the individual form fields in 'initialization/initial-data-upload-4.html'
 
         Returns:
             dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
@@ -723,9 +723,9 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         copy(file, new_file)
         for_removal.append(new_file)
         if new_file.suffix == ".xlsx":
-            return {field_data[0]: (new_file.name, open(new_file, 'rb'))}
+            return {label_ID: (new_file.name, open(new_file, 'rb'))}
         else:
-            return {field_data[0]: new_file.name}
+            return {label_ID: new_file.name}
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
@@ -781,8 +781,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     )}
     log.warning(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")  #TEST: temp level, should be `info`
     form_submissions_fields = []
-    for field in fields_being_uploaded:
-        form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(field))
+    for label_ID in fields_being_uploaded.keys():
+        form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(label_ID))
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
