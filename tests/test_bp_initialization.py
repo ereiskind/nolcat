@@ -793,7 +793,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     log.warning(f"type `form_submissions_fields` {type(form_submissions_fields)}: {form_submissions_fields}")  #TEST: temp
     log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
     form_submissions = MultipartEncoder(
-        fields=form_submissions_fields[0],
+        fields=form_submissions_fields,
         encoding='utf-8',
     )
     log.warning(f"`form_submissions`: {form_submissions}")  #TEST: temp
