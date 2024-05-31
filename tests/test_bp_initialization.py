@@ -687,13 +687,12 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 
 @pytest.fixture
-def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
-    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance, and then removing that file from S3 at the completion of the test.
+def files_for_test_upload_historical_non_COUNTER_usage(caplog):
+    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage` and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
     Args:
-        tmp_path (pathlib.Path): a temporary directory created just for running tests
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
@@ -714,29 +713,17 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         """
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
-        new_file = tmp_path / file.name
-        copy(file, new_file)
-        log.debug(f"Created file {new_file}: {file.is_file()}")
-        for_removal.append(new_file)
-        log.warning(f"`for_removal` in inner function: {for_removal}")  #TEST: temp
-        if new_file.suffix == ".xlsx":
-            return (new_file.name, open(new_file, 'rb'))
+        for_removal.append(file.name)
+        if file.suffix == ".xlsx":
+            return (file.name, open(file, 'rb'))
         else:
-            return new_file.name
+            return file.name
 
-    #TEST: temp
-    log.warning(f"`for_removal`: {for_removal}")
-    for folder, subfolders, files in Path('/tmp/pytest-of-root').walk():
-        log.warning(f"For the folder {folder}:")
-        for subfolder in subfolders:
-            log.warning(f"Folder {folder} - subfolder {subfolder}")
-        for file in files:
-            log.warning(f"Folder {folder} - file {file}")
-    #TEST: end temp
+    log.warning(f"`for_removal`: {for_removal}")  #TEST: temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
-        file.unlink()
+        log.warning(f"File in `for_removal`: {file}")  #TEST: temp
         #TEST: temp
         #try:
         #    s3_client.delete_object(
