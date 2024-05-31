@@ -486,7 +486,6 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         },
         encoding='utf-8',
     )
-    log.warning(f"`CSV_files`: {CSV_files}")  #TEST: temp
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
@@ -703,13 +702,6 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     caplog.set_level(logging.INFO, logger='botocore')
     
     for_removal = []
-    #TEST: temp
-    log.critical(f"critical, outer function")
-    log.error(f"error, outer function")
-    log.warning(f"warning, outer function")
-    log.info(f"info, outer function")
-    log.debug(f"debug, outer function")
-    #TEST: end temp
 
     def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
         """An inner fixture function returning a dictionary needed for MultipartEncoder to simulate uploading a randomly selected file to a given FileField.
@@ -725,23 +717,19 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         Returns:
             dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
         """
-        #TEST: temp
-        log.critical(f"critical, inner function")
-        log.error(f"error, inner function")
-        log.warning(f"warning, inner function")
-        log.info(f"info, inner function")
-        log.debug(f"debug, inner function")
-        #TEST: end temp
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
         new_file = tmp_path / file.name
         copy(file, new_file)
+        log.warning(f"Created file {new_file}: {file.is_file()}")  #TEST: temp level, should be `debug`
         for_removal.append(new_file)
+        log.warning(f"Uploading file {new_file} to form field {label_ID}.")  #TEST: temp level, should be `info`
         if new_file.suffix == ".xlsx":
             return {label_ID: (new_file.name, open(new_file, 'rb'))}
         else:
             return {label_ID: new_file.name}
 
+    log.warning(f"`for_removal`: {for_removal}")  #TEST: temp
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
@@ -800,6 +788,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         form_submissions_fields.append(files_for_test_upload_historical_non_COUNTER_usage(label_ID))
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
+    log.warning(f"type `form_submissions_fields`: {type(form_submissions_fields)}")  #TEST: temp
+    log.warning(f"type `form_submissions_fields[0]`: {type(form_submissions_fields[0])}")  #TEST: temp
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields[0],
         encoding='utf-8',
