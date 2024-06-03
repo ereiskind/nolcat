@@ -811,18 +811,19 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     #ToDo: Add assert statements to match searches in above to-do
 
     #Section: Confirm Successful Database Update
-    field_forms_and_values = {k: ((None if fields_being_uploaded.get(k) is None else fields_being_uploaded.get(k)[0]), (None if form_submissions_fields.get(k) is None else form_submissions_fields.get(k)[0]),) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
-    log.warning(f"`field_forms_and_values`: {field_forms_and_values}")  #TEST: temp
-    #ToDo: collection_status_and_file_path = empty group object to save `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values
-    #ToDo: For each item in above iterator
-        #df = query_database(
-        #    query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {} AND AUCT_fiscal_year = {};",
-        #    engine=db.engine,
-        #)
-        #if isinstance(df, str):
-        #    pytest.skip(database_function_skip_statements(df))
-        #ToDo: Add `df.at[0,'collection_status']` and `df.at[0,'usage_file_path']` to `collection_status_and_file_path`
-    #log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")  #TEST: temp level, should be `info`
+    collection_status_and_file_path = []
+    for record in fields_being_uploaded.values():
+        df = query_database(
+            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            pytest.skip(database_function_skip_statements(df))
+        collection_status_and_file_path.append((
+            df.at[0,'collection_status'],
+            df.at[0,'usage_file_path'],
+        ))
+    log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")  #TEST: temp level, should be `info`
     #for record in collection_status_and_file_path:
         #ToDo: assert `collection_status` == 'Collection complete'
         #ToDo: assert `usage_file_path` is not None
