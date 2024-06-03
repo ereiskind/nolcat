@@ -840,3 +840,12 @@ def S3_file_name_timestamp():
         str: Python datetime format code
     """
     return '%Y-%m-%dT%H.%M.%S'
+
+
+def non_COUNTER_file_name_regex():
+    """A regex for the format of non-COUNTER usage files saved in S3.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
