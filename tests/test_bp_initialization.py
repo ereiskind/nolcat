@@ -776,8 +776,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     )}
     log.info(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     form_submissions_fields = {}
-    for AUCT_option in fields_being_uploaded.values():
-        form_submissions_fields[AUCT_option] = files_for_test_upload_historical_non_COUNTER_usage(AUCT_option)
+    for label_ID, AUCT_option in fields_being_uploaded.items():
+        form_submissions_fields[label_ID] = files_for_test_upload_historical_non_COUNTER_usage(AUCT_option)
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
