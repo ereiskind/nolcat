@@ -687,12 +687,13 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 
 @pytest.fixture
-def files_for_test_upload_historical_non_COUNTER_usage(caplog):
+def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage` and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
     Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
@@ -702,10 +703,13 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
     
     for_removal = []  # When invoked in a log statement before the yield statement, the list appears empty, but the teardown works as expected
 
-    def _files_for_test_upload_historical_non_COUNTER_usage():
+    def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
         """An inner fixture function returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
         The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
+
+    Args:
+        label_ID (str): the value used as the ID for the individual form fields in 'initialization/initial-data-upload-4.html'
 
         Returns:
             tuple: for Excel workbooks, a tuple with the file name and a FileIO object
