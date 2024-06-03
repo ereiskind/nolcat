@@ -20,10 +20,6 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
-Iteration 2: Add Historical Data
-================================
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``, incorporating alternate value in variable route
-
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Add check of contents of file uploaded to S3 against original file to ``tests.test_app.test_upload_file_to_S3_bucket()``
