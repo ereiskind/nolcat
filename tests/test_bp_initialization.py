@@ -807,44 +807,20 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     #Section: Confirm Successful Database Update
     #TEST: temp
     try:
-        x = {k: tuple(d[k] for d in (fields_being_uploaded, form_submissions_fields) if k in d) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
-        log.warning(f"Try 1:\n{x}")
+        d = {k: (fields_being_uploaded[k], form_submissions_fields[k]) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
+        log.warning(f"Try 1:\n{d}")
     except:
         pass
 
     try:
-        d = dict(zip(
-            fields_being_uploaded.keys(),
-            zip(
-                fields_being_uploaded.values(),
-                form_submissions_fields.values(),
-            ),
-        ))
+        d = {k: (fields_being_uploaded.get(k), form_submissions_fields.get(k)) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
         log.warning(f"Try 2:\n{d}")
     except:
         pass
 
     try:
-        d = dict(zip(
-            fields_being_uploaded.keys(),
-            zip(
-                fields_being_uploaded.values()[0],
-                form_submissions_fields.values(),
-            ),
-        ))
+        d = {k: (("what to return if no corresponding key" if fields_being_uploaded.get(k) is None else fields_being_uploaded.get(k)[0]), form_submissions_fields.get(k)) for k in (fields_being_uploaded.keys() | form_submissions_fields.keys())}
         log.warning(f"Try 2a:\n{d}")
-    except:
-        pass
-
-    try:
-        d = {k: (fields_being_uploaded[k], form_submissions_fields[k]) for k in fields_being_uploaded.keys()}
-        log.warning(f"Try 3:\n{d}")
-    except:
-        pass
-
-    try:
-        d = {k: (fields_being_uploaded[k][0], form_submissions_fields[k]) for k in fields_being_uploaded.keys()}
-        log.warning(f"Try 3a:\n{d}")
     except:
         pass
     #TEST: end temp
