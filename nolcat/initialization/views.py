@@ -526,7 +526,13 @@ def upload_historical_non_COUNTER_usage(testing):
         for file in form.usage_files.data:
             if file['usage_file']:
                 log.warning(f"`file['usage_file']` (type {type(file['usage_file'])}): {file['usage_file']}")  #TEST: temp
-                statistics_source_ID, fiscal_year = non_COUNTER_file_name_regex().fullmatch(file['usage_file'].filename).group(1, 2)
+                try:
+                    statistics_source_ID, fiscal_year = non_COUNTER_file_name_regex().fullmatch(file['usage_file'].filename).group(1, 2)
+                except Exception as error:
+                    message = f"Unable to get query filter data from file name because {error[0].lower()}{error[1:]}"
+                    log.warning(message)
+                    flash_error_messages[file['usage_file'].filename] = message
+                    continue
                 df = query_database(
                     query=f"""
                         SELECT
