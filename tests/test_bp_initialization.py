@@ -716,7 +716,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         """
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
-        new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[0][-4:]}{file.suffix}"
+        new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
         log.warning(check_if_file_exists_statement(new_file))  #TEST: temp level, should be `debug`
         for_removal.append(new_file.name)
