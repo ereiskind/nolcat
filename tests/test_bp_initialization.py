@@ -720,6 +720,8 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         copy(file, new_file)
         log.debug(check_if_file_exists_statement(new_file))
         for_removal.append(new_file.name)
+        log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
+        log.warning(f"`new_file` (type {type(new_file)}): {new_file}")  #TEST: temp
         return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
@@ -839,6 +841,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             files_in_bucket.append(contents_dict['Key'])
         files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
         log.warning(f"`files_in_bucket`(type {type(files_in_bucket)}): {files_in_bucket}")  #TEST: temp
+        log.warning(f"`collection_status_and_file_path`(type {type(collection_status_and_file_path)}): {collection_status_and_file_path}")  #TEST: temp
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     else:
         assert False  # Nothing in bucket
