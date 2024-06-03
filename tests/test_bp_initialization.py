@@ -688,7 +688,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
 
 @pytest.fixture
 def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
-    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage` and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
+    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, making a copy of that file with a name matching the naming convention, and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
     To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
 
@@ -712,8 +712,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         AUCT_option (str): the result of the `nolcat.app.create_AUCT_SelectField_options()` function for the given field
 
         Returns:
-            tuple: for Excel workbooks, a tuple with the file name and a FileIO object
-            str: for text files, the file name
+            tuple: the file name and a FileIO object for the file
         """
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
