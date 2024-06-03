@@ -725,10 +725,11 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
+        log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file.name
+                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
