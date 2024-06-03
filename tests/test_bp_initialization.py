@@ -714,10 +714,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(caplog):
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
         for_removal.append(file.name)
-        if file.suffix == ".xlsx":
-            return (file.name, open(file, 'rb'))
-        else:
-            return file.name
+        return (file.name, open(file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
@@ -776,7 +773,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     for label_ID in fields_being_uploaded.keys():
         form_submissions_fields[label_ID] = files_for_test_upload_historical_non_COUNTER_usage()
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
-    log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
+    log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields,
         encoding='utf-8',
