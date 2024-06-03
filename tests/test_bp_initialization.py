@@ -719,14 +719,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
         log.debug(check_if_file_exists_statement(new_file))
-        log.warning(f"File to be removed: `{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}`")  #TEST: temp
-        for_removal.append(new_file.name)
+        for_removal.append(f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")  # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` changes the file name to the instance record's primary keys separated by an underscore, so that file name is what needs to be saved for removal from S3 
         return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
     for file in for_removal:
-        log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
