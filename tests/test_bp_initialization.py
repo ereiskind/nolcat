@@ -823,10 +823,10 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             df.at[0,'collection_status'],
             df.at[0,'usage_file_path'],
         ))
-    log.warning(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")  #TEST: temp level, should be `info`
-    #for record in collection_status_and_file_path:
-        #ToDo: assert `collection_status` == 'Collection complete'
-        #ToDo: assert `usage_file_path` is not None
+    log.info(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")
+    for record in collection_status_and_file_path:
+        assert record[0] == 'Collection complete'
+        assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
 
     #Section: Confirm Successful S3 Upload
     #list_objects_response = s3_client.list_objects_v2(
