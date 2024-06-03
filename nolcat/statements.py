@@ -396,7 +396,7 @@ def successful_SUSHI_call_statement(call_path, statistics_source_name):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    return f"The call to the `{call_path}` endpoint for {statistics_source_name} successful."
+    return f"The call to the `{call_path}` endpoint for {statistics_source_name} was successful."
 
 
 def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records, fiscal_year=None):
