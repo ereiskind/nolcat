@@ -703,13 +703,13 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     
     for_removal = []  # When invoked in a log statement before the yield statement, the list appears empty, but the teardown works as expected
 
-    def _files_for_test_upload_historical_non_COUNTER_usage(label_ID):
+    def _files_for_test_upload_historical_non_COUNTER_usage(AUCT_option):
         """An inner fixture function returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
 
         The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
 
     Args:
-        label_ID (str): the value used as the ID for the individual form fields in 'initialization/initial-data-upload-4.html'
+        AUCT_option (str): the result of the `nolcat.app.create_AUCT_SelectField_options()` function for the given field
 
         Returns:
             tuple: for Excel workbooks, a tuple with the file name and a FileIO object
@@ -717,14 +717,11 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         """
         file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
         file = random.choice(file_options)
-        if not non_COUNTER_file_name_regex().fullmatch(file.name):
-            new_file = tmp_path / f"{label_ID.split('-')[1]}_2000{file.suffix}"
-            copy(file, new_file)
-            log.warning(f"Created file {new_file}: {new_file.is_file()}")  #TEST: temp
-            file = new_file
-        log.warning(f"`file`: {file}")  #TEST: temp
-        for_removal.append(file.name)
-        return (file.name, open(file, 'rb'))
+        new_file = tmp_path / str(AUCT_option[0][0]) + "_" + AUCT_option[0][-4:] + file.suffix
+        copy(file, new_file)
+        log.warning(check_if_file_exists_statement(new_file))  #TEST: temp level, should be `debug`
+        for_removal.append(new_file.name)
+        return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
 
@@ -780,8 +777,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     )}
     log.info(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
     form_submissions_fields = {}
-    for label_ID in fields_being_uploaded.keys():
-        form_submissions_fields[label_ID] = files_for_test_upload_historical_non_COUNTER_usage(label_ID)
+    for AUCT_option in fields_being_uploaded.values():
+        form_submissions_fields[AUCT_option] = files_for_test_upload_historical_non_COUNTER_usage(AUCT_option)
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
     log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
     form_submissions = MultipartEncoder(
