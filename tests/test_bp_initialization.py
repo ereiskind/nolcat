@@ -718,7 +718,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         file = random.choice(file_options)
         new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
-        log.warning(check_if_file_exists_statement(new_file))  #TEST: temp level, should be `debug`
+        log.debug(check_if_file_exists_statement(new_file))
         for_removal.append(new_file.name)
         return (new_file.name, open(new_file, 'rb'))
 
@@ -779,7 +779,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     for label_ID, AUCT_option in fields_being_uploaded.items():
         form_submissions_fields[label_ID] = files_for_test_upload_historical_non_COUNTER_usage(AUCT_option)
         # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
-    log.warning(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")  #TEST: temp level, should be `info`
+    log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
     form_submissions = MultipartEncoder(
         fields=form_submissions_fields,
         encoding='utf-8',

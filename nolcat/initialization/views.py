@@ -519,13 +519,12 @@ def upload_historical_non_COUNTER_usage(testing):
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
         return render_template('initialization/initial-data-upload-4.html', form=form, testing=testing)
     elif form.validate_on_submit():
-        log.warning(f"`form.usage_files.data` (type {type(form.usage_files.data)}):\n{form.usage_files.data}")  #TEST: temp
         flash_error_messages = dict()
         files_submitted_for_upload = len(form.usage_files.data)
         files_uploaded = 0
         for file in form.usage_files.data:
             if file['usage_file']:
-                log.warning(f"`file['usage_file']` (type {type(file['usage_file'])}): {file['usage_file']}")  #TEST: temp
+                log.debug(f"Processing the file {file['usage_file']} for upload.")
                 try:
                     statistics_source_ID, fiscal_year = non_COUNTER_file_name_regex().fullmatch(file['usage_file'].filename).group(1, 2)
                 except Exception as error:
@@ -581,7 +580,7 @@ def upload_historical_non_COUNTER_usage(testing):
                     return redirect(url_for('view_usage.view_usage_homepage'))
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                    log.warning(response)  #TEST: temp level, should be `debug`
+                    log.debug(response)
                     files_uploaded += 1
                 elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
                     log.warning(response)
