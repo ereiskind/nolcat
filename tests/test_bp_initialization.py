@@ -838,8 +838,6 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
         files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
-        log.warning(f"`files_in_bucket`(type {type(files_in_bucket)}): {files_in_bucket}")  #TEST: temp
-        log.warning(f"`list_of_files_in_S3`(type {type(list_of_files_in_S3)}): {list_of_files_in_S3}")  #TEST: temp
-    #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
+        assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
         assert False  # Nothing in bucket
