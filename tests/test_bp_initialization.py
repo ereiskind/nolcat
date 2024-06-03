@@ -835,12 +835,12 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     )
     log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
-    #bucket_contents = list_objects_response.get('Contents')
-    #if bucket_contents:
-    #    for contents_dict in bucket_contents:
-    #        files_in_bucket.append(contents_dict['Key'])
+    bucket_contents = list_objects_response.get('Contents')
+    if bucket_contents:
+        for contents_dict in bucket_contents:
+            files_in_bucket.append(contents_dict['Key'])
+        log.warning(f"`files_in_bucket`(type {type(files_in_bucket)}): {files_in_bucket}")  #TEST: temp
     #    files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
-    #else:
-    #    assert False  # Nothing in bucket
-    #ToDo: If possible, confirm contents of files match those of files of origin
+    else:
+        assert False  # Nothing in bucket
