@@ -924,10 +924,9 @@ def download_non_COUNTER_usage(testing):
     log.info("Starting `download_non_COUNTER_usage()`.")
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
-        file_name_format = re.compile(r"\d+_\d{4}\.\w{3,4}")
         log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder(), False))
         for file in create_downloads_folder().iterdir():
-            if file_name_format.fullmatch(str(file.name)):
+            if non_COUNTER_file_name_regex().fullmatch(str(file.name)):
                 file.unlink()
                 log.debug(check_if_file_exists_statement(file))
 
