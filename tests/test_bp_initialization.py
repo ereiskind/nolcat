@@ -719,9 +719,8 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
         log.debug(check_if_file_exists_statement(new_file))
+        log.warning(f"File to be removed: `{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}`")  #TEST: temp
         for_removal.append(new_file.name)
-        log.warning(f"`file` (type {type(file)}): {file}")  #TEST: temp
-        log.warning(f"`new_file` (type {type(new_file)}): {new_file}")  #TEST: temp
         return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
@@ -829,6 +828,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
 
     #Section: Confirm Successful S3 Upload
+    list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
@@ -841,7 +841,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             files_in_bucket.append(contents_dict['Key'])
         files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
         log.warning(f"`files_in_bucket`(type {type(files_in_bucket)}): {files_in_bucket}")  #TEST: temp
-        log.warning(f"`collection_status_and_file_path`(type {type(collection_status_and_file_path)}): {collection_status_and_file_path}")  #TEST: temp
+        log.warning(f"`list_of_files_in_S3`(type {type(list_of_files_in_S3)}): {list_of_files_in_S3}")  #TEST: temp
     #    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
     else:
         assert False  # Nothing in bucket
