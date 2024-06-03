@@ -8,6 +8,7 @@ import re
 from datetime import date
 import calendar
 from sqlalchemy import log as SQLAlchemy_log
+from sqlalchemy import text
 from flask import Flask
 from flask import render_template
 from flask import send_file
@@ -43,13 +44,34 @@ DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 BUCKET_NAME = secrets.Bucket
 PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
+PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
+
+
+def filter_empty_parentheses(log_statement):
+    """A filter removing log statements containing only empty parentheses.
+
+    SQLAlchemy logging has lines for outputting query parameters, but since pandas doesn't use parameters, these lines always appear in stdout as empty parentheses. This function and its use in `nolcat.app.create_logging()` is based upon information at https://stackoverflow.com/a/58583082.
+
+    Args:
+        log_statement (logging.LogRecord): a Python logging statement
+
+    Returns:
+        bool: if `log_statement` should go to stdout
+    """
+    if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
+        return False
+    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
+        log_statement.msg = remove_IDE_spacing_from_statement(log_statement.msg)
+        return True
+    else:
+        return True
 
 
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
-    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/. The logging level and format set in `logging.basicConfig` are used when directly running NoLCAT in the container; the `nolcat/pytest.ini` supplies that information when using pytest. The module `sqlalchemy.engine.base.Engine` is used for the SQLAlchemy logger instead of the more common `sqlalchemy.engine` because the latter includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another.
 
     Args:
         app (flask.Flask): the Flask object
@@ -58,14 +80,14 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
+        level=logging.INFO,
         format= "[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
+        encoding="utf-8",
     )
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    #Test: SQLAlchemy logging statements appear when when no live log output is requested--investigate and determine if related to the to-do below
+    logging.getLogger('sqlalchemy.engine.base.Engine').setLevel(logging.INFO)  # Statements appear when when no live log output is requested
+    logging.getLogger('sqlalchemy.engine.base.Engine').addFilter(filter_empty_parentheses)  # From Python docs: "Multiple calls to `getLogger()` with the same name will always return a reference to the same Logger object."
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
-    #ToDo: `pd.to_sql()` logging output begins with multiple setup statements with messages of just a pair of parentheses in between; some parentheses-only logging statements also appear in the `pd.read_sql()` output. Is there a way to remove those statements from the logging output?
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
     if app.debug:
@@ -183,7 +205,7 @@ def create_app():
         """
         log.info(f"Starting `create_app.download_file()` for file at path {file_path} (type {type(file_path)}).")
         file_path = Path(  # Just using the `Path()` constructor creates a relative path; relative paths in `send_file()` are considered in relation to CWD
-            *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
+            TOP_NOLCAT_DIRECTORY,
             *Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
         )
         log.info(f"`file_path` after type juggling is '{file_path}' (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
@@ -197,20 +219,6 @@ def create_app():
 
 
     return app
-
-
-def date_parser(dates):
-    """The function for parsing dates as part of converting ingested data into a dataframe.
-    
-    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
-
-    Args:
-        dates (date, datetime, string): a value in a data file being read into a pandas dataframe being interpreted as a date
-
-    Returns:
-        datetime64[ns]: a datetime value pandas inherits from numpy
-    """
-    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
 
 
 def last_day_of_month(first_day_of_month):
@@ -273,7 +281,7 @@ def first_new_PK_value(relation):
         log.debug(f"The {relation} relation is empty.")
         return 0
     else:
-        largest_PK_value = largest_PK_value.iloc[0][0]
+        largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
         log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
 
@@ -324,13 +332,10 @@ def restore_boolean_values_to_boolean_field(series):
     Returns:
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
-    return series.replace({
-        0: False,
-        1: True,
-    }).astype('boolean')
+    return series.astype('boolean')
 
 
-def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
     """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
@@ -338,20 +343,16 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
-        bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
-    #ALERT: On 2024-01-11, this function doesn't work when FileStorage objects are being passed in from `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` when testing `nolcat.ingest_usage.views.upload_non_COUNTER_reports()`
-    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
+    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
-        check_for_bucket = s3_client.head_bucket(Bucket=bucket)
+        check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
         message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
         log.error(message)
@@ -359,19 +360,19 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{BUCKET_NAME}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
         log.debug(f"Successfully initialized {file_object} (type {type(file_object)}).")
         try:
-            client.upload_fileobj(
+            s3_client.upload_fileobj(
                 Fileobj=file_object,
-                Bucket=bucket,
+                Bucket=BUCKET_NAME,
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
+            message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
             log.info(message)
             return message
         except Exception as error:
@@ -383,20 +384,25 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     #Subsection: Upload File with `upload_file()`
     try:
         if file.is_file():
-            client.upload_file(  # This uploads `file` like a path-like object
-                Filename=file,
-                Bucket=bucket,
-                Key=bucket_path + file_name,
-            )
-            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
-            log.info(message)
-            return message
+            try:
+                s3_client.upload_file(  # This uploads `file` like a path-like object
+                    Filename=file,
+                    Bucket=BUCKET_NAME,
+                    Key=bucket_path + file_name,
+                )
+                message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
+                log.info(message)
+                return message
+            except Exception as error:
+                message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
+                log.error(message)
+                return message
         else:
-            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
+            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
             log.error(message)
             return message
     except AttributeError as error:
-        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
+        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
 
@@ -424,7 +430,7 @@ def create_AUCT_SelectField_options(df):
 def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is).
+    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
 
     Args:
         df (dataframe): the data to load into the database
@@ -437,14 +443,14 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     """
     log.info(f"Starting `load_data_into_database()` for relation {relation}.")
     try:
-        df.to_sql(
+        number_of_records = df.to_sql(
             name=relation,
             con=engine,
             if_exists='append',
             chunksize=1000,
             index_label=index_field_name,
         )
-        message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
+        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
         log.info(message)
         return message
     except Exception as error:
@@ -465,7 +471,7 @@ def query_database(query, engine, index=None):
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
     """
-    log.info(f"Starting `query_database()` for query {query}.")
+    log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
         df = pd.read_sql(
             sql=query,
@@ -473,18 +479,18 @@ def query_database(query, engine, index=None):
             index_col=index,
         )
         if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{query}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         else:
-            log.info(f"The complete response to `{query}`:\n{df}")
+            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        message = f"Running the query `{query}` raised the error {error}."
+        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
 
 
-def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
+def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
@@ -500,21 +506,21 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
     #Section: Get the Statistics Sources, Report Types, and Dates
     #Subsection: Get the Statistics Sources
     statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
-    log.debug(f"All statistics sources as a list:\n{statistics_sources_in_dataframe}")
+    log.debug(f"All statistics sources as a list:\n{format_list_for_stdout(statistics_sources_in_dataframe)}")
     statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
-    log.debug(f"All statistics sources as a deduped list:\n{statistics_sources_in_dataframe}")
+    log.debug(f"All statistics sources as a deduped list:\n{format_list_for_stdout(statistics_sources_in_dataframe)}")
 
     #Subsection: Get the Report Types
     report_types_in_dataframe = df['report_type'].tolist()
-    log.debug(f"All report types as a list:\n{report_types_in_dataframe}")
+    log.debug(f"All report types as a list:\n{format_list_for_stdout(report_types_in_dataframe)}")
     report_types_in_dataframe = list(set(report_types_in_dataframe))
-    log.debug(f"All report types as a deduped list:\n{report_types_in_dataframe}")
+    log.debug(f"All report types as a deduped list:\n{format_list_for_stdout(report_types_in_dataframe)}")
 
     #Subsection: Get the Dates
     dates_in_dataframe = df['usage_date'].tolist()
-    log.debug(f"All usage dates as a list:\n{dates_in_dataframe}")
+    log.debug(f"All usage dates as a list:\n{format_list_for_stdout(dates_in_dataframe)}")
     dates_in_dataframe = list(set(dates_in_dataframe))
-    log.debug(f"All usage dates as a deduped list:\n{dates_in_dataframe}")
+    log.debug(f"All usage dates as a deduped list:\n{format_list_for_stdout(dates_in_dataframe)}")
 
     #Section: Check Database for Combinations of Above
     combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
@@ -528,7 +534,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
         )
         if isinstance(number_of_matching_records, str):
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
-        number_of_matching_records = number_of_matching_records.iloc[0][0]
+        number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
             matching_record_instances.append({
@@ -549,7 +555,8 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
                 (df['report_type']==instance['report_type']) &
                 (df['usage_date']==instance['usage_date'])
             ]
-            records_to_remove.append(to_remove)
+            if not to_remove.empty:
+                records_to_remove.append(to_remove)
 
             statistics_source_name = query_database(
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
@@ -557,7 +564,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
             )
             if isinstance(statistics_source_name, str):
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
-            instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
+            instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name)
         
         #Subsection: Return Results
         records_to_remove = pd.concat(records_to_remove)
@@ -607,21 +614,101 @@ def update_database(update_statement, engine):
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
     """
-    display_update_statement = update_statement.replace('\n', ' ')
-    display_update_statement = truncate_longer_lines(display_update_statement)
+    update_statement = remove_IDE_spacing_from_statement(update_statement)
+    display_update_statement = truncate_longer_lines(update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
+
+    # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
+    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
+    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
+    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
+    if UPDATE_regex:
+        query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
+        before_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(before_df, str):
+            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        else:
+            log.debug(f"The records to be updated:\n{before_df}")
+    elif INSERT_regex:
+        query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
+        before_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(before_df, str):
+            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        else:
+            before_number = extract_value_from_single_value_df(before_df)
+            log.debug(f"There are {before_number} records in the relation to be updated.")
+    elif TRUNCATE_regex:
+        log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
+    else:
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
+
     try:
-        engine.execute(update_statement)
-        message = f"Successfully performed the update {display_update_statement}."
-        log.info(message)
-        return message
+        with engine.connect() as connection:
+            try:
+                connection.execute(text(update_statement))
+                connection.commit()
+            except Exception as error:
+                message = f"Running the update statement {display_update_statement} raised the error {error}."
+                log.error(message)
+                return message
     except Exception as error:
-        message = f"Running the update statement {display_update_statement} raised the error {error}."
+        message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
         return message
+    
+    if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
+        after_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(after_df, str):
+            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        else:
+            log.debug(f"The records after being updated:\n{after_df}")
+            if before_df.equals(after_df):
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
+    elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
+        after_df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(after_df, str):
+            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        else:
+            after_number = extract_value_from_single_value_df(after_df)
+            log.debug(f"There are {after_number} records in the relation that was updated.")
+            if before_number >= after_number:
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
+    elif TRUNCATE_regex:
+        df = query_database(
+            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
+        else:
+            if extract_value_from_single_value_df(df) > 0:
+                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                log.warning(message)
+                return message
+    else:
+        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
+    message = f"Successfully performed the update {display_update_statement}."
+    log.info(message)
+    return message
 
 
-def save_unconverted_data_via_upload(data, file_name_stem):
+def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
     """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
 
     Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
@@ -629,11 +716,12 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
     """
-    log.info(f"Starting `save_unconverted_data_via_upload()`.")
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
 
     #Section: Create Temporary File
     #Subsection: Create File Path
@@ -677,15 +765,16 @@ def save_unconverted_data_via_upload(data, file_name_stem):
 
     #Section: Upload File to S3
     file_name = file_name_stem + temp_file_path.suffix
-    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
+    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 location `{BUCKET_NAME}/{bucket_path}`.")
     logging_message = upload_file_to_S3_bucket(
         temp_file_path,
         file_name,
+        bucket_path=bucket_path,
     )
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:
@@ -728,3 +817,35 @@ def last_day_of_month(original_date):
         original_date.month,
         calendar.monthrange(original_date.year, original_date.month)[1],
     )
+
+
+def extract_value_from_single_value_df(df):
+    """The value in a dataframe containing a single value.
+
+    Args:
+        df (dataframe): a dataframe with a single value
+    
+    Returns:
+        int or str: the value in the dataframe
+    """
+    return df.iloc[0].iloc[0]
+
+
+def S3_file_name_timestamp():
+    """The string with the `strftime()` format code to use in S3 file names.
+
+    ISO format cannot be used for timestamps in S3 file names because S3 file names can't contain colons.
+    
+    Returns:
+        str: Python datetime format code
+    """
+    return '%Y-%m-%dT%H.%M.%S'
+
+
+def non_COUNTER_file_name_regex():
+    """A regex for the format of non-COUNTER usage files saved in S3.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")

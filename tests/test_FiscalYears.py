@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-06-03 ##########
 
 import pytest
 import logging
@@ -259,7 +259,6 @@ def test_collect_fiscal_year_usage_statistics(caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     #ToDo: This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. Right now, no record in the test data meets those criteria.
     # logging_statement, flash_messages = FiscalYears.collect_fiscal_year_usage_statistics()

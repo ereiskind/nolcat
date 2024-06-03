@@ -34,17 +34,36 @@ def file_extensions_and_mimetypes():
 
 
 def format_list_for_stdout(stdout_list):
-    """Changes a list into a string which places each item of the list on its own line.
+    """Changes a sequence into a string which places each item of the list on its own line.
 
     Using the list comprehension allows the function to accept generators, which are transformed into lists by the comprehension, and to handle both lists and generators with individual items that aren't strings by type juggling.
 
     Args:
-        stdout_list (list or generator): a list for pretty printing to stdout
+        stdout_list (list or generator): a sequence for pretty printing to stdout
     
     Returns:
-        str: the list contents with a line break between each item
+        str: the sequence contents with a line break between each item
     """
-    return '\n'.join([str(file_path) for file_path in stdout_list])
+    if isinstance(stdout_list, dict):
+        return '\n'.join([f"{k}: {v}" for k, v in stdout_list.items()])
+    else:
+        return '\n'.join([str(file_path) for file_path in stdout_list])
+
+
+def remove_IDE_spacing_from_statement(statement):
+    """Removes from a SQL statement the newlines and spaces used to for readability in the IDE.
+
+    The `view_usage.views` module has route functions that add AND and GROUP BY clauses to SQL statements on new lines but without spaces in front; the non-regex lines are designed to remove those newlines.
+
+    Args:
+        statement (str): a SQL statement
+
+    Returns:
+        str: the same SQL statement on a single line without multi-space gaps
+    """
+    statement = " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " AND ".join(statement.split("\nAND ")).strip()
+    return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
 
 
 #Section: General Statements
@@ -118,8 +137,7 @@ def Flask_error_statement(error_statement):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    formatted_dict = '\n'.join([f"{k}: {v}" for k, v in error_statement.items()])
-    return f"The form submission failed because of the following error(s):\n{formatted_dict}"
+    return f"The form submission failed because of the following error(s):\n{'\n'.join([f"{k}: {v}" for k, v in error_statement.items()])}"
 
 
 #Section: Files, File Organization, and File I/O
@@ -214,7 +232,7 @@ def upload_file_to_S3_bucket_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.*) into the .* S3 bucket\.?")
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
 
 
 def upload_nonstandard_usage_file_success_regex():
@@ -225,7 +243,7 @@ def upload_nonstandard_usage_file_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.*) into the .* S3 bucket and successfully performed the update (.*)\.", flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
 
 
 #Section: Database Interactions
@@ -293,14 +311,17 @@ def database_query_fail_statement(error_message, value_type="load requested page
 def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
 
+    The repetition of the statement in both a print statement and as the return value ensures the SQL UPDATE statement isn't truncated, which would happen if the statement only went to stdout via log statements. 
+
     Args:
         update_statement (str): the SQL update statement
 
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = update_statement.replace('\n', ' ')
-    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+    message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+    print(message)
+    return message
 
 
 def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
@@ -313,8 +334,8 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    update_statement = update_statement.replace('\n', ' ')
-    return f"{load_data_response[:-1]}, but updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+    update_statement = database_update_fail_statement(update_statement)
+    return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
 
 
 def database_function_skip_statements(return_value, is_test_function=True, SUSHI_error=False, no_data=False):
@@ -349,7 +370,7 @@ def load_data_into_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r"[Ss]uccessfully loaded (\d*) records into the (.*) relation\.?")
+    return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
 
 
 def update_database_success_regex():
@@ -360,7 +381,7 @@ def update_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
     """
-    return re.compile(r"[Ss]uccessfully performed the update .*\.", flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully performed the update .+\.", flags=re.DOTALL)
 
 
 #Section: SUSHI API Calls
@@ -473,7 +494,7 @@ def reports_with_no_usage_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r"The call to the `.*` endpoint for .* returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
+    return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
 def skip_test_due_to_SUSHI_error_regex():
@@ -484,7 +505,7 @@ def skip_test_due_to_SUSHI_error_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`
     """
-    return re.compile(r"The call to the `.*` endpoint for .* raised the (SUSHI )?errors?")
+    return re.compile(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?")
 
 
 """Other standardized logging statements, including those in a single class:

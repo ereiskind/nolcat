@@ -3,22 +3,23 @@ Testing
 
 Running Tests
 *************
-There are two ways to run the test suite:
 
 Running Tests From the CLI
 ==========================
 Test modules are designed to be run from the root folder with the command ``python -m pytest``.
 
-* To view logging statements in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To view the logging statements with the default logging levels (``warning`` for running tests, ``info`` for showing errors) in the pytest output, add ``-s`` to the command. (The ``-s`` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To view logging statements with a specified logging level in the pytest output, add ``-s --log-cli-level="LEVEL"`` to the command where ``LEVEL`` is the name of the desired logging level. 
 * To save the pytest output to stdout, add ``-p pytest_session2file --session2file=logfile_name`` to the command, where ``logfile_name`` is the name of the logfile, including the file extension and the relative path from the root folder (the folder in which the command is being run) for the desired location.
 
   * In stdout, the test functions are reproduced until the point of the error, at which point the error is stated; in the log files, these reproductions contain a fair number of extra characters with no discernable meaning that can be removed by replacing the regex ``\[[\d;]*m`` with no characters.
+  * Pytest has a built-in argument for saving logging to a file, but it saves only the logging; the session2file extension copies the complete pytest output to stdout, including the stack trace.
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
 Working with the Database Within the Container
-----------------------------------------------
-The MySQL command line is accessible through the instance command line with the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate), but the data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
+==============================================
+In addition to the established tests, it's possible to interact with the data through the MySQL command line via the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate). The data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
 
 1. Enter the Python command line with ``python``
 2. Import the needed SQLAlchemy methods with ``from sqlalchemy import create_engine`` and ``from sqlalchemy.orm import sessionmaker``
@@ -49,7 +50,6 @@ Test Data Folders and Modules
 ----------------
 This folder contains all the Excel files, most of which are stored in one of three subfolders:
 
-* "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx": This workbook contains all the records from all the workbooks in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" in the order in which they would be ingested.
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
@@ -88,13 +88,13 @@ Create Tabular COUNTER Reports
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_data.py".
-4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
 
-Create `COUNTERData` Relation Fixture Data
-------------------------------------------
-1. Load the sole worksheet in "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" into OpenRefine to create project "nolcat_test_data".
-2. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
-3. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
+Create `COUNTERData` Relations Fixture Data
+-------------------------------------------
+1. For each workbook in "\\tests\\bin\\COUNTER_workbooks_for_tests\\", load its worksheets into OpenRefine to create projects.
+2. Use the notebook at "\\tests\\data\\create_transformed_test_data.ipynb" to create a "\\tests\\data\\transform_test_data_<report_type>.json" for each project, then apply that JSON to the project for the specified report type.
+3. Download the projects in Excel, then use the ``df`` fields from all the projects and the other field headings to create the relation named for the workbook in "\\tests\\data\\relations.py".
+4. Escape the quotation marks (") within certain resource name values (replace ``"`` with ``/"``).
 
 Create R5 SUSHI Response JSON Reports
 -------------------------------------
@@ -124,7 +124,7 @@ The preferred setup for testing database interactions involves performing all te
 
   * ``test_bp_initialization``
 
-3. Tests needing data in all relations but ``COUNTERData`` -- *Does NOT load all test data into ``COUNTERData``*
+3. Tests needing data in all relations but ``COUNTERData``
 
   * ``test_bp_ingest_usage``
 

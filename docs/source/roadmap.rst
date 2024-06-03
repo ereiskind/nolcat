@@ -20,26 +20,10 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
-Iteration 2: Add Historical Data
-================================
-* Write "ingest_usage/upload-non-COUNTER-usage.html" page
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms`` for use in ``initialization.views.upload_historical_non_COUNTER_usage()``
-* Write "initialization/initial-data-upload-4.html" page
-* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` from existing psuedocode
-* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Finish ``tests.conftest.function sample_COUNTER_reports_for_MultipartEncoder()`` and use it in the designated test functions/Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
 * Add check of contents of file uploaded to S3 against original file to ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
-* Get failing test ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to pass
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_61a()``
@@ -48,6 +32,8 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
+* Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
+* Write ``tests.test_app.test_COUNTER_reports_offered_by_statistics_source()``
 
 Basic Enhancement Iterations
 ****************************
@@ -151,7 +137,7 @@ Iteration 2: Formalize Documentation
 Iteration 3: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
-* Write ``tests.test_bp_initialization.test_data_load_complete()``
+* Update ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()`` to check for displayed data
 
 Aspirational Iterations
 ***********************

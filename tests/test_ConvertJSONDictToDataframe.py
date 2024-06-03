@@ -1,5 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-05-30 ##########
 
 import pytest
 import logging
@@ -23,7 +23,7 @@ def sample_SUSHI_PR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -35,7 +35,7 @@ def sample_SUSHI_DR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -47,7 +47,7 @@ def sample_SUSHI_TR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -59,7 +59,7 @@ def sample_SUSHI_IR_response_JSON_dict():
     Yields:
         dict: test COUNTER data
     """
-    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -4502,22 +4502,22 @@ def sample_SUSHI_IR_response_dataframe():
 def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUSHI_PR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_JSON_dict).create_dataframe()
-    assert_frame_equal(df, sample_SUSHI_PR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(df, sample_SUSHI_PR_response_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_DR(sample_SUSHI_DR_response_JSON_dict, sample_SUSHI_DR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_JSON_dict).create_dataframe()
-    assert_frame_equal(df, sample_SUSHI_DR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(df, sample_SUSHI_DR_response_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUSHI_TR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_JSON_dict).create_dataframe()
-    assert_frame_equal(df, sample_SUSHI_TR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(df, sample_SUSHI_TR_response_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
-    assert_frame_equal(df, sample_SUSHI_IR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(df, sample_SUSHI_IR_response_dataframe[df.columns.tolist()])

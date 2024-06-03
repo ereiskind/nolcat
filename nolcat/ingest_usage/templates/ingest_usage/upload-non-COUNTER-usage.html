@@ -10,8 +10,44 @@
 <body>
     <h1>Upload Historical Non-COUNTER Data</h1>
 
-    <!--
-        Render form for downloading files with non-COUNTER compliant data--use `views.py` and `forms.py` for logic
-    -->
+    <p>The file name will be changed by the program to match the needed convention, but the file must be one of the following:
+        <dl>
+            <dt>Tabular data</dt>
+                <dd>.xlsx</dd>
+                <dd>.csv</dd>
+                <dd>.tsv</dd>
+            <dt>Text</dt>
+                <dd>.docx</dd>
+                <dd>.txt</dd>
+                <dd>.json</dd>
+                <dd>.html</dd>
+                <dd>.htm</dd>
+                <dd>.xml</dd>
+            <dt>Image</dt>
+                <dd>.jpeg</dd>
+                <dd>jpg</dd>
+                <dd>.png</dd>
+                <dd>.svg</dd>
+            <dt>Text and images</dt>
+                <dd>.pdf</dd>
+                <dd>.pptx</dd>
+            <dt>Compressed file</dt>
+                <dd>.zip</dd>
+        </dl>
+    </p>
+
+    <form action="{{ url_for('ingest_usage.upload_non_COUNTER_reports', testing=testing) }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <label>
+            {{ form.AUCT_option.label }}
+            {{ form.AUCT_option }}
+        </label>
+        <br>
+        <label>
+            {{ form.usage_file.label }}
+            {{ form.usage_file }}
+        </label>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

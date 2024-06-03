@@ -1,10 +1,12 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-06-03 ##########
 
 import pytest
 import logging
 from pathlib import Path
 import os
+import random
+from shutil import copy
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -356,23 +358,19 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
 
 
 @pytest.fixture
-def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
-    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test.
+def zip_dicts_by_common_keys(*dicts):
+    """Zips together dictionaries based on common key values.
+
+    This function was taken from https://stackoverflow.com/a/16458780.
     
     Args:
-        tmp_path (pathlib.Path): a temporary directory created just for running tests
-        COUNTERData_relation (dataframe): a relation of test data
-    
+        *dicts (dict): a variable length list of dictionaries
+
     Yields:
-        CSV: a CSV file corresponding to a relation in the test data
+        list: a list of tuples containing the keys followed by their values from all the argument dictionaries
     """
-    yield COUNTERData_relation.to_csv(
-        tmp_path / 'COUNTERData_relation.csv',
-        index_label="COUNTER_data_ID",
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    os.remove(tmp_path / 'COUNTERData_relation.csv')
+    for i in set(dicts[0]).intersection(*dicts[1:]):
+        yield (i,) + tuple(d[i] for d in dicts)
 
 
 #Section: Tests
@@ -411,11 +409,10 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     fiscalYears_relation_data = query_database(
@@ -459,7 +456,6 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-2.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -493,11 +489,10 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     statisticsSources_relation_data = query_database(
@@ -551,7 +546,6 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-3.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -589,30 +583,23 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
-    #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
-    form_submissions = MultipartEncoder(
-        fields={
-            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
-            #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
-            #'COUNTER_reports': #Test: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
-            #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
-        },
-        encoding='utf-8',
-    )
-    header_value['Content-Type'] = form_submissions.content_type
+    form_submissions = {
+        'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
+        'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
+    }
+    header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
         '/initialization/initialization-page-3',
-        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
-    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    )
 
     #Section: Get Relations from Database for Comparison
     annualUsageCollectionTracking_relation_data = query_database(
@@ -624,50 +611,233 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    #COUNTERData_relation_data = query_database(
-    #    query="SELECT * FROM COUNTERData;",
-    #    engine=engine,
-    #    index="COUNTER_data_ID",
-    #)
-    #if isinstance(COUNTERData_relation_data, str):
-    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
-    #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
-    #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
-    #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
-    #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
-    #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
+    COUNTERData_relation_data = query_database(
+        query="SELECT * FROM COUNTERData;",
+        engine=engine,
+        index="COUNTER_data_ID",
+    )
+    if isinstance(COUNTERData_relation_data, str):
+        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
+    COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
+    COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
+    COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
+    COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
 
     #Section: Assert Statements
-    # This is the HTML file of the page the redirect goes to
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-5.html', 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
-    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
+    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_GET_request_for_upload_historical_non_COUNTER_usage():
+def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
-    #ToDo: Render the page
-    #ToDo: Compare the fields in the form on the page to a static list of the test data values that meet the requirements
-    pass
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    page = client.get(
+        '/initialization/initialization-page-4',
+        follow_redirects=True,
+    )
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+    number_of_file_fields = len(GET_soup.find_all(name='input', type='file'))
+    
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-4.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
+    assert number_of_file_fields == df.shape[0]
+
+
+@pytest.fixture
+def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
+    """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, making a copy of that file with a name matching the naming convention, and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
+
+    To test for a greater number of possible scenarios, the number and type of files uploaded when calling `test_upload_historical_non_COUNTER_usage` should vary; the "factory as fixture" pattern (https://docs.pytest.org/en/8.2.x/how-to/fixtures.html#factories-as-fixtures) makes that possible. Not only does iteration allow the test to call the fixture a variable number of times, it makes teardown much easier, as the pattern has that functionality explicitly modeled in the pytest instructions. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        dict: a valid `MultipartEncoder.fields` argument using a randomly selected file
+    """
+    caplog.set_level(logging.INFO, logger='botocore')
+    
+    for_removal = []  # When invoked in a log statement before the yield statement, the list appears empty, but the teardown works as expected
+
+    def _files_for_test_upload_historical_non_COUNTER_usage(AUCT_option):
+        """An inner fixture function returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
+
+        The "factory as fixture" pattern uses an inner function which supplies a return value passed to the test function whenever the outer fixture function is called. Since the inner function uses a `return` statement, not a `yield` statement, teardown functionality must be in the outer function. To preserve the values returned by the inner function, the outer function has the `for_removal` list, and all values returned by the inner function must also be appended to that list for teardown.
+
+    Args:
+        AUCT_option (str): the result of the `nolcat.app.create_AUCT_SelectField_options()` function for the given field
+
+        Returns:
+            tuple: the file name and a FileIO object for the file
+        """
+        file_options = [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'data', 'COUNTER_JSONs_for_tests').iterdir()] + [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
+        file = random.choice(file_options)
+        new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
+        copy(file, new_file)
+        log.debug(check_if_file_exists_statement(new_file))
+        for_removal.append(f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")  # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` changes the file name to the instance record's primary keys separated by an underscore, so that file name is what needs to be saved for removal from S3 
+        return (new_file.name, open(new_file, 'rb'))
+
+    yield _files_for_test_upload_historical_non_COUNTER_usage
+
+    for file in for_removal:
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file
+            )
+        except botocore.exceptions as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage():
+def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
     """Tests uploading the files with non-COUNTER usage statistics."""
-    #ToDo: Get the file paths out of the AUCT relation
-    #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
-    pass
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
 
+    #Section: Create Form Submission
+    df = query_database(
+        query=f"""
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status='Collection not started' OR
+                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                );
+        """,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
+    list_of_AUCT_submission_fields = {f"usage_files-{i}-usage_file": AUCT_options for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields)}
+    log.debug(f"Uploads possible for the following fields:\n{format_list_for_stdout(list_of_AUCT_submission_fields)}")
+    fields_being_uploaded = {k: list_of_AUCT_submission_fields[k] for k in random.sample(
+        list(list_of_AUCT_submission_fields.keys()),  # Using brackets to type juggle causes the complete list of keys to be repeated k times
+        k=random.randint(2, len(list_of_AUCT_submission_fields)),
+    )}
+    log.info(f"Uploading files into the following fields:\n{format_list_for_stdout(fields_being_uploaded)}")
+    form_submissions_fields = {}
+    for label_ID, AUCT_option in fields_being_uploaded.items():
+        form_submissions_fields[label_ID] = files_for_test_upload_historical_non_COUNTER_usage(AUCT_option)
+        # There's no check against duplication in the files used, but for file uploads, a given file can be uploaded multiple times without a problem
+    log.info(f"Submitting the following field and form combinations:\n{format_list_for_stdout(form_submissions_fields)}")
+    form_submissions = MultipartEncoder(
+        fields=form_submissions_fields,
+        encoding='utf-8',
+    )
 
-def test_data_load_complete():
-    """Tests calling the route and subsequently rendering the page."""
-    #ToDo: Write test once this route contains content for displaying the newly uploaded data in the browser
-    pass
+    #Section: Confirm HTTP POST
+    #Subsection: Submit Files via HTTP POST
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/initialization/initialization-page-4/test',
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )
+    POST_soup = BeautifulSoup(POST_response.data, 'lxml')
+    POST_response_title = POST_soup.head.title
+    POST_response_page_title = POST_soup.body.h1
+    #ToDo: Add searches for displayed loaded data when `nolcat.initialization.views.data_load_complete()`/'initialization/show-loaded-data.html' displays such data
+
+    #Subsection: Assert Statements
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'show-loaded-data.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title == POST_response_title
+    assert HTML_file_page_title == POST_response_page_title
+    #ToDo: Add assert statements to match searches in above to-do
+
+    #Section: Confirm Successful Database Update
+    collection_status_and_file_path = []
+    for record in fields_being_uploaded.values():
+        df = query_database(
+            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            pytest.skip(database_function_skip_statements(df))
+        collection_status_and_file_path.append((
+            df.at[0,'collection_status'],
+            df.at[0,'usage_file_path'],
+        ))
+    log.info(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")
+    for record in collection_status_and_file_path:
+        assert record[0] == 'Collection complete'
+        assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
+
+    #Section: Confirm Successful S3 Upload
+    list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    files_in_bucket = []
+    bucket_contents = list_objects_response.get('Contents')
+    if bucket_contents:
+        for contents_dict in bucket_contents:
+            files_in_bucket.append(contents_dict['Key'])
+        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
+        assert files_in_bucket.sort() == list_of_files_in_S3.sort()
+    else:
+        assert False  # Nothing in bucket

@@ -13,7 +13,6 @@ import re
 import html
 from sqlalchemy import create_engine
 import pandas as pd
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
@@ -21,7 +20,7 @@ from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard beca
 from nolcat.app import create_app
 from nolcat.app import configure_logging
 from nolcat.app import s3_client
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.models import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
@@ -31,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 #Section: Fixtures for Connecting to the Database
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def engine():
     """Creates a SQLAlchemy engine for testing.
     
@@ -78,7 +77,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server. This fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104).
+    The Flask test client lets tests make HTTP requests without running the server. This fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104). The test client uses HTTP methods for the method names, just like requests, but such methods are actually wrappers for `werkzeug.test.Client.open()` (https://werkzeug.palletsprojects.com/en/3.0.x/test/#werkzeug.test.Client.open).
 
     Args:
         app (flask.Flask): a Flask object
@@ -122,7 +121,7 @@ def session(engine, db):
 
 
 #Section: Test Data for Relations
-@pytest.fixture
+@pytest.fixture(scope='session')
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation.
     
@@ -132,7 +131,7 @@ def fiscalYears_relation():
     yield relations.fiscalYears_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def annualStatistics_relation():
     """Creates a dataframe that can be loaded into the `annualStatistics` relation.
     
@@ -142,7 +141,7 @@ def annualStatistics_relation():
     yield relations.annualStatistics_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def vendors_relation():
     """Creates a dataframe that can be loaded into the `vendors` relation.
     
@@ -152,7 +151,7 @@ def vendors_relation():
     yield relations.vendors_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def vendorNotes_relation():
     """Creates a dataframe that can be loaded into the `vendorNotes` relation.
     
@@ -162,7 +161,7 @@ def vendorNotes_relation():
     yield relations.vendorNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsSources_relation():
     """Creates a dataframe that can be loaded into the `statisticsSources` relation.
     
@@ -172,7 +171,7 @@ def statisticsSources_relation():
     yield relations.statisticsSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation.
     
@@ -182,7 +181,7 @@ def statisticsSourceNotes_relation():
     yield relations.statisticsSourceNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def resourceSources_relation():
     """Creates a dataframe that can be loaded into the `resourceSources` relation.
     
@@ -192,7 +191,7 @@ def resourceSources_relation():
     yield relations.resourceSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def resourceSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation.
     
@@ -202,7 +201,7 @@ def resourceSourceNotes_relation():
     yield relations.resourceSourceNotes_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def statisticsResourceSources_relation():
     """Creates a series that can be loaded into the `statisticsResourceSources` relation.
     
@@ -212,7 +211,7 @@ def statisticsResourceSources_relation():
     yield relations.statisticsResourceSources_relation()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def annualUsageCollectionTracking_relation():
     """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation.
     
@@ -222,14 +221,215 @@ def annualUsageCollectionTracking_relation():
     yield relations.annualUsageCollectionTracking_relation()
 
 
-@pytest.fixture
-def COUNTERData_relation():
-    """Creates a dataframe that can be loaded into the `COUNTERData` relation.
+@pytest.fixture(scope='session')
+def workbook_0_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2017.xlsx` workbook.
     
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.COUNTERData_relation()
+    yield relations.workbook_0_2017_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_1_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2017.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2017_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_2_2017_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2017.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2017_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_0_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2018_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_1_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2018_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_2_2018_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2018.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2018_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_0_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2019_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_1_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2019_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_2_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2019_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_3_2019_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `3_2019.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_3_2019_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_0_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `0_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_0_2020_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_1_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `1_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_1_2020_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_2_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `2_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_2_2020_relation()
+
+
+@pytest.fixture(scope='session')
+def workbook_3_2020_relation():
+    """Creates a dataframe of test data based on the COUNTER data in the `3_2020.xlsx` workbook.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
+    yield relations.workbook_3_2020_relation()
+
+
+@pytest.fixture(scope='session')
+def workbooks_and_relations(workbook_0_2017_relation, workbook_1_2017_relation, workbook_2_2017_relation, workbook_0_2018_relation, workbook_1_2018_relation, workbook_2_2018_relation, workbook_0_2019_relation, workbook_1_2019_relation, workbook_2_2019_relation, workbook_3_2019_relation, workbook_0_2020_relation, workbook_1_2020_relation, workbook_2_2020_relation, workbook_3_2020_relation):
+    """A dictionary connecting the name of individual workbooks in the `COUNTER_workbooks_for_tests` folder to the relations containing the given workbook's data.
+
+    Args:
+        workbook_0_2017_relation (dataframe): a relation of test data
+        workbook_1_2017_relation (dataframe): a relation of test data
+        workbook_2_2017_relation (dataframe): a relation of test data
+        workbook_0_2018_relation (dataframe): a relation of test data
+        workbook_1_2018_relation (dataframe): a relation of test data
+        workbook_2_2018_relation (dataframe): a relation of test data
+        workbook_0_2019_relation (dataframe): a relation of test data
+        workbook_1_2019_relation (dataframe): a relation of test data
+        workbook_2_2019_relation (dataframe): a relation of test data
+        workbook_3_2019_relation (dataframe): a relation of test data
+        workbook_0_2020_relation (dataframe): a relation of test data
+        workbook_1_2020_relation (dataframe): a relation of test data
+        workbook_2_2020_relation (dataframe): a relation of test data
+        workbook_3_2020_relation (dataframe): a relation of test data
+
+    Yields:
+        dict: key-value pairs of workbook names and fixture names for the data in the given workbook
+    """
+    yield {
+        '0_2017.xlsx': workbook_0_2017_relation,
+        '1_2017.xlsx': workbook_1_2017_relation,
+        '2_2017.xlsx': workbook_2_2017_relation,
+        '0_2018.xlsx': workbook_0_2018_relation,
+        '1_2018.xlsx': workbook_1_2018_relation,
+        '2_2018.xlsx': workbook_2_2018_relation,
+        '0_2019.xlsx': workbook_0_2019_relation,
+        '1_2019.xlsx': workbook_1_2019_relation,
+        '2_2019.xlsx': workbook_2_2019_relation,
+        '3_2019.xlsx': workbook_3_2019_relation,
+        '0_2020.xlsx': workbook_0_2020_relation,
+        '1_2020.xlsx': workbook_1_2020_relation,
+        '2_2020.xlsx': workbook_2_2020_relation,
+        '3_2020.xlsx': workbook_3_2020_relation,
+    }
+
+
+@pytest.fixture(scope='session')
+def create_COUNTERData_workbook_iterdir_list():
+    """A list of pathlib.Path objects for each of the workbooks containing test data.
+
+    The `iterdir()` method, by definition, returns the files in an arbitrary order, but many test functions rely upon both an `iterdir()` method to get all of the workbooks in the `COUNTER_workbooks_for_tests` folder and a specific order of records in a `COUNTERData_relation` fixture compared to the output of the function being tested. To keep the arbitrary order of `iterdir()` from causing problems, this fixture runs the method once for a test session; the order of workbooks returned in this fixture is used throughout the test session.
+
+    Yields:
+        list: the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+    """
+    yield [file for file in Path(TOP_NOLCAT_DIRECTORY, 'tests', 'bin', 'COUNTER_workbooks_for_tests').iterdir()]
+
+
+@pytest.fixture
+def COUNTERData_relation(create_COUNTERData_workbook_iterdir_list, workbooks_and_relations):
+    """Creates a dataframe containing all the test COUNTER data.
+
+    The order in which the the data from the workbook fixtures is added to the dataframe is determined by the `create_COUNTERData_workbook_iterdir_list()` fixture because the dataframes this fixture is being compared against use that same order.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        workbooks_and_relations (dict): key-value pairs of workbook names and fixture names for the data in the given workbook
+
+    Yields:
+        dataframe: a relation of test data
+    """
+    df = pd.concat([workbooks_and_relations[file.name] for file in create_COUNTERData_workbook_iterdir_list], ignore_index=True)
+    df.index.name = "COUNTER_data_ID"  # To restore the index name
+    yield df
 
 
 #Section: Fixtures for File I/O
@@ -255,8 +455,8 @@ def download_destination():
 
 
 @pytest.fixture(params=[
-    Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
-    Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
+    TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests',
+    TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'sample_COUNTER_R4_reports',
 ])
 def path_to_sample_file(request):
     """A parameterized function returning absolute paths to randomly selected files for use in testing file I/O operations.
@@ -289,16 +489,14 @@ def remove_file_from_S3(path_to_sample_file):
         None
     """
     log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
-    file_name = f"test_{path_to_sample_file.name}"
-    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
 @pytest.fixture
@@ -347,7 +545,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
@@ -402,10 +600,11 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
-    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}`"))
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
@@ -414,7 +613,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
@@ -454,24 +653,6 @@ def most_recent_month_with_usage():
     yield (begin_date, end_date)
 
 
-@pytest.fixture
-def sample_COUNTER_reports_for_MultipartEncoder():
-    """Creates a `MultipartEncoder.fields` dictionary value for a `MultipleFileField`.
-    
-    When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
-
-    Yields:
-        MultipartEncoder.fields: a representation of multiple files selected in a MultipleFileField
-    """
-    # https://werkzeug.palletsprojects.com/en/2.0.x/test/#werkzeug.test.EnvironBuilder
-    # https://werkzeug.palletsprojects.com/en/2.0.x/test/#werkzeug.test.EnvironBuilder.files
-    folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
-    file_names = []
-    for workbook in folder_path.iterdir():
-        file_names.append(workbook)
-    pass  #Test: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
-
-
 #Section: Test Helper Functions Not Possible in `nolcat.app`
 def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
@@ -503,18 +684,16 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
-    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
-    if 'publication_date' in df.columns.to_list():
+    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
+    if 'publication_date' in df.columns.tolist():
         df["publication_date"] = pd.to_datetime(
             df["publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
         )
-    if 'parent_publication_date' in df.columns.to_list():
+    if 'parent_publication_date' in df.columns.tolist():
         df["parent_publication_date"] = pd.to_datetime(
             df["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
         )
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
@@ -541,7 +720,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         URL,
         "reports",
         credentials,
-    ).make_SUSHI_call()
+    ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     if isinstance(response[0], str):
         pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))

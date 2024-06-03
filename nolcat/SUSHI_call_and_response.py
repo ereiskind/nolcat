@@ -66,10 +66,13 @@ class SUSHICallAndResponse:
         pass
     
 
-    def make_SUSHI_call(self):
+    def make_SUSHI_call(self, bucket_path=PATH_WITHIN_BUCKET):
         """Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
 
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
+
+        Args:
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
 
         Returns:
             tuple: the API call response (dict) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -94,7 +97,7 @@ class SUSHICallAndResponse:
             message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
             messages_to_flash = [message]
-            flash_message = self._save_raw_Response_text(API_response.text)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
@@ -105,7 +108,7 @@ class SUSHICallAndResponse:
         if isinstance(API_response, Exception):
             message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
-            flash_message = self._save_raw_Response_text(API_response.text)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
@@ -129,7 +132,7 @@ class SUSHICallAndResponse:
                 if flash_message_list:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
                     message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
@@ -153,7 +156,7 @@ class SUSHICallAndResponse:
             if flash_message_list:
                 for statement in flash_message_list:
                     messages_to_flash.append(statement)
-                log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
             if flash_message_list and SUSHI_exceptions:
                 message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                 log.warning(message)
@@ -173,7 +176,7 @@ class SUSHICallAndResponse:
                 if flash_message_list:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
+                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
                     message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
@@ -253,7 +256,7 @@ class SUSHICallAndResponse:
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 log.info(f"GET response code: {API_response}")
                 API_response.raise_for_status()
-            except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
+            except Timeout as error_after_timeout:
                 message = f"GET request to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
                 log.error(message)
                 return message
@@ -372,11 +375,12 @@ class SUSHICallAndResponse:
         return (API_response, [])
     
 
-    def _save_raw_Response_text(self, Response_text):
+    def _save_raw_Response_text(self, Response_text, bucket_path=PATH_WITHIN_BUCKET):
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
             str: an error message to flash indicating the creation of the bailout file
@@ -390,13 +394,14 @@ class SUSHICallAndResponse:
             return database_query_fail_statement(statistics_source_ID, "return requested value")
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
-            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
-            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
-        log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 bucket {BUCKET_NAME}"))
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().strftime(S3_file_name_timestamp())}"
+        log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
         logging_message = save_unconverted_data_via_upload(
-            data=Response_text,
-            file_name_stem=file_name_stem,
+            Response_text,
+            file_name_stem,
+            bucket_path,
         )
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
@@ -456,13 +461,13 @@ class SUSHICallAndResponse:
                             errors_list.add(report_type + SUSHI_exception)
                 if len(errors_list) == 1:  # One error indicating API calls should stop
                     return_value = (errors_list.pop(), flash_messages_list)
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return return_value
                 elif len(errors_list) > 1:  # Multiple errors indicating API calls should stop
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return (f"All of the following errors were raised:\n{format_list_for_stdout(errors_list)}", flash_messages_list)
                 else:  # API calls should continue
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
                     return (None, flash_messages_list)
         else:
             message = f"SUSHI error handling method for a {report_type} accepted {repr(type(error_contents))} data, which is an invalid type."
@@ -472,6 +477,8 @@ class SUSHICallAndResponse:
 
     def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
+
+        For the messages, the report type is added to the start of the sentence in `_handle_SUSHI_exceptions()`.
 
         Args:
             error_contents (dict): the contents of the error message
@@ -522,7 +529,7 @@ class SUSHICallAndResponse:
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         #Section: Handle Error
-        message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
+        message = f" request raised error {error_code}: {error_contents['Message']}."
         if error_contents.get('Data'):
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         
@@ -537,7 +544,6 @@ class SUSHICallAndResponse:
                 if isinstance(df, str):
                     error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
                     return (error_message, [message, error_message])
-                logging.debug("About to create a StatisticsSources object")  #TEST: temp
                 statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                     statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                     statistics_source_name = str(df.at[0,'statistics_source_name']),

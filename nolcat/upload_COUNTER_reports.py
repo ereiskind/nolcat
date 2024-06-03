@@ -68,7 +68,7 @@ class UploadCOUNTERReports:
                 continue
             
             try:
-                statistics_source_ID = int(re.search(r"(\d*)_.*\.xlsx", str(FileStorage_object.filename)).group(1))
+                statistics_source_ID = int(re.search(r"(\d+)_.+\.xlsx", str(FileStorage_object.filename)).group(1))
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
@@ -235,7 +235,6 @@ class UploadCOUNTERReports:
                     df[field] = pd.to_datetime(
                         df[field],
                         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                        infer_datetime_format=True,
                         utc=True,  # This must be set to `True` to convert timezone-aware datetime objects
                     )
                     df[field] = df[field].dt.tz_localize(None)
@@ -244,7 +243,7 @@ class UploadCOUNTERReports:
 
                 #Section: Make Pre-Stacking Updates
                 df = df.replace(r"\n", "", regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
-                df = df.applymap(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
+                df = df.map(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
 
                 #Subsection: Make Publication Dates Date Only ISO Strings
                 # At this point, dates can be in multiple formats and data types, but NoLCAT doesn't need time or timezone data, and since all the metadata values are combined into a larger string as part of the unstacking process, using ISO strings or the null placeholder string is appropriate
@@ -281,7 +280,7 @@ class UploadCOUNTERReports:
                 if re.fullmatch(r"PR1?", report_type) is None:
                     log.debug("About to remove total rows from non-platform reports.")
                     number_of_rows_with_totals = df.shape[0]
-                    common_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*", regex=True)  # `\w*` is because values besides `title` are used in various reports
+                    common_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ff]or\s[Aa]ll\s\w+", regex=True)  # `\w+` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ss]earches", regex=True)
                     summary_rows = common_summary_rows | uncommon_summary_rows
                     summary_rows.name = 'summary_rows'  # Before this, the series is named `resource_name`, just like the series it was filtered from
@@ -325,7 +324,7 @@ class UploadCOUNTERReports:
                 log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
                     to_replace='^\s*$',
-                    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
+                    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is considered invalid by libraries not used in this class, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
                     value="`None`",
                     regex=True
                 )
@@ -381,11 +380,7 @@ class UploadCOUNTERReports:
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
                 log.debug(f"Dataframe immediately after stacking:\n{df}")
-                df = df.reset_index()
-                df = df.rename(columns={
-                    'level_1': 'usage_date',
-                    0: 'usage_count',
-                })
+                df = df.reset_index(name='usage_count').rename(columns={"level_1": "usage_date"})
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
@@ -483,13 +478,11 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(
                 combined_df['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
 

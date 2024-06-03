@@ -555,23 +555,13 @@ class ConvertJSONDictToDataframe:
             log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}) is too long to display.")
         else:
             log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}):\n{records_orient_list}")
-        try:
-            df = pd.read_json(
-                records_orient_list,
-                orient='records',
-                dtype=df_dtypes,  # This only sets numeric data types
-                encoding='utf-8',
-                encoding_errors='backslashreplace',
-            )
-        except Exception as error:
-            log.debug(f"Converting `records_orient_list` directly to dataframe raises the error {error}.")
-            df = pd.read_json(
-                io.StringIO(records_orient_list),  # From https://stackoverflow.com/a/63655099
-                orient='records',
-                dtype=df_dtypes,  # This only sets numeric data types
-                encoding='utf-8',
-                encoding_errors='backslashreplace',
-            )
+        df = pd.read_json(
+            io.StringIO(records_orient_list),  # Originally from https://stackoverflow.com/a/63655099 in `except` block; now only option due to `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.`
+            orient='records',
+            dtype=df_dtypes,  # This only sets numeric data types
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
         log.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
@@ -580,13 +570,11 @@ class ConvertJSONDictToDataframe:
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             df['parent_publication_date'] = pd.to_datetime(
                 df['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
             )
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)

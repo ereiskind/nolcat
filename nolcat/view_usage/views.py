@@ -32,7 +32,7 @@ def create_COUNTER_fixed_vocab_list(form_selections):
     Returns:
         list: the argument list with all pipe-delimited strings separated into individual list items
     """
-    log.info("Starting `create_COUNTER_fixed_vocab_list()`.")
+    log.info(f"Starting `create_COUNTER_fixed_vocab_list()` for list {form_selections}.")
     return_value = []
     for item in form_selections:
         if "|" in item:
@@ -913,16 +913,20 @@ def construct_IR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
-def download_non_COUNTER_usage():
-    """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
+@bp.route('/non-COUNTER-downloads/', defaults={'testing': ""}, methods=['GET', 'POST'])
+@bp.route('/non-COUNTER-downloads/<string:testing>', methods=['GET', 'POST'])
+def download_non_COUNTER_usage(testing):
+    """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
+    
+    Args:
+        testing (str, optional): an indicator that the route function call is for a test; default is an empty string which indicates POST is for production
+    """
     log.info("Starting `download_non_COUNTER_usage()`.")
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
-        file_name_format = re.compile(r"\d*_\d{4}\.\w{3,4}")
         log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder(), False))
         for file in create_downloads_folder().iterdir():
-            if file_name_format.fullmatch(str(file.name)):
+            if non_COUNTER_file_name_regex().fullmatch(str(file.name)):
                 file.unlink()
                 log.debug(check_if_file_exists_statement(file))
 
@@ -944,12 +948,12 @@ def download_non_COUNTER_usage():
             flash(database_query_fail_statement(file_download_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
-        return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
+        return render_template('view_usage/download-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
-        AUCT_object = pd.read_sql(
-            sql=f"""
+        AUCT_object = query_database(
+            query=f"""
                 SELECT
                     usage_is_being_collected,
                     manual_collection_required,
@@ -961,8 +965,11 @@ def download_non_COUNTER_usage():
                 FROM annualUsageCollectionTracking
                 WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(AUCT_object, str):
+            flash(database_query_fail_statement(AUCT_object))
+            return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
         AUCT_object['manual_collection_required'] = restore_boolean_values_to_boolean_field(AUCT_object['manual_collection_required'])
         AUCT_object['collection_via_email'] = restore_boolean_values_to_boolean_field(AUCT_object['collection_via_email'])
@@ -981,7 +988,19 @@ def download_non_COUNTER_usage():
         )
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
-        file_path = AUCT_object.download_nonstandard_usage_file(create_downloads_folder())
+        if testing == "":
+            bucket_path = PATH_WITHIN_BUCKET
+        elif testing == "test":
+            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+        else:
+            message = f"The dynamic route featured the invalid value {testing}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        file_path = AUCT_object.download_nonstandard_usage_file(
+            create_downloads_folder(),
+            bucket_path=bucket_path,
+        )
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         return send_file(

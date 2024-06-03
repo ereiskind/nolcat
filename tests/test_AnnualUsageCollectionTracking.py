@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-02-21 ##########
+########## Passing 2024-06-03 ##########
 
 import pytest
 import logging
@@ -64,10 +64,9 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()` and for `query_database()`
-    caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
-    caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
 
     record = query_database(
         query=f"""
@@ -99,7 +98,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
+        start_date,
+        end_date,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
     if isinstance(yield_object[0], str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object[0])
@@ -118,10 +121,9 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     with client:
-        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
@@ -135,11 +137,11 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     )
     if isinstance(database_update_check, str):
         pytest.skip(database_function_skip_statements(database_update_check))
-    database_update_check = database_update_check.iloc[0][0]
+    database_update_check = extract_value_from_single_value_df(database_update_check)
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
-    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result)
 
 
 #Section: Upload and Download Nonstandard Usage File
@@ -167,15 +169,13 @@ def sample_FileStorage_object(path_to_sample_file):
 def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
-    caplog.set_level(logging.INFO, logger='botocore')
 
     #Section: Make Function Call
     with client:
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object)
+        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
 
     #Section: Check Results with Assert Statements
-    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{sample_FileStorage_object.filename.suffix}"
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{Path(sample_FileStorage_object.filename).suffix}"
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
@@ -186,14 +186,14 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
     #Subsection: Check File Upload to S3
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=PATH_WITHIN_BUCKET,
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
-    log.debug(f"Raw list of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{list_objects_response} (type {type(list_objects_response)}).")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET, "") for file_name in bucket_contents]
-    log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{format_list_for_stdout(bucket_contents)}")
+    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
+    log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{format_list_for_stdout(bucket_contents)}")
     assert file_name in bucket_contents
     
     #Subsection: Check Database Update
@@ -203,16 +203,18 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
     )
     if isinstance(usage_file_path_in_database, str):
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
-    usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
+    usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))
     assert file_name == usage_file_path_in_database
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):
     """Test downloading a file in S3 to a local computer."""
-    caplog.set_level(logging.INFO, logger='botocore')
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
-    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
+    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(
+        download_destination,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        )
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()

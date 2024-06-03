@@ -1,12 +1,11 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-02-19 ##########
+########## Passing 2024-06-03 ##########
 
 import pytest
 import logging
-from pathlib import Path
 from datetime import date
+from datetime import datetime
 from random import choice
-import re
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -41,7 +40,7 @@ def test_SQLAlchemy_engine_creation(engine):
     """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
     assert isinstance(engine, sqlalchemy.engine.base.Engine)
     assert isinstance(engine.__dict__['url'], sqlalchemy.engine.url.URL)
-    assert str(engine.__dict__['url']) == f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    assert str(engine.__dict__['url']) == f'mysql://{DATABASE_USERNAME}:***@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'  # The `sqlalchemy.engine.url.URL` changes the password to `***` for stdout
 
 
 def test_homepage(client):
@@ -112,7 +111,7 @@ def test_query_database(engine, vendors_relation):
 
 
 @pytest.mark.dependency(depends=['test_query_database'])
-def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation, caplog):
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
@@ -250,19 +249,21 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
-        f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
+        path_to_sample_file.name,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
     #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
 
@@ -309,7 +310,7 @@ def test_truncate_longer_lines():
 
 
 @pytest.fixture
-def updated_vendors_relation():
+def vendors_relation_after_test_update_database():
     """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
 
     Yields:
@@ -334,7 +335,7 @@ def updated_vendors_relation():
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, updated_vendors_relation):
+def test_update_database(engine, vendors_relation_after_test_update_database):
     """Tests updating data in the database through a SQL update statement."""
     update_result = update_database(
         update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
@@ -349,7 +350,53 @@ def test_update_database(engine, updated_vendors_relation):
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
+    assert_frame_equal(vendors_relation_after_test_update_database, retrieved_updated_vendors_data)
+
+
+@pytest.fixture
+def vendors_relation_after_test_update_database_with_insert_statement():
+    """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+            ["A Vendor", None],
+            ["Another Vendor", "1"],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
+
+
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
+    """Tests adding records to the database through a SQL insert statement."""
+    update_result = update_database(
+        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+        engine=engine,
+    )
+    retrieved_updated_vendors_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
+    )
+    if isinstance(retrieved_updated_vendors_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
@@ -380,7 +427,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     """
     data = request.param
     log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
-    file_name_stem = f"test_1_reports-{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().isoformat()}"  # This is the format used for usage reports, which are the most frequently type of saved report
+    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     if isinstance(data, dict):
@@ -390,7 +437,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
@@ -402,17 +449,18 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     logging_message = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "test_") for file_name in bucket_contents]  # `test_` prefix retained to match file name from `file_name_stem_and_data()` fixture
+    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:
@@ -440,3 +488,24 @@ def test_last_day_of_month():
     assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
     assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
     assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
+
+
+def test_extract_value_from_single_value_df():
+    """Tests extracting the value from a dataframe containing a single value."""
+    assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
+    assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"
+
+
+def test_S3_file_name_timestamp():
+    """Tests formatting a datetime value with the given format code."""
+    assert datetime(2022, 1, 12, 23, 59, 59).strftime(S3_file_name_timestamp()) == "2022-01-12T23.59.59"
+    assert datetime(2024, 7, 4, 2, 45, 8).strftime(S3_file_name_timestamp()) == "2024-07-04T02.45.08"
+    assert datetime(1999, 11, 27, 13, 18, 27).strftime(S3_file_name_timestamp()) == "1999-11-27T13.18.27"
+
+
+def test_non_COUNTER_file_name_regex():
+    """Tests matching the regex object to file names."""
+    assert non_COUNTER_file_name_regex().fullmatch("1_2020.csv") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("100_2021.xlsx") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("55_2016.pdf") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
