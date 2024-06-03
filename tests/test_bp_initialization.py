@@ -829,12 +829,12 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
 
     #Section: Confirm Successful S3 Upload
-    #list_objects_response = s3_client.list_objects_v2(
-    #    Bucket=BUCKET_NAME,
-    #    Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
-    #)
-    #files_in_bucket = []
-    #log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
+    )
+    files_in_bucket = []
+    log.warning(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")  #TEST: temp
     #bucket_contents = list_objects_response.get('Contents')
     #if bucket_contents:
     #    for contents_dict in bucket_contents:
