@@ -833,8 +833,8 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
     )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
-    log.warning(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")  #TEST: temp
     #bucket_contents = list_objects_response.get('Contents')
     #if bucket_contents:
     #    for contents_dict in bucket_contents:

@@ -188,7 +188,7 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
         Bucket=BUCKET_NAME,
         Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
     )
-    log.debug(f"Raw list of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{list_objects_response} (type {type(list_objects_response)}).")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])

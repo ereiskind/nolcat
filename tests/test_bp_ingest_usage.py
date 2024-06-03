@@ -324,8 +324,8 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
-    log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
     bucket_contents = list_objects_response.get('Contents')
     if bucket_contents:
         for contents_dict in bucket_contents:
