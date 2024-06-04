@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-06-03 ##########
+########## Passing 2024-06-04 ##########
 
 import pytest
 import logging
@@ -48,9 +48,8 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
 
     Args:
-        PATH_TO_CREDENTIALS_FILE (str): the file path for "R5_SUSHI_credentials.json"
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
@@ -94,7 +93,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    log.info(f"`StatisticsSources_fixture()` yields {yield_object} (type {type(yield_object)}).")
+    log.warning(fixture_variable_value_declaration_statement("StatisticsSources_fixture", yield_object))  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
     yield yield_object
 
 
@@ -161,7 +160,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
-def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
+def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
@@ -182,6 +181,7 @@ def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
+@pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
@@ -209,6 +209,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
+@pytest.mark.slow
 def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
     
@@ -240,6 +241,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
+@pytest.mark.slow
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
@@ -258,6 +260,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
+@pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value."""
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
@@ -339,6 +342,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
+@pytest.mark.slow
 def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation.
     

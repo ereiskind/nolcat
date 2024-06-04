@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-06-03 ##########
+########## Passing 2024-06-04 ##########
 
 import pytest
 import logging
@@ -41,6 +41,7 @@ def test_ingest_usage_homepage(client):
 
 
 @pytest.mark.dependency()
+@pytest.mark.slow
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`

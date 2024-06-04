@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2024-06-03 ##########
+########## Passing 2024-06-04 ##########
 
 import pytest
 import logging
@@ -159,6 +159,7 @@ def list_of_reports(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
+@pytest.mark.slow
 def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
@@ -178,6 +179,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
+@pytest.mark.slow
 def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
@@ -197,6 +199,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
+@pytest.mark.slow
 def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
@@ -216,6 +219,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
+@pytest.mark.slow
 def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`

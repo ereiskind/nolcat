@@ -1,5 +1,5 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2024-06-03 ##########
+########## Passing 2024-06-04 ##########
 
 import pytest
 import logging
@@ -53,6 +53,7 @@ def sample_COUNTER_report_workbooks(create_COUNTERData_workbook_iterdir_list):
     yield fixture
 
 
+@pytest.mark.slow
 def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation):
     """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe.
     
