@@ -93,7 +93,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    log.warning(f"`StatisticsSources_fixture()` yields {yield_object} (type {type(yield_object)}).")  #TEST: temp level, revert to `info`
+    log.warning(fixture_variable_value_declaration_statement("StatisticsSources_fixture", yield_object))  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
     yield yield_object
 
 
