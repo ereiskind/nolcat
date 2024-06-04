@@ -48,9 +48,8 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
 
     Args:
-        PATH_TO_CREDENTIALS_FILE (str): the file path for "R5_SUSHI_credentials.json"
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
