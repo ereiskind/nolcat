@@ -1068,8 +1068,8 @@ class StatisticsSources(db.Model):
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 if not df.empty:
                     individual_month_dfs.append(df)
-                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
-                return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+            return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
