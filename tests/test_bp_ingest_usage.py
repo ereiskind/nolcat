@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-06-03 ##########
+########## Passing 2024-06-04 ##########
 
 import pytest
 import logging
