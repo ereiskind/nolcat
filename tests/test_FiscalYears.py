@@ -15,35 +15,7 @@ from nolcat.statements import *
 log = logging.getLogger(__name__)
 
 
-@pytest.fixture(scope='module')
-def FiscalYears_object_and_record():
-    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
-
-    Yields:
-        tuple: a FiscalYears object; a single-record dataframe for the fiscalYears relation
-    """
-    primary_key_value = 6
-    fiscal_year_value = "2023"
-    start_date_value = date.fromisoformat('2022-07-01')
-    end_date_value = date.fromisoformat('2023-06-30')
-
-    FY_instance = FiscalYears(
-        fiscal_year_ID = primary_key_value,
-        fiscal_year = fiscal_year_value,
-        start_date = start_date_value,
-        end_date = end_date_value,
-        notes_on_statisticsSources_used = None,
-        notes_on_corrections_after_submission = None,
-    )
-    FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
-        index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
-    )
-    FY_df.index.name = "fiscal_year_ID"
-    yield (FY_instance, FY_df)
-
-
+#Section: Test Annual Usage Statistics Methods
 def test_calculate_depreciated_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
@@ -84,6 +56,36 @@ def test_calculate_ARL_20():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass
+
+
+#Section: Test Creating New `annualUsageCollectionTracking` Records
+@pytest.fixture(scope='module')
+def FiscalYears_object_and_record():
+    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
+
+    Yields:
+        tuple: a FiscalYears object; a single-record dataframe for the fiscalYears relation
+    """
+    primary_key_value = 6
+    fiscal_year_value = "2023"
+    start_date_value = date.fromisoformat('2022-07-01')
+    end_date_value = date.fromisoformat('2023-06-30')
+
+    FY_instance = FiscalYears(
+        fiscal_year_ID = primary_key_value,
+        fiscal_year = fiscal_year_value,
+        start_date = start_date_value,
+        end_date = end_date_value,
+        notes_on_statisticsSources_used = None,
+        notes_on_corrections_after_submission = None,
+    )
+    FY_df = pd.DataFrame(
+        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
+        index=[primary_key_value],
+        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+    )
+    FY_df.index.name = "fiscal_year_ID"
+    yield (FY_instance, FY_df)
 
 
 @pytest.fixture
@@ -254,6 +256,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
+#Section: Test Collecting Usage Statistics
 def test_collect_fiscal_year_usage_statistics(caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
