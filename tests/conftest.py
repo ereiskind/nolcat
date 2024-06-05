@@ -47,6 +47,7 @@ def engine():
     log.warning(f"`tests.conftest.engine()` yields {engine1} (type {type(engine1)}).")  #TEST: temp level, should be `info`
 
     with engine1.connect() as connection:  # Creates a new database in MySQL in the instance
+        log.warning(f"`connection` in with statement yields {connection} (type {type(connection)}).")  #TEST: temp
         connection.execute(f"CREATE DATABASE test CHARACTER SET = 'utf8'")
     engine2 = create_engine(
         f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/test',
