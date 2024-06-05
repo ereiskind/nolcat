@@ -47,10 +47,12 @@ def FY2021_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-def test_calculate_depreciated_ACRL_60b():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
+def test_calculate_depreciated_ACRL_60b(FY2021_FiscalYears_object):
+    """Tests getting the old ACRL 60b value.
+    
+    Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
 
 
 def test_calculate_depreciated_ACRL_63():
