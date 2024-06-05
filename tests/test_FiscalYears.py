@@ -63,10 +63,12 @@ def test_calculate_depreciated_ACRL_63(FY2021_FiscalYears_object):
     assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
 
 
-def test_calculate_ACRL_61a():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
+def test_calculate_ACRL_61a(FY2021_FiscalYears_object):
+    """Tests getting the ACRL 61a value.
+    
+    Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    assert FY2021_FiscalYears_object.calculate_ACRL_61a() == 73
 
 
 def test_calculate_ACRL_61b():
