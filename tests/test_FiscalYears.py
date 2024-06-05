@@ -16,6 +16,37 @@ log = logging.getLogger(__name__)
 
 
 #Section: Test Annual Usage Statistics Methods
+@pytest.fixture(scope='module')
+def FY2021_FiscalYears_object(engine, caplog):
+    """Creates a FiscalYears object for the fiscal year with COUNTER R5 test data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2021';",
+        engine=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    )
+    if isinstance(record, str):
+        pytest.skip(database_function_skip_statements(record, False))
+    yield_object = FiscalYears(
+        fiscal_year_ID=record.at[0,'fiscal_year_ID'],
+        fiscal_year=record.at[0,'fiscal_year'],
+        start_date=record.at[0,'start_date'],
+        end_date=record.at[0,'end_date'],
+        notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
+        notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
+    )
+    log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
+    yield yield_object
+
+
 def test_calculate_depreciated_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
