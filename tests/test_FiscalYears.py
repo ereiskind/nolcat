@@ -59,12 +59,12 @@ def test_calculate_ARL_20():
 
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
-@pytest.fixture(scope='module')
-def FiscalYears_object_and_record():
+@pytest.fixture
+def FY2023_FiscalYears_object_and_record():
     """Creates a FiscalYears object and an empty record for the fiscalYears relation.
 
     Yields:
-        tuple: a FiscalYears object; a single-record dataframe for the fiscalYears relation
+        tuple: the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
     """
     primary_key_value = 6
     fiscal_year_value = "2023"
@@ -89,12 +89,12 @@ def FiscalYears_object_and_record():
 
 
 @pytest.fixture
-def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, caplog):
+def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_record, caplog):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        FiscalYears_object_and_record (tuple): a FiscalYears object; a single-record dataframe for the fiscalYears relation corresponding to that object
+        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Yields:
@@ -102,7 +102,7 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
     method_result = load_data_into_database(
-        df=FiscalYears_object_and_record[1],
+        df=FY2023_FiscalYears_object_and_record[1],
         relation='fiscalYears',
         engine=engine,
         index_field_name='fiscal_year_ID',
@@ -112,13 +112,13 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_records_into_fiscalYears, FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     #Section: Call Method
     with client:
-        method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+        method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
     if not load_data_into_database_success_regex().fullmatch(method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
