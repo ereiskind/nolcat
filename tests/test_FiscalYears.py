@@ -286,7 +286,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
             [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
             [True, True, False, False, "Collection complete", "11_3.csv", None],
             [True, True, False, False, "Collection complete", "11_4.csv", None],
-            [True, True, False, False, "Collection not started", None, None],
+            [True, False, False, False, "Collection not started", None, "This is the record for `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`"],
             [None, None, None, None, None, None, None],
         ],
         index=multiindex,
