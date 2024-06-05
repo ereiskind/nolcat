@@ -158,6 +158,10 @@ def list_of_reports(SUSHI_credentials_fixture):
     )
 
 
+#ToDo: test_COUNTER_reports_offered_by_statistics_source()
+# Function itself in `tests.conftest`
+
+
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 @pytest.mark.slow
 def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):

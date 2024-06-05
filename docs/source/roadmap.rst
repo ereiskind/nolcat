@@ -26,7 +26,7 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 * Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
-* Write ``tests.test_app.test_COUNTER_reports_offered_by_statistics_source()``
+* Write ``tests.test_SUSHICallAndResponse.test_COUNTER_reports_offered_by_statistics_source()``
 
 Basic Enhancement Iterations
 ****************************
