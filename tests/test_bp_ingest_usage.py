@@ -143,7 +143,8 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert_frame_equal(df, insert_statement_data)
 
 
-# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+#ToDo: test_match_direct_SUSHI_harvest_result()
+# Function itself in `tests.conftest`
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):

@@ -195,6 +195,9 @@ def test_download_file(client, path_to_sample_file):  #ToDo: If method for inter
     #        assert file.read() == downloaded_file
 
 
+# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+
+
 #Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_first_new_PK_value():
@@ -397,10 +400,6 @@ def test_update_database_with_insert_statement(engine, vendors_relation_after_te
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
     assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
-
-
-#ToDo: test_match_direct_SUSHI_harvest_result()
-# Function itself in `tests.conftest`
 
 
 def test_prepare_HTML_page_for_comparison():
