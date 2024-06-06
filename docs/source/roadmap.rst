@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Add check of contents of file uploaded to S3 against original file to ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 

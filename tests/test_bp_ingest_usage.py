@@ -301,7 +301,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
+def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
@@ -329,6 +329,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     )
 
     #Subsection: Assert Statements
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -345,7 +346,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         engine=engine,
     )
     assert df.at[0,'collection_status'] == 'Collection complete'
-    assert df.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
     list_objects_response = s3_client.list_objects_v2(
@@ -358,7 +359,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
-        assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
+        files_in_bucket = [name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for name in files_in_bucket]
+        assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
+    file_from_S3 = s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Filename=tmp_path / file_name,
+    )
+    assert (path_to_sample_file, file_from_S3)

@@ -248,7 +248,7 @@ def test_restore_boolean_values_to_boolean_field():
     assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
-def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
@@ -268,7 +268,12 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
-    #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
+    file_from_S3 = s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
+        Filename=tmp_path / path_to_sample_file.name,
+    )
+    assert (path_to_sample_file, file_from_S3)
 
 
 def test_create_AUCT_SelectField_options():
