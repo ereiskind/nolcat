@@ -389,15 +389,15 @@ def collect_AUCT_and_historical_COUNTER_data():
         #TEST: temp
         log.warning(f"`form.COUNTER_reports.data`:\n{form.COUNTER_reports.data}")
         try:
-            log.warning(f"`form.COUNTER_reports.__dict__`:\n{form.COUNTER_reports.__dict__}")
+            log.warning(f"`form.COUNTER_reports.data.stream`:\n{form.COUNTER_reports.data.stream}")
         except:
             pass
         try:
-            log.warning(f"`form.COUNTER_reports.dir()`:\n{form.COUNTER_reports.dir()}")
+            log.warning(f"`form.COUNTER_reports.data.filename`:\n{form.COUNTER_reports.data.filename}")
         except:
             pass
         try:
-            log.warning(f"`form.COUNTER_reports.var()`:\n{form.COUNTER_reports.var()}")
+            log.warning(f"`form.COUNTER_reports.data.name`:\n{form.COUNTER_reports.data.name}")
         except:
             pass
         #TEST: end temp
