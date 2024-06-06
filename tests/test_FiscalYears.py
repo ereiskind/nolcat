@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 #Section: Test Annual Usage Statistics Methods
-@pytest.fixture(scope='module')
+@pytest.fixture
 def FY2021_FiscalYears_object(engine, caplog):
     """Creates a FiscalYears object for the fiscal year with COUNTER R5 test data.
 
