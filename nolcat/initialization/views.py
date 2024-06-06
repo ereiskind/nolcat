@@ -54,6 +54,8 @@ def collect_FY_and_vendor_data():
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
+        log.info(f"`fiscalYears_dataframe['start_date']`:\n{fiscalYears_dataframe['start_date']}\n")  #TEST: temp
+        log.info(f"`fiscalYears_dataframe['end_date']`:\n{fiscalYears_dataframe['end_date']}\n")  #TEST: temp
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
@@ -384,6 +386,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
+        log.warning(f"`form.COUNTER_reports.data[0].filename` (type {type(form.COUNTER_reports.data[0].filename)}, len {len(form.COUNTER_reports.data[0].filename)}): {form.COUNTER_reports.data[0].filename}")  #TEST: temp
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
@@ -406,7 +409,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        if len(form.COUNTER_reports.data) == 0:
+        if len(form.COUNTER_reports.data) == 0 or form.COUNTER_reports.data[0].filename == "":  # In tests, not submitting forms is done with an empty list, so an empty list is returned; in production, an empty FileStorage object is returned instead
             log.info(f"No COUNTER files were provided for upload.")
             COUNTER_reports_df = None
         else:
@@ -457,15 +460,15 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        COUNTERData_load_result = load_data_into_database(
-            df=COUNTER_reports_df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            messages_to_flash.append(COUNTERData_load_result)
-            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
+        if COUNTER_reports_df:
+            COUNTERData_load_result = load_data_into_database(
+                df=COUNTER_reports_df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+                messages_to_flash.append(COUNTERData_load_result)
         if messages_to_flash:
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
