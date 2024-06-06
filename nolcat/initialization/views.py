@@ -387,16 +387,17 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: After Form Submission
     elif form.validate_on_submit():
         #TEST: temp
+        log.warning(f"`form.COUNTER_reports.data`:\n{form.COUNTER_reports.data}")
         try:
-            log.info(f"`form.COUNTER_reports.data.__dict__`:\n{form.COUNTER_reports.data.__dict__}")
+            log.warning(f"`form.COUNTER_reports.__dict__`:\n{form.COUNTER_reports.__dict__}")
         except:
             pass
         try:
-            log.info(f"`form.COUNTER_reports.data.dir()`:\n{form.COUNTER_reports.data.dir()}")
+            log.warning(f"`form.COUNTER_reports.dir()`:\n{form.COUNTER_reports.dir()}")
         except:
             pass
         try:
-            log.info(f"`form.COUNTER_reports.data.var()`:\n{form.COUNTER_reports.data.var()}")
+            log.warning(f"`form.COUNTER_reports.var()`:\n{form.COUNTER_reports.var()}")
         except:
             pass
         #TEST: end temp
