@@ -386,21 +386,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
-        #TEST: temp
-        log.warning(f"`form.COUNTER_reports.data[0]`:\n{form.COUNTER_reports.data[0]}")
-        try:
-            log.warning(f"`form.COUNTER_reports.data[0].stream`:\n{form.COUNTER_reports.data[0].stream}")
-        except:
-            pass
-        try:
-            log.warning(f"`form.COUNTER_reports.data[0].filename`:\n{form.COUNTER_reports.data[0].filename}")
-        except:
-            pass
-        try:
-            log.warning(f"`form.COUNTER_reports.data[0].name`:\n{form.COUNTER_reports.data[0].name}")
-        except:
-            pass
-        #TEST: end temp
+        log.warning(f"`form.COUNTER_reports.data[0].filename` (type {type(form.COUNTER_reports.data[0].filename)}, len {len(form.COUNTER_reports.data[0].filename)}): {form.COUNTER_reports.data[0].filename}")  #TEST: temp
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
