@@ -4,6 +4,7 @@
 import pytest
 import logging
 from datetime import date
+from random import choice
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
@@ -333,15 +334,49 @@ def FY2022_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-def test_collect_fiscal_year_usage_statistics(caplog):
+def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
-    #ToDo: This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. Right now, no record in the test data meets those criteria.
-    # logging_statement, flash_messages = FiscalYears.collect_fiscal_year_usage_statistics()
-    # assert load_data_into_database_success_regex().match(logging_statement)
-    # assert update_database_success_regex().search(logging_statement)
-    # assert isinstance(flash_messages, list)
-    pass
+    #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
+    # A random value is added at this point for greater variability in the testing
+    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
+    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+        SUSHI_data_file = json.load(JSON_file)
+        for vendor in SUSHI_data_file:
+            for statistics_source_dict in vendor['interface']:
+                if "interface_id" in list(statistics_source_dict.keys()):
+                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
+    retrieval_code = str(choice(retrieval_codes_as_interface_IDs)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+
+    update_result = update_database(
+        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",
+        engine=engine,
+    )
+    if not update_database_success_regex().fullmatch(update_result):
+        pytest.skip("Unable to add statistics source retrieval code to relevant record.")
+    
+    #Section: Make Function Call
+    before_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(before_count, str):
+        pytest.skip(database_function_skip_statements(before_count, False))
+    before_count = extract_value_from_single_value_df(before_count)
+    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    after_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(after_count, str):
+        pytest.skip(database_function_skip_statements(after_count, False))
+    after_count = extract_value_from_single_value_df(after_count)
+
+    #Section: Assert Statements
+    assert before_count < after_count
+    assert load_data_into_database_success_regex().match(logging_statement)
+    assert update_database_success_regex().search(logging_statement)
+    assert isinstance(flash_messages, list)
