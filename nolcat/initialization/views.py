@@ -54,6 +54,8 @@ def collect_FY_and_vendor_data():
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
+        log.info(f"`fiscalYears_dataframe['start_date']`:\n{fiscalYears_dataframe['start_date']}\n")  #TEST: temp
+        log.info(f"`fiscalYears_dataframe['end_date']`:\n{fiscalYears_dataframe['end_date']}\n")  #TEST: temp
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
@@ -384,6 +386,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
+        log.info(f"`form.COUNTER_reports.data`: {form.COUNTER_reports.data}")  #TEST: temp
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
