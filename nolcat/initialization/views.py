@@ -409,7 +409,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        if len(form.COUNTER_reports.data) == 0:  # In tests, not submitting forms is done with an empty list, so an empty list is returned; in production, an empty FileStorage object is returned instead
+        if len(form.COUNTER_reports.data) == 0 or form.COUNTER_reports.data[0].filename == "":  # In tests, not submitting forms is done with an empty list, so an empty list is returned; in production, an empty FileStorage object is returned instead
             log.info(f"No COUNTER files were provided for upload.")
             COUNTER_reports_df = None
         else:
