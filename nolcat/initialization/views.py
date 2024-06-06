@@ -460,15 +460,15 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        COUNTERData_load_result = load_data_into_database(
-            df=COUNTER_reports_df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            messages_to_flash.append(COUNTERData_load_result)
-            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
+        if COUNTER_reports_df:
+            COUNTERData_load_result = load_data_into_database(
+                df=COUNTER_reports_df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+                messages_to_flash.append(COUNTERData_load_result)
         if messages_to_flash:
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
