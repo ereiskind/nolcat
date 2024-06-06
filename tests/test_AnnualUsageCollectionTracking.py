@@ -200,6 +200,8 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
         Filename=tmp_path / file_name,
     )
+    log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
+    log.warning(f"`file_from_S3`: {file_from_S3}")  #TEST: temp
     assert cmp(path_to_sample_file, file_from_S3)
     
     #Subsection: Check Database Update
