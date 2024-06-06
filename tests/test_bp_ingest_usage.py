@@ -14,6 +14,7 @@ from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
+from conftest import match_direct_SUSHI_harvest_result
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
@@ -143,8 +144,33 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert_frame_equal(df, insert_statement_data)
 
 
-#ToDo: test_match_direct_SUSHI_harvest_result()
-# Function itself in `tests.conftest`
+def test_match_direct_SUSHI_harvest_result(engine, caplog):
+    """Tests pulling a set number of records from the `COUNTERData` relation and modifying them so they match the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
+    
+    This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. The function is tested here because the immediately preceding test function loads exactly seven records into the `COUNTERData` relation, and so if it passes, the won't fail due to the last records in `COUNTERData` not containing the expected data.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    df = match_direct_SUSHI_harvest_result(engine, 7, caplog)
+    match_result_df = pd.DataFrame(
+        [
+            [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, "Journal", "Silverchair:1000052", "0018-2702", "1527-1919", "Total_Item_Investigations", "2020-07-01", 6, None, "2019-07-01"],
+            [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None, "2019-07-01"],
+            [2, "TR", "Library Journal", "Library Journals, LLC", None, "Gale", None, None, None, None, "Gale:1273", None, "0363-0277", "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3, None, "2019-07-01"],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4, None, "2019-07-01"],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3, None, "2019-07-01"],
+            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", None, "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", None, "0363-0277", "Journal", None, 2019, "Controlled", "Regular", "Library Journal", None, "Journal", "ProQuest:40955", "0363-0277", None, "Unique_Item_Investigations", "2020-07-01", 3, None, "2019-07-01"],
+            [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None, "2019-07-01"],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "data_type", "section_type", "YOP", "access_type", "access_method", "parent_title", "parent_authors", "parent_data_type", "parent_proprietary_ID", "parent_print_ISSN", "parent_online_ISSN", "metric_type", "usage_date", "usage_count", "report_creation_date"],
+    )
+    match_result_df = match_result_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in match_result_df.columns.tolist()})
+    match_result_df['usage_date'] = pd.to_datetime(match_result_df['usage_date'])
+    match_result_df['report_creation_date'] = pd.to_datetime(match_result_df['report_creation_date'])
+    match_result_df["publication_date"] = pd.to_datetime(
+        match_result_df["publication_date"],
+        errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+    )
+    assert_frame_equal(match_result_df, df)
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
