@@ -200,7 +200,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
         Filename=tmp_path / file_name,
     )
-    assert (path_to_sample_file, file_from_S3)
+    assert cmp(path_to_sample_file, file_from_S3)
     
     #Subsection: Check Database Update
     usage_file_path_in_database = query_database(

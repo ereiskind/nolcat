@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import re
 from ast import literal_eval
+from filecmp import cmp
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -368,4 +369,4 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
         Filename=tmp_path / file_name,
     )
-    assert (path_to_sample_file, file_from_S3)
+    assert cmp(path_to_sample_file, file_from_S3)

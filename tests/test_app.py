@@ -6,6 +6,7 @@ import logging
 from datetime import date
 from datetime import datetime
 from random import choice
+from filecmp import cmp
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -273,7 +274,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
         Filename=tmp_path / path_to_sample_file.name,
     )
-    assert (path_to_sample_file, file_from_S3)
+    assert cmp(path_to_sample_file, file_from_S3)
 
 
 def test_create_AUCT_SelectField_options():
