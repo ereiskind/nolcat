@@ -387,17 +387,17 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: After Form Submission
     elif form.validate_on_submit():
         #TEST: temp
-        log.warning(f"`form.COUNTER_reports.data`:\n{form.COUNTER_reports.data}")
+        log.warning(f"`form.COUNTER_reports.data[0]`:\n{form.COUNTER_reports.data[0]}")
         try:
-            log.warning(f"`form.COUNTER_reports.data.stream`:\n{form.COUNTER_reports.data.stream}")
+            log.warning(f"`form.COUNTER_reports.data[0].stream`:\n{form.COUNTER_reports.data[0].stream}")
         except:
             pass
         try:
-            log.warning(f"`form.COUNTER_reports.data.filename`:\n{form.COUNTER_reports.data.filename}")
+            log.warning(f"`form.COUNTER_reports.data[0].filename`:\n{form.COUNTER_reports.data[0].filename}")
         except:
             pass
         try:
-            log.warning(f"`form.COUNTER_reports.data.name`:\n{form.COUNTER_reports.data.name}")
+            log.warning(f"`form.COUNTER_reports.data[0].name`:\n{form.COUNTER_reports.data[0].name}")
         except:
             pass
         #TEST: end temp
