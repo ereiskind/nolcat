@@ -144,6 +144,10 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     )
 
 
+#ToDo: test_COUNTER_reports_offered_by_statistics_source()
+# Function itself in `tests.conftest`
+
+
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
