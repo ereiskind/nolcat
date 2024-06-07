@@ -453,21 +453,19 @@ class FiscalYears(db.Model):
         where_statements = []
         all_flash_statements = []
         for AUCT_object in AUCT_objects_to_collect:
-            statistics_source = query_database(
-                query=f"""
-                    SELECT
-                        statisticsSources.statistics_source_ID,
-                        statisticsSources.statistics_source_name,
-                        statisticsSources.statistics_source_retrieval_code,
-                        statisticsSources.vendor_ID
-                    FROM statisticsSources
-                    WHERE statisticsSources.statistics_source_ID={AUCT_object.AUCT_statistics_source};
-                """,
+            statistics_source_df = query_database(
+                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source, str):
-                all_flash_statements.append(database_query_fail_statement(statistics_source, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}"))
+            if isinstance(statistics_source_df, str):
+                all_flash_statements.append(database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}"))
                 continue
+            statistics_source = StatisticsSources(
+                statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
+                statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
+                vendor_ID=statistics_source_df.at[0,'vendor_ID'],
+            )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             for statement in flash_statements:
                 all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
