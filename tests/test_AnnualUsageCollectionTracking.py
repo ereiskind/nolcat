@@ -46,7 +46,7 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
+    log.warning(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))  # This is set at `warning` to show the retrieval code
     yield yield_object
 
 
