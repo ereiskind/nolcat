@@ -1036,10 +1036,6 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
                 
-                if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
-                    log.warning(message)
-                    return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if isinstance(df, str):
                     message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
@@ -1065,6 +1061,11 @@ class StatisticsSources(db.Model):
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 if not df.empty:
                     individual_month_dfs.append(df)
+
+            if len(subset_of_months_to_harvest) == no_usage_returned_count or len(individual_month_dfs) == 0:
+                message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
+                log.warning(message)
+                return (message, complete_flash_message_list)
             log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
             return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
