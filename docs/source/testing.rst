@@ -8,8 +8,8 @@ Running Tests From the CLI
 ==========================
 Test modules are designed to be run from the root folder with the command ``python -m pytest``.
 
-* To view the logging statements with the default logging levels (``warning`` for running tests, ``info`` for showing errors) in the pytest output, add ``-s`` to the command. (The ``-s`` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
-* To view logging statements with a specified logging level in the pytest output, add ``-s --log-cli-level="LEVEL"`` to the command where ``LEVEL`` is the name of the desired logging level. 
+* To view the logging statements with the default logging levels (``warning`` for running tests, ``debug`` for showing errors) in the pytest output, add ``-s`` to the command. (The ``-s`` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To view logging statements with a specified logging level in the pytest output when running tests, add ``-s --log-cli-level="LEVEL"`` to the command where ``LEVEL`` is the name of the desired logging level. 
 * To save the pytest output to stdout, add ``-p pytest_session2file --session2file=logfile_name`` to the command, where ``logfile_name`` is the name of the logfile, including the file extension and the relative path from the root folder (the folder in which the command is being run) for the desired location.
 
   * In stdout, the test functions are reproduced until the point of the error, at which point the error is stated; in the log files, these reproductions contain a fair number of extra characters with no discernable meaning that can be removed by replacing the regex ``\[[\d;]*m`` with no characters.
