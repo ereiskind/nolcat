@@ -433,6 +433,8 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
             return (message, [message])
         log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
+        temp = [t for t in AUCT_objects_to_collect_df.itertuples(name=None)]  #TEST: temp
+        log.warning(f"`temp`:\n{format_list_for_stdout(temp[0])}")  #TEST: temp
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
                 AUCT_statistics_source=record_tuple[0],
