@@ -1613,7 +1613,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path)
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path=bucket_path)
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
