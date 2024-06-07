@@ -1063,7 +1063,7 @@ class StatisticsSources(db.Model):
                     individual_month_dfs.append(df)
 
             if len(subset_of_months_to_harvest) == no_usage_returned_count or len(individual_month_dfs) == 0:
-                message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
+                message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
                 log.warning(message)
                 return (message, complete_flash_message_list)
             log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
