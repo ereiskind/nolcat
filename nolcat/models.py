@@ -446,7 +446,7 @@ class FiscalYears(db.Model):
                 notes=record_tuple[8],
             ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
         ]
-        log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
+        log.warning(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")  #TEST: temp level, should be `info`
 
         #Section: Collect Usage from Each Statistics Source
         dfs = []
