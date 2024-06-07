@@ -48,60 +48,67 @@ def FY2021_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-def test_calculate_depreciated_ACRL_60b(FY2021_FiscalYears_object):
+def test_calculate_depreciated_ACRL_60b(client, FY2021_FiscalYears_object):
     """Tests getting the old ACRL 60b value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
+    with client:
+        assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
 
 
-def test_calculate_depreciated_ACRL_63(FY2021_FiscalYears_object):
+def test_calculate_depreciated_ACRL_63(client, FY2021_FiscalYears_object):
     """Tests getting the old ACRL 63 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
+    with client:
+        assert FY2021_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
 
 
-def test_calculate_ACRL_61a(FY2021_FiscalYears_object):
+def test_calculate_ACRL_61a(client, FY2021_FiscalYears_object):
     """Tests getting the ACRL 61a value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_ACRL_61a() == 73
+    with client:
+        assert FY2021_FiscalYears_object.calculate_ACRL_61a() == 73
 
 
-def test_calculate_ACRL_61b(FY2021_FiscalYears_object):
+def test_calculate_ACRL_61b(client, FY2021_FiscalYears_object):
     """Tests getting the ACRL 61b value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_ACRL_61b() == 2190
+    with client:
+        assert FY2021_FiscalYears_object.calculate_ACRL_61b() == 2190
 
 
-def test_calculate_ARL_18(FY2021_FiscalYears_object):
+def test_calculate_ARL_18(client, FY2021_FiscalYears_object):
     """Tests getting the ARL 18 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_ARL_18() == 2190
+    with client:
+        assert FY2021_FiscalYears_object.calculate_ARL_18() == 2190
 
 
-def test_calculate_ARL_19(FY2021_FiscalYears_object):
+def test_calculate_ARL_19(client, FY2021_FiscalYears_object):
     """Tests getting the ARL 19 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_ARL_19() == 85613
+    with client:
+        assert FY2021_FiscalYears_object.calculate_ARL_19() == 85613
 
 
-def test_calculate_ARL_20(FY2021_FiscalYears_object):
+def test_calculate_ARL_20(client, FY2021_FiscalYears_object):
     """Tests getting the ARL 20 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    assert FY2021_FiscalYears_object.calculate_ARL_20() == 0
+    with client:
+        assert FY2021_FiscalYears_object.calculate_ARL_20() == 0
 
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
