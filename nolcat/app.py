@@ -828,6 +828,8 @@ def extract_value_from_single_value_df(df):
     Returns:
         int or str: the value in the dataframe
     """
+    log.warning(f"`df` with single value to extract:\n{df}")  #TEST: temp
+    log.warning(f"`df.iloc[0].iloc[0]` (type {type(df.iloc[0].iloc[0])}): {df.iloc[0].iloc[0]}")  #TEST: temp
     return df.iloc[0].iloc[0]
 
 

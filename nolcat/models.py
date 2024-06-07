@@ -855,7 +855,7 @@ class StatisticsSources(db.Model):
 
         #Section: Harvest Individual Report if Specified
         if isinstance(report_to_harvest, str):
-            log.debug(f"Harvesting just a {report_to_harvest} report.")
+            log.info(f"Harvesting just a {report_to_harvest} report.")  #TEST: temp level, revert to `debug`
             if report_to_harvest == "PR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
             elif report_to_harvest == "DR":
@@ -1115,7 +1115,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
-        log.debug(f"The months in the date range are {months_in_date_range}.")
+        log.info(f"The months in the date range are {months_in_date_range}.")  #TEST: temp level, revert to `debug`
         months_to_harvest = []
         
         for month_being_checked in months_in_date_range:
