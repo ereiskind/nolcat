@@ -592,7 +592,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #Section: Submit Forms via HTTP POST
     form_submissions = {
         'annualUsageCollectionTracking_CSV': open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'),
-        'COUNTER_reports': [],  #TEST: [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
+        'COUNTER_reports': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list],
     }
     header_value['Content-Type'] = 'multipart/form-data'
     POST_response = client.post(
