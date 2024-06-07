@@ -36,7 +36,6 @@ def FY2021_FiscalYears_object(engine, caplog):
     )
     if isinstance(record, str):
         pytest.skip(database_function_skip_statements(record, False))
-    log.warning(f"`record` (type {type(record)}):\n{record}")  #TEST: temp
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -45,7 +44,6 @@ def FY2021_FiscalYears_object(engine, caplog):
         notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
         notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
     )
-    log.warning(f"`yield_object` (type {type(yield_object)}): {yield_object}")  #TEST: temp
     log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
     yield yield_object
 
@@ -127,7 +125,6 @@ def FY2023_FiscalYears_object_and_record():
         notes_on_statisticsSources_used = None,
         notes_on_corrections_after_submission = None,
     )
-    log.warning(f"`FY_instance` (type {type(FY_instance)}):\n{FY_instance}")  #TEST: temp
     FY_df = pd.DataFrame(
         [[fiscal_year_value, start_date_value, end_date_value, None, None]],
         index=[primary_key_value],
@@ -325,7 +322,6 @@ def FY2022_FiscalYears_object(engine, caplog):
     )
     if isinstance(record, str):
         pytest.skip(database_function_skip_statements(record, False))
-    log.warning(f"`record` (type {type(record)}):\n{record}")  #TEST: temp
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -334,7 +330,6 @@ def FY2022_FiscalYears_object(engine, caplog):
         notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
         notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
     )
-    log.warning(f"`yield_object` (type {type(yield_object)}): {yield_object}")  #TEST: temp
     log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
     yield yield_object
 
