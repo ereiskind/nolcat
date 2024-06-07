@@ -477,6 +477,11 @@ class FiscalYears(db.Model):
             log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
         
         #Section: Update Data in Database
+        if len(dfs) == 0:
+            message = f"None of the {len(AUCT_objects_to_collect)} statistics sources with SUSHI for FY {self.fiscal_year} returned any data."
+            log.warning(message)
+            all_flash_statements.append(message)
+            return (message, all_flash_statements)
         df = pd.concat(dfs)
         try:
             df.index += first_new_PK_value('COUNTERData')

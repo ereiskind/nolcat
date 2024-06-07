@@ -374,6 +374,8 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
         pytest.skip(database_function_skip_statements(before_count, False))
     before_count = extract_value_from_single_value_df(before_count)
     logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
+        pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
     after_count = query_database(
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
