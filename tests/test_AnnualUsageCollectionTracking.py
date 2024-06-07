@@ -104,8 +104,8 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )[0]
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
-    if isinstance(yield_object[0], str):
-        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object[0])
+    if isinstance(yield_object, str):
+        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
             file_name = file_name_match_object.group(1)
             remove_file_from_S3(file_name)
