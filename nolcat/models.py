@@ -86,8 +86,7 @@ class FiscalYears(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<FiscalYears - 'fiscal_year_ID': {self.fiscal_year_ID}, 'fiscal_year': '{self.fiscal_year}', 'start_date': {self.start_date}, 'end_date': {self.end_date}, 'notes_on_statisticsSources_used': '{self.notes_on_statisticsSources_used}', 'notes_on_corrections_after_submission': '{self.notes_on_corrections_after_submission}'>"
 
 
     @hybrid_method
@@ -534,8 +533,7 @@ class AnnualStatistics(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<AnnualStatistics - 'fiscal_year_ID': {self.fiscal_year_ID}, 'question': '{self.question}', 'count': {self.count}>"
 
 
     @hybrid_method
@@ -582,8 +580,7 @@ class Vendors(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}', 'alma_vendor_code': '{self.alma_vendor_code}'>"
 
 
     @hybrid_method
@@ -741,7 +738,7 @@ class StatisticsSources(db.Model):
 
     def __repr__(self):
         """The printable representation of a `StatisticsSources` instance."""
-        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
+        return f"<StatisticsSources - 'statistics_source_ID': {self.statistics_source_ID}, 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': {self.vendor_ID}>"
     
 
     @hybrid_method
@@ -1268,8 +1265,7 @@ class ResourceSources(db.Model):
 
 
     def __repr__(self):
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<ResourceSources - 'resource_source_ID': {self.resource_source_ID}, 'resource_source_name': '{self.resource_source_name}', 'source_in_use': {self.source_in_use}, 'access_stop_date': {self.access_stop_date}, 'vendor_ID': {self.vendor_ID}>"
 
 
     @hybrid_method
@@ -1486,8 +1482,7 @@ class StatisticsResourceSources(db.Model):
 
 
     def __repr__(self):
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<StatisticsResourceSources - 'SRS_statistics_source': {self.SRS_statistics_source}, 'SRS_resource_source': {self.SRS_resource_source}, 'current_statistics_source': {self.current_statistics_source}>"
 
 
     @hybrid_method
@@ -1549,7 +1544,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        return f"<'AUCT_statistics_source': '{self.AUCT_statistics_source}', 'AUCT_fiscal_year': '{self.AUCT_fiscal_year}', 'usage_is_being_collected': '{self.usage_is_being_collected}', 'manual_collection_required': '{self.manual_collection_required}', 'collection_via_email': '{self.collection_via_email}', 'is_COUNTER_compliant': '{self.is_COUNTER_compliant}', 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
+        return f"<AnnualUsageCollectionTracking - 'AUCT_statistics_source': {self.AUCT_statistics_source}, 'AUCT_fiscal_year': {self.AUCT_fiscal_year}, 'usage_is_being_collected': {self.usage_is_being_collected}, 'manual_collection_required': {self.manual_collection_required}, 'collection_via_email': {self.collection_via_email}, 'is_COUNTER_compliant': {self.is_COUNTER_compliant}, 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
 
 
     @hybrid_method
@@ -1834,8 +1829,7 @@ class COUNTERData(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<COUNTERData - 'COUNTER_data_ID': {self.COUNTER_data_ID}, 'statistics_source_ID': {self.statistics_source_ID}, 'report_type': '{self.report_type}', 'resource_name': '{self.resource_name}', 'publisher': '{self.publisher}', 'publisher_ID': '{self.publisher_ID}', 'platform': '{self.platform}', 'authors': '{self.authors}', 'publication_date': {self.publication_date}, 'article_version': '{self.article_version}', 'DOI': '{self.DOI}', 'proprietary_ID': '{self.proprietary_ID}', 'ISBN': '{self.ISBN}', 'print_ISSN': '{self.print_ISSN}', 'online_ISSN': '{self.online_ISSN}', 'URI': '{self.URI}', 'data_type': '{self.data_type}', 'section_type': '{self.section_type}', 'YOP': {self.YOP}, 'access_type': '{self.access_type}', 'access_method': '{self.access_method}', 'parent_title': '{self.parent_title}', 'parent_authors': '{self.parent_authors}', 'parent_publication_date': '{self.parent_publication_date}', 'parent_article_version': '{self.parent_article_version}', 'parent_data_type': '{self.parent_data_type}', 'parent_DOI': '{self.parent_DOI}', 'parent_proprietary_ID': '{self.parent_proprietary_ID}', 'parent_ISBN': '{self.parent_ISBN}', 'parent_print_ISSN': '{self.parent_print_ISSN}', 'parent_online_ISSN': '{self.parent_online_ISSN}', 'parent_URI': '{self.parent_URI}', 'metric_type': '{self.metric_type}', 'usage_date': {self.usage_date}, 'usage_count': {self.usage_count}, 'report_creation_date': {self.report_creation_date}>"
 
 
     @hybrid_method

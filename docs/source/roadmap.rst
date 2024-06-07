@@ -68,6 +68,10 @@ Iteration 3: Add Notes
 * Write ``tests.test_Vendors.test_add_note()``
 * Write ``nolcat.models.ResourceSources.add_note()``
 * Write ``tests.test_ResourceSources.test_add_note()``
+* Write ``nolcat.models.VendorNotes.__repr__()``
+* Write ``nolcat.models.StatisticsSourceNotes.__repr__()``
+* Write ``nolcat.models.ResourceSourceNotes.__repr__()``
+* Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
 
 Iteration 4: Show and Edit Fiscal Year Information
 ==================================================
@@ -104,26 +108,13 @@ Open Source Iterations
 **********************
 These iterations contain updates necessary for NoLCAT to be used as an open source program.
 
-Iteration 1: Write ``__repr__`` Methods
-=======================================
-* Write ``nolcat.models.FiscalYears.__repr__()``
-* Write ``nolcat.models.AnnualStatistics.__repr__()``
-* Write ``nolcat.models.Vendors.__repr__()``
-* Write ``nolcat.models.VendorNotes.__repr__()``
-* Write ``nolcat.models.StatisticsSourceNotes.__repr__()``
-* Write ``nolcat.models.ResourceSources.__repr__()``
-* Write ``nolcat.models.ResourceSourceNotes.__repr__()``
-* Write ``nolcat.models.StatisticsResourceSources.__repr__()``
-* Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
-* Write ``nolcat.models.COUNTERData.__repr__()``
-
-Iteration 2: Formalize Documentation
+Iteration 1: Formalize Documentation
 ====================================
 * Update and flesh out README according to best practices
 * Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
 * Organize custom documentation pages on Sphinx index
 
-Iteration 3: Display Data Uploaded at End of Initialization
+Iteration 2: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
 * Update ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()`` to check for displayed data
