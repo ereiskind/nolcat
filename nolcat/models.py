@@ -463,7 +463,7 @@ class FiscalYears(db.Model):
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
                 statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
-                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
