@@ -683,9 +683,7 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
-    log.warning(f"`df.columns` before removing null fields: {df.columns}")  #TEST: temp
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
-    log.warning(f"`df.columns` after removing null fields: {df.columns}")  #TEST: temp
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
     if 'publication_date' in df.columns.tolist():
         df["publication_date"] = pd.to_datetime(
@@ -697,8 +695,8 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
             df["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
         )
-    log.warning(f"`df.columns`: {df.columns}")  #TEST: temp
-    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    if 'report_creation_date' in df.columns.tolist():
+        df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
     if df.shape[0] > 20:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
