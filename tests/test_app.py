@@ -275,7 +275,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         Filename=tmp_path / path_to_sample_file.name,
     )
     log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
-    log.warning(f"`file_from_S3`: {file_from_S3}")  #TEST: temp
+    log.warning(f"`tmp_path / path_to_sample_file.name`: {tmp_path / path_to_sample_file.name}")  #TEST: temp
     assert cmp(path_to_sample_file, file_from_S3)
 
 
