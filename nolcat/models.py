@@ -433,19 +433,17 @@ class FiscalYears(db.Model):
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
             return (message, [message])
         log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
-        temp = [t for t in AUCT_objects_to_collect_df.itertuples(name=None)]  #TEST: temp
-        log.warning(f"`temp`:\n{format_list_for_stdout(temp[0])}")  #TEST: temp
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
-                AUCT_statistics_source=record_tuple[0],
-                AUCT_fiscal_year=record_tuple[1],
-                usage_is_being_collected=record_tuple[2],
-                manual_collection_required=record_tuple[3],
-                collection_via_email=record_tuple[4],
-                is_COUNTER_compliant=record_tuple[5],
-                collection_status=record_tuple[6],
-                usage_file_path=record_tuple[7],
-                notes=record_tuple[8],
+                AUCT_statistics_source=record_tuple[1],
+                AUCT_fiscal_year=record_tuple[2],
+                usage_is_being_collected=record_tuple[3],
+                manual_collection_required=record_tuple[4],
+                collection_via_email=record_tuple[5],
+                is_COUNTER_compliant=record_tuple[6],
+                collection_status=record_tuple[7],
+                usage_file_path=record_tuple[8],
+                notes=record_tuple[9],
             ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
         ]
         log.warning(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")  #TEST: temp level, should be `info`
