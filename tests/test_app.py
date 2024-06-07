@@ -269,15 +269,13 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
-    file_from_S3 = s3_client.download_file(
+    download_location = tmp_path / path_to_sample_file.name
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
-        Filename=tmp_path / path_to_sample_file.name,
+        Filename=download_location,
     )
-    log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
-    log.warning(f"`tmp_path / path_to_sample_file.name`: {tmp_path / path_to_sample_file.name}")  #TEST: temp
-    assert cmp(path_to_sample_file, file_from_S3)
-
+    assert cmp(path_to_sample_file, download_location)
 
 def test_create_AUCT_SelectField_options():
     """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""

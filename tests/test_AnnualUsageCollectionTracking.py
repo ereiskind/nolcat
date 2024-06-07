@@ -195,14 +195,13 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
     bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
     log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{format_list_for_stdout(bucket_contents)}")
     assert file_name in bucket_contents
-    file_from_S3 = s3_client.download_file(
+    download_location = tmp_path / file_name
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
-        Filename=tmp_path / file_name,
+        Filename=download_location,
     )
-    log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
-    log.warning(f"`tmp_path / path_to_sample_file.name`: {tmp_path / path_to_sample_file.name}")  #TEST: temp
-    assert cmp(path_to_sample_file, file_from_S3)
+    assert cmp(path_to_sample_file, download_location)
     
     #Subsection: Check Database Update
     usage_file_path_in_database = query_database(

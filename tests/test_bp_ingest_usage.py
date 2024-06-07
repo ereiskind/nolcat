@@ -364,11 +364,10 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
         assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
-    file_from_S3 = s3_client.download_file(
+    download_location = tmp_path / file_name
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
-        Filename=tmp_path / file_name,
+        Filename=download_location,
     )
-    log.warning(f"`path_to_sample_file`: {path_to_sample_file}")  #TEST: temp
-    log.warning(f"`tmp_path / path_to_sample_file.name`: {tmp_path / path_to_sample_file.name}")  #TEST: temp
-    assert cmp(path_to_sample_file, file_from_S3)
+    assert cmp(path_to_sample_file, download_location)
