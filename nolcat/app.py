@@ -564,7 +564,7 @@ def check_if_data_already_in_COUNTERData(df):
             )
             if isinstance(statistics_source_name, str):
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
-            instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name)
+            instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
         #Subsection: Return Results
         records_to_remove = pd.concat(records_to_remove)
@@ -819,18 +819,25 @@ def last_day_of_month(original_date):
     )
 
 
-def extract_value_from_single_value_df(df):
+def extract_value_from_single_value_df(df, expect_int=True):
     """The value in a dataframe containing a single value.
+
+    Since the single-value dataframes are often numerical query results, this function includes the type juggling to convert floats to ints and nulls to zeros. To ensure null values are preserved when strings are requested, the `expect_int` parameter is used.
 
     Args:
         df (dataframe): a dataframe with a single value
+        expect_int (bool, optional): if the return value is expected to have a numerical data type; default is True
     
     Returns:
         int or str: the value in the dataframe
     """
-    log.warning(f"`df` with single value to extract:\n{df}")  #TEST: temp
-    log.warning(f"`df.iloc[0].iloc[0]` (type {type(df.iloc[0].iloc[0])}): {df.iloc[0].iloc[0]}")  #TEST: temp
-    return df.iloc[0].iloc[0]
+    return_value = df.iloc[0].iloc[0]
+    if expect_int:
+        if return_value is None:
+            return_value = int(0)
+        elif isinstance(return_value, float):
+            return_value = int(return_value)
+    return return_value
 
 
 def S3_file_name_timestamp():
