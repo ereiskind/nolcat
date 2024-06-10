@@ -161,11 +161,11 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         """,
         engine=engine,
     )
+    log.warning(f"`a` fields: {format_list_for_stdout(a.columns.to_list())}")
+    log.warning(f"`b` fields: {format_list_for_stdout(records_loaded_by_method.columns.to_list())}")
+    log.warning(f"`c` fields: {format_list_for_stdout(harvest_R5_SUSHI_result.columns.to_list())}")
     b = records_loaded_by_method[a.columns.to_list()]
     c = harvest_R5_SUSHI_result[a.columns.to_list()]
-    log.warning(f"`a` fields: {format_list_for_stdout(a.columns.to_list())}")
-    log.warning(f"`b` fields: {format_list_for_stdout(b.columns.to_list())}")
-    log.warning(f"`c` fields: {format_list_for_stdout(c.columns.to_list())}")
     #try:
     #    log.warning(f"Compare a and b:\n{a.compare(b)}")
     #except:
