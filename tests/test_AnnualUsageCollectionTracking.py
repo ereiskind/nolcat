@@ -135,8 +135,6 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
-    logging.warning(f"`logging_statement`: {logging_statement}")  #TEST: temp
-    logging.warning(f"`method_response_match_object`: {method_response_match_object}")  #TEST: temp
     assert method_response_match_object is not None
     assert update_database_success_regex().search(logging_statement)
     assert isinstance(flash_statements, dict)

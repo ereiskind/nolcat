@@ -702,7 +702,6 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
     else:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
-    log.warning(f"`df.columns`:\n{format_list_for_stdout(df.columns.to_list())}")  #TEST: temp
     return df
 
 
