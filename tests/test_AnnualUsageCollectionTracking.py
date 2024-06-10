@@ -149,8 +149,8 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     #TEST: temp
-    a = records_loaded_by_method.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True)
-    b = harvest_R5_SUSHI_result.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True)
+    a = records_loaded_by_method.sort_values(['metric_type', 'usage_date', 'usage_count'], ignore_index=True)
+    b = harvest_R5_SUSHI_result.sort_values(['metric_type', 'usage_date', 'usage_count'], ignore_index=True)
     try:
         log.warning(f"Comparison:\n{a.compare(b[a.columns.to_list()])}")
     except:
