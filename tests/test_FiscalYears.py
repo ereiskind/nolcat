@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-10 ##########
 
 import pytest
 import logging
@@ -341,6 +341,7 @@ def FY2022_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
+@pytest.mark.slow
 def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
