@@ -389,4 +389,4 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
     assert before_count < after_count
     assert load_data_into_database_success_regex().match(logging_statement)
     assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_messages, list)
+    assert isinstance(flash_messages, dict)

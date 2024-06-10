@@ -404,7 +404,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of all the statements that should be flashed in their various formats
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled

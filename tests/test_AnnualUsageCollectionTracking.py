@@ -132,7 +132,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     logging.warning(f"`method_response_match_object`: {method_response_match_object}")  #TEST: temp
     assert method_response_match_object is not None
     assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_statements, list)
+    assert isinstance(flash_statements, dict)
 
     database_update_check = query_database(
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
