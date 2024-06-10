@@ -544,14 +544,17 @@ class SUSHICallAndResponse:
                 if isinstance(df, str):
                     error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
                     return (error_message, [message, error_message])
-                statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-                    statistics_source_ID = int(df.at[0,'statistics_source_ID']),
-                    statistics_source_name = str(df.at[0,'statistics_source_name']),
-                    statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-                    vendor_ID = int(df.at[0,'vendor_ID']),
-                )  # Without the `int` constructors, a numpy int type is used
-                log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
-                statistics_source_object.add_note(message)
+                try:
+                    statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                        statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+                        statistics_source_name = str(df.at[0,'statistics_source_name']),
+                        statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                        vendor_ID = int(df.at[0,'vendor_ID']),
+                    )  # Without the `int` constructors, a numpy int type is used
+                    log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
+                    statistics_source_object.add_note(message)
+                except NameError as error:  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Between its infrequent, unpredictable appearance and the importing of the module in which it's defined, the cause of the error is unclear.
+                    log.critical(f"Due to the error {error}, the error message is not being saved to the database.")
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
