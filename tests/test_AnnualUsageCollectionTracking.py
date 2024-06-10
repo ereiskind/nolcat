@@ -149,23 +149,18 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     #TEST: temp
-    a = query_database(
-        query=f"""
-            SELECT *
-            FROM (
-                SELECT * FROM COUNTERData
-                ORDER BY COUNTER_data_ID DESC
-                LIMIT {method_response_match_object.group(1)}
-            ) subquery
-            ORDER BY COUNTER_data_ID ASC;
-        """,
-        engine=engine,
+    records_loaded_by_method.to_csv(
+        '/nolcat/records_loaded_by_method.csv',
+        index_label="index",
+        encoding='utf-8',
+        errors='backslashreplace',
     )
-    log.warning(f"`a` fields: {format_list_for_stdout(a.columns.to_list())}")
-    log.warning(f"`b` fields: {format_list_for_stdout(records_loaded_by_method.columns.to_list())}")
-    log.warning(f"`c` fields: {format_list_for_stdout(harvest_R5_SUSHI_result.columns.to_list())}")
-    b = records_loaded_by_method[a.columns.to_list()]
-    c = harvest_R5_SUSHI_result[a.columns.to_list()]
+    harvest_R5_SUSHI_result.to_csv(
+        '/nolcat/harvest_R5_SUSHI_result.csv',
+        index_label="index",
+        encoding='utf-8',
+        errors='backslashreplace',
+    )
     #try:
     #    log.warning(f"Compare a and b:\n{a.compare(b)}")
     #except:
