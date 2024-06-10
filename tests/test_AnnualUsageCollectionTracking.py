@@ -29,7 +29,8 @@ def AUCT_fixture_for_SUSHI(engine):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
     record = query_database(
-        query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
+        #query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
+        query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source=1 AND AUCT_fiscal_year=5;",  #TEST: temp
         engine=engine,
     )
     if isinstance(record, str):
