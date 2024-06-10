@@ -149,15 +149,13 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     #TEST: temp
-    log.warning(f"First record in `records_loaded_by_method`:\n{records_loaded_by_method.iloc[0]}")
-    log.warning(f"First record in `harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]`:\n{harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()].iloc[0]}")
-    log.warning(f"Last record in `records_loaded_by_method`:\n{records_loaded_by_method.iloc[method_response_match_object.group(1)]}")
-    log.warning(f"Last record in `harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]`:\n{harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()].iloc[method_response_match_object.group(1)]}")
+    a = records_loaded_by_method.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True)
+    b = harvest_R5_SUSHI_result.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True)
     try:
-        log.warning(f"Comparison:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        log.warning(f"Comparison:\n{a.compare(b[a.columns.to_list()])}")
     except:
-        log.warning(f"`records_loaded_by_method` fields:\n{records_loaded_by_method}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` fields:\n{harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]}\n")
-        log.warning(f"`records_loaded_by_method` index:\n{records_loaded_by_method}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` index:\n{harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]}\n")
+        log.warning(f"`records_loaded_by_method` fields:\n{a}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` fields:\n{b[a.columns.to_list()]}\n")
+        log.warning(f"`records_loaded_by_method` index:\n{a}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` index:\n{b[a.columns.to_list()]}\n")
     #TEST: end temp
     assert database_update_check == "Collection complete"
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
