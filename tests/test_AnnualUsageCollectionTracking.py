@@ -163,27 +163,30 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     )
     b = records_loaded_by_method[a.columns.to_list()]
     c = harvest_R5_SUSHI_result[a.columns.to_list()]
-    try:
-        log.warning(f"Compare a and b:\n{a.compare(b)}")
-    except:
-        log.warning(f"Fields in a but not b: {[x for x in a.columns.to_list() if x not in b.columns.to_list()]}")
-        log.warning(f"Fields in b but not a: {[x for x in b.columns.to_list() if x not in a.columns.to_list()]}")
-        log.warning(f"Index a: {a.index}")
-        log.warning(f"Index b: {b.index}")
-    try:
-        log.warning(f"Compare a and c:\n{a.compare(b)}")
-    except:
-        log.warning(f"Fields in a but not c: {[x for x in a.columns.to_list() if x not in c.columns.to_list()]}")
-        log.warning(f"Fields in c but not a: {[x for x in c.columns.to_list() if x not in a.columns.to_list()]}")
-        log.warning(f"Index a: {a.index}")
-        log.warning(f"Index c: {c.index}")
-    try:
-        log.warning(f"Compare c and b:\n{a.compare(b)}")
-    except:
-        log.warning(f"Fields in c but not b: {[x for x in c.columns.to_list() if x not in b.columns.to_list()]}")
-        log.warning(f"Fields in b but not c: {[x for x in b.columns.to_list() if x not in c.columns.to_list()]}")
-        log.warning(f"Index c: {c.index}")
-        log.warning(f"Index b: {b.index}")
+    log.warning(f"`a` fields: {format_list_for_stdout(a.columns.to_list())}")
+    log.warning(f"`b` fields: {format_list_for_stdout(b.columns.to_list())}")
+    log.warning(f"`c` fields: {format_list_for_stdout(c.columns.to_list())}")
+    #try:
+    #    log.warning(f"Compare a and b:\n{a.compare(b)}")
+    #except:
+    #    log.warning(f"Fields in a but not b: {[x for x in a.columns.to_list() if x not in b.columns.to_list()]}")
+    #    log.warning(f"Fields in b but not a: {[x for x in b.columns.to_list() if x not in a.columns.to_list()]}")
+    #    log.warning(f"Index a: {a.index}")
+    #    log.warning(f"Index b: {b.index}")
+    #try:
+    #    log.warning(f"Compare a and c:\n{a.compare(b)}")
+    #except:
+    #    log.warning(f"Fields in a but not c: {[x for x in a.columns.to_list() if x not in c.columns.to_list()]}")
+    #    log.warning(f"Fields in c but not a: {[x for x in c.columns.to_list() if x not in a.columns.to_list()]}")
+    #    log.warning(f"Index a: {a.index}")
+    #    log.warning(f"Index c: {c.index}")
+    #try:
+    #    log.warning(f"Compare c and b:\n{a.compare(b)}")
+    #except:
+    #    log.warning(f"Fields in c but not b: {[x for x in c.columns.to_list() if x not in b.columns.to_list()]}")
+    #    log.warning(f"Fields in b but not c: {[x for x in b.columns.to_list() if x not in c.columns.to_list()]}")
+    #    log.warning(f"Index c: {c.index}")
+    #    log.warning(f"Index b: {b.index}")
     #TEST: end temp
     assert database_update_check == "Collection complete"
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
