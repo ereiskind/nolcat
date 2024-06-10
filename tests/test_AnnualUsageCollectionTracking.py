@@ -104,7 +104,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         end_date,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )[0]
-    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
+    log.warning(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")  #TEST: temp level, reset to `debug`
     if isinstance(yield_object, str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
@@ -149,13 +149,41 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     #TEST: temp
-    a = records_loaded_by_method.sort_values(['metric_type', 'usage_date', 'usage_count'], ignore_index=True)
-    b = harvest_R5_SUSHI_result.sort_values(['metric_type', 'usage_date', 'usage_count'], ignore_index=True)
+    a = query_database(
+        query=f"""
+            SELECT *
+            FROM (
+                SELECT * FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT {method_response_match_object.group(1)}
+            ) subquery
+            ORDER BY COUNTER_data_ID ASC;
+        """,
+        engine=engine,
+    )
+    b = records_loaded_by_method[a.columns.to_list()]
+    c = harvest_R5_SUSHI_result[a.columns.to_list()]
     try:
-        log.warning(f"Comparison:\n{a.compare(b[a.columns.to_list()])}")
+        log.warning(f"Compare a and b:\n{a.compare(b)}")
     except:
-        log.warning(f"`records_loaded_by_method` fields:\n{a}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` fields:\n{b[a.columns.to_list()]}\n")
-        log.warning(f"`records_loaded_by_method` index:\n{a}\n`harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()]` index:\n{b[a.columns.to_list()]}\n")
+        log.warning(f"Fields in a but not b: {[x for x in a.columns.to_list() if x not in b.columns.to_list()]}")
+        log.warning(f"Fields in b but not a: {[x for x in b.columns.to_list() if x not in a.columns.to_list()]}")
+        log.warning(f"Index a: {a.index}")
+        log.warning(f"Index b: {b.index}")
+    try:
+        log.warning(f"Compare a and c:\n{a.compare(b)}")
+    except:
+        log.warning(f"Fields in a but not c: {[x for x in a.columns.to_list() if x not in c.columns.to_list()]}")
+        log.warning(f"Fields in c but not a: {[x for x in c.columns.to_list() if x not in a.columns.to_list()]}")
+        log.warning(f"Index a: {a.index}")
+        log.warning(f"Index c: {c.index}")
+    try:
+        log.warning(f"Compare c and b:\n{a.compare(b)}")
+    except:
+        log.warning(f"Fields in c but not b: {[x for x in c.columns.to_list() if x not in b.columns.to_list()]}")
+        log.warning(f"Fields in b but not c: {[x for x in b.columns.to_list() if x not in c.columns.to_list()]}")
+        log.warning(f"Index c: {c.index}")
+        log.warning(f"Index b: {b.index}")
     #TEST: end temp
     assert database_update_check == "Collection complete"
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
