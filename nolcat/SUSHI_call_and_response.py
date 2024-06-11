@@ -554,7 +554,7 @@ class SUSHICallAndResponse:
                     log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
                     statistics_source_object.add_note(message)
                 except NameError as error:  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Between its infrequent, unpredictable appearance and the importing of the module in which it's defined, the cause of the error is unclear.
-                    log.critical(f"Due to the error {error}, the error message is not being saved to the database.")
+                    log.critical(f"Due to the error {error}, the error message {message} is not being saved to the database.")
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
