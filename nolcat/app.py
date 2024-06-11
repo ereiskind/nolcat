@@ -471,18 +471,20 @@ def query_database(query, engine, index=None):
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
     """
-    log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
+    #TEST: log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
         df = pd.read_sql(
             sql=query,
             con=engine,
             index_col=index,
         )
-        if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        else:
-            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+        #TEST: temp
+        #if df.shape[0] > 20:
+        #    log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+        #    log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+        #else:
+        #    log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+        #TEST: end temp
         return df
     except Exception as error:
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
