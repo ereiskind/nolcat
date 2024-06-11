@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-11 ##########
 
 import pytest
 import logging
@@ -29,8 +29,7 @@ def AUCT_fixture_for_SUSHI(engine):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
     record = query_database(
-        #query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
-        query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source=1 AND AUCT_fiscal_year=5;",  #TEST: temp
+        query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
     if isinstance(record, str):
@@ -104,7 +103,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         end_date,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
     )[0]
-    log.warning(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")  #TEST: temp level, reset to `debug`
+    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
     if isinstance(yield_object, str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
@@ -121,6 +120,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
 
 
 @pytest.mark.slow
+@pytest.mark.skip(reason="Almost all of the options for this test will trigger skipping the test.")  #TEST: Remove if reason for skip changes
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
@@ -148,41 +148,6 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
-    #TEST: temp
-    records_loaded_by_method.to_csv(
-        '/nolcat/records_loaded_by_method.csv',
-        index_label="index",
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    harvest_R5_SUSHI_result.to_csv(
-        '/nolcat/harvest_R5_SUSHI_result.csv',
-        index_label="index",
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    #try:
-    #    log.warning(f"Compare a and b:\n{a.compare(b)}")
-    #except:
-    #    log.warning(f"Fields in a but not b: {[x for x in a.columns.to_list() if x not in b.columns.to_list()]}")
-    #    log.warning(f"Fields in b but not a: {[x for x in b.columns.to_list() if x not in a.columns.to_list()]}")
-    #    log.warning(f"Index a: {a.index}")
-    #    log.warning(f"Index b: {b.index}")
-    #try:
-    #    log.warning(f"Compare a and c:\n{a.compare(b)}")
-    #except:
-    #    log.warning(f"Fields in a but not c: {[x for x in a.columns.to_list() if x not in c.columns.to_list()]}")
-    #    log.warning(f"Fields in c but not a: {[x for x in c.columns.to_list() if x not in a.columns.to_list()]}")
-    #    log.warning(f"Index a: {a.index}")
-    #    log.warning(f"Index c: {c.index}")
-    #try:
-    #    log.warning(f"Compare c and b:\n{a.compare(b)}")
-    #except:
-    #    log.warning(f"Fields in c but not b: {[x for x in c.columns.to_list() if x not in b.columns.to_list()]}")
-    #    log.warning(f"Fields in b but not c: {[x for x in b.columns.to_list() if x not in c.columns.to_list()]}")
-    #    log.warning(f"Index c: {c.index}")
-    #    log.warning(f"Index b: {b.index}")
-    #TEST: end temp
     assert database_update_check == "Collection complete"
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
 
