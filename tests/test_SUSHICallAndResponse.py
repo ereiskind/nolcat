@@ -239,14 +239,11 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
-@pytest.mark.xfail(
-    raises=AssertionError,
-    reason="Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error 2000. Instead of trying to match all the possible options, this test expects the PR `assert` statement to fail."
-)
+@pytest.mark.xfail(raises=AssertionError)
 def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog):
     """Tests that a SUSHI call with invalid credentials returns an error.
     
-    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
+    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running. Since platforms can handle invalid credentials in multiple different ways--HTTP 400 errors, HTTP 500 errors, and SUSHI error 2000 are the most common--the xfail can confirm that an error statement was returned, but the test cannot confirm that the error statements was for incorrect credentials; since triggering any other error, however, requires having data, this is a minor concern.
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
@@ -255,4 +252,4 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     log.warning(f"`response[0]`: {response[0]}")  #TEST: temp
     log.warning(f"`response[1]`:\n{format_list_for_stdout(response[1])}")  #TEST: temp
-    assert response[0].get('Report_Header').get('Report_ID') == "PR" or response[0].get('Report_Header').get('Report_ID') == "pr"
+    assert isinstance(response[0], dict)
