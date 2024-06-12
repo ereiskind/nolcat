@@ -1012,7 +1012,9 @@ class StatisticsSources(db.Model):
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if isinstance(subset_of_months_to_harvest, list):
             if len(subset_of_months_to_harvest) == 0:
-                #ToDo: Return indication that all months already have data in the database
+                message = f"The database already has {report} usage for {self.statistics_source_name} for every month in the {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} date range."
+                log.info(message)
+                return (message, [message])
             else:
                 log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
                 individual_month_dfs = []
