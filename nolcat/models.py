@@ -1010,10 +1010,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str):
-            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
-            return (message, [message])
-        elif isinstance(subset_of_months_to_harvest, list):
+        if isinstance(subset_of_months_to_harvest, list):
             if len(subset_of_months_to_harvest) == 0:
                 #ToDo: Return indication that all months already have data in the database
             else:
@@ -1108,8 +1105,9 @@ class StatisticsSources(db.Model):
             log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
             return (df, flash_message_list)
 
-        else:
-            #ToDo: Return error of some sort--the code should never reach here
+        if isinstance(subset_of_months_to_harvest, str):
+            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
+            return (message, [message])
 
 
     @hybrid_method
