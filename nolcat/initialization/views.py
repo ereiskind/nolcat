@@ -457,7 +457,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if COUNTER_reports_df:
+        if not COUNTER_reports_df.empty:
             COUNTERData_load_result = load_data_into_database(
                 df=COUNTER_reports_df,
                 relation='COUNTERData',
