@@ -249,6 +249,8 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
         response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+    log.warning(f"`response[0]`: {response[0]}")  #TEST: temp
+    log.warning(f"`response[1]`:\n{format_list_for_stdout(response[1])}")  #TEST: temp
     assert isinstance(response, tuple)
     assert isinstance(response[1], list)
     assert response[0].startswith(f"GET request to StatisticsSources.statistics_source_name raised")  # Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error 2000; this matches the more common HTTP error via the single-use error responses in `SUSHICallAndResponse._make_API_call()`, but a SUSHI error 2000, which is also a valid result, will raise an error here
