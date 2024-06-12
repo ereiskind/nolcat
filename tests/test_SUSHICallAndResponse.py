@@ -35,7 +35,7 @@ def SUSHI_credentials_fixture():
     Yields:
         tuple: the URL and parameters dictionary needed to make a SUSHI call
     """
-    URL = input("Enter the SUSHI base URL, including the final backslash: ")
+    URL = input("\nEnter the SUSHI base URL, including the final backslash: ")
     customer_id = input("Enter the SUSHI customer ID: ")
     requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
     api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
