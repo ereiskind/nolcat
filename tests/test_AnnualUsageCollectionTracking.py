@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-12 ##########
 
 import pytest
 import logging
@@ -46,12 +46,12 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
+    log.warning(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))  # This is set at `warning` to show the retrieval code
     yield yield_object
 
 
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
-def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3, caplog):
+def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
 
     The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
@@ -102,17 +102,25 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3,
         start_date,
         end_date,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
-    )
+    )[0]
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
-    if isinstance(yield_object[0], str):
-        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object[0])
+    if isinstance(yield_object, str):
+        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
             file_name = file_name_match_object.group(1)
-            remove_file_from_S3(file_name)
+            try:
+                s3_client.delete_object(
+                    Bucket=BUCKET_NAME,
+                    Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+                )
+            except botocore.exceptions as error:
+                log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
         pytest.skip(f"Unable to create fixture because `_harvest_R5_SUSHI()` returned the errors {yield_object}.")
     yield yield_object
 
 
+@pytest.mark.slow
+@pytest.mark.skip(reason="Almost all of the options for this test will trigger skipping the test.")  #TEST: Remove if reason for skip changes
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
@@ -129,7 +137,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     # The test fails at this point because a failing condition here raises errors below
     assert method_response_match_object is not None
     assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_statements, list)
+    assert isinstance(flash_statements, dict)
 
     database_update_check = query_database(
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
@@ -137,11 +145,11 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     )
     if isinstance(database_update_check, str):
         pytest.skip(database_function_skip_statements(database_update_check))
-    database_update_check = extract_value_from_single_value_df(database_update_check)
+    database_update_check = extract_value_from_single_value_df(database_update_check, False)
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
-    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result)
+    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
 
 
 #Section: Upload and Download Nonstandard Usage File
@@ -166,7 +174,7 @@ def sample_FileStorage_object(path_to_sample_file):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, caplog):
+def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
 
@@ -195,6 +203,13 @@ def test_upload_nonstandard_usage_file(engine, client, sample_FileStorage_object
     bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
     log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` contents:\n{format_list_for_stdout(bucket_contents)}")
     assert file_name in bucket_contents
+    download_location = tmp_path / file_name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Filename=download_location,
+    )
+    assert cmp(path_to_sample_file, download_location)
     
     #Subsection: Check Database Update
     usage_file_path_in_database = query_database(

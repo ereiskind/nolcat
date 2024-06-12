@@ -1,11 +1,12 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-12 ##########
 
 import pytest
 import logging
 from datetime import date
 from datetime import datetime
 from random import choice
+from filecmp import cmp
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -195,6 +196,9 @@ def test_download_file(client, path_to_sample_file):  #ToDo: If method for inter
     #        assert file.read() == downloaded_file
 
 
+# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+
+
 #Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_first_new_PK_value():
@@ -245,7 +249,7 @@ def test_restore_boolean_values_to_boolean_field():
     assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
-def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
@@ -265,8 +269,13 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
-    #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
-
+    download_location = tmp_path / path_to_sample_file.name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
+        Filename=download_location,
+    )
+    assert cmp(path_to_sample_file, download_location)
 
 def test_create_AUCT_SelectField_options():
     """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
@@ -399,14 +408,6 @@ def test_update_database_with_insert_statement(engine, vendors_relation_after_te
     assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
 
 
-#ToDo: test_match_direct_SUSHI_harvest_result()
-# Function itself in `tests.conftest`
-
-
-#ToDo: test_COUNTER_reports_offered_by_statistics_source()
-# Function itself in `tests.conftest`
-
-
 def test_prepare_HTML_page_for_comparison():
     """Tests creating an Unicode string from HTML page data."""
     assert prepare_HTML_page_for_comparison(b'<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Ingest Usage</title>\n</head>\n<body>\n    <h1>Ingest Usage Homepage</h1>\n\n    \n        \n            <p>[{&#39;DR&#39;: [], &#39;IR&#39;: [], &#39;PR&#39;: [], &#39;reports&#39;: [], &#39;status&#39;: []}]</p>\n        \n    \n\n    <ul>\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\n    </ul>\n\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\n</body>\n</html>') == '<!DOCTYPE html>\\n<html lang="en">\\n<head>\\n    <meta charset="UTF-8">\\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\\n    <title>Ingest Usage</title>\\n</head>\\n<body>\\n    <h1>Ingest Usage Homepage</h1>\\n\\n    \\n        \\n            <p>[{\'DR\': [], \'IR\': [], \'PR\': [], \'reports\': [], \'status\': []}]</p>\\n        \\n    \\n\\n    <ul>\\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\\n    </ul>\\n\\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\\n</body>\\n</html>'
@@ -494,6 +495,8 @@ def test_extract_value_from_single_value_df():
     """Tests extracting the value from a dataframe containing a single value."""
     assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
     assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"
+    assert extract_value_from_single_value_df(pd.DataFrame([[10.0]])) == 10
+    assert extract_value_from_single_value_df(pd.DataFrame([[None]])) == 0
 
 
 def test_S3_file_name_timestamp():

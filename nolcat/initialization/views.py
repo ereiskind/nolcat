@@ -406,7 +406,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         messages_to_flash = []
-        if len(form.COUNTER_reports.data) == 0:
+        if len(form.COUNTER_reports.data) == 0 or form.COUNTER_reports.data[0].filename == "":  # In tests, not submitting forms is done with an empty list, so an empty list is returned; in production, an empty FileStorage object is returned instead
             log.info(f"No COUNTER files were provided for upload.")
             COUNTER_reports_df = None
         else:
@@ -457,15 +457,15 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        COUNTERData_load_result = load_data_into_database(
-            df=COUNTER_reports_df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-            messages_to_flash.append(COUNTERData_load_result)
-            messages_to_flash.append("Upload all workbooks through the 'Upload COUNTER Data' page.")
+        if not COUNTER_reports_df.empty:
+            COUNTERData_load_result = load_data_into_database(
+                df=COUNTER_reports_df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+                messages_to_flash.append(COUNTERData_load_result)
         if messages_to_flash:
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))

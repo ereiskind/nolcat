@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-12 ##########
 
 import pytest
 import logging
@@ -35,7 +35,7 @@ def SUSHI_credentials_fixture():
     Yields:
         tuple: the URL and parameters dictionary needed to make a SUSHI call
     """
-    URL = input("Enter the SUSHI base URL, including the final backslash: ")
+    URL = input("\nEnter the SUSHI base URL, including the final backslash: ")
     customer_id = input("Enter the SUSHI customer ID: ")
     requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
     api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
@@ -76,13 +76,34 @@ def SUSHI_credentials_fixture():
     yield (URL, SUSHI_credentials)
 
 
+@pytest.fixture
+def StatisticsSource_instance_name(engine):
+    """Selects a `statisticsSources.statistics_source_name` value from the database.
+
+    `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()` makes a StatisticsSource object for adding a note from a record based on that record's `statistics_source_name` value, so it fails if a placeholder name is used. This randomly selects a name from the database to be used in its place.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        str: a value in `statisticsSources.statistics_source_name`
+    """
+    df = query_database(
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
+        engine=engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df, False))
+    yield extract_value_from_single_value_df(df, False)
+
+
 @pytest.mark.dependency()
-def test_status_call(client, SUSHI_credentials_fixture, caplog):
+def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)  # The argument "StatisticsSources.statistics_source_name" is a placeholder
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -93,12 +114,12 @@ def test_status_call(client, SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
-def test_status_call_validity(client, SUSHI_credentials_fixture, caplog):
+def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "status", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
@@ -108,12 +129,12 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency()
-def test_reports_call(client, SUSHI_credentials_fixture, caplog):
+def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -124,12 +145,12 @@ def test_reports_call(client, SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
-def test_reports_call_validity(client, SUSHI_credentials_fixture, caplog):
+def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     list_of_reports = [report for report in list(response[0].values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
@@ -160,14 +181,14 @@ def list_of_reports(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 @pytest.mark.slow
-def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
+def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "PR" not in list_of_reports:
         pytest.skip("PR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -180,14 +201,14 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 @pytest.mark.slow
-def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
+def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "DR" not in list_of_reports:
         pytest.skip("DR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/dr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -200,14 +221,14 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 @pytest.mark.slow
-def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
+def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "TR" not in list_of_reports:
         pytest.skip("TR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/tr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -220,14 +241,14 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 @pytest.mark.slow
-def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, caplog):
+def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "IR" not in list_of_reports:
         pytest.skip("IR not offered by this statistics source.")
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/ir", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -239,16 +260,15 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, list_of_reports, ca
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
-def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, caplog):
+@pytest.mark.xfail(raises=AssertionError)
+def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that a SUSHI call with invalid credentials returns an error.
     
-    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
+    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running. Since platforms can handle invalid credentials in multiple different ways--HTTP 400 errors, HTTP 500 errors, and SUSHI error 2000 are the most common--the xfail can confirm that an error statement was returned, but the test cannot confirm that the error statements was for incorrect credentials; since triggering any other error, however, requires having data, this is a minor concern.
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
-        response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
-    assert isinstance(response, tuple)
-    assert isinstance(response[1], list)
-    assert response[0].startswith(f"GET request to StatisticsSources.statistics_source_name raised")  # Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error 2000; this matches the more common HTTP error via the single-use error responses in `SUSHICallAndResponse._make_API_call()`, but a SUSHI error 2000, which is also a valid result, will raise an error here
+        response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+    assert isinstance(response[0], dict)

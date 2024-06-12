@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-12 ##########
 
 import pytest
 import logging
@@ -8,12 +8,14 @@ from pathlib import Path
 import os
 import re
 from ast import literal_eval
+from filecmp import cmp
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
+from conftest import match_direct_SUSHI_harvest_result
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
@@ -143,7 +145,32 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert_frame_equal(df, insert_statement_data)
 
 
-# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+def test_match_direct_SUSHI_harvest_result(engine, caplog):
+    """Tests pulling a set number of records from the `COUNTERData` relation and modifying them so they match the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
+    
+    This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. The function is tested here because the immediately preceding test function loads exactly seven records into the `COUNTERData` relation, and so if it passes, the won't fail due to the last records in `COUNTERData` not containing the expected data.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    df = match_direct_SUSHI_harvest_result(engine, 7, caplog)
+    match_result_df = pd.DataFrame(
+        [
+            [0, "PR", None, None, "ProQuest", None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77],
+            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", "0363-0277", "Journal", None, 2019, "Controlled", "Regular", "Library Journal", "Journal", "ProQuest:40955", "0363-0277", None, "Unique_Item_Investigations", "2020-07-01", 3],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4],
+            [2, "TR", "Library Journal", "Library Journals, LLC", "Gale", None, None, None, None, "Gale:1273", "0363-0277", "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3],
+            [3, "PR", None, None, "Duke University Press", None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2],
+            [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", "Journal", "Silverchair:1000052", "0018-2702", "1527-1919", "Total_Item_Investigations", "2020-07-01", 6],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "print_ISSN", "data_type", "section_type", "YOP", "access_type", "access_method", "parent_title", "parent_data_type", "parent_proprietary_ID", "parent_print_ISSN", "parent_online_ISSN", "metric_type", "usage_date", "usage_count"],
+    )
+    match_result_df = match_result_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in match_result_df.columns.tolist()})
+    match_result_df['usage_date'] = pd.to_datetime(match_result_df['usage_date'])
+    match_result_df["publication_date"] = pd.to_datetime(
+        match_result_df["publication_date"],
+        errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+    )
+    assert_frame_equal(match_result_df, df)
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
@@ -274,7 +301,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
+def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
@@ -302,6 +329,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     )
 
     #Subsection: Assert Statements
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
@@ -318,7 +346,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         engine=engine,
     )
     assert df.at[0,'collection_status'] == 'Collection complete'
-    assert df.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
     list_objects_response = s3_client.list_objects_v2(
@@ -331,7 +359,14 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
-        assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
+        files_in_bucket = [name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for name in files_in_bucket]
+        assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
+    download_location = tmp_path / file_name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Filename=download_location,
+    )
+    assert cmp(path_to_sample_file, download_location)

@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-06-04 ##########
+########## Passing 2024-06-12 ##########
 
 import pytest
 import logging
@@ -89,7 +89,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         pytest.skip(database_function_skip_statements(statistics_source_name, False))
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = str(statistics_source_name.at[0,'statistics_source_name']),
+        statistics_source_name = extract_value_from_single_value_df(statistics_source_name, False),
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
@@ -142,6 +142,17 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
         SUSHI_data['URL'],
         {k: v for (k, v) in SUSHI_data.items() if k != "URL"},
     )
+
+
+def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_StatisticsSource_fixture):
+    """Tests creating list of available reports from a `/reports` SUSHI call.
+    
+    This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. To best test this function, the test is placed immediately after the instantiation of a fixture that exists to call the function in a test module that randomly selects SUSHI credentials to use. Since the fixture is generated dynamically from a randomly designated source, it cannot be compared to a static value, and dynamically retrieving the data for comparison would effectively be comparing the same code in two places; instead, this test checks various aspects of the data that will be true in all cases.
+    """
+    assert isinstance(reports_offered_by_StatisticsSource_fixture, list)
+    assert 1 <= len(reports_offered_by_StatisticsSource_fixture) <= 4
+    for report in reports_offered_by_StatisticsSource_fixture:
+        assert re.fullmatch(r"[PDTI]R", report)
 
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order

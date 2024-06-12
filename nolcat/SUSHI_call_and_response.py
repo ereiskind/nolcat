@@ -295,7 +295,7 @@ class SUSHICallAndResponse:
                 except Exception as error:
                     message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
                     log.error(message)
-                    return (SyntaxError(error), message)
+                    return (SyntaxError(error), [message])
             elif isinstance(API_response.text, list):
                 try:
                     log.debug("The returned text is in list format and is the list of reports.")
@@ -303,23 +303,23 @@ class SUSHICallAndResponse:
                 except Exception as error:
                     message = f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}."
                     log.error(message)
-                    return (json.JSONDecodeError(error), message)
+                    return (json.JSONDecodeError(error), [message])
             else:
                 message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
                 log.error(message)
-                return (json.JSONDecodeError(message), message)
+                return (json.JSONDecodeError(message), [message])
                 
             if isinstance(API_response, list):
                 if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
                     message = failed_SUSHI_call_statement("reports", self.calling_to, API_response)
                     log.error(message)
-                    return (ValueError(message), message)
+                    return (ValueError(message), [message])
                 log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
                 API_response = dict(reports = API_response)
             else:
                 message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
                 log.error(message)
-                return (json.JSONDecodeError(message), message)
+                return (json.JSONDecodeError(message), [message])
         
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
@@ -333,7 +333,7 @@ class SUSHICallAndResponse:
                     except Exception as error:
                         message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
                         log.error(message)
-                        return (SyntaxError(error), message)
+                        return (SyntaxError(error), [message])
                 
                 if isinstance(API_response, dict):
                     log.debug("The returned text was converted to a dictionary.")
@@ -345,7 +345,7 @@ class SUSHICallAndResponse:
                 else:
                     message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."
                     log.error(message)
-                    return (json.JSONDecodeError(message), message)
+                    return (json.JSONDecodeError(message), [message])
             
             elif isinstance(API_response.text, dict):
                 try:
@@ -354,7 +354,7 @@ class SUSHICallAndResponse:
                 except Exception as error:
                     message = f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}."
                     log.error(message)
-                    return (json.JSONDecodeError(error), message)
+                    return (json.JSONDecodeError(error), [message])
             
             elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
                 try:
@@ -363,12 +363,12 @@ class SUSHICallAndResponse:
                 except Exception as error:
                     message = f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}."
                     log.error(message)
-                    return (json.JSONDecodeError(error), message)
+                    return (json.JSONDecodeError(error), [message])
             
             else:
                 message = f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
                 log.error(message)
-                return (json.JSONDecodeError(message), message)
+                return (json.JSONDecodeError(message), [message])
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
         log.debug(self._stdout_API_response_based_on_size(API_response))
@@ -544,14 +544,17 @@ class SUSHICallAndResponse:
                 if isinstance(df, str):
                     error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
                     return (error_message, [message, error_message])
-                statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-                    statistics_source_ID = int(df.at[0,'statistics_source_ID']),
-                    statistics_source_name = str(df.at[0,'statistics_source_name']),
-                    statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-                    vendor_ID = int(df.at[0,'vendor_ID']),
-                )  # Without the `int` constructors, a numpy int type is used
-                log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
-                statistics_source_object.add_note(message)
+                try:
+                    statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                        statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+                        statistics_source_name = str(df.at[0,'statistics_source_name']),
+                        statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                        vendor_ID = int(df.at[0,'vendor_ID']),
+                    )  # Without the `int` constructors, a numpy int type is used
+                    log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
+                    statistics_source_object.add_note(message)
+                except NameError as error:  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Between its infrequent, unpredictable appearance and the importing of the module in which it's defined, the cause of the error is unclear.
+                    log.critical(f"Due to the error {error}, the error message {message} is not being saved to the database.")
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)

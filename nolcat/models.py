@@ -86,8 +86,7 @@ class FiscalYears(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<FiscalYears - 'fiscal_year_ID': {self.fiscal_year_ID}, 'fiscal_year': '{self.fiscal_year}', 'start_date': {self.start_date}, 'end_date': {self.end_date}, 'notes_on_statisticsSources_used': '{self.notes_on_statisticsSources_used}', 'notes_on_corrections_after_submission': '{self.notes_on_corrections_after_submission}'>"
 
 
     @hybrid_method
@@ -405,7 +404,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of all the statements that should be flashed in their various formats
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
@@ -436,15 +435,15 @@ class FiscalYears(db.Model):
         log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
-                AUCT_statistics_source=record_tuple[0],
-                AUCT_fiscal_year=record_tuple[1],
-                usage_is_being_collected=record_tuple[2],
-                manual_collection_required=record_tuple[3],
-                collection_via_email=record_tuple[4],
-                is_COUNTER_compliant=record_tuple[5],
-                collection_status=record_tuple[6],
-                usage_file_path=record_tuple[7],
-                notes=record_tuple[8],
+                AUCT_statistics_source=record_tuple[1],
+                AUCT_fiscal_year=record_tuple[2],
+                usage_is_being_collected=record_tuple[3],
+                manual_collection_required=record_tuple[4],
+                collection_via_email=record_tuple[5],
+                is_COUNTER_compliant=record_tuple[6],
+                collection_status=record_tuple[7],
+                usage_file_path=record_tuple[8],
+                notes=record_tuple[9],
             ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
         ]
         log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
@@ -452,26 +451,24 @@ class FiscalYears(db.Model):
         #Section: Collect Usage from Each Statistics Source
         dfs = []
         where_statements = []
-        all_flash_statements = []
+        all_flash_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
-            statistics_source = query_database(
-                query=f"""
-                    SELECT
-                        statisticsSources.statistics_source_ID,
-                        statisticsSources.statistics_source_name,
-                        statisticsSources.statistics_source_retrieval_code,
-                        statisticsSources.vendor_ID
-                    FROM statisticsSources
-                    WHERE statisticsSources.statistics_source_ID={AUCT_object.AUCT_statistics_source};
-                """,
+            statistics_source_df = query_database(
+                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source, str):
-                all_flash_statements.append(database_query_fail_statement(statistics_source, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}"))
+            if isinstance(statistics_source_df, str):
+                all_flash_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
+            statistics_source = StatisticsSources(
+                statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
+                statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                vendor_ID=statistics_source_df.at[0,'vendor_ID'],
+            )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            for statement in flash_statements:
-                all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
+            for k, v in flash_statements.items():
+                all_flash_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
             if isinstance(df, str):
                 continue
             if not df.empty:
@@ -480,13 +477,18 @@ class FiscalYears(db.Model):
             log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
         
         #Section: Update Data in Database
+        if len(dfs) == 0:
+            message = f"None of the {len(AUCT_objects_to_collect)} statistics sources with SUSHI for FY {self.fiscal_year} returned any data."
+            log.warning(message)
+            all_flash_statements['No data'] = message
+            return (message, all_flash_statements)
         df = pd.concat(dfs)
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
-            all_flash_statements.append(message)
+            all_flash_statements['first_new_PK_value()'] = message
             return (message, all_flash_statements)
         load_result = load_data_into_database(
             df=df,
@@ -508,7 +510,7 @@ class FiscalYears(db.Model):
         if not update_database_success_regex().fullmatch(update_result):
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
-            all_flash_statements.append(message)
+            all_flash_statements['update_database()'] = message
             return (message, all_flash_statements)
         return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
 
@@ -534,8 +536,7 @@ class AnnualStatistics(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<AnnualStatistics - 'fiscal_year_ID': {self.fiscal_year_ID}, 'question': '{self.question}', 'count': {self.count}>"
 
 
     @hybrid_method
@@ -582,8 +583,7 @@ class Vendors(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}', 'alma_vendor_code': '{self.alma_vendor_code}'>"
 
 
     @hybrid_method
@@ -741,7 +741,7 @@ class StatisticsSources(db.Model):
 
     def __repr__(self):
         """The printable representation of a `StatisticsSources` instance."""
-        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
+        return f"<StatisticsSources - 'statistics_source_ID': {self.statistics_source_ID}, 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': {self.vendor_ID}>"
     
 
     @hybrid_method
@@ -1039,10 +1039,6 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
                 
-                if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
-                    log.warning(message)
-                    return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if isinstance(df, str):
                     message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
@@ -1068,6 +1064,11 @@ class StatisticsSources(db.Model):
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 if not df.empty:
                     individual_month_dfs.append(df)
+
+            if len(subset_of_months_to_harvest) == no_usage_returned_count or len(individual_month_dfs) == 0:
+                message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
+                log.warning(message)
+                return (message, complete_flash_message_list)
             log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
             return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
@@ -1175,7 +1176,7 @@ class StatisticsSources(db.Model):
         except Exception as error:
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
-            flash_statements.append(message)
+            flash_statements['first_new_PK_value()'] = message
             return (message, flash_statements)
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         load_result = load_data_into_database(
@@ -1268,8 +1269,7 @@ class ResourceSources(db.Model):
 
 
     def __repr__(self):
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<ResourceSources - 'resource_source_ID': {self.resource_source_ID}, 'resource_source_name': '{self.resource_source_name}', 'source_in_use': {self.source_in_use}, 'access_stop_date': {self.access_stop_date}, 'vendor_ID': {self.vendor_ID}>"
 
 
     @hybrid_method
@@ -1486,8 +1486,7 @@ class StatisticsResourceSources(db.Model):
 
 
     def __repr__(self):
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<StatisticsResourceSources - 'SRS_statistics_source': {self.SRS_statistics_source}, 'SRS_resource_source': {self.SRS_resource_source}, 'current_statistics_source': {self.current_statistics_source}>"
 
 
     @hybrid_method
@@ -1549,7 +1548,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        return f"<'AUCT_statistics_source': '{self.AUCT_statistics_source}', 'AUCT_fiscal_year': '{self.AUCT_fiscal_year}', 'usage_is_being_collected': '{self.usage_is_being_collected}', 'manual_collection_required': '{self.manual_collection_required}', 'collection_via_email': '{self.collection_via_email}', 'is_COUNTER_compliant': '{self.is_COUNTER_compliant}', 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
+        return f"<AnnualUsageCollectionTracking - 'AUCT_statistics_source': {self.AUCT_statistics_source}, 'AUCT_fiscal_year': {self.AUCT_fiscal_year}, 'usage_is_being_collected': {self.usage_is_being_collected}, 'manual_collection_required': {self.manual_collection_required}, 'collection_via_email': {self.collection_via_email}, 'is_COUNTER_compliant': {self.is_COUNTER_compliant}, 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
 
 
     @hybrid_method
@@ -1614,7 +1613,7 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path)
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path=bucket_path)
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
@@ -1624,7 +1623,7 @@ class AnnualUsageCollectionTracking(db.Model):
         except Exception as error:
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
-            flash_statements.append(message)
+            flash_statements['first_new_PK_value()'] = message
             return (message, flash_statements)
         load_result = load_data_into_database(
             df=df,
@@ -1646,7 +1645,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if not update_database_success_regex().fullmatch(update_result):
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
-            flash_statements.append(message)
+            flash_statements['update_database()'] = message
             return (message, flash_statements)
         return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", flash_statements)
 
@@ -1834,8 +1833,7 @@ class COUNTERData(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<COUNTERData - 'COUNTER_data_ID': {self.COUNTER_data_ID}, 'statistics_source_ID': {self.statistics_source_ID}, 'report_type': '{self.report_type}', 'resource_name': '{self.resource_name}', 'publisher': '{self.publisher}', 'publisher_ID': '{self.publisher_ID}', 'platform': '{self.platform}', 'authors': '{self.authors}', 'publication_date': {self.publication_date}, 'article_version': '{self.article_version}', 'DOI': '{self.DOI}', 'proprietary_ID': '{self.proprietary_ID}', 'ISBN': '{self.ISBN}', 'print_ISSN': '{self.print_ISSN}', 'online_ISSN': '{self.online_ISSN}', 'URI': '{self.URI}', 'data_type': '{self.data_type}', 'section_type': '{self.section_type}', 'YOP': {self.YOP}, 'access_type': '{self.access_type}', 'access_method': '{self.access_method}', 'parent_title': '{self.parent_title}', 'parent_authors': '{self.parent_authors}', 'parent_publication_date': '{self.parent_publication_date}', 'parent_article_version': '{self.parent_article_version}', 'parent_data_type': '{self.parent_data_type}', 'parent_DOI': '{self.parent_DOI}', 'parent_proprietary_ID': '{self.parent_proprietary_ID}', 'parent_ISBN': '{self.parent_ISBN}', 'parent_print_ISSN': '{self.parent_print_ISSN}', 'parent_online_ISSN': '{self.parent_online_ISSN}', 'parent_URI': '{self.parent_URI}', 'metric_type': '{self.metric_type}', 'usage_date': {self.usage_date}, 'usage_count': {self.usage_count}, 'report_creation_date': {self.report_creation_date}>"
 
 
     @hybrid_method

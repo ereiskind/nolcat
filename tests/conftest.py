@@ -695,7 +695,8 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
             df["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
         )
-    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    if 'report_creation_date' in df.columns.tolist():
+        df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
     if df.shape[0] > 20:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
