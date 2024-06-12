@@ -170,8 +170,6 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
         match_result_df["publication_date"],
         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
     )
-    log.warning(f"Fields in `match_result_df` but not in `df`:\n{format_list_for_stdout([x for x in match_result_df.columns.to_list() if x not in df.columns.to_list()])}")  #TEST: temp
-    log.warning(f"Fields in `df` but not in `match_result_df`:\n{format_list_for_stdout([x for x in df.columns.to_list() if x not in match_result_df.columns.to_list()])}")  #TEST: temp
     assert_frame_equal(match_result_df, df)
 
 
