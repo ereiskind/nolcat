@@ -860,7 +860,7 @@ class StatisticsSources(db.Model):
 
         #Section: Harvest Individual Report if Specified
         if isinstance(report_to_harvest, str):
-            log.debug(f"Harvesting just a {report_to_harvest} report.")
+            log.info(f"Harvesting just a {report_to_harvest} report.")
             if report_to_harvest == "PR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
             elif report_to_harvest == "DR":
