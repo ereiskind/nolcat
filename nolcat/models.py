@@ -446,7 +446,7 @@ class FiscalYears(db.Model):
                 notes=record_tuple[9],
             ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
         ]
-        log.warning(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")  #TEST: temp level, should be `info`
+        log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
 
         #Section: Collect Usage from Each Statistics Source
         dfs = []
@@ -466,7 +466,6 @@ class FiscalYears(db.Model):
                 statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
-            log.warning(f"`statistics_source`: {statistics_source}")  #TEST: temp
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             for k, v in flash_statements.items():
                 all_flash_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
@@ -1121,7 +1120,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
-        log.info(f"The months in the date range are {months_in_date_range}.")  #TEST: temp level, revert to `debug`
+        log.debug(f"The months in the date range are {months_in_date_range}.")
         months_to_harvest = []
         
         for month_being_checked in months_in_date_range:
