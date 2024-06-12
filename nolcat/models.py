@@ -1017,9 +1017,97 @@ class StatisticsSources(db.Model):
             if len(subset_of_months_to_harvest) == 0:
                 #ToDo: Return indication that all months already have data in the database
             else:
-                #ToDo: for each month in `subset_of_months_to_harvest`, collect usage
+                log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
+                individual_month_dfs = []
+                complete_flash_message_list = []
+                no_usage_returned_count = 0
+                for month_to_harvest in subset_of_months_to_harvest:
+                    SUSHI_parameters['begin_date'] = month_to_harvest
+                    SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
+                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+                    for item in flash_message_list:
+                        complete_flash_message_list.append(item)
+                    if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
+                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
+                        log.warning(SUSHI_data_response + " " + message)
+                        complete_flash_message_list.append(message)
+                        return (SUSHI_data_response, complete_flash_message_list)
+                    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
+                        log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
+                        no_usage_returned_count += 1
+                        log.warning(SUSHI_data_response)
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    elif isinstance(SUSHI_data_response, str):
+                        log.warning(SUSHI_data_response)
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
+
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if isinstance(df, str):
+                        message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                        log.warning(message)
+                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
+                        logging_message = save_unconverted_data_via_upload(
+                            SUSHI_data_response,
+                            file_name_stem,
+                            bucket_path,
+                        )
+                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                            message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
+                            log.critical(message)
+                        else:
+                            message = message + " " + logging_message
+                            log.debug(message)
+                        complete_flash_message_list.append(message)
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report
+                    df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
+                    log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
+                    log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
+                    if not df.empty:
+                        individual_month_dfs.append(df)
+                
+                if len(subset_of_months_to_harvest) == no_usage_returned_count or len(individual_month_dfs) == 0:
+                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
+                    log.warning(message)
+                    return (message, complete_flash_message_list)
+                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+                return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+
         elif subset_of_months_to_harvest is None:
-            #ToDo: Collect usage for all months
+            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+            SUSHI_parameters['begin_date'] = start_date
+            SUSHI_parameters['end_date'] = end_date
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            if isinstance(SUSHI_data_response, str):
+                log.warning(SUSHI_data_response)
+                return (SUSHI_data_response, flash_message_list)
+            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            if isinstance(df, str):
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                log.warning(message)
+                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
+                logging_message = save_unconverted_data_via_upload(
+                    SUSHI_data_response,
+                    file_name_stem,
+                    bucket_path,
+                )
+                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                    message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
+                    log.critical(message)
+                else:
+                    message = message + " " + logging_message
+                    log.debug(message)
+                flash_message_list.append(message)
+                return (message, flash_message_list)
+            df['statistics_source_ID'] = self.statistics_source_ID
+            df['report_type'] = report
+            df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
+            log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
+            log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
+            return (df, flash_message_list)
+
         else:
             #ToDo: Return error of some sort--the code should never reach here
 
