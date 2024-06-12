@@ -271,6 +271,4 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, Statis
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
         response = SUSHICallAndResponse(StatisticsSource_instance_name, URL, "reports/pr", SUSHI_credentials).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
-    log.warning(f"`response[0]`: {response[0]}")  #TEST: temp
-    log.warning(f"`response[1]`:\n{format_list_for_stdout(response[1])}")  #TEST: temp
     assert isinstance(response[0], dict)
