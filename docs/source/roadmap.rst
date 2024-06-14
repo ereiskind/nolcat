@@ -38,7 +38,6 @@ Iteration 0: Prepare for COUNTER R5.1
 
 Iteration 1: View Lists
 =======================
-* Confirm variable routes in "annual_stats/index.html" work
 * Finish ``nolcat.view_lists.views.view_lists_homepage()``
 * Write "view_lists/index.html" page
 * Finish ``tests.test_bp_view_list.test_view_lists_homepage()``
