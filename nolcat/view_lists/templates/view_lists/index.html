@@ -24,9 +24,9 @@
 
         {% for record in records %}
         <tr>
-            {% for field_of_value, value in zip(fields, record)}
+            {% for field_of_value, value in zip(fields, record) %}
             <td>
-                {% if field_of_value == edit_button_field}
+                {% if field_of_value == edit_button_field %}
                     <button type="submit" value={{value}}><!--ToDo: name="" form="" class=""-->
                         {{value}}
                     </button>
