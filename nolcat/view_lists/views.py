@@ -28,7 +28,7 @@ def view_lists_homepage(list):
         title = "Resource Sources"
         SQL_query = f"""
             SELECT
-                resourceSources.resource_source_ID,
+                resourceSources.resource_source_ID AS ID,
                 resourceSources.resource_source_name,
                 resourceSources.source_in_use,
                 resourceSources.access_stop_date,
@@ -46,12 +46,15 @@ def view_lists_homepage(list):
             log.error(message)
             flash(message)
             return redirect(url_for('view_lists.view_lists_homepage'))
-        df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
+        df = df.astype({
+            **{k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()},
+            "ID": 'int',
+        })
     elif list == "statistics":
         title = "Statistics Sources"
         SQL_query = f"""
             SELECT
-                statisticsSources.statistics_source_ID,
+                statisticsSources.statistics_source_ID AS ID,
                 statisticsSources.statistics_source_name,
                 vendors.vendor_name
             FROM statisticsSources
@@ -67,12 +70,15 @@ def view_lists_homepage(list):
             log.error(message)
             flash(message)
             return redirect(url_for('view_lists.view_lists_homepage'))
-        df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
+        df = df.astype({
+            **{k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()},
+            "ID": 'int',
+        })
     elif list == "vendors":
         title = "Vendors"
         SQL_query = f"""
             SELECT
-                vendor_ID,
+                vendor_ID AS ID,
                 vendor_name
             FROM vendors
             ORDER BY vendor_name;
@@ -86,15 +92,18 @@ def view_lists_homepage(list):
             log.error(message)
             flash(message)
             return redirect(url_for('view_lists.view_lists_homepage'))
-        df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})
+        df = df.astype({
+            **{k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()},
+            "ID": 'int',
+        })
     else:
         message = f"`{list}` is not a valid list option."
         log.error(message)
         flash(message)
         return abort(404)
     
-    df['View Record Details'] = f"url_for('view_lists.view_list_record', list='{list}', PK='')"
-    df['Edit'] = f"url_for('view_lists.edit_list_record', list='{list}', PK='')"
+    df['View Record Details'] = f"url_for('view_lists.view_list_record', list='{list}', PK={df['ID']})"
+    df['Edit'] = f"url_for('view_lists.edit_list_record', list='{list}', PK={df['ID']})"
     return render_template(
         'view_lists/index.html',
         title=title,
