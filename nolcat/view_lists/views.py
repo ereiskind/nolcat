@@ -93,7 +93,17 @@ def view_lists_homepage(list):
         flash(message)
         return abort(404)
     
-    return render_template('view_lists/index.html', title=title)
+    df['View Record Details'] = f"View {title[:-1]} Details"
+    df['Edit'] = f"Edit {title[:-1]}"
+    return render_template(
+        'view_lists/index.html',
+        title=title,
+        fields=df.columns.values,  #ToDo: Exclude ID field from display
+        records=df.values.tolist(),  #ToDo: Exclude ID field from display
+        edit_button_field="Edit",
+        view_button_field="View Record Details",
+        zip=zip,
+    )
 
 
 @bp.route('/<string:list>/<int:PK>')
