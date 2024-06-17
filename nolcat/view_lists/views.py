@@ -107,10 +107,8 @@ def view_lists_homepage(list):
     return render_template(
         'view_lists/index.html',
         title=title,
-        fields=df.columns.values,  #ToDo: Exclude ID field from display
-        records=df.values.tolist(),  #ToDo: Exclude ID field from display
-        edit_link_field="Edit",
-        view_link_field="View Record Details",
+        fields=[field_name.replace("_", " ").title() for field_name in df.columns.values.tolist() if field_name != "ID"],
+        records=[field_values[1:] for field_values in df.values.tolist()],
         zip=zip,
     )
 
