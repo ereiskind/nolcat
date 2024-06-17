@@ -153,8 +153,8 @@ def edit_list_record(list, PK):
     Adding a record is done by creating a `PK` value that matches what's next in the auto-generated count list, adding new values to all the fields available for edit, which are then committed to the relation as a new record. Editing the `resourceSources` relation is also the method for updating the `statisticsResourceSources` junction table, which is never directly visible or directly accessed.
 
     Args:
-        list (_type_): _description_
-        PK (_type_): _description_
+        list (str): the relation the record comes from
+        PK (int): the primary key of the record being edited
     """
     log.info(f"Starting `edit_list_record()` for {list}.")
     #ToDo: Write form for adding/editing record and for adding or editing notes
