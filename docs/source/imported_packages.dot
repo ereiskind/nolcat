@@ -60,7 +60,7 @@ digraph imported_packages {
         label="\N==2024.6.2"
         shape="box"
     ]
-    charset-normalizer [
+    "charset-normalizer" [
         label="\N==3.3.2"
         shape="box"
     ]
@@ -76,7 +76,7 @@ digraph imported_packages {
         label="\N==0.21.2"
         shape="box"
     ]
-    et-xmlfile [
+    "et-xmlfile" [
         label="\N==1.1.0"
         shape="box"
     ]
@@ -85,12 +85,12 @@ digraph imported_packages {
         shape="component"
         style="bold"
     ]
-    Flask-SQLAlchemy [
+    "Flask-SQLAlchemy" [
         label="\N==3.1.1"
         shape="component"
         style="bold"
     ]
-    Flask-WTF [
+    "Flask-WTF" [
         label="\N==1.2.1"
         shape="component"
         style="bold"
@@ -236,17 +236,17 @@ digraph imported_packages {
         shape="component"
         style="bold"
     ]
-    pytest-dependency [
+    "pytest-dependency" [
         label="\N==0.6.0"
         shape="component"
         style="bold"
     ]
-    pytest-session2file [
+    "pytest-session2file" [
         label="\N==0.1.11"
         shape="component"
         style="bold"
     ]
-    python-dateutil [
+    "python-dateutil" [
         label="\N==2.9.0.post0"
         shape="box"
     ]
@@ -259,7 +259,7 @@ digraph imported_packages {
         shape="component"
         style="bold"
     ]
-    requests-toolbelt [
+    "requests-toolbelt" [
         label="\N==1.0.0"
         shape="box"
     ]
@@ -297,37 +297,37 @@ digraph imported_packages {
         shape="component"
         style="bold"
     ]
-    sphinx-autobuild [
+    "sphinx-autobuild" [
         label="\N==2024.4.16"
         shape="component"
         style="bold"
     ]
-    sphinx-autodocgen [
+    "sphinx-autodocgen" [
         label="\N==1.3"
         shape="component"
         style="bold"
     ]
-    sphinxcontrib-applehelp [
+    "sphinxcontrib-applehelp" [
         label="\N==1.0.8"
         shape="box"
     ]
-    sphinxcontrib-devhelp [
+    "sphinxcontrib-devhelp" [
         label="\N==1.0.6"
         shape="box"
     ]
-    sphinxcontrib-htmlhelp [
+    "sphinxcontrib-htmlhelp" [
         label="\N==2.0.5"
         shape="box"
     ]
-    sphinxcontrib-jsmath [
+    "sphinxcontrib-jsmath" [
         label="\N==1.0.1"
         shape="box"
     ]
-    sphinxcontrib-qthelp [
+    "sphinxcontrib-qthelp" [
         label="\N==1.0.7"
         shape="box"
     ]
-    sphinxcontrib-serializinghtml [
+    "sphinxcontrib-serializinghtml" [
         label="\N==1.1.10"
         shape="box"
     ]
@@ -389,11 +389,11 @@ digraph imported_packages {
         label="\N==1.9.4"
         shape="box"
     ]
-    zope.event [
+    "zope.event" [
         label="\N==5.0"
         shape="box"
     ]
-    zope.interface [
+    "zope.interface" [
         label="\N==6.4.post2"
         shape="box"
     ]
