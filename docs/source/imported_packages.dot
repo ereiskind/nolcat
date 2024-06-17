@@ -397,4 +397,68 @@ digraph imported_packages {
         label="\N==6.4.post2"
         shape="box"
     ]
+
+    // Package Dependencies
+    beautifulsoup4 -> soupsieve
+    boto3 -> botocore
+    boto3 -> jmespath
+    boto3 -> s3transfer
+    Flask -> blinker
+    Flask -> click
+    Flask -> itsdangerous
+    Flask -> Jinja2
+    Flask -> Werkzeug
+    "Flask-SQLAlchemy" -> Flask
+    "Flask-SQLAlchemy" -> SQLAlchemy
+    "Flask-WTF" -> Flask
+    "Flask-WTF" -> itsdangerous
+    "Flask-WTF" -> WTForms
+    mysql -> mysqlclient
+    openpyxl -> "et-xmlfile"
+    pandas -> numpy
+    pandas -> "python-dateutil"
+    pandas -> pytz
+    pandas -> tzdata
+    // pandas[aws, performance, pyarrow]
+    PyInputPlus -> PySimpleValidate
+    PyInputPlus -> stdiomask
+    pytest -> iniconfig
+    pytest -> packaging
+    pytest -> pluggy
+    "pytest-dependency" -> pytest
+    "pytest-dependency" -> setuptools
+    "pytest-session2file" -> pytest
+    requests -> certifi
+    requests -> "charset-normalizer"
+    requests -> idna
+    requests -> urllib3
+    "requests-toolbelt" -> requests
+    s3fs -> aiobotocore
+    s3fs -> aiohttp
+    s3fs -> fsspec
+    Sphinx -> alabaster
+    Sphinx -> Babel
+    Sphinx -> docutils
+    Sphinx -> imagesize
+    Sphinx -> Jinja2
+    Sphinx -> packaging
+    Sphinx -> Pygments
+    Sphinx -> requests
+    Sphinx -> snowballstemmer
+    Sphinx -> "sphinxcontrib-applehelp"
+    Sphinx -> "sphinxcontrib-devhelp"
+    Sphinx -> "sphinxcontrib-htmlhelp"
+    Sphinx -> "sphinxcontrib-jsmath"
+    Sphinx -> "sphinxcontrib-qthelp"
+    Sphinx -> "sphinxcontrib-serializinghtml"
+    "sphinx-autobuild" -> colorama
+    "sphinx-autobuild" -> Sphinx
+    "sphinx-autobuild" -> starlette
+    "sphinx-autobuild" -> uvicorn
+    "sphinx-autobuild" -> watchfiles
+    "sphinx-autobuild" -> websockets
+    "sphinx-autodocgen" -> Sphinx
+    SQLAlchemy -> greenlet
+    SQLAlchemy -> typing_extensions
+    WTForms -> MarkupSafe
 }
