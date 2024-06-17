@@ -414,10 +414,26 @@ digraph imported_packages {
     ]
 
     // Package Dependencies
+    aiobotocore -> aiohttp [style="dashed"]
+    aiobotocore -> aioitertools [style="dashed"]
+    aiobotocore -> botocore [style="dashed"]
+    aiobotocore -> wrapt [style="dashed"]
+    aiohttp -> aiosignal [style="dashed"]
+    aiohttp -> attrs [style="dashed"]
+    aiohttp -> frozenlist [style="dashed"]
+    aiohttp -> multidict [style="dashed"]
+    aiohttp -> yarl [style="dashed"]
+    aiosignal -> frozenlist [style="dashed"]
+    anyio -> idna [style="dashed"]
+    anyio -> sniffio [style="dashed"]
     beautifulsoup4 -> soupsieve
     boto3 -> botocore
     boto3 -> jmespath
     boto3 -> s3transfer
+    botocore -> jmespath [style="dashed"]
+    botocore -> "python-dateutil" [style="dashed"]
+    botocore -> urllib3 [style="dashed"]
+    Bottleneck -> numpy [style="dashed"]
     Flask -> blinker
     Flask -> click
     Flask -> itsdangerous
@@ -428,7 +444,15 @@ digraph imported_packages {
     "Flask-WTF" -> Flask
     "Flask-WTF" -> itsdangerous
     "Flask-WTF" -> WTForms
+    gevent -> greenlet [style="dashed"]
+    gevent -> "zope.event" [style="dashed"]
+    gevent -> "zope.interface" [style="dashed"]
+    gunicorn -> packaging [style="dashed"]
+    Jinja2 -> MarkupSafe [style="dashed"]
     mysql -> mysqlclient
+    numba -> llvmlite [style="dashed"]
+    numba -> numpy [style="dashed"]
+    numexpr -> numpy [style="dashed"]
     openpyxl -> "et-xmlfile"
     pandas -> numpy
     pandas -> "python-dateutil"
@@ -443,6 +467,7 @@ digraph imported_packages {
         "pandas[performance]" -> numexpr
     pandas -> "pandas[pyarrow]"
         "pandas[pyarrow]" -> pyarrow
+    pyarrow -> numpy [style="dashed"]
     PyInputPlus -> PySimpleValidate
     PyInputPlus -> stdiomask
     pytest -> iniconfig
@@ -451,6 +476,7 @@ digraph imported_packages {
     "pytest-dependency" -> pytest
     "pytest-dependency" -> setuptools
     "pytest-session2file" -> pytest
+    "python-dateutil" -> six [style="dashed"]
     requests -> certifi
     requests -> "charset-normalizer"
     requests -> idna
@@ -459,6 +485,7 @@ digraph imported_packages {
     s3fs -> aiobotocore
     s3fs -> aiohttp
     s3fs -> fsspec
+    s3transfer -> botocore [style="dashed"]
     Sphinx -> alabaster
     Sphinx -> Babel
     Sphinx -> docutils
@@ -483,5 +510,14 @@ digraph imported_packages {
     "sphinx-autodocgen" -> Sphinx
     SQLAlchemy -> greenlet
     SQLAlchemy -> typing_extensions
+    starlette -> anyio [style="dashed"]
+    uvicorn -> click [style="dashed"]
+    uvicorn -> h11 [style="dashed"]
+    watchfiles -> anyio [style="dashed"]
+    Werkzeug -> MarkupSafe [style="dashed"]
     WTForms -> MarkupSafe
+    yarl -> idna [style="dashed"]
+    yarl -> multidict [style="dashed"]
+    "zope.event" -> setuptools [style="dashed"]
+    "zope.interface" -> setuptools [style="dashed"]
 }
