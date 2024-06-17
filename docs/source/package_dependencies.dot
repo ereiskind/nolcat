@@ -1,4 +1,4 @@
-digraph imported_packages {
+digraph package_dependencies {
     graph [rankdir=TB]
 
     // All Imported Packages
