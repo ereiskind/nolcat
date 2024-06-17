@@ -2,6 +2,13 @@ digraph imported_packages {
     graph [rankdir=TB]
 
     // All Imported Packages
+    /*
+        Bold components are packages installed based on `requirements.txt`
+        Boxes are packages installed as dependencies of other packages
+        Dashed folders are packages installed with Python
+        Dashed components are packages installed based on the Dockerfile
+    */
+
     aiobotocore [
         label="\N==2.13.0"
         shape="box"
@@ -106,7 +113,8 @@ digraph imported_packages {
     ]
     gevent [
         label="\N==24.2.1"
-        shape="box"
+        shape="component"
+        style="dashed"
     ]
     graphviz [
         label="\N==0.20.3"
@@ -119,7 +127,8 @@ digraph imported_packages {
     ]
     gunicorn [
         label="\N==22.0.0"
-        shape="box"
+        shape="component"
+        style="dashed"
     ]
     h11 [
         label="\N==0.14.0"
@@ -375,7 +384,8 @@ digraph imported_packages {
     ]
     wheel [
         label="\N==0.43.0"
-        shape="box"
+        shape="folder"
+        style="dashed"
     ]
     wrapt [
         label="\N==1.16.0"
