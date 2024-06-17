@@ -399,6 +399,20 @@ digraph imported_packages {
         shape="box"
     ]
 
+    // Pandas Optional Dependency Markers
+    "pandas[aws]" [
+        shape="box"
+        style="dotted"
+    ]
+    "pandas[performance]" [
+        shape="box"
+        style="dotted"
+    ]
+    "pandas[pyarrow]" [
+        shape="box"
+        style="dotted"
+    ]
+
     // Package Dependencies
     beautifulsoup4 -> soupsieve
     boto3 -> botocore
@@ -420,7 +434,15 @@ digraph imported_packages {
     pandas -> "python-dateutil"
     pandas -> pytz
     pandas -> tzdata
-    // pandas[aws, performance, pyarrow]
+    pandas -> "pandas[aws]"
+        "pandas[aws]" -> fsspec
+        "pandas[aws]" -> s3fs
+    pandas -> "pandas[performance]"
+        "pandas[performance]" -> Bottleneck
+        "pandas[performance]" -> numba
+        "pandas[performance]" -> numexpr
+    pandas -> "pandas[pyarrow]"
+        "pandas[pyarrow]" -> pyarrow
     PyInputPlus -> PySimpleValidate
     PyInputPlus -> stdiomask
     pytest -> iniconfig
