@@ -26,14 +26,10 @@
         <tr>
             {% for field_of_value, value in zip(fields, record) %}
             <td>
-                {% if field_of_value == edit_button_field %}
-                    <button type="submit" value={{value}}><!--ToDo: name="" form="" class=""-->
-                        {{value}}
-                    </button>
-                {% elif field_of_value == view_button_field %}
-                    <button type="submit" value={{value}}><!--ToDo: name="" form="" class=""-->
-                        {{value}}
-                    </button>
+                {% if field_of_value == edit_link_field %}
+                    <a href="{{ value }}">Edit</a>
+                {% elif field_of_value == view_link_field %}
+                    <a href="{{ value }}">View Details</a>
                 {% else %}
                     {{value}}
                 {% endif %}
