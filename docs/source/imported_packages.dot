@@ -203,7 +203,8 @@ digraph imported_packages {
     ]
     pip [
         label="\N==24.0"
-        shape="box"
+        shape="folder"
+        style="dashed"
     ]
     pluggy [
         label="\N==1.5.0"
