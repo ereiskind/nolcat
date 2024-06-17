@@ -15,7 +15,33 @@
         {% endif %}
     {% endwith %}
 
-    <!--ToDo: Display dataframe; for each record, have links to pages for viewing details of and editing record-->
+    <table>
+        <tr>
+            {% for field in fields %}
+                <th>{{field}}</th>
+            {% endfor %}
+        </tr>
+
+        {% for record in records %}
+        <tr>
+            {% for field_of_value, value in zip(fields, record)}
+            <td>
+                {% if field_of_value == edit_button_field}
+                    <button type="submit" value={{value}}><!--ToDo: name="" form="" class=""-->
+                        {{value}}
+                    </button>
+                {% elif field_of_value == view_button_field %}
+                    <button type="submit" value={{value}}><!--ToDo: name="" form="" class=""-->
+                        {{value}}
+                    </button>
+                {% else %}
+                    {{value}}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
 
     <!--ToDo: Create link for adding record-->
 </body>
