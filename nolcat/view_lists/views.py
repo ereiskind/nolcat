@@ -50,6 +50,7 @@ def view_lists_homepage(list):
             **{k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()},
             "ID": 'int',
         })
+        df['source_in_use'] = restore_boolean_values_to_boolean_field(df['source_in_use'])
     elif list == "statistics":
         title = "Statistics Sources"
         SQL_query = f"""
