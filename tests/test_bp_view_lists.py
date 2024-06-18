@@ -24,11 +24,11 @@ def relation_and_record(request, engine):
         tuple: the relation whose records are being listed and the primary key for a record in that relation
     """
     log.debug(f"Listing records in the {request} relation.")
-    if request == "resources":
+    if request.param == "resources":
         query = "SELECT resource_source_ID FROM resourceSources;"
-    elif request == "statistics":
+    elif request.param == "statistics":
         query = "SELECT statistics_source_ID FROM statisticsSources;"
-    elif request == "vendors":
+    elif request.param == "vendors":
         query = "SELECT vendor_ID FROM vendors;"
     
     PKs = query_database(
