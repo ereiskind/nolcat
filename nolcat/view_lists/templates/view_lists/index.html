@@ -27,11 +27,11 @@
             {% for field_of_value, value in zip(fields, record) %}
             <td>
                 {% if field_of_value == edit_link_field %}
-                    <a href="{{ url_for('view_lists.edit_list_record', list=value[0], PK=value[1]) }}">Edit</a>
+                    <a href="{{ url_for('view_lists.edit_list_record', list=value[0], PK=value[1]) }}">{{ field_of_value }}</a>  <!--TEST: revert text to `Edit`-->
                 {% elif field_of_value == view_link_field %}
-                    <a href="{{ url_for('view_lists.view_list_record', list=value[0], PK=value[1]) }}">View Details</a>
+                    <a href="{{ url_for('view_lists.view_list_record', list=value[0], PK=value[1]) }}">{{ field_of_value }}</a>  <!--TEST: revert text to `View_Details`-->
                 {% else %}
-                    {{value}}
+                    {{ field_of_value }}  <!--TEST: revert to `value`-->
                 {% endif %}
             </td>
             {% endfor %}
