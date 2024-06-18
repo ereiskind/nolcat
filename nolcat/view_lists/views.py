@@ -103,8 +103,8 @@ def view_lists_homepage(list):
         flash(message)
         return abort(404)
     
-    df['View Record Details'] = df['ID'].apply(lambda cell_value: f"list='{list}', PK='{cell_value}'")
-    df['Edit'] = df['ID'].apply(lambda cell_value: f"list='{list}', PK='{cell_value}'")
+    df['View Record Details'] = df['ID'].apply(lambda cell_value: (list, cell_value))
+    df['Edit'] = df['ID'].apply(lambda cell_value: (list, cell_value))
     log.info(f"List of {list} as dataframe:\n{df}")
     return render_template(
         'view_lists/index.html',
