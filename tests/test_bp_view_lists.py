@@ -12,6 +12,36 @@ from nolcat.view_lists import *
 log = logging.getLogger(__name__)
 
 
+@pytest.fixture(scope='module', params=["resources", "statistics", "vendors"])
+def relation_and_record(request, engine):
+    """A parameterized function providing a relation and record.
+
+    Args:
+        request (str): the relation whose records are being listed
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        tuple: the relation whose records are being listed and the primary key for a record in that relation
+    """
+    log.debug(f"Listing records in the {request} relation.")
+    if request == "resources":
+        query = "SELECT resource_source_ID FROM resourceSources;"
+    elif request == "statistics":
+        query = "SELECT statistics_source_ID FROM statisticsSources;"
+    elif request == "vendors":
+        query = "SELECT vendor_ID FROM vendors;"
+    
+    PKs = query_database(
+        query=query,
+        engine=engine,
+    )
+    if isinstance(PKs, str):
+        pytest.skip(database_function_skip_statements(PKs))
+    PK = extract_value_from_single_value_df(PKs.sample())
+    log.debug(f"Viewing and editing record {PK}.")
+    yield(request, PK)
+
+
 def test_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
