@@ -24,6 +24,20 @@ def relation_and_record(request, engine):
         tuple: the relation whose records are being listed and the primary key for a record in that relation
     """
     log.debug(f"Listing records in the {request} relation.")
+    #TEST: temp
+    try:
+        log.warning(f"`request.__dict__`:\n{request.__dict__}")
+    except:
+        pass
+    try:
+        log.warning(f"`request.dir()`:\n{request.dir()}")
+    except:
+        pass
+    try:
+        log.warning(f"`request.var()`:\n{request.var()}")
+    except:
+        pass
+    #TEST: temp end
     if request == "resources":
         query = "SELECT resource_source_ID FROM resourceSources;"
     elif request == "statistics":
