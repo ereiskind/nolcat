@@ -42,24 +42,27 @@ def relation_and_record(request, engine):
     yield(request, PK)
 
 
-def test_view_lists_homepage(client):
+def test_view_lists_homepage(client, relation_and_record):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
+    page = client.get(f'/view_lists/{relation_and_record[0]}')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    log.warning(f"`GET_soup` (type {type(GET_soup)}):\n{GET_soup}")  #TEST: temp
+    GET_response_title = GET_soup.head.title
+    log.warning(f"`GET_response_title` (type {type(GET_response_title)}):\n{GET_response_title}")  #TEST: temp
+    GET_response_page_title = GET_soup.body.h1
+    log.warning(f"`GET_response_page_title` (type {type(GET_response_page_title)}):\n{GET_response_page_title}")  #TEST: temp
 
-    #page = client.get('/view_lists/')  #ToDo: Add variable route element
-    #GET_soup = BeautifulSoup(page.data, 'lxml')
-    #GET_response_title = GET_soup.head.title
-    #GET_response_page_title = GET_soup.body.h1
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_lists' / 'templates' / 'view_lists' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        log.warning(f"`file_soup` (type {type(file_soup)}):\n{file_soup}")  #TEST: temp
+        HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
+        log.warning(f"`HTML_file_title` (type {type(HTML_file_title)}):\n{HTML_file_title}")  #TEST: temp
+        HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
+        log.warning(f"`HTML_file_page_title` (type {type(HTML_file_page_title)}):\n{HTML_file_page_title}")  #TEST: temp
 
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_lists' / 'templates' / 'view_lists' / 'index.html', 'br') as HTML_file:
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
-    #    HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
-
-    #assert page.status == "200 OK"
-    #assertHTML_file_title == GET_response_title
-    #assertHTML_file_page_title == GET_response_page_title
-    pass
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_GET_request_for_view_list_record():
