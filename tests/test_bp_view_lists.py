@@ -39,7 +39,7 @@ def relation_and_record(request, engine):
         pytest.skip(database_function_skip_statements(PKs))
     PK = extract_value_from_single_value_df(PKs.sample())
     log.debug(f"Viewing and editing record {PK}.")
-    yield(request, PK)
+    yield(request.param, PK)
 
 
 def test_view_lists_homepage(client, relation_and_record):
