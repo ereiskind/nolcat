@@ -24,6 +24,20 @@ def view_lists_homepage(list):
         list (str): the relation whose records are being listed
     """
     log.info(f"Starting `view_lists_homepage()` for {list}.")
+    #TEST: temp
+    try:
+        log.warning(f"`list.__dict__`:\n{list.__dict__}")
+    except:
+        pass
+    try:
+        log.warning(f"`list.dir()`:\n{list.dir()}")
+    except:
+        pass
+    try:
+        log.warning(f"`list.var()`:\n{list.var()}")
+    except:
+        pass
+    #TEST: end temp
     if list == "resources":
         title = "Resource Sources"
         SQL_query = f"""
