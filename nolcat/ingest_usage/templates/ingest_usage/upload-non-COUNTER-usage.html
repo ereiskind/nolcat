@@ -32,17 +32,19 @@
         </p>
     </header>
 
-    <form action="{{ url_for('ingest_usage.upload_non_COUNTER_reports', testing=testing) }}" method="POST" enctype="multipart/form-data">
-        {{ form.csrf_token }}
-        <label>
-            {{ form.AUCT_option.label }}
-            {{ form.AUCT_option }}
-        </label>
-        <br>
-        <label>
-            {{ form.usage_file.label }}
-            {{ form.usage_file }}
-        </label>
-        <input type="submit" value="Submit">
-    </form>
+    <article>
+        <form action="{{ url_for('ingest_usage.upload_non_COUNTER_reports', testing=testing) }}" method="POST" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <label>
+                {{ form.AUCT_option.label }}
+                {{ form.AUCT_option }}
+            </label>
+            <br>
+            <label>
+                {{ form.usage_file.label }}
+                {{ form.usage_file }}
+            </label>
+            <input type="submit" value="Submit">
+        </form>
+    </article>
 {% endblock %}

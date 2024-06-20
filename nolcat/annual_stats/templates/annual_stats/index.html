@@ -22,12 +22,14 @@
         </ul>
     </article>
 
-    <form action="{{  url_for('annual_stats.annual_stats_homepage') }}" method="POST">
-        {{ form.csrf_token }}
-        <label>
-            {{ form.fiscal_year.label }}
-            {{ form.fiscal_year }}
-        </label>
-        <input type="submit" value="Submit">
-    </form>
+    <article>
+        <form action="{{  url_for('annual_stats.annual_stats_homepage') }}" method="POST">
+            {{ form.csrf_token }}
+            <label>
+                {{ form.fiscal_year.label }}
+                {{ form.fiscal_year }}
+            </label>
+            <input type="submit" value="Submit">
+        </form>
+    </article>
 {% endblock %}
