@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Usage Homepage</title>
-</head>
-<body>
+{% extends "nolcat/templates/layout.html" %}
+{% block metadata_title %}View Usage Homepage{% endblock %}
+
+{% block main_content %}
     <h1>Ways to View Usage</h1>
 
     {% with message = get_flashed_messages() %}
@@ -21,5 +16,4 @@
     <p><a href="{{ url_for('view_usage.download_non_COUNTER_usage') }}">Click here</a> for a non-COUNTER usage file.</p>
 
     <p>All usage is returned as a CSV download.</p>
-</body>
-</html>
+{% endblock %}

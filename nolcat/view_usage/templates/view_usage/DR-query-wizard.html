@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DR Query Wizard</title>
-</head>
-<body>
+{% extends "nolcat/templates/layout.html" %}
+{% block metadata_title %}DR Query Wizard{% endblock %}
+
+{% block main_content %}
     <h1>DR Query Wizard <small>(continued)</small></h1>
 
     <p>Fill out the form below; only the date fields, which are already filled in, are required. For the boxes listing options to select:
@@ -75,5 +71,4 @@
         </label>
         <input type="submit" value="Submit">
     </form>
-</body>
-</html>
+{% endblock %}

@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of {{ title }}</title>
-</head>
-<body>
+{% extends "nolcat/templates/layout.html" %}
+{% block metadata_title %}List of {{ title }}{% endblock %}
+
+{% block main_content %}
     <h1>List of {{ title }}</h1>
 
     {% with message = get_flashed_messages() %}
@@ -40,5 +35,4 @@
     </table>
 
     <!--ToDo: Create link for adding record-->
-</body>
-</html>
+{% endblock %}

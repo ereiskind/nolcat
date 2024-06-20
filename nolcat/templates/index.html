@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
-    <title>NoLCAT</title>
-</head>
-<body>
+{% extends "nolcat/templates/layout.html" %}
+{% block metadata_title %}NoLCAT{% endblock %}
+
+{% block main_content %}
     <h1>NoLCAT Homepage</h1>
     <p>This is the NoLCAT homepage.</p>
     <p>For the purpose of providing a direct link, <a href="{{ url_for('initialization.collect_FY_and_vendor_data') }}">access the initialization wizard here</a>.</p>
@@ -19,5 +13,4 @@
         <li><a href="{{ url_for('view_usage.view_usage_homepage') }}">Click here</a> for usage view options</li>
         <li><a href="{{ url_for('annual_stats.annual_stats_homepage') }}">Click here</a> for admin features homepage</li>
     </ul>
-</body>
-</html>
+{% endblock %}

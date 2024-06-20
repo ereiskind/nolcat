@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
-    <title>Upload Historical Non-COUNTER Data</title>
-</head>
-<body>
+{% extends "nolcat/templates/layout.html" %}
+{% block metadata_title %}Upload Historical Non-COUNTER Data{% endblock %}
+
+{% block main_content %}
     <h1>Upload Historical Non-COUNTER Data</h1>
 
     <p>The file name will be changed by the program to match the needed convention, but the file must be one of the following:
@@ -49,5 +43,4 @@
         </label>
         <input type="submit" value="Submit">
     </form>
-</body>
-</html>
+{% endblock %}
