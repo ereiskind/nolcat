@@ -14,22 +14,25 @@ log = logging.getLogger(__name__)
 
 @pytest.fixture(scope='module', params=["resources", "statistics", "vendors"])
 def relation_and_record(request, engine):
-    """A parameterized function providing a relation and record.
+    """A parameterized function providing a relation, the readable title for the relation, and a primary key for a record in the relation.
 
     Args:
         request (str): the relation whose records are being listed
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
 
     Yields:
-        tuple: the relation whose records are being listed and the primary key for a record in that relation
+        tuple: the relation whose records are being listed, the readable title for that relation, and the primary key for a record in that relation
     """
     log.debug(f"Listing records in the {request} relation.")
     if request.param == "resources":
         query = "SELECT resource_source_ID FROM resourceSources;"
+        readable_title = "Resource Sources"
     elif request.param == "statistics":
         query = "SELECT statistics_source_ID FROM statisticsSources;"
+        readable_title = "Statistics Sources"
     elif request.param == "vendors":
         query = "SELECT vendor_ID FROM vendors;"
+        readable_title = "Vendors"
     
     PKs = query_database(
         query=query,
@@ -39,12 +42,12 @@ def relation_and_record(request, engine):
         pytest.skip(database_function_skip_statements(PKs))
     PK = extract_value_from_single_value_df(PKs.sample())
     log.debug(f"Viewing and editing record {PK}.")
-    yield(request.param, PK)
+    yield(request.param, readable_title, PK)
 
 
 def test_view_lists_homepage(client, relation_and_record):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    relation, record_PK = relation_and_record
+    relation, readable_title, record_PK = relation_and_record
     page = client.get(f'/view_lists/{relation}')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
