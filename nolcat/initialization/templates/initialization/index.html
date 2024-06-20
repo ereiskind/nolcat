@@ -7,11 +7,13 @@
         <p>These pages will walk you through the process of initializing the database with your historical usage statistics and other data required for the relational structure of the underlying database.</p>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <h2>1. Create the `fiscalYears` Relation with Historical Years</h2>  <!--Ordered list not used because numbering continues across multiple pages-->
     <ol>

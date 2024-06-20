@@ -6,11 +6,13 @@
         <h1>Database Initialization Wizard: Page 2</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
         <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <h2>4. Create the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` Relations</h2>
     <p>In handling usage statistics for electronic resources, there are two information sources to consider--the resource source, also called the platform and often equivalent to a HTTP domain, which is the source of the e-resource content, and the statistics source, where the usage statistics come from. There's a complex, many-to-many relationship between these two sources with situations/use cases that include

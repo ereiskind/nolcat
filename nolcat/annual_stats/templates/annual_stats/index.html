@@ -6,11 +6,13 @@
         <h1>Admin Homepage</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <p><a href="{{ url_for('view_lists.view_lists_homepage', list='vendors') }}">Click here</a> to view the list of vendors</p>
     <p><a href="{{ url_for('view_lists.view_lists_homepage', list='statistics') }}">Click here</a> to view the list of statistics sources</p>

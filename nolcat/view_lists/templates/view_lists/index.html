@@ -6,11 +6,13 @@
         <h1>List of {{ title }}</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <table>
         <tr>

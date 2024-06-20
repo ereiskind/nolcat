@@ -6,11 +6,13 @@
         <h1>Database Initialization Wizard: Page 4</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
         <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <h2>8. Upload the Non-COUNTER Files</h2>
     <ol>

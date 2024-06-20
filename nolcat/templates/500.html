@@ -6,8 +6,10 @@
         <h1>Internal Server Error</h1>
     </header>
 
-    <p>The following error occurred:</p>
-    <p>{{ error }}</p>
+    <article>
+        <p>The following error occurred:</p>
+        <p>{{ error }}</p>
+    </article>
 
     <p>Return to the <a href="{{ url_for('homepage') }}">home page</a> here.</p>
 {% endblock %}

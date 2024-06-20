@@ -6,11 +6,13 @@
         <h1>Database Initialization Wizard: Page 4</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
         <p>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <p>The initial data load is complete! <a href="{{ url_for('homepage') }}">click here</a> to return to the homepage.</p>
 {% endblock %}

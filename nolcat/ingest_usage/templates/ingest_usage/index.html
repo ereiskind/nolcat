@@ -6,11 +6,13 @@
         <h1>Ingest Usage Homepage</h1>
     </header>
 
+    <article>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
     {% endwith %}
+    </article>
 
     <ul>
         <li>To upload COUNTER data, <a href="{{ url_for('ingest_usage.upload_COUNTER_data') }}">click here</a>.</li>
