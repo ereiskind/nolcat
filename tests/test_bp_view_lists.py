@@ -44,7 +44,8 @@ def relation_and_record(request, engine):
 
 def test_view_lists_homepage(client, relation_and_record):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    page = client.get(f'/view_lists/{relation_and_record[0]}')
+    relation, record_PK = relation_and_record
+    page = client.get(f'/view_lists/{relation}')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     log.warning(f"`GET_soup` (type {type(GET_soup)}):\n{GET_soup}")  #TEST: temp
     GET_response_title = GET_soup.head.title
