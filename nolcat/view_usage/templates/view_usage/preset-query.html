@@ -2,7 +2,9 @@
 {% block metadata_title %}Preset Queries{% endblock %}
 
 {% block main_content %}
-    <h1>Preset Queries</h1>
+    <header>
+        <h1>Preset Queries</h1>
+    </header>
 
     <form action="{{ url_for('view_usage.use_predefined_SQL_query') }}" method="POST">
         {{ form.csrf_token }}

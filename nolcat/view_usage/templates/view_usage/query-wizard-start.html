@@ -2,7 +2,10 @@
 {% block metadata_title %}Query Wizard{% endblock %}
 
 {% block main_content %}
-    <h1>Query Wizard</h1>
+    <header>
+        <h1>Query Wizard</h1>
+        <p>This query wizard helps construct a query for returning COUNTER data. Select the date range and report type here; on the next page, select the fields to display and the filters. For the date range, either enter dates for a custom date range or select a fiscal year to use that time span as the date range; if custom dates are entered, the fiscal year selection will be ignored.</p>
+    </header>
 
     {% with message = get_flashed_messages() %}
         {% if message %}
@@ -10,7 +13,6 @@
         {% endif %}
     {% endwith %}
 
-    <p>This query wizard helps construct a query for returning COUNTER data. Select the date range and report type here; on the next page, select the fields to display and the filters. For the date range, either enter dates for a custom date range or select a fiscal year to use that time span as the date range; if custom dates are entered, the fiscal year selection will be ignored.</p>
 
     <form action="{{ url_for('view_usage.start_query_wizard') }}" method="POST">
         {{ form.csrf_token }}

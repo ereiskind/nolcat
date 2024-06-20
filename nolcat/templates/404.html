@@ -2,7 +2,9 @@
 {% block metadata_title %}Page Not Found{% endblock %}
 
 {% block main_content %}
-    <h1>Page Not Found</h1>
+    <header>
+        <h1>Page Not Found</h1>
+    </header>
 
     {% with message = get_flashed_messages() %}
         {% if message %}
