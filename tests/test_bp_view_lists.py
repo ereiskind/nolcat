@@ -47,19 +47,14 @@ def test_view_lists_homepage(client, relation_and_record):
     relation, record_PK = relation_and_record
     page = client.get(f'/view_lists/{relation}')
     GET_soup = BeautifulSoup(page.data, 'lxml')
-    log.warning(f"`GET_soup` (type {type(GET_soup)}):\n{GET_soup}")  #TEST: temp
     GET_response_title = GET_soup.head.title
-    log.warning(f"`GET_response_title` (type {type(GET_response_title)}):\n{GET_response_title}")  #TEST: temp
     GET_response_page_title = GET_soup.body.h1
     log.warning(f"`GET_response_page_title` (type {type(GET_response_page_title)}):\n{GET_response_page_title}")  #TEST: temp
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_lists' / 'templates' / 'view_lists' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
-        log.warning(f"`file_soup` (type {type(file_soup)}):\n{file_soup}")  #TEST: temp
         HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
-        log.warning(f"`HTML_file_title` (type {type(HTML_file_title)}):\n{HTML_file_title}")  #TEST: temp
         HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
-        log.warning(f"`HTML_file_page_title` (type {type(HTML_file_page_title)}):\n{HTML_file_page_title}")  #TEST: temp
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
