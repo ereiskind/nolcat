@@ -56,8 +56,8 @@ def test_view_lists_homepage(client, relation_and_record):
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_lists' / 'templates' / 'view_lists' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
-        HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
+        HTML_file_title = file_soup.head.title.replace("{{ title }}", readable_title)
+        HTML_file_page_title = file_soup.body.h1.replace("{{ title }}", readable_title)
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
