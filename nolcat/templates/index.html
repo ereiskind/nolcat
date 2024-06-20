@@ -8,11 +8,13 @@
         <p>For the purpose of providing a direct link, <a href="{{ url_for('initialization.collect_FY_and_vendor_data') }}">access the initialization wizard here</a>.</p>
     </header>
 
-    <h2>Links</h2>
-    <ul>
-        <li><a href="{{ url_for('login.login_homepage') }}">Click here</a> to log in</li>
-        <li><a href="{{ url_for('ingest_usage.ingest_usage_homepage') }}">Click here</a> for usage ingest options</li>
-        <li><a href="{{ url_for('view_usage.view_usage_homepage') }}">Click here</a> for usage view options</li>
-        <li><a href="{{ url_for('annual_stats.annual_stats_homepage') }}">Click here</a> for admin features homepage</li>
-    </ul>
+    <article>
+        <h2>Links</h2>
+        <ul>
+            <li><a href="{{ url_for('login.login_homepage') }}">Click here</a> to log in.</li>
+            <li><a href="{{ url_for('ingest_usage.ingest_usage_homepage') }}">Click here</a> for usage ingest options.</li>
+            <li><a href="{{ url_for('view_usage.view_usage_homepage') }}">Click here</a> for usage view options.</li>
+            <li><a href="{{ url_for('annual_stats.annual_stats_homepage') }}">Click here</a> for admin features homepage.</li>
+        </ul>
+    </article>
 {% endblock %}
