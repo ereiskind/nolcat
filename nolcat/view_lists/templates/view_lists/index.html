@@ -14,6 +14,7 @@
     {% endwith %}
     </article>
 
+    <article>
     <table>
         <tr>
             {% for field in fields %}
@@ -30,13 +31,14 @@
                 {% elif field_of_value == "View Record Details" %}
                     <a href="{{ url_for('view_lists.view_list_record', list=value[0], PK=value[1]) }}">View Record Details</a>
                 {% else %}
-                    {{ value }}
+                    <section>{{ value }}</section>  <!--Tag used primarily for isolating fields during testing-->
                 {% endif %}
             </td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+    </article>
 
     <!--ToDo: Create link for adding record-->
 {% endblock %}
