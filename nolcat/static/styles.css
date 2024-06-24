@@ -10,6 +10,12 @@ body {
 main {
     margin-left: 1.5rem;  /* Moves text away from viewport edge */
 }
+a, a:visited {
+    color: auto;
+}
+a:active, a:focus, a:hover {
+    text-decoration: none;
+}
 small {
     font-size: 70%;
 }
@@ -51,45 +57,6 @@ h6 {
     font-size: 1rem;
     text-transform: uppercase;
 }
-
-
-/*** LINKS ***/
-a {/*
-    background-color: transparent;
-    color: #782f40;
-    text-decoration: none;
-    font-weight: 800;
-    -webkit-transition: all 0.10s ease-in-out;
-    transition: all 0.15s ease-in-out;
-*/}
-
-a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, p a, li a, dt a, a:hover, a:focus {/*
-    background-image: linear-gradient(to right, rgba(120, 47, 64, 1.0) 40%, rgba(206, 184, 136, 1.0) 60%); /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0.15) 40%, rgba(255, 255, 255, 0.15) 60%); *\
-    background-position: 50% calc(100% - 1px);
-    background-position: 50% 100%;
-    background-repeat: repeat-x;
-    background-size: 6px 1px;
-*/}
-p a, li a, dt a, td a {/*
-    font-weight: 800;
-*/}
-a, a:visited {/*
-    text-decoration: underline;
-*/}
-
-a:active, a:hover {/*
-    outline: 0;
-*/}
-a:hover, a:focus {/*
-    color: #ceb888;
-    text-decoration: none;
-    /* shared with `a` */
-
-*/}
-a:focus {/*
-    outline: 5px auto -webkit-focus-ring-color; /* outline: 3px auto -webkit-focus-ring-color *\
-    outline-offset: -2px;
-*/}
 
 
 /*** NAVIGATION ***/
