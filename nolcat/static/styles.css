@@ -14,24 +14,6 @@ small {
     font-size: 70%;
 }
 
-ul, ol {/*
-    margin-top: 0;
-    margin-bottom: 14px;
-*/}
-ul ul, ol ul, ul ol, ol ol {/*
-    margin-bottom: 0;
-*/}
-li {/*
-    -webkit-transition: all 0.10s ease-in-out;
-    transition: all 0.15s ease-in-out;
-*/}
-dl {/*
-    margin-top: 0;
-    margin-bottom: 28px;
-*/}
-dt, dd {/*
-    line-height: 1.777;
-*/}
 dt {/*
     font-weight: 700;
 */}
