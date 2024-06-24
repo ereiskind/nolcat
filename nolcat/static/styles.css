@@ -3,7 +3,7 @@ body {
     margin: 0;  /* Null margin for later properties to override */
     font-family: "Acumin Pro", acumin-pro, Arial, sans-serif;
     font-size: 16px;
-    line-height: 150%;
+    line-height: 125%;
     color: #2c2a29;
     background-color: #ffffff;
 }
