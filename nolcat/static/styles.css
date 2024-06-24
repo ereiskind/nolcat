@@ -7,11 +7,9 @@ body {
     color: #2c2a29;
     background-color: #ffffff;
 }
-p {/*
-    margin: 0 0 14px;
-    font-size: 1.333rem;
-    font-weight: normal;
-*/}
+main {
+    margin-left: 1.5rem;  /* Moves text away from viewport edge */
+}
 small {/*
     font-size: 80%;
 */}
