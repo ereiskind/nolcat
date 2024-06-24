@@ -13,13 +13,13 @@ main {
 small {
     font-size: 70%;
 }
-
-dt {/*
+dt {
     font-weight: 700;
-*/}
-dd {/*
-    margin-left: 0;
-*/}
+    margin-left: 1.75rem;
+}
+dd {
+    margin-left: 3.5rem;
+}
 
 
 /*** HEADINGS ***/
