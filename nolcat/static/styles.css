@@ -10,9 +10,9 @@ body {
 main {
     margin-left: 1.5rem;  /* Moves text away from viewport edge */
 }
-small {/*
-    font-size: 80%;
-*/}
+small {
+    font-size: 70%;
+}
 
 ul, ol {/*
     margin-top: 0;
