@@ -59,43 +59,34 @@ h6 {
 }
 
 
-/*** NAVIGATION ***/
-nav {/*
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    border:none;
-*/}
-nav > li {/*
-    position: relative;
-    display: block;
-*/}
-nav > li > a {/*
-    position: relative;
-    display: block;
-    padding: 0.5em 1em;
-*/}
-nav > li > a:hover, nav > li > a:focus {/*
-    text-decoration: none;
-    background-color: #f4f4f4;
-*/}
+/*** HEADER AND FOOTER ***/
+body > header, body > footer {
+    background-color: #782f40;
+    color: #ffffff;
+}
+body > header {
+    /*ToDo: Add flexbox code for a sticky header */
+}
+body > footer {
+    /*ToDo: Add flexbox code to move to bottom of viewport */
+}
 
-nav ul {/*
-    list-style: none;
-    padding-left: 0
-*/}
-nav a {/*
-    font-weight: 400;
-*/}
-nav li a {/*
-    display: block;
-    background-image: none;
-    font-weight: 400;
-    line-height: 1.777;
-    padding: 1em;
-    font-size:.8em;
-    cursor:pointer;
-*/}
+nav {
+    border: none;
+    /*ToDo: Add as a flexbox container*/
+}
+nav ul {
+    list-style-type: none;
+    /*ToDo: Add as a flexbox container*/
+}
+nav li a {
+    color: #ceb888;
+    text-decoration-line: underline #ceb888 solid auto;
+    font-weight: 600;
+}
+nav li a:active, nav li a:focus, nav li a:hover {
+    text-decoration-line: none;
+}
 
 
 /*** FORMS ***/
