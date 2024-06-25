@@ -105,44 +105,23 @@ input[type="checkbox"]:active, input[type="checkbox"]:focus, input[type="checkbo
 
 
 /*** TABLES ***/
-table {/*
+table{
+    /*ToDo: Use flexbox to mirror 1.5rem margin-left property on right and have centered table fill remaining space */
     border-collapse: collapse;
     border-spacing: 0;
-    background-color: transparent;
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 28px;
-*/}
-td, th {/*
-    padding: 0;
-    background-color: #fff;
+}
+th, td {
+    padding: 0.25em 0.5em;
+    line-height: 175%;
+    text-align: center;
     border: 1px solid #ddd; /* for a bordered style */
-*/}
-th {/*
-    text-align: left;
-*/}
-table > thead tr {/*
+}
+table tr > th {  /* `th` tags immediately inside `tr` tags inside `table` tag */
     background-color:#782f40;
-    color:#ffffff
-*/}
-table > thead > tr > th, table > tbody > tr > th, table > tfoot > tr > th, table > thead > tr > td, table > tbody > tr > td, table > tfoot > tr > td {/*
-    padding: 0.4em;
-    line-height: 1.777;
-    vertical-align: top;
-    border-top: 1px solid #dddddd;
-*/}
-.table > thead > tr > th {/*
-    vertical-align: bottom;
-    border-bottom: 2px solid #dddddd;
-*/}
-
-table td[class*="col-"], table th[class*="col-"] {/*
-    position: static;
-    display: table-cell;
-    float: none;
-*/}
-table col[class*="col-"] {/*
-    position: static;
-    display: table-column;
-    float: none;
-*/}
+    color:#ffffff;
+    font-weight: 700;
+    
+}
+table tr:nth-child(odd) {  /* every odd `tr` tags inside `table` tag; the more specific CSS for `th` tags inside the first `tr` tag overrides this */
+    background-color: #ceb888;
+}
