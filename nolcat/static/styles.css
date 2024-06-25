@@ -90,55 +90,18 @@ nav li a:active, nav li a:focus, nav li a:hover {
 
 
 /*** FORMS ***/
-button, input, optgroup, select, textarea {/*
-    color: inherit;
-    font: inherit;
-    margin: 0;
-*/}
-label {/*
-    display: inline-block;
-    max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: 700;
-*/}
-button {/*
-    font-weight: 500;
-    font-family: acumin-pro-condensed, "Arial", sans-serif;
-    line-height: 1.1;
-    white-space: normal;
-    border-style: solid;
-    margin: 2px 0;
-    border-radius: .25em;
-    border-width: 1px;
-    -webkit-transition: all 0.10s ease-in-out;
-    transition: all 0.15s ease-in-out;
-*/}
-
-input[type="radio"], input[type="checkbox"] {/*
-    margin: 4px 0 0;
-    margin-top: 1px \9; /* margin-top: 10px; *\
-    margin-bottom: 10px;
-    line-height: normal;
-    position: relative;
-    display: block;
-*/}
-button, html input[type="button"], input[type="reset"], input[type="submit"] {/*
-    -webkit-appearance: button;
-    cursor: pointer;
-*/}
-input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focus {/*
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px;
-*/}
-
-input[type="radio"] label, input[type="checkbox"] label {/*
-    min-height: 28px;
-    padding-left: 20px;
-    margin-bottom: 0;
-    font-weight: 400;
-    cursor: pointer;
-*/}
-
+label { /* Through HTML writing and Jinja rendering, all parts of forms but the submit button are wrapped in `label` tags */
+    line-height: 200%;
+}
+input:active, input:focus, input:hover, select:active, select:focus, select:hover, textarea:active, textarea:focus, textarea:hover {
+    outline: 0.25em auto #ceb888;
+}
+input:active, input:focus, input:hover {
+    outline-offset: 0.125em;
+}
+input[type="checkbox"]:active, input[type="checkbox"]:focus, input[type="checkbox"]:hover, input[type="file"]:active, input[type="file"]:focus, input[type="file"]:hover {
+    outline-offset: 0;
+}
 
 
 /*** TABLES ***/
