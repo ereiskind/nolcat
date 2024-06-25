@@ -87,7 +87,7 @@ def upload_COUNTER_data():
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
             log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
-            load_result = load_data_into_database(
+            load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
                 df=df,
                 relation='COUNTERData',
                 engine=db.engine,

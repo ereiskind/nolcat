@@ -48,6 +48,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
+    #ToDo: Function will be redone to make `df` a parquet file and save it to S3
     
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
     log.debug(f"The files being uploaded to the database are:\n{format_list_for_stdout(form_submissions)}")

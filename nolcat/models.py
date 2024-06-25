@@ -490,7 +490,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             all_flash_statements['first_new_PK_value()'] = message
             return (message, all_flash_statements)
-        load_result = load_data_into_database(
+        load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
             df=df,
             relation='COUNTERData',
             engine=db.engine,
@@ -1186,7 +1186,7 @@ class StatisticsSources(db.Model):
             flash_statements['first_new_PK_value()'] = message
             return (message, flash_statements)
         log.debug(f"The dataframe after adjusting the index:\n{df}")
-        load_result = load_data_into_database(
+        load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
             df=df,
             relation='COUNTERData',
             engine=db.engine,
@@ -1632,7 +1632,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(message)
             flash_statements['first_new_PK_value()'] = message
             return (message, flash_statements)
-        load_result = load_data_into_database(
+        load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
             df=df,
             relation='COUNTERData',
             engine=db.engine,

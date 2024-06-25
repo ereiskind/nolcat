@@ -344,6 +344,7 @@ def FY2022_FiscalYears_object(engine, caplog):
 @pytest.mark.slow
 def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
+    #ToDo: Function will be redone to make `df` a parquet file and save it to S3
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`

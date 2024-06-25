@@ -362,6 +362,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    #ToDo: Function will be redone to make `df` a parquet file and save it to S3
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
         month_before_month_like_most_recent_month_with_usage[0],
