@@ -9,6 +9,10 @@
     <title>{% block metadata_title %}{% endblock %}</title>
 </head>
 <body>
+    <main>
+        {% block main_content %}{% endblock %}
+    </main>
+
     <header>
         NoLCAT: Noles Library Collection Assessment Tool
         <nav>
@@ -17,10 +21,6 @@
         <!--ToDo: When authentication is set up, add login/logout function-->
         <!--ToDo: Does anything else need to go in the header?-->
     </header>
-
-    <main>
-        {% block main_content %}{% endblock %}
-    </main>
 
     <footer>
         NoLCAT, created by FSU Libraries

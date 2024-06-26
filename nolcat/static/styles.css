@@ -20,6 +20,7 @@ main {
     flex-direction: inherit;
     flex: 1 1 auto;
     overflow-y: auto;
+    order: 2;  /* "layout.html" has sticky header below main content for accessability */
 }
 a, a:visited {
     color: auto;
@@ -76,6 +77,12 @@ body > header, body > footer {
     color: #ffffff;
     flex: 0 0 auto;
     max-height: 25vh;  /* Ensures at least half of the viewport space will be for the main content */
+}
+body > header {
+    order: 1;  /* "layout.html" has sticky header below main content for accessability */
+}
+body > footer {
+    order: 3;  /* "layout.html" has sticky header below main content for accessability */
 }
 
 nav {
