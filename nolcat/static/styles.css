@@ -80,6 +80,12 @@ body > header, body > footer {
 }
 body > header {
     order: 1;  /* "layout.html" has sticky header below main content for accessability */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0.5em;
+    align-items: baseline;
 }
 header > a {
     background-color: #ceb888;
