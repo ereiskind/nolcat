@@ -99,11 +99,17 @@ body > footer {
 
 nav {
     border: none;
-    /*ToDo: Add as a flexbox container*/
+    display: inherit;
+    flex: 1 0 auto;
 }
 nav ul {
     list-style-type: none;
-    /*ToDo: Add as a flexbox container*/
+    display: inherit;
+    flex-direction: column;
+    padding: 0;
+    justify-content: space-evenly;
+    width: 100%;
+    /*ToDo: Get list to revert to vertical format when viewport gets too narrow (`flex-wrap: wrap;` not wrapping individual list items) */
 }
 nav li a {
     color: #ceb888;
