@@ -1,4 +1,7 @@
 /*** BODY ***/
+html, body {  /* Needed on both tags for scrolling between the sticky header and footer to work */
+    height: 100%
+}
 body {
     margin: 0;  /* Null margin for later properties to override */
     font-family: "Acumin Pro", acumin-pro, Arial, sans-serif;
@@ -8,12 +11,15 @@ body {
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 main {
     margin-left: 1.5rem;  /* Moves text away from viewport edge */
     /* The inherits are required for items within `main` to act as flexbox items*/
     display: inherit;
     flex-direction: inherit;
+    flex: 1 1 auto;
+    overflow-y: auto;
 }
 a, a:visited {
     color: auto;
@@ -68,12 +74,8 @@ h6 {
 body > header, body > footer {
     background-color: #782f40;
     color: #ffffff;
-}
-body > header {
-    /*ToDo: Add flexbox code for a sticky header */
-}
-body > footer {
-    /*ToDo: Add flexbox code to move to bottom of viewport */
+    flex: 0 0 auto;
+    max-height: 25vh;  /* Ensures at least half of the viewport space will be for the main content */
 }
 
 nav {
