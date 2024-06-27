@@ -1,0 +1,917 @@
+digraph package_dependencies {
+    graph [rankdir="LR"]
+
+    /* Cluster Types
+        Rounded = Class
+        Rounded, light gold fill = Relation class
+        Light garnet fill = Blueprint
+        Grey (50% of #2c2a29) outline = Module collecting general functions
+        Dotted = Test module
+    */
+
+    node [  // To remove the fill color from the individual function nodes
+        style="filled"
+        fillcolor="white"
+    ]
+    /* Node Types
+        Box = Function
+        Cds = Route function
+        Folder = Function connecting to S3
+        Cylinder = Function connecting to MySQL
+        Note = Fixture function
+        Component = Test function
+    */
+
+
+    // All Functions
+
+    subgraph cluster_fiscalYears {
+        label="fiscalYears"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_fiscalYears [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+        calculate_depreciated_ACRL_60b
+        calculate_depreciated_ACRL_63
+        calculate_ACRL_61a
+        calculate_ACRL_61b
+        calculate_ARL_18
+        calculate_ARL_19
+        calculate_ARL_20
+        create_usage_tracking_records_for_fiscal_year
+        collect_fiscal_year_usage_statistics
+    }
+
+
+    subgraph cluster_annualStatistics {
+        label="annualStatistics"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_annualStatistics [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+        add_annual_statistic_value
+    }
+
+
+    subgraph cluster_vendorNotes {
+        label="vendorNotes"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_vendorNotes [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_statisticsSources {
+        label="statisticsSources"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_statisticsSources [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+        fetch_SUSHI_information
+        _harvest_R5_SUSHI
+        _harvest_single_report
+        _check_if_data_in_database
+        collect_usage_statistics
+        add_note_in_statisticsSources [
+            label="add_note"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_statisticsSourceNotes {
+        label="statisticsSourceNotes"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_statisticsSourceNotes [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_resourceSources {
+        label="resourceSources"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_resourceSources [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+        add_access_stop_date
+        remove_access_stop_date
+        change_StatisticsSource
+        add_note_in_resourceSources [
+            label="add_note"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_resourceSourceNotes {
+        label="resourceSourceNotes"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_resourceSourceNotes [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_statisticsResourceSources {
+        label="statisticsResourceSources"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_statisticsResourceSources [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_annualUsageCollectionTracking {
+        label="annualUsageCollectionTracking"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_annualUsageCollectionTracking [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+        collect_annual_usage_statistics
+        upload_nonstandard_usage_file
+        download_nonstandard_usage_file
+    }
+
+
+    subgraph cluster_COUNTERData {
+        label="COUNTERData"
+        style="rounded"
+        bgcolor="#e9dfc9"
+
+        state_data_types_in_COUNTERData [
+            label="state_data_types"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_SUSHICallAndResponse {
+        label="SUSHICallAndResponse"
+        style="rounded"
+
+        make_SUSHI_call
+        _make_API_call
+        _convert_Response_to_JSON
+        _save_raw_Response_text
+        _handle_SUSHI_exceptions
+        _evaluate_individual_SUSHI_exception
+        _stdout_API_response_based_on_size
+    }
+
+
+    subgraph cluster_UploadCOUNTERReports {
+        label="UploadCOUNTERReports"
+        style="rounded"
+
+        create_dataframe_in_UploadCOUNTERReports [
+            label="create_dataframe"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_ConvertJSONDictToDataframe {
+        label="ConvertJSONDictToDataframe"
+        style="rounded"
+
+        create_dataframe_in_ConvertJSONDictToDataframe [
+            label="create_dataframe"
+            /*shape=""*/
+        ]
+        _transform_R5_JSON
+        _transform_R5b1_JSON
+        _serialize_dates
+    }
+
+
+    subgraph cluster_annual_stats {
+        label="annual_stats"
+        bgcolor="#eac8d0"
+
+        annual_stats_homepage
+        show_fiscal_year_details
+    }
+
+
+    subgraph cluster_ingest_usage {
+        label="ingest_usage"
+        bgcolor="#eac8d0"
+
+        ingest_usage_homepage
+        upload_COUNTER_data
+        harvest_SUSHI_statistics
+        upload_non_COUNTER_reports
+    }
+
+
+    subgraph cluster_initialization {
+        label="initialization"
+        bgcolor="#eac8d0"
+
+        collect_FY_and_vendor_data
+        collect_sources_data
+        collect_AUCT_and_historical_COUNTER_data
+        upload_historical_non_COUNTER_usage
+        data_load_complete
+    }
+
+
+    subgraph cluster_login {
+        label="login"
+        bgcolor="#eac8d0"
+
+        login_homepage
+    }
+
+
+    subgraph cluster_view_lists {
+        label="view_lists"
+        bgcolor="#eac8d0"
+
+        view_lists_homepage
+        view_list_record
+        edit_list_record
+    }
+
+
+    subgraph cluster_view_usage {
+        label="view_usage"
+        bgcolor="#eac8d0"
+
+        create_COUNTER_fixed_vocab_list
+        set_encoding
+        create_downloads_folder
+        view_usage_homepage
+        run_custom_SQL_query
+        use_predefined_SQL_query
+        start_query_wizard
+        query_wizard_sort_redirect
+        construct_PR_query_with_wizard
+        construct_DR_query_with_wizard
+        construct_TR_query_with_wizard
+        construct_IR_query_with_wizard
+        download_non_COUNTER_usage
+    }
+
+
+    subgraph cluster_PATH_TO_CREDENTIALS_FILE {
+        label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
+        pencolor="#857e7a"
+
+        PATH_TO_CREDENTIALS_FILE
+    }
+
+
+    subgraph cluster_app {
+        label="nolcat.app"
+        pencolor="#857e7a"
+
+        filter_empty_parentheses
+        configure_logging
+        page_not_found
+        internal_server_error
+        create_app
+        "create_app.create_db"
+        "create_app.homepage"
+        "create_app.download_file"
+        first_new_PK_value
+        return_string_of_dataframe_info
+        change_single_field_dataframe_into_series
+        restore_boolean_values_to_boolean_field
+        upload_file_to_S3_bucket
+        create_AUCT_SelectField_options
+        load_data_into_database
+        query_database
+        check_if_data_already_in_COUNTERData
+        truncate_longer_lines
+        update_database
+        save_unconverted_data_via_upload
+        ISSN_regex
+        ISBN_regex
+        last_day_of_month
+        extract_value_from_single_value_df
+        S3_file_name_timestamp
+        non_COUNTER_file_name_regex
+    }
+
+
+    subgraph cluster_statements {
+        label="nolcat.statements"
+        pencolor="#857e7a"
+
+        file_extensions_and_mimetypes
+        format_list_for_stdout
+        remove_IDE_spacing_from_statement
+        initialize_relation_class_object_statement
+        fixture_variable_value_declaration_statement
+        unable_to_convert_SUSHI_data_to_dataframe_statement
+        unable_to_get_updated_primary_key_values_statement
+        Flask_error_statement
+        file_IO_statement
+        list_folder_contents_statement
+        check_if_file_exists_statement
+        failed_upload_to_S3_statement
+        unable_to_delete_test_file_in_S3_statement
+        upload_file_to_S3_bucket_success_regex
+        upload_nonstandard_usage_file_success_regex
+        return_value_from_query_statement
+        return_dataframe_from_query_statement
+        database_query_fail_statement
+        database_update_fail_statement
+        add_data_success_and_update_database_fail_statement
+        database_function_skip_statements
+        load_data_into_database_success_regex
+        update_database_success_regex
+        successful_SUSHI_call_statement
+        harvest_R5_SUSHI_success_statement
+        failed_SUSHI_call_statement
+        no_data_returned_by_SUSHI_statement
+        attempted_SUSHI_call_with_invalid_dates_statement
+        reports_with_no_usage_regex
+        skip_test_due_to_SUSHI_error_regex
+    }
+
+
+    subgraph cluster_relations {
+        label="tests.data.relations"
+        pencolor="#857e7a"
+
+        fiscalYears_relation_in_relations [
+            label="fiscalYears_relation"
+            /*shape=""*/
+        ]
+        annualStatistics_relation_in_relations [
+            label="annualStatistics_relation"
+            /*shape=""*/
+        ]
+        vendors_relation_in_relations [
+            label="vendors_relation"
+            /*shape=""*/
+        ]
+        vendorNotes_relation_in_relations [
+            label="vendorNotes_relation"
+            /*shape=""*/
+        ]
+        statisticsSources_relation_in_relations [
+            label="statisticsSources_relation"
+            /*shape=""*/
+        ]
+        statisticsSourceNotes_relation_in_relations [
+            label="statisticsSourceNotes_relation"
+            /*shape=""*/
+        ]
+        resourceSources_relation_in_relations [
+            label="resourceSources_relation"
+            /*shape=""*/
+        ]
+        resourceSourceNotes_relation_in_relations [
+            label="resourceSourceNotes_relation"
+            /*shape=""*/
+        ]
+        statisticsResourceSources_relation_in_relations [
+            label="statisticsResourceSources_relation"
+            /*shape=""*/
+        ]
+        annualUsageCollectionTracking_relation_in_relations [
+            label="annualUsageCollectionTracking_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2017_relation_in_relations [
+            label="workbook_0_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2017_relation_in_relations [
+            label="workbook_1_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2017_relation_in_relations [
+            label="workbook_2_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2018_relation_in_relations [
+            label="workbook_0_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2018_relation_in_relations [
+            label="workbook_1_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2018_relation_in_relations [
+            label="workbook_2_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2019_relation_in_relations [
+            label="workbook_0_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2019_relation_in_relations [
+            label="workbook_1_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2019_relation_in_relations [
+            label="workbook_2_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_3_2019_relation_in_relations [
+            label="workbook_3_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2020_relation_in_relations [
+            label="workbook_0_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2020_relation_in_relations [
+            label="workbook_1_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2020_relation_in_relations [
+            label="workbook_2_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_3_2020_relation_in_relations [
+            label="workbook_3_2020_relation"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_conftest {
+        label="tests.conftest"
+        style="dotted"
+        pencolor="#857e7a"
+
+        engine
+        app
+        client
+        db
+        session
+        fiscalYears_relation_in_conftest [
+            label="fiscalYears_relation"
+            /*shape=""*/
+        ]
+        annualStatistics_relation_in_conftest [
+            label="annualStatistics_relation"
+            /*shape=""*/
+        ]
+        vendors_relation_in_conftest [
+            label="vendors_relation"
+            /*shape=""*/
+        ]
+        vendorNotes_relation_in_conftest [
+            label="vendorNotes_relation"
+            /*shape=""*/
+        ]
+        statisticsSources_relation_in_conftest [
+            label="statisticsSources_relation"
+            /*shape=""*/
+        ]
+        statisticsSourceNotes_relation_in_conftest [
+            label="statisticsSourceNotes_relation"
+            /*shape=""*/
+        ]
+        resourceSources_relation_in_conftest [
+            label="resourceSources_relation"
+            /*shape=""*/
+        ]
+        resourceSourceNotes_relation_in_conftest [
+            label="resourceSourceNotes_relation"
+            /*shape=""*/
+        ]
+        statisticsResourceSources_relation_in_conftest [
+            label="statisticsResourceSources_relation"
+            /*shape=""*/
+        ]
+        annualUsageCollectionTracking_relation_in_conftest [
+            label="annualUsageCollectionTracking_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2017_relation_in_conftest [
+            label="workbook_0_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2017_relation_in_conftest [
+            label="workbook_1_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2017_relation_in_conftest [
+            label="workbook_2_2017_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2018_relation_in_conftest [
+            label="workbook_0_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2018_relation_in_conftest [
+            label="workbook_1_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2018_relation_in_conftest [
+            label="workbook_2_2018_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2019_relation_in_conftest [
+            label="workbook_0_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2019_relation_in_conftest [
+            label="workbook_1_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2019_relation_in_conftest [
+            label="workbook_2_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_3_2019_relation_in_conftest [
+            label="workbook_3_2019_relation"
+            /*shape=""*/
+        ]
+        workbook_0_2020_relation_in_conftest [
+            label="workbook_0_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_1_2020_relation_in_conftest [
+            label="workbook_1_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_2_2020_relation_in_conftest [
+            label="workbook_2_2020_relation"
+            /*shape=""*/
+        ]
+        workbook_3_2020_relation_in_conftest [
+            label="workbook_3_2020_relation"
+            /*shape=""*/
+        ]
+        workbooks_and_relations
+        create_COUNTERData_workbook_iterdir_list
+        COUNTERData_relation
+        download_destination
+        path_to_sample_file
+        remove_file_from_S3
+        non_COUNTER_AUCT_object_before_upload
+        non_COUNTER_AUCT_object_after_upload
+        non_COUNTER_file_to_download_from_S3
+        header_value
+        most_recent_month_with_usage
+        match_direct_SUSHI_harvest_result
+        COUNTER_reports_offered_by_statistics_source
+        prepare_HTML_page_for_comparison
+    }
+
+
+    subgraph cluster_test_AnnualStatistics {
+        label="test_AnnualStatistics"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        test_add_annual_statistic_value
+    }
+
+
+    subgraph cluster_test_AnnualUsageCollectionTracking {
+        label="test_AnnualUsageCollectionTracking"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        AUCT_fixture_for_SUSHI
+        harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
+            label="harvest_R5_SUSHI_result"
+            /*shape=""*/
+        ]
+        test_collect_annual_usage_statistics
+        sample_FileStorage_object
+        test_upload_nonstandard_usage_file
+        test_download_nonstandard_usage_file
+    }
+
+
+    subgraph cluster_test_app {
+        label="test_app"
+        style="dotted"
+        pencolor="#857e7a"
+
+        test_flask_app_creation
+        test_flask_client_creation
+        test_SQLAlchemy_engine_creation
+        test_homepage
+        test_404_page
+        test_load_data_into_database
+        test_query_database
+        test_loading_connected_data_into_other_relation
+        test_download_file
+        test_first_new_PK_value
+        test_change_single_field_dataframe_into_series
+        test_restore_boolean_values_to_boolean_field
+        test_upload_file_to_S3_bucket
+        test_create_AUCT_SelectField_options
+        test_truncate_longer_lines
+        vendors_relation_after_test_update_database
+        test_update_database
+        vendors_relation_after_test_update_database_with_insert_statement
+        test_update_database_with_insert_statement
+        test_prepare_HTML_page_for_comparison
+        file_name_stem_and_data
+        test_save_unconverted_data_via_upload
+        test_ISSN_regex
+        test_ISBN_regex
+        test_last_day_of_month
+        test_extract_value_from_single_value_df
+        test_S3_file_name_timestamp
+        test_non_COUNTER_file_name_regex
+    }
+
+
+    subgraph cluster_test_bp_annual_stats {
+        label="test_bp_annual_stats"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        test_GET_request_for_annual_stats_homepage
+        test_GET_request_for_show_fiscal_year_details
+        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm
+        test_show_fiscal_year_details_submitting_EditFiscalYearForm
+        test_show_fiscal_year_details_submitting_EditAUCTForm
+    }
+
+
+    subgraph cluster_test_bp_ingest_usage {
+        label="test_bp_ingest_usage"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        test_ingest_usage_homepage
+        test_upload_COUNTER_data_via_Excel
+        test_upload_COUNTER_data_via_SQL_insert
+        test_match_direct_SUSHI_harvest_result
+        test_GET_request_for_harvest_SUSHI_statistics
+        test_harvest_SUSHI_statistics
+        test_GET_request_for_upload_non_COUNTER_reports
+        test_upload_non_COUNTER_reports
+    }
+
+
+    subgraph cluster_test_bp_initialization {
+        label="test_bp_initialization"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        blank_annualUsageCollectionTracking_data_types
+        create_fiscalYears_CSV_file
+        create_annualStatistics_CSV_file
+        create_vendors_CSV_file
+        create_vendorNotes_CSV_file
+        create_statisticsSources_CSV_file
+        create_statisticsSourceNotes_CSV_file
+        create_resourceSources_CSV_file
+        create_resourceSourceNotes_CSV_file
+        create_statisticsResourceSources_CSV_file
+        create_blank_annualUsageCollectionTracking_CSV_file
+        create_annualUsageCollectionTracking_CSV_file
+        zip_dicts_by_common_keys
+        test_GET_request_for_collect_FY_and_vendor_data
+        test_collect_FY_and_vendor_data
+        test_collect_sources_data
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
+        test_collect_AUCT_and_historical_COUNTER_data
+        test_GET_request_for_upload_historical_non_COUNTER_usage
+        files_for_test_upload_historical_non_COUNTER_usage
+        "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage"
+        test_upload_historical_non_COUNTER_usage
+    }
+
+
+    subgraph cluster_test_bp_login {
+        label="test_bp_login"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        test_login_homepage
+        test_logging_in
+        test_logging_in_as_admin
+        test_creating_an_account
+    }
+
+
+    subgraph cluster_test_bp_view_lists {
+        label="test_bp_view_lists"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        test_view_lists_homepage
+        test_GET_request_for_view_list_record
+        test_view_list_record
+        test_GET_request_for_edit_list_record_for_existing_record
+        test_GET_request_for_edit_list_record_for_new_record
+        test_edit_list_record
+    }
+
+
+    subgraph cluster_test_bp_view_usage {
+        label="test_bp_view_usage"
+        style="dotted"
+        bgcolor="#eac8d0"
+
+        COUNTER_download_CSV
+        test_create_COUNTER_fixed_vocab_list
+        test_set_encoding
+        test_view_usage_homepage
+        test_run_custom_SQL_query
+        test_use_predefined_SQL_query
+        start_query_wizard_form_data
+        test_start_query_wizard
+        test_GET_query_wizard_sort_redirect
+        PR_parameters
+        test_construct_PR_query_with_wizard
+        DR_parameters
+        test_construct_DR_query_with_wizard
+        TR_parameters
+        test_construct_TR_query_with_wizard
+        IR_parameters
+        test_construct_IR_query_with_wizard
+        construct_PR_query_with_wizard_without_string_match
+        test_GET_request_for_download_non_COUNTER_usage
+        test_download_non_COUNTER_usage
+    }
+
+
+    subgraph cluster_test_ConvertJSONDictToDataframe {
+        label="test_ConvertJSONDictToDataframe"
+        style="dotted"
+
+        sample_SUSHI_PR_response_JSON_dict
+        sample_SUSHI_DR_response_JSON_dict
+        sample_SUSHI_TR_response_JSON_dict
+        sample_SUSHI_IR_response_JSON_dict
+        sample_SUSHI_PR_response_dataframe
+        sample_SUSHI_DR_response_dataframe
+        sample_SUSHI_TR_response_dataframe
+        sample_SUSHI_IR_response_dataframe
+        test_create_dataframe_from_PR
+        test_create_dataframe_from_DR
+        test_create_dataframe_from_TR
+        test_create_dataframe_from_IR
+    }
+
+
+    subgraph cluster_test_FiscalYears {
+        label="test_FiscalYears"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        FY2020_FiscalYears_object
+        test_calculate_depreciated_ACRL_60b
+        test_calculate_depreciated_ACRL_63
+        test_calculate_ACRL_61a
+        test_calculate_ACRL_61b
+        test_calculate_ARL_18
+        test_calculate_ARL_19
+        test_calculate_ARL_20
+        FY2023_FiscalYears_object_and_record
+        load_new_record_into_fiscalYears
+        test_create_usage_tracking_records_for_fiscal_year
+        FY2022_FiscalYears_object
+        test_collect_fiscal_year_usage_statistics
+    }
+
+
+    subgraph cluster_test_ResourceSources {
+        label="test_ResourceSources"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        test_add_access_stop_date
+        test_remove_access_stop_date
+        test_change_StatisticsSource
+        test_add_note_in_test_ResourceSources [
+            label="test_add_note"
+            /*shape=""*/
+        ]
+    }
+
+
+    subgraph cluster_test_statements {
+        label="test_statements"
+        style="dotted"
+        pencolor="#857e7a"
+
+        test_format_list_for_stdout_with_list
+        test_format_list_for_stdout_with_generator
+        test_remove_IDE_spacing_from_statement
+    }
+
+
+    subgraph cluster_test_StatisticsSources {
+        label="test_StatisticsSources"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        current_month_like_most_recent_month_with_usage
+        StatisticsSources_fixture
+        test_fetch_SUSHI_information_for_API
+        test_fetch_SUSHI_information_for_display
+        SUSHI_credentials_fixture_in_test_StatisticsSources [
+            label="SUSHI_credentials_fixture"
+            /*shape=""*/
+        ]
+        reports_offered_by_StatisticsSource_fixture
+        test_COUNTER_reports_offered_by_statistics_source
+        test_check_if_data_in_database_no
+        test_check_if_data_in_database_yes
+        test_harvest_single_report
+        test_harvest_single_report_with_partial_date_range
+        test_harvest_R5_SUSHI
+        test_harvest_R5_SUSHI_with_report_to_harvest
+        test_harvest_R5_SUSHI_with_invalid_dates
+        month_before_month_like_most_recent_month_with_usage
+        harvest_R5_SUSHI_result_in_test_StatisticsSources [
+            label="harvest_R5_SUSHI_result"
+            /*shape=""*/
+        ]
+        test_collect_usage_statistics
+        test_add_note_in_test_StatisticsSources [
+            label="test_add_note"
+            /*shape=""*/
+        ]
+        partially_duplicate_COUNTER_data
+        non_duplicate_COUNTER_data
+        test_check_if_data_already_in_COUNTERData
+    }
+
+
+    subgraph cluster_test_SUSHICallAndResonse {
+        label="test_SUSHICallAndResonse"
+        style="dotted"
+
+        SUSHI_credentials_fixture_in_test_SUSHICallAndResonse [
+            label="SUSHI_credentials_fixture"
+            /*shape=""*/
+        ]
+        StatisticsSource_instance_name
+        test_status_call
+        test_status_call_validity
+        test_reports_call
+        test_reports_call_validity
+        list_of_reports
+        test_PR_call_validity
+        test_DR_call_validity
+        test_TR_call_validity
+        test_IR_call_validity
+        test_call_with_invalid_credentials
+    }
+
+
+    subgraph cluster_test_UploadCOUNTERReports {
+        label="test_UploadCOUNTERReports"
+        style="dotted"
+
+        sample_COUNTER_report_workbook
+        test_create_dataframe_from_single_workbook
+        sample_COUNTER_report_workbooks
+        test_create_dataframe
+    }
+
+
+    subgraph cluster_test_Vendors {
+        label="test_Vendors"
+        style="dotted"
+        bgcolor="#e9dfc9"
+
+        test_get_statisticsSources_records
+        test_get_resourceSources_records
+        test_add_note_in_test_Vendors [
+            label="test_add_note"
+            /*shape=""*/
+        ]
+    }
+
+    
+    // Calls Between Functions
+}
