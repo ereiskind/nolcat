@@ -23,7 +23,7 @@ digraph package_dependencies {
     */
 
 
-    // All Functions
+    /* *** All Functions *** */
 
     subgraph cluster_fiscalYears {
         label="fiscalYears"
@@ -913,5 +913,86 @@ digraph package_dependencies {
     }
 
     
-    // Calls Between Functions
+    /* *** Calls Between Functions (Organized by Calling Function) *** */
+    // nolcat.annual_stats.views
+
+    // nolcat.ingest_usage.views
+
+    // nolcat.initialization.views
+
+    // nolcat.login.views
+
+    // nolcat.view_lists.views
+
+    // nolcat.view_usage.views
+
+    // nolcat.app
+
+    // nolcat.ConvertJSONDictToDataframe
+
+    // nolcat.models.FiscalYears
+
+    // nolcat.models.AnnualStatistics
+
+    // nolcat.models.Vendors
+
+    // nolcat.models.VendorNotes
+
+    // nolcat.models.StatisticsSources
+
+    // nolcat.models.StatisticsSourceNotes
+
+    // nolcat.models.ResourceSources
+
+    // nolcat.models.ResourceSourceNotes
+
+    // nolcat.models.StatisticsResourceSources
+
+    // nolcat.models.AnnualUsageCollectionTracking
+
+    // nolcat.models.COUNTERData
+
+    // nolcat.statements
+
+    // nolcat.SUSHICallAndResponse
+
+    // nolcat.UploadCOUNTERReports
+
+    // tests.data.relations
+
+    // tests.conftest
+
+    // tests.test_AnnualStatistics
+
+    // tests.test_AnnualUsageCollectionTracking
+
+    // tests.test_app
+
+    // tests.test_bp_annual_stats
+
+    // tests.test_bp_ingest_usage
+
+    // tests.test_bp_initialization
+
+    // tests.test_bp_login
+
+    // tests.test_bp_view_lists
+
+    // tests.test_bp_view_usage
+
+    // tests.test_ConvertJSONDictToDataframe
+
+    // tests.test_FiscalYears
+
+    // tests.test_ResourceSources
+
+    // tests.test_statements
+
+    // tests.test_StatisticsSources
+
+    // tests.test_SUSHICallAndResponse
+
+    // tests.test_UploadCOUNTERReports
+
+    // tests.test_Vendors
 }
