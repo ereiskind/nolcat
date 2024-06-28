@@ -860,7 +860,7 @@ digraph package_dependencies {
         ]
         partially_duplicate_COUNTER_data [shape="note"]
         non_duplicate_COUNTER_data [shape="note"]
-        test_check_if_data_already_in_COUNTERData
+        test_check_if_data_already_in_COUNTERData [shape="component"]
     }
 
 
@@ -1076,7 +1076,7 @@ digraph package_dependencies {
     test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
     test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
     test_fetch_SUSHI_information_for_display -> StatisticsSources_fixture
-    SUSHI_credentials_fixture -> StatisticsSources_fixture
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture
     reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture
     test_check_if_data_in_database_no -> StatisticsSources_fixture
     test_check_if_data_in_database_yes -> StatisticsSources_fixture
@@ -1085,7 +1085,7 @@ digraph package_dependencies {
     test_harvest_R5_SUSHI -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
-    harvest_R5_SUSHI_result -> StatisticsSources_fixture
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
     test_collect_usage_statistics -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
     test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
@@ -1096,7 +1096,7 @@ digraph package_dependencies {
     test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
     test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
-    harvest_R5_SUSHI_result -> month_before_month_like_most_recent_month_with_usage
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
     test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
     test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
     test_check_if_data_already_in_COUNTERData -> partially_duplicate_COUNTER_data
