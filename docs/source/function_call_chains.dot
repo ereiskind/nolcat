@@ -592,7 +592,7 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        test_add_annual_statistic_value
+        test_add_annual_statistic_value [shape="component"]
     }
 
 
@@ -601,15 +601,15 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        AUCT_fixture_for_SUSHI
+        AUCT_fixture_for_SUSHI [shape="note"]
         harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
             label="harvest_R5_SUSHI_result"
-            /*shape=""*/
+            shape="note"
         ]
-        test_collect_annual_usage_statistics
-        sample_FileStorage_object
-        test_upload_nonstandard_usage_file
-        test_download_nonstandard_usage_file
+        test_collect_annual_usage_statistics [shape="component"]
+        sample_FileStorage_object [shape="note"]
+        test_upload_nonstandard_usage_file [shape="component"]
+        test_download_nonstandard_usage_file [shape="component"]
     }
 
 
@@ -618,34 +618,34 @@ digraph package_dependencies {
         style="dotted"
         pencolor="#857e7a"
 
-        test_flask_app_creation
-        test_flask_client_creation
-        test_SQLAlchemy_engine_creation
-        test_homepage
-        test_404_page
-        test_load_data_into_database
-        test_query_database
-        test_loading_connected_data_into_other_relation
-        test_download_file
-        test_first_new_PK_value
-        test_change_single_field_dataframe_into_series
-        test_restore_boolean_values_to_boolean_field
-        test_upload_file_to_S3_bucket
-        test_create_AUCT_SelectField_options
-        test_truncate_longer_lines
-        vendors_relation_after_test_update_database
-        test_update_database
-        vendors_relation_after_test_update_database_with_insert_statement
-        test_update_database_with_insert_statement
-        test_prepare_HTML_page_for_comparison
-        file_name_stem_and_data
-        test_save_unconverted_data_via_upload
-        test_ISSN_regex
-        test_ISBN_regex
-        test_last_day_of_month
-        test_extract_value_from_single_value_df
-        test_S3_file_name_timestamp
-        test_non_COUNTER_file_name_regex
+        test_flask_app_creation [shape="component"]
+        test_flask_client_creation [shape="component"]
+        test_SQLAlchemy_engine_creation [shape="component"]
+        test_homepage [shape="component"]
+        test_404_page [shape="component"]
+        test_load_data_into_database [shape="component"]
+        test_query_database [shape="component"]
+        test_loading_connected_data_into_other_relation [shape="component"]
+        test_download_file [shape="component"]
+        test_first_new_PK_value [shape="component"]
+        test_change_single_field_dataframe_into_series [shape="component"]
+        test_restore_boolean_values_to_boolean_field [shape="component"]
+        test_upload_file_to_S3_bucket [shape="component"]
+        test_create_AUCT_SelectField_options [shape="component"]
+        test_truncate_longer_lines [shape="component"]
+        vendors_relation_after_test_update_database [shape="note"]
+        test_update_database [shape="component"]
+        vendors_relation_after_test_update_database_with_insert_statement [shape="note"]
+        test_update_database_with_insert_statement [shape="component"]
+        test_prepare_HTML_page_for_comparison [shape="component"]
+        file_name_stem_and_data [shape="note"]
+        test_save_unconverted_data_via_upload [shape="component"]
+        test_ISSN_regex [shape="component"]
+        test_ISBN_regex [shape="component"]
+        test_last_day_of_month [shape="component"]
+        test_extract_value_from_single_value_df [shape="component"]
+        test_S3_file_name_timestamp [shape="component"]
+        test_non_COUNTER_file_name_regex [shape="component"]
     }
 
 
@@ -654,11 +654,11 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        test_GET_request_for_annual_stats_homepage
-        test_GET_request_for_show_fiscal_year_details
-        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm
-        test_show_fiscal_year_details_submitting_EditFiscalYearForm
-        test_show_fiscal_year_details_submitting_EditAUCTForm
+        test_GET_request_for_annual_stats_homepage [shape="component"]
+        test_GET_request_for_show_fiscal_year_details [shape="component"]
+        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm [shape="component"]
+        test_show_fiscal_year_details_submitting_EditFiscalYearForm [shape="component"]
+        test_show_fiscal_year_details_submitting_EditAUCTForm [shape="component"]
     }
 
 
@@ -667,14 +667,14 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        test_ingest_usage_homepage
-        test_upload_COUNTER_data_via_Excel
-        test_upload_COUNTER_data_via_SQL_insert
-        test_match_direct_SUSHI_harvest_result
-        test_GET_request_for_harvest_SUSHI_statistics
-        test_harvest_SUSHI_statistics
-        test_GET_request_for_upload_non_COUNTER_reports
-        test_upload_non_COUNTER_reports
+        test_ingest_usage_homepage [shape="component"]
+        test_upload_COUNTER_data_via_Excel [shape="component"]
+        test_upload_COUNTER_data_via_SQL_insert [shape="component"]
+        test_match_direct_SUSHI_harvest_result [shape="component"]
+        test_GET_request_for_harvest_SUSHI_statistics [shape="component"]
+        test_harvest_SUSHI_statistics [shape="component"]
+        test_GET_request_for_upload_non_COUNTER_reports [shape="component"]
+        test_upload_non_COUNTER_reports [shape="component"]
     }
 
 
@@ -683,28 +683,26 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        blank_annualUsageCollectionTracking_data_types
-        create_fiscalYears_CSV_file
-        create_annualStatistics_CSV_file
-        create_vendors_CSV_file
-        create_vendorNotes_CSV_file
-        create_statisticsSources_CSV_file
-        create_statisticsSourceNotes_CSV_file
-        create_resourceSources_CSV_file
-        create_resourceSourceNotes_CSV_file
-        create_statisticsResourceSources_CSV_file
-        create_blank_annualUsageCollectionTracking_CSV_file
-        create_annualUsageCollectionTracking_CSV_file
-        zip_dicts_by_common_keys
-        test_GET_request_for_collect_FY_and_vendor_data
-        test_collect_FY_and_vendor_data
-        test_collect_sources_data
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
-        test_collect_AUCT_and_historical_COUNTER_data
-        test_GET_request_for_upload_historical_non_COUNTER_usage
-        files_for_test_upload_historical_non_COUNTER_usage
-        "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage"
-        test_upload_historical_non_COUNTER_usage
+        blank_annualUsageCollectionTracking_data_types [shape="note"]
+        create_fiscalYears_CSV_file [shape="note"]
+        create_annualStatistics_CSV_file [shape="note"]
+        create_vendors_CSV_file [shape="note"]
+        create_vendorNotes_CSV_file [shape="note"]
+        create_statisticsSources_CSV_file [shape="note"]
+        create_statisticsSourceNotes_CSV_file [shape="note"]
+        create_resourceSources_CSV_file [shape="note"]
+        create_resourceSourceNotes_CSV_file [shape="note"]
+        create_statisticsResourceSources_CSV_file [shape="note"]
+        create_blank_annualUsageCollectionTracking_CSV_file [shape="note"]
+        create_annualUsageCollectionTracking_CSV_file [shape="note"]
+        test_GET_request_for_collect_FY_and_vendor_data [shape="component"]
+        test_collect_FY_and_vendor_data [shape="component"]
+        test_collect_sources_data [shape="component"]
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data [shape="component"]
+        test_collect_AUCT_and_historical_COUNTER_data [shape="component"]
+        test_GET_request_for_upload_historical_non_COUNTER_usage [shape="component"]
+        files_for_test_upload_historical_non_COUNTER_usage [shape="note"]
+        test_upload_historical_non_COUNTER_usage [shape="component"]
     }
 
 
@@ -713,10 +711,10 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        test_login_homepage
-        test_logging_in
-        test_logging_in_as_admin
-        test_creating_an_account
+        test_login_homepage [shape="component"]
+        test_logging_in [shape="component"]
+        test_logging_in_as_admin [shape="component"]
+        test_creating_an_account [shape="component"]
     }
 
 
@@ -725,12 +723,12 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        test_view_lists_homepage
-        test_GET_request_for_view_list_record
-        test_view_list_record
-        test_GET_request_for_edit_list_record_for_existing_record
-        test_GET_request_for_edit_list_record_for_new_record
-        test_edit_list_record
+        test_view_lists_homepage [shape="component"]
+        test_GET_request_for_view_list_record [shape="component"]
+        test_view_list_record [shape="component"]
+        test_GET_request_for_edit_list_record_for_existing_record [shape="component"]
+        test_GET_request_for_edit_list_record_for_new_record [shape="component"]
+        test_edit_list_record [shape="component"]
     }
 
 
@@ -739,26 +737,26 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#eac8d0"
 
-        COUNTER_download_CSV
-        test_create_COUNTER_fixed_vocab_list
-        test_set_encoding
-        test_view_usage_homepage
-        test_run_custom_SQL_query
-        test_use_predefined_SQL_query
-        start_query_wizard_form_data
-        test_start_query_wizard
-        test_GET_query_wizard_sort_redirect
-        PR_parameters
-        test_construct_PR_query_with_wizard
-        DR_parameters
-        test_construct_DR_query_with_wizard
-        TR_parameters
-        test_construct_TR_query_with_wizard
-        IR_parameters
-        test_construct_IR_query_with_wizard
-        construct_PR_query_with_wizard_without_string_match
-        test_GET_request_for_download_non_COUNTER_usage
-        test_download_non_COUNTER_usage
+        COUNTER_download_CSV [shape="note"]
+        test_create_COUNTER_fixed_vocab_list [shape="component"]
+        test_set_encoding [shape="component"]
+        test_view_usage_homepage [shape="component"]
+        test_run_custom_SQL_query [shape="component"]
+        test_use_predefined_SQL_query [shape="component"]
+        start_query_wizard_form_data [shape="note"]
+        test_start_query_wizard [shape="component"]
+        test_GET_query_wizard_sort_redirect [shape="component"]
+        PR_parameters [shape="note"]
+        test_construct_PR_query_with_wizard [shape="component"]
+        DR_parameters [shape="note"]
+        test_construct_DR_query_with_wizard [shape="component"]
+        TR_parameters [shape="note"]
+        test_construct_TR_query_with_wizard [shape="component"]
+        IR_parameters [shape="note"]
+        test_construct_IR_query_with_wizard [shape="component"]
+        test_construct_PR_query_with_wizard_without_string_match [shape="component"]
+        test_GET_request_for_download_non_COUNTER_usage [shape="component"]
+        test_download_non_COUNTER_usage [shape="component"]
     }
 
 
@@ -766,18 +764,18 @@ digraph package_dependencies {
         label="test_ConvertJSONDictToDataframe"
         style="dotted"
 
-        sample_SUSHI_PR_response_JSON_dict
-        sample_SUSHI_DR_response_JSON_dict
-        sample_SUSHI_TR_response_JSON_dict
-        sample_SUSHI_IR_response_JSON_dict
-        sample_SUSHI_PR_response_dataframe
-        sample_SUSHI_DR_response_dataframe
-        sample_SUSHI_TR_response_dataframe
-        sample_SUSHI_IR_response_dataframe
-        test_create_dataframe_from_PR
-        test_create_dataframe_from_DR
-        test_create_dataframe_from_TR
-        test_create_dataframe_from_IR
+        sample_SUSHI_PR_response_JSON_dict [shape="note"]
+        sample_SUSHI_DR_response_JSON_dict [shape="note"]
+        sample_SUSHI_TR_response_JSON_dict [shape="note"]
+        sample_SUSHI_IR_response_JSON_dict [shape="note"]
+        sample_SUSHI_PR_response_dataframe [shape="note"]
+        sample_SUSHI_DR_response_dataframe [shape="note"]
+        sample_SUSHI_TR_response_dataframe [shape="note"]
+        sample_SUSHI_IR_response_dataframe [shape="note"]
+        test_create_dataframe_from_PR [shape="component"]
+        test_create_dataframe_from_DR [shape="component"]
+        test_create_dataframe_from_TR [shape="component"]
+        test_create_dataframe_from_IR [shape="component"]
     }
 
 
@@ -786,19 +784,19 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        FY2020_FiscalYears_object
-        test_calculate_depreciated_ACRL_60b
-        test_calculate_depreciated_ACRL_63
-        test_calculate_ACRL_61a
-        test_calculate_ACRL_61b
-        test_calculate_ARL_18
-        test_calculate_ARL_19
-        test_calculate_ARL_20
-        FY2023_FiscalYears_object_and_record
-        load_new_record_into_fiscalYears
-        test_create_usage_tracking_records_for_fiscal_year
-        FY2022_FiscalYears_object
-        test_collect_fiscal_year_usage_statistics
+        FY2020_FiscalYears_object [shape="note"]
+        test_calculate_depreciated_ACRL_60b [shape="component"]
+        test_calculate_depreciated_ACRL_63 [shape="component"]
+        test_calculate_ACRL_61a [shape="component"]
+        test_calculate_ACRL_61b [shape="component"]
+        test_calculate_ARL_18 [shape="component"]
+        test_calculate_ARL_19 [shape="component"]
+        test_calculate_ARL_20 [shape="component"]
+        FY2023_FiscalYears_object_and_record [shape="note"]
+        load_new_record_into_fiscalYears [shape="note"]
+        test_create_usage_tracking_records_for_fiscal_year [shape="component"]
+        FY2022_FiscalYears_object [shape="note"]
+        test_collect_fiscal_year_usage_statistics [shape="component"]
     }
 
 
@@ -807,12 +805,12 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        test_add_access_stop_date
-        test_remove_access_stop_date
-        test_change_StatisticsSource
+        test_add_access_stop_date [shape="component"]
+        test_remove_access_stop_date [shape="component"]
+        test_change_StatisticsSource [shape="component"]
         test_add_note_in_test_ResourceSources [
             label="test_add_note"
-            /*shape=""*/
+            shape="component"
         ]
     }
 
@@ -822,9 +820,9 @@ digraph package_dependencies {
         style="dotted"
         pencolor="#857e7a"
 
-        test_format_list_for_stdout_with_list
-        test_format_list_for_stdout_with_generator
-        test_remove_IDE_spacing_from_statement
+        test_format_list_for_stdout_with_list [shape="component"]
+        test_format_list_for_stdout_with_generator [shape="component"]
+        test_remove_IDE_spacing_from_statement [shape="component"]
     }
 
 
@@ -833,35 +831,35 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        current_month_like_most_recent_month_with_usage
-        StatisticsSources_fixture
-        test_fetch_SUSHI_information_for_API
-        test_fetch_SUSHI_information_for_display
+        current_month_like_most_recent_month_with_usage [shape="note"]
+        StatisticsSources_fixture [shape="note"]
+        test_fetch_SUSHI_information_for_API [shape="component"]
+        test_fetch_SUSHI_information_for_display [shape="component"]
         SUSHI_credentials_fixture_in_test_StatisticsSources [
             label="SUSHI_credentials_fixture"
-            /*shape=""*/
+            shape="note"
         ]
-        reports_offered_by_StatisticsSource_fixture
-        test_COUNTER_reports_offered_by_statistics_source
-        test_check_if_data_in_database_no
-        test_check_if_data_in_database_yes
-        test_harvest_single_report
-        test_harvest_single_report_with_partial_date_range
-        test_harvest_R5_SUSHI
-        test_harvest_R5_SUSHI_with_report_to_harvest
-        test_harvest_R5_SUSHI_with_invalid_dates
-        month_before_month_like_most_recent_month_with_usage
+        reports_offered_by_StatisticsSource_fixture [shape="note"]
+        test_COUNTER_reports_offered_by_statistics_source [shape="component"]
+        test_check_if_data_in_database_no [shape="component"]
+        test_check_if_data_in_database_yes [shape="component"]
+        test_harvest_single_report [shape="component"]
+        test_harvest_single_report_with_partial_date_range [shape="component"]
+        test_harvest_R5_SUSHI [shape="component"]
+        test_harvest_R5_SUSHI_with_report_to_harvest [shape="component"]
+        test_harvest_R5_SUSHI_with_invalid_dates [shape="component"]
+        month_before_month_like_most_recent_month_with_usage [shape="note"]
         harvest_R5_SUSHI_result_in_test_StatisticsSources [
             label="harvest_R5_SUSHI_result"
-            /*shape=""*/
+            shape="note"
         ]
-        test_collect_usage_statistics
+        test_collect_usage_statistics [shape="component"]
         test_add_note_in_test_StatisticsSources [
             label="test_add_note"
-            /*shape=""*/
+            shape="component"
         ]
-        partially_duplicate_COUNTER_data
-        non_duplicate_COUNTER_data
+        partially_duplicate_COUNTER_data [shape="note"]
+        non_duplicate_COUNTER_data [shape="note"]
         test_check_if_data_already_in_COUNTERData
     }
 
@@ -872,19 +870,19 @@ digraph package_dependencies {
 
         SUSHI_credentials_fixture_in_test_SUSHICallAndResonse [
             label="SUSHI_credentials_fixture"
-            /*shape=""*/
+            shape="note"
         ]
-        StatisticsSource_instance_name
-        test_status_call
-        test_status_call_validity
-        test_reports_call
-        test_reports_call_validity
-        list_of_reports
-        test_PR_call_validity
-        test_DR_call_validity
-        test_TR_call_validity
-        test_IR_call_validity
-        test_call_with_invalid_credentials
+        StatisticsSource_instance_name [shape="note"]
+        test_status_call [shape="component"]
+        test_status_call_validity [shape="component"]
+        test_reports_call [shape="component"]
+        test_reports_call_validity [shape="component"]
+        list_of_reports [shape="note"]
+        test_PR_call_validity [shape="component"]
+        test_DR_call_validity [shape="component"]
+        test_TR_call_validity [shape="component"]
+        test_IR_call_validity [shape="component"]
+        test_call_with_invalid_credentials [shape="component"]
     }
 
 
@@ -892,10 +890,10 @@ digraph package_dependencies {
         label="test_UploadCOUNTERReports"
         style="dotted"
 
-        sample_COUNTER_report_workbook
-        test_create_dataframe_from_single_workbook
-        sample_COUNTER_report_workbooks
-        test_create_dataframe
+        sample_COUNTER_report_workbook [shape="note"]
+        test_create_dataframe_from_single_workbook [shape="component"]
+        sample_COUNTER_report_workbooks [shape="note"]
+        test_create_dataframe [shape="component"]
     }
 
 
@@ -904,11 +902,11 @@ digraph package_dependencies {
         style="dotted"
         bgcolor="#e9dfc9"
 
-        test_get_statisticsSources_records
-        test_get_resourceSources_records
+        test_get_statisticsSources_records [shape="component"]
+        test_get_resourceSources_records [shape="component"]
         test_add_note_in_test_Vendors [
             label="test_add_note"
-            /*shape=""*/
+            shape="component"
         ]
     }
 
@@ -965,34 +963,140 @@ digraph package_dependencies {
     // tests.test_AnnualStatistics
 
     // tests.test_AnnualUsageCollectionTracking
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
+    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
+    test_upload_nonstandard_usage_file -> sample_FileStorage_object
 
     // tests.test_app
+    test_update_database -> vendors_relation_after_test_update_database
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
 
     // tests.test_bp_annual_stats
 
     // tests.test_bp_ingest_usage
 
     // tests.test_bp_initialization
+    create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> blank_annualUsageCollectionTracking_data_types
+    test_collect_FY_and_vendor_data -> create_fiscalYears_CSV_file
+    test_collect_FY_and_vendor_data -> create_annualStatistics_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendors_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendorNotes_CSV_file
+    test_collect_sources_data -> create_statisticsSources_CSV_file
+    test_collect_sources_data -> create_statisticsSourceNotes_CSV_file
+    test_collect_sources_data -> create_resourceSources_CSV_file
+    test_collect_sources_data -> create_resourceSourceNotes_CSV_file
+    test_collect_sources_data -> create_statisticsResourceSources_CSV_file
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
+    test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
 
     // tests.test_bp_login
 
     // tests.test_bp_view_lists
 
     // tests.test_bp_view_usage
+    test_run_custom_SQL_query -> COUNTER_download_CSV
+    test_use_predefined_SQL_query -> COUNTER_download_CSV
+    test_construct_PR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_DR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_TR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_IR_query_with_wizard -> COUNTER_download_CSV
+    test_start_query_wizard -> start_query_wizard_form_data
+    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data
+    test_construct_PR_query_with_wizard -> PR_parameters
+    test_construct_DR_query_with_wizard -> DR_parameters
+    test_construct_TR_query_with_wizard -> TR_parameters
+    test_construct_IR_query_with_wizard -> IR_parameters
 
     // tests.test_ConvertJSONDictToDataframe
+    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
+    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_JSON_dict
+    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_JSON_dict
+    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_JSON_dict
+    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_dataframe
+    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_dataframe
+    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_dataframe
+    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_dataframe
 
     // tests.test_FiscalYears
+    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
+    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object
+    test_calculate_ACRL_61a -> FY2020_FiscalYears_object
+    test_calculate_ACRL_61b -> FY2020_FiscalYears_object
+    test_calculate_ARL_18 -> FY2020_FiscalYears_object
+    test_calculate_ARL_19 -> FY2020_FiscalYears_object
+    test_calculate_ARL_20 -> FY2020_FiscalYears_object
+    load_new_record_into_fiscalYears -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> load_new_record_into_fiscalYears
+    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
 
     // tests.test_ResourceSources
 
     // tests.test_statements
 
     // tests.test_StatisticsSources
+    test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
+    test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
+    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
+    test_fetch_SUSHI_information_for_display -> StatisticsSources_fixture
+    SUSHI_credentials_fixture -> StatisticsSources_fixture
+    reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture
+    test_check_if_data_in_database_no -> StatisticsSources_fixture
+    test_check_if_data_in_database_yes -> StatisticsSources_fixture
+    test_harvest_single_report -> StatisticsSources_fixture
+    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
+    harvest_R5_SUSHI_result -> StatisticsSources_fixture
+    test_collect_usage_statistics -> StatisticsSources_fixture
+    test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
+    harvest_R5_SUSHI_result -> month_before_month_like_most_recent_month_with_usage
+    test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
+    test_check_if_data_already_in_COUNTERData -> partially_duplicate_COUNTER_data
+    test_check_if_data_already_in_COUNTERData -> non_duplicate_COUNTER_data
 
     // tests.test_SUSHICallAndResponse
+    test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_status_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_reports_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_reports_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_PR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_DR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_TR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_IR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_call_with_invalid_credentials -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_status_call -> StatisticsSource_instance_name
+    test_status_call_validity -> StatisticsSource_instance_name
+    test_reports_call -> StatisticsSource_instance_name
+    test_reports_call_validity -> StatisticsSource_instance_name
+    test_PR_call_validity -> StatisticsSource_instance_name
+    test_DR_call_validity -> StatisticsSource_instance_name
+    test_TR_call_validity -> StatisticsSource_instance_name
+    test_IR_call_validity -> StatisticsSource_instance_name
+    test_call_with_invalid_credentials -> StatisticsSource_instance_name
+    test_PR_call_validity -> list_of_reports
+    test_DR_call_validity -> list_of_reports
+    test_TR_call_validity -> list_of_reports
+    test_IR_call_validity -> list_of_reports
 
     // tests.test_UploadCOUNTERReports
+    test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
+    test_create_dataframe -> sample_COUNTER_report_workbooks
 
     // tests.test_Vendors
 }
