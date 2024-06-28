@@ -864,11 +864,11 @@ digraph package_dependencies {
     }
 
 
-    subgraph cluster_test_SUSHICallAndResonse {
-        label="test_SUSHICallAndResonse"
+    subgraph cluster_test_SUSHICallAndResponse {
+        label="test_SUSHICallAndResponse"
         style="dotted"
 
-        SUSHI_credentials_fixture_in_test_SUSHICallAndResonse [
+        SUSHI_credentials_fixture_in_test_SUSHICallAndResponse [
             label="SUSHI_credentials_fixture"
             shape="note"
         ]
