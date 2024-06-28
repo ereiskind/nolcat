@@ -367,43 +367,43 @@ digraph package_dependencies {
 
         fiscalYears_relation_in_relations [
             label="fiscalYears_relation"
-            /*shape=""*/
+            shape="box"
         ]
         annualStatistics_relation_in_relations [
             label="annualStatistics_relation"
-            /*shape=""*/
+            shape="box"
         ]
         vendors_relation_in_relations [
             label="vendors_relation"
-            /*shape=""*/
+            shape="box"
         ]
         vendorNotes_relation_in_relations [
             label="vendorNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsSources_relation_in_relations [
             label="statisticsSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsSourceNotes_relation_in_relations [
             label="statisticsSourceNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         resourceSources_relation_in_relations [
             label="resourceSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         resourceSourceNotes_relation_in_relations [
             label="resourceSourceNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsResourceSources_relation_in_relations [
             label="statisticsResourceSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         annualUsageCollectionTracking_relation_in_relations [
             label="annualUsageCollectionTracking_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2017_relation_in_relations [
             label="workbook_0_2017_relation"
@@ -476,43 +476,43 @@ digraph package_dependencies {
         session
         fiscalYears_relation_in_conftest [
             label="fiscalYears_relation"
-            /*shape=""*/
+            shape="note"
         ]
         annualStatistics_relation_in_conftest [
             label="annualStatistics_relation"
-            /*shape=""*/
+            shape="note"
         ]
         vendors_relation_in_conftest [
             label="vendors_relation"
-            /*shape=""*/
+            shape="note"
         ]
         vendorNotes_relation_in_conftest [
             label="vendorNotes_relation"
-            /*shape=""*/
+            shape="note"
         ]
         statisticsSources_relation_in_conftest [
             label="statisticsSources_relation"
-            /*shape=""*/
+            shape="note"
         ]
         statisticsSourceNotes_relation_in_conftest [
             label="statisticsSourceNotes_relation"
-            /*shape=""*/
+            shape="note"
         ]
         resourceSources_relation_in_conftest [
             label="resourceSources_relation"
-            /*shape=""*/
+            shape="note"
         ]
         resourceSourceNotes_relation_in_conftest [
             label="resourceSourceNotes_relation"
-            /*shape=""*/
+            shape="note"
         ]
         statisticsResourceSources_relation_in_conftest [
             label="statisticsResourceSources_relation"
-            /*shape=""*/
+            shape="note"
         ]
         annualUsageCollectionTracking_relation_in_conftest [
             label="annualUsageCollectionTracking_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_0_2017_relation_in_conftest [
             label="workbook_0_2017_relation"
@@ -959,6 +959,16 @@ digraph package_dependencies {
     // tests.data.relations
 
     // tests.conftest
+    fiscalYears_relation_in_conftest -> fiscalYears_relation_in_relations
+    annualStatistics_relation_in_conftest -> annualStatistics_relation_in_relations
+    vendors_relation_in_conftest -> vendors_relation_in_relations
+    vendorNotes_relation_in_conftest -> vendorNotes_relation_in_relations
+    statisticsSources_relation_in_conftest -> statisticsSources_relation_in_relations
+    statisticsSourceNotes_relation_in_conftest -> statisticsSourceNotes_relation_in_relations
+    resourceSources_relation_in_conftest -> resourceSources_relation_in_relations
+    resourceSourceNotes_relation_in_conftest -> resourceSourceNotes_relation_in_relations
+    statisticsResourceSources_relation_in_conftest -> statisticsResourceSources_relation_in_relations
+    annualUsageCollectionTracking_relation_in_conftest -> annualUsageCollectionTracking_relation_in_relations
 
     // tests.test_AnnualStatistics
 
@@ -972,6 +982,9 @@ digraph package_dependencies {
     test_update_database -> vendors_relation_after_test_update_database
     test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_load_data_into_database -> vendors_relation_in_conftest
+    test_query_database -> vendors_relation_in_conftest
+    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
 
     // tests.test_bp_annual_stats
 
@@ -992,6 +1005,26 @@ digraph package_dependencies {
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
     test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
     test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
+    create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
+    test_collect_FY_and_vendor_data -> fiscalYears_relation_in_conftest
+    create_annualStatistics_CSV_file -> annualStatistics_relation_in_conftest
+    test_collect_FY_and_vendor_data -> annualStatistics_relation_in_conftest
+    create_vendors_CSV_file -> vendors_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
+    create_vendorNotes_CSV_file -> vendorNotes_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
+    create_statisticsSources_CSV_file -> statisticsSources_relation_in_conftest
+    test_collect_sources_data -> statisticsSources_relation_in_conftest
+    create_statisticsSourceNotes_CSV_file -> statisticsSourceNotes_relation_in_conftest
+    test_collect_sources_data -> statisticsSourceNotes_relation_in_conftest
+    create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
+    test_collect_sources_data -> resourceSources_relation_in_conftest
+    create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
+    test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
+    create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
+    test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
+    create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
+    test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
 
     // tests.test_bp_login
 
