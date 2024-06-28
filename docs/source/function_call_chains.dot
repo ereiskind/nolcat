@@ -407,59 +407,59 @@ digraph package_dependencies {
         ]
         workbook_0_2017_relation_in_relations [
             label="workbook_0_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2017_relation_in_relations [
             label="workbook_1_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2017_relation_in_relations [
             label="workbook_2_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2018_relation_in_relations [
             label="workbook_0_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2018_relation_in_relations [
             label="workbook_1_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2018_relation_in_relations [
             label="workbook_2_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2019_relation_in_relations [
             label="workbook_0_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2019_relation_in_relations [
             label="workbook_1_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2019_relation_in_relations [
             label="workbook_2_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_3_2019_relation_in_relations [
             label="workbook_3_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2020_relation_in_relations [
             label="workbook_0_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2020_relation_in_relations [
             label="workbook_1_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2020_relation_in_relations [
             label="workbook_2_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_3_2020_relation_in_relations [
             label="workbook_3_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -516,59 +516,59 @@ digraph package_dependencies {
         ]
         workbook_0_2017_relation_in_conftest [
             label="workbook_0_2017_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_1_2017_relation_in_conftest [
             label="workbook_1_2017_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_2_2017_relation_in_conftest [
             label="workbook_2_2017_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_0_2018_relation_in_conftest [
             label="workbook_0_2018_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_1_2018_relation_in_conftest [
             label="workbook_1_2018_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_2_2018_relation_in_conftest [
             label="workbook_2_2018_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_0_2019_relation_in_conftest [
             label="workbook_0_2019_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_1_2019_relation_in_conftest [
             label="workbook_1_2019_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_2_2019_relation_in_conftest [
             label="workbook_2_2019_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_3_2019_relation_in_conftest [
             label="workbook_3_2019_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_0_2020_relation_in_conftest [
             label="workbook_0_2020_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_1_2020_relation_in_conftest [
             label="workbook_1_2020_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_2_2020_relation_in_conftest [
             label="workbook_2_2020_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbook_3_2020_relation_in_conftest [
             label="workbook_3_2020_relation"
-            /*shape=""*/
+            shape="note"
         ]
         workbooks_and_relations
         create_COUNTERData_workbook_iterdir_list
@@ -969,6 +969,34 @@ digraph package_dependencies {
     resourceSourceNotes_relation_in_conftest -> resourceSourceNotes_relation_in_relations
     statisticsResourceSources_relation_in_conftest -> statisticsResourceSources_relation_in_relations
     annualUsageCollectionTracking_relation_in_conftest -> annualUsageCollectionTracking_relation_in_relations
+    workbook_0_2017_relation_in_conftest -> workbook_0_2017_relation_in_relations
+    workbook_1_2017_relation_in_conftest -> workbook_1_2017_relation_in_relations
+    workbook_2_2017_relation_in_conftest -> workbook_2_2017_relation_in_relations
+    workbook_0_2018_relation_in_conftest -> workbook_0_2018_relation_in_relations
+    workbook_1_2018_relation_in_conftest -> workbook_1_2018_relation_in_relations
+    workbook_2_2018_relation_in_conftest -> workbook_2_2018_relation_in_relations
+    workbook_0_2019_relation_in_conftest -> workbook_0_2019_relation_in_relations
+    workbook_1_2019_relation_in_conftest -> workbook_1_2019_relation_in_relations
+    workbook_2_2019_relation_in_conftest -> workbook_2_2019_relation_in_relations
+    workbook_3_2019_relation_in_conftest -> workbook_3_2019_relation_in_relations
+    workbook_0_2020_relation_in_conftest -> workbook_0_2020_relation_in_relations
+    workbook_1_2020_relation_in_conftest -> workbook_1_2020_relation_in_relations
+    workbook_2_2020_relation_in_conftest -> workbook_2_2020_relation_in_relations
+    workbook_3_2020_relation_in_conftest -> workbook_3_2020_relation_in_relations
+    workbooks_and_relations -> workbook_0_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2020_relation_in_conftest
 
     // tests.test_AnnualStatistics
 
