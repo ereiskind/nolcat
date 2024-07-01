@@ -14,7 +14,6 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

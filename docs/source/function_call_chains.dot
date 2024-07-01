@@ -626,20 +626,53 @@ digraph package_dependencies {
             shape="box"
             style="dotted"
         ]
-        workbooks_and_relations
-        create_COUNTERData_workbook_iterdir_list
-        COUNTERData_relation
-        download_destination
-        path_to_sample_file
-        remove_file_from_S3
-        non_COUNTER_AUCT_object_before_upload
-        non_COUNTER_AUCT_object_after_upload
-        non_COUNTER_file_to_download_from_S3
-        header_value
-        most_recent_month_with_usage
-        match_direct_SUSHI_harvest_result
-        COUNTER_reports_offered_by_statistics_source
-        prepare_HTML_page_for_comparison
+        workbooks_and_relations [
+            shape="box"
+            style="dotted"
+        ]
+        create_COUNTERData_workbook_iterdir_list [
+            shape="box"
+            style="dotted"
+        ]
+        COUNTERData_relation [
+            shape="box"
+            style="dotted"
+        ]
+        download_destination [
+            shape="box"
+            style="dotted"
+        ]
+        path_to_sample_file [
+            shape="box"
+            style="dotted"
+        ]
+        remove_file_from_S3 [
+            shape="box"
+            style="dotted"
+        ]
+        non_COUNTER_AUCT_object_before_upload [
+            shape="box"
+            style="dotted"
+        ]
+        non_COUNTER_AUCT_object_after_upload [
+            shape="box"
+            style="dotted"
+        ]
+        non_COUNTER_file_to_download_from_S3 [
+            shape="box"
+            style="dotted"
+        ]
+        header_value [
+            shape="box"
+            style="dotted"
+        ]
+        most_recent_month_with_usage [
+            shape="box"
+            style="dotted"
+        ]
+        match_direct_SUSHI_harvest_result [shape="box"]
+        COUNTER_reports_offered_by_statistics_source [shape="box"]
+        prepare_HTML_page_for_comparison [shape="box"]
     }
 
 
@@ -1667,6 +1700,13 @@ digraph package_dependencies {
     client -> test_TR_call_validity
     client -> test_IR_call_validity
     client -> test_call_with_invalid_credentials
+    COUNTERData_relation -> workbooks_and_relations
+    COUNTERData_relation -> create_COUNTERData_workbook_iterdir_list
+    non_COUNTER_file_to_download_from_S3 -> download_destination
+    remove_file_from_S3 -> path_to_sample_file
+    non_COUNTER_AUCT_object_before_upload -> path_to_sample_file
+    non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
+    non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
 
     // tests.test_AnnualStatistics
 
@@ -1675,6 +1715,13 @@ digraph package_dependencies {
     test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
     test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
     test_upload_nonstandard_usage_file -> sample_FileStorage_object
+    test_download_nonstandard_usage_file -> download_destination
+    sample_FileStorage_object -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
+    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
+    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
+    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
@@ -1683,10 +1730,27 @@ digraph package_dependencies {
     test_load_data_into_database -> vendors_relation_in_conftest
     test_query_database -> vendors_relation_in_conftest
     test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
+    test_download_file -> path_to_sample_file
+    test_upload_file_to_S3_bucket -> path_to_sample_file
+    test_upload_file_to_S3_bucket -> remove_file_from_S3
+    file_name_stem_and_data -> most_recent_month_with_usage
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
 
     // tests.test_bp_annual_stats
 
     // tests.test_bp_ingest_usage
+    test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
+    test_upload_COUNTER_data_via_Excel -> COUNTERData_relation
+    test_upload_non_COUNTER_reports -> path_to_sample_file
+    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
+    test_upload_COUNTER_data_via_Excel -> header_value
+    test_upload_COUNTER_data_via_SQL_insert -> header_value
+    test_harvest_SUSHI_statistics -> header_value
+    test_upload_non_COUNTER_reports -> header_value
+    test_harvest_SUSHI_statistics -> most_recent_month_with_usage
+    test_match_direct_SUSHI_harvest_result -> 
+    test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
+    test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
@@ -1723,6 +1787,12 @@ digraph package_dependencies {
     test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
     create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
     test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
+    test_collect_AUCT_and_historical_COUNTER_data -> create_COUNTERData_workbook_iterdir_list
+    test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
+    test_collect_FY_and_vendor_data -> header_value
+    test_collect_sources_data -> header_value
+    test_collect_AUCT_and_historical_COUNTER_data -> header_value
+    test_upload_historical_non_COUNTER_usage -> header_value
 
     // tests.test_bp_login
 
@@ -1741,6 +1811,19 @@ digraph package_dependencies {
     test_construct_DR_query_with_wizard -> DR_parameters
     test_construct_TR_query_with_wizard -> TR_parameters
     test_construct_IR_query_with_wizard -> IR_parameters
+    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
+    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
+    test_run_custom_SQL_query -> header_value
+    test_use_predefined_SQL_query -> header_value
+    test_start_query_wizard -> header_value
+    test_GET_query_wizard_sort_redirect -> header_value
+    test_construct_PR_query_with_wizard -> header_value
+    test_construct_DR_query_with_wizard -> header_value
+    test_construct_TR_query_with_wizard -> header_value
+    test_construct_IR_query_with_wizard -> header_value
+    test_construct_PR_query_with_wizard_without_string_match -> header_value
+    test_download_non_COUNTER_usage -> header_value
+    test_construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
@@ -1768,6 +1851,7 @@ digraph package_dependencies {
     // tests.test_ResourceSources
 
     // tests.test_statements
+    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
 
     // tests.test_StatisticsSources
     test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
@@ -1799,6 +1883,14 @@ digraph package_dependencies {
     test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
     test_check_if_data_already_in_COUNTERData -> partially_duplicate_COUNTER_data
     test_check_if_data_already_in_COUNTERData -> non_duplicate_COUNTER_data
+    StatisticsSources_fixture -> most_recent_month_with_usage
+    test_harvest_single_report -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_report_to_harvest -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
+    month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
+    test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
+    reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
@@ -1824,10 +1916,15 @@ digraph package_dependencies {
     test_DR_call_validity -> list_of_reports
     test_TR_call_validity -> list_of_reports
     test_IR_call_validity -> list_of_reports
+    list_of_reports -> COUNTER_reports_offered_by_statistics_source
 
     // tests.test_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
     test_create_dataframe -> sample_COUNTER_report_workbooks
+    test_create_dataframe_from_single_workbook -> workbooks_and_relations
+    sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
+    sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
+    test_create_dataframe -> COUNTERData_relation
 
     // tests.test_Vendors
 }
