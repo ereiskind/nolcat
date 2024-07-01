@@ -325,11 +325,11 @@ digraph package_dependencies {
         restore_boolean_values_to_boolean_field
         upload_file_to_S3_bucket
         create_AUCT_SelectField_options
-        load_data_into_database
-        query_database
+        load_data_into_database // shape="cylinder"
+        query_database // shape="cylinder"
         check_if_data_already_in_COUNTERData
         truncate_longer_lines
-        update_database
+        update_database // shape="cylinder"
         save_unconverted_data_via_upload
         ISSN_regex
         ISBN_regex
