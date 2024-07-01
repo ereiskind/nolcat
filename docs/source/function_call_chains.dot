@@ -13,7 +13,7 @@ digraph package_dependencies {
         Box = Function
         Cds = Route function
         Folder = Function connecting to S3
-        Cylinder = Function connecting to MySQL
+        Cylinder = Function connecting to MySQL/SQLAlchemy
         
         Dashed = Test function
         Dotted = Fixture function
@@ -486,7 +486,10 @@ digraph package_dependencies {
         color="#5cb8b2"
         penwidth=5
 
-        engine
+        engine [
+            shape="cylinder"
+            style="dotted"
+        ]
         app
         client
         db
@@ -1550,6 +1553,47 @@ digraph package_dependencies {
     workbooks_and_relations -> workbook_1_2020_relation_in_conftest
     workbooks_and_relations -> workbook_2_2020_relation_in_conftest
     workbooks_and_relations -> workbook_3_2020_relation_in_conftest
+    engine -> session
+    engine -> non_COUNTER_AUCT_object_before_upload
+    engine -> non_COUNTER_AUCT_object_after_upload
+    engine -> match_direct_SUSHI_harvest_result
+    engine -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
+    engine -> test_collect_annual_usage_statistics
+    engine -> test_upload_nonstandard_usage_file
+    engine -> test_SQLAlchemy_engine_creation
+    engine -> test_load_data_into_database
+    engine -> test_query_database
+    engine -> test_loading_connected_data_into_other_relation
+    engine -> test_update_database
+    engine -> test_update_database_with_insert_statement
+    engine -> test_GET_request_for_annual_stats_homepage
+    engine -> test_upload_COUNTER_data_via_Excel
+    engine -> test_upload_COUNTER_data_via_SQL_insert
+    engine -> test_match_direct_SUSHI_harvest_result
+    engine -> test_GET_request_for_harvest_SUSHI_statistics
+    engine -> test_harvest_SUSHI_statistics
+    engine -> test_GET_request_for_upload_non_COUNTER_reports
+    engine -> test_upload_non_COUNTER_reports
+    engine -> test_collect_FY_and_vendor_data
+    engine -> test_collect_sources_data
+    engine -> test_collect_AUCT_and_historical_COUNTER_data
+    engine -> test_upload_historical_non_COUNTER_usage
+    engine -> test_use_predefined_SQL_query
+    engine -> start_query_wizard_form_data
+    engine -> test_construct_PR_query_with_wizard
+    engine -> test_construct_DR_query_with_wizard
+    engine -> test_construct_TR_query_with_wizard
+    engine -> test_construct_IR_query_with_wizard
+    engine -> test_GET_request_for_download_non_COUNTER_usage
+    engine -> FY2020_FiscalYears_object
+    engine -> load_new_record_into_fiscalYears
+    engine -> test_create_usage_tracking_records_for_fiscal_year
+    engine -> FY2022_FiscalYears_object
+    engine -> test_collect_fiscal_year_usage_statistics
+    engine -> StatisticsSources_fixture
+    engine -> test_collect_usage_statistics
+    engine -> test_check_if_data_already_in_COUNTERData
+    engine -> StatisticsSource_instance_name
 
     // tests.test_AnnualStatistics
 
