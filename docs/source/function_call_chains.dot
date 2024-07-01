@@ -490,7 +490,10 @@ digraph package_dependencies {
             shape="cylinder"
             style="dotted"
         ]
-        app
+        app [
+            shape="box"
+            style="dotted"
+        ]
         client
         db
         session
@@ -1594,6 +1597,9 @@ digraph package_dependencies {
     engine -> test_collect_usage_statistics
     engine -> test_check_if_data_already_in_COUNTERData
     engine -> StatisticsSource_instance_name
+    app -> client
+    app -> db
+    app -> test_flask_app_creation 
 
     // tests.test_AnnualStatistics
 
