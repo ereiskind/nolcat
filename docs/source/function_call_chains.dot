@@ -3,16 +3,12 @@ digraph package_dependencies {
 
     /* Cluster Types
         Rounded = Class
-        Rounded, light gold fill = Relation class
-        Light garnet fill = Blueprint
-        Grey (50% of #2c2a29) outline = Module collecting general functions
-        Dotted = Test module
-    */
+        Dahsed = Test module
 
-    node [  // To remove the fill color from the individual function nodes
-        style="filled"
-        fillcolor="white"
-    ]
+        Gold outline = Relation
+        Garnet outline = Blueprint
+        Blue outline = Module collecting general functions
+    */
     /* Node Types
         Box = Function
         Cds = Route function
@@ -28,7 +24,8 @@ digraph package_dependencies {
     subgraph cluster_fiscalYears {
         label="fiscalYears"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_fiscalYears [
             label="state_data_types"
@@ -49,7 +46,8 @@ digraph package_dependencies {
     subgraph cluster_annualStatistics {
         label="annualStatistics"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_annualStatistics [
             label="state_data_types"
@@ -62,7 +60,8 @@ digraph package_dependencies {
     subgraph cluster_vendorNotes {
         label="vendorNotes"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_vendorNotes [
             label="state_data_types"
@@ -74,7 +73,8 @@ digraph package_dependencies {
     subgraph cluster_statisticsSources {
         label="statisticsSources"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_statisticsSources [
             label="state_data_types"
@@ -95,7 +95,8 @@ digraph package_dependencies {
     subgraph cluster_statisticsSourceNotes {
         label="statisticsSourceNotes"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_statisticsSourceNotes [
             label="state_data_types"
@@ -107,7 +108,8 @@ digraph package_dependencies {
     subgraph cluster_resourceSources {
         label="resourceSources"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_resourceSources [
             label="state_data_types"
@@ -126,7 +128,8 @@ digraph package_dependencies {
     subgraph cluster_resourceSourceNotes {
         label="resourceSourceNotes"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_resourceSourceNotes [
             label="state_data_types"
@@ -138,7 +141,8 @@ digraph package_dependencies {
     subgraph cluster_statisticsResourceSources {
         label="statisticsResourceSources"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_statisticsResourceSources [
             label="state_data_types"
@@ -150,7 +154,8 @@ digraph package_dependencies {
     subgraph cluster_annualUsageCollectionTracking {
         label="annualUsageCollectionTracking"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_annualUsageCollectionTracking [
             label="state_data_types"
@@ -165,7 +170,8 @@ digraph package_dependencies {
     subgraph cluster_COUNTERData {
         label="COUNTERData"
         style="rounded"
-        bgcolor="#e9dfc9"
+        color="#ceb888"
+        penwidth=5
 
         state_data_types_in_COUNTERData [
             label="state_data_types"
@@ -177,6 +183,7 @@ digraph package_dependencies {
     subgraph cluster_SUSHICallAndResponse {
         label="SUSHICallAndResponse"
         style="rounded"
+        penwidth=5
 
         make_SUSHI_call
         _make_API_call
@@ -191,6 +198,7 @@ digraph package_dependencies {
     subgraph cluster_UploadCOUNTERReports {
         label="UploadCOUNTERReports"
         style="rounded"
+        penwidth=5
 
         create_dataframe_in_UploadCOUNTERReports [
             label="create_dataframe"
@@ -202,6 +210,7 @@ digraph package_dependencies {
     subgraph cluster_ConvertJSONDictToDataframe {
         label="ConvertJSONDictToDataframe"
         style="rounded"
+        penwidth=5
 
         create_dataframe_in_ConvertJSONDictToDataframe [
             label="create_dataframe"
@@ -215,7 +224,8 @@ digraph package_dependencies {
 
     subgraph cluster_annual_stats {
         label="annual_stats"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         annual_stats_homepage
         show_fiscal_year_details
@@ -224,7 +234,8 @@ digraph package_dependencies {
 
     subgraph cluster_ingest_usage {
         label="ingest_usage"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         ingest_usage_homepage
         upload_COUNTER_data
@@ -235,7 +246,8 @@ digraph package_dependencies {
 
     subgraph cluster_initialization {
         label="initialization"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         collect_FY_and_vendor_data
         collect_sources_data
@@ -247,7 +259,8 @@ digraph package_dependencies {
 
     subgraph cluster_login {
         label="login"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         login_homepage
     }
@@ -255,7 +268,8 @@ digraph package_dependencies {
 
     subgraph cluster_view_lists {
         label="view_lists"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         view_lists_homepage
         view_list_record
@@ -265,7 +279,8 @@ digraph package_dependencies {
 
     subgraph cluster_view_usage {
         label="view_usage"
-        bgcolor="#eac8d0"
+        color="#782f40"
+        penwidth=5
 
         create_COUNTER_fixed_vocab_list
         set_encoding
@@ -285,7 +300,7 @@ digraph package_dependencies {
 
     subgraph cluster_PATH_TO_CREDENTIALS_FILE {
         label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
-        pencolor="#857e7a"
+        color="#5cb8b2"
 
         PATH_TO_CREDENTIALS_FILE
     }
@@ -293,7 +308,7 @@ digraph package_dependencies {
 
     subgraph cluster_app {
         label="nolcat.app"
-        pencolor="#857e7a"
+        color="#5cb8b2"
 
         filter_empty_parentheses
         configure_logging
@@ -326,7 +341,7 @@ digraph package_dependencies {
 
     subgraph cluster_statements {
         label="nolcat.statements"
-        pencolor="#857e7a"
+        color="#5cb8b2"
 
         file_extensions_and_mimetypes
         format_list_for_stdout
@@ -363,7 +378,7 @@ digraph package_dependencies {
 
     subgraph cluster_relations {
         label="tests.data.relations"
-        pencolor="#857e7a"
+        color="#5cb8b2"
 
         fiscalYears_relation_in_relations [
             label="fiscalYears_relation"
@@ -466,8 +481,9 @@ digraph package_dependencies {
 
     subgraph cluster_conftest {
         label="tests.conftest"
-        style="dotted"
-        pencolor="#857e7a"
+        style="dashed"
+        color="#5cb8b2"
+        penwidth=5
 
         engine
         app
@@ -589,8 +605,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_AnnualStatistics {
         label="test_AnnualStatistics"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         test_add_annual_statistic_value [shape="component"]
     }
@@ -598,8 +615,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_AnnualUsageCollectionTracking {
         label="test_AnnualUsageCollectionTracking"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         AUCT_fixture_for_SUSHI [shape="note"]
         harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
@@ -615,8 +633,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_app {
         label="test_app"
-        style="dotted"
-        pencolor="#857e7a"
+        style="dashed"
+        color="#5cb8b2"
+        penwidth=5
 
         test_flask_app_creation [shape="component"]
         test_flask_client_creation [shape="component"]
@@ -651,8 +670,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_annual_stats {
         label="test_bp_annual_stats"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         test_GET_request_for_annual_stats_homepage [shape="component"]
         test_GET_request_for_show_fiscal_year_details [shape="component"]
@@ -664,8 +684,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_ingest_usage {
         label="test_bp_ingest_usage"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         test_ingest_usage_homepage [shape="component"]
         test_upload_COUNTER_data_via_Excel [shape="component"]
@@ -680,8 +701,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_initialization {
         label="test_bp_initialization"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         blank_annualUsageCollectionTracking_data_types [shape="note"]
         create_fiscalYears_CSV_file [shape="note"]
@@ -708,8 +730,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_login {
         label="test_bp_login"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         test_login_homepage [shape="component"]
         test_logging_in [shape="component"]
@@ -720,8 +743,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_view_lists {
         label="test_bp_view_lists"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         test_view_lists_homepage [shape="component"]
         test_GET_request_for_view_list_record [shape="component"]
@@ -734,8 +758,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_bp_view_usage {
         label="test_bp_view_usage"
-        style="dotted"
-        bgcolor="#eac8d0"
+        style="dashed"
+        color="#782f40"
+        penwidth=5
 
         COUNTER_download_CSV [shape="note"]
         test_create_COUNTER_fixed_vocab_list [shape="component"]
@@ -762,7 +787,8 @@ digraph package_dependencies {
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
         label="test_ConvertJSONDictToDataframe"
-        style="dotted"
+        style="dashed"
+        color="#5cb8b2"
 
         sample_SUSHI_PR_response_JSON_dict [shape="note"]
         sample_SUSHI_DR_response_JSON_dict [shape="note"]
@@ -781,8 +807,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_FiscalYears {
         label="test_FiscalYears"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         FY2020_FiscalYears_object [shape="note"]
         test_calculate_depreciated_ACRL_60b [shape="component"]
@@ -802,8 +829,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_ResourceSources {
         label="test_ResourceSources"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         test_add_access_stop_date [shape="component"]
         test_remove_access_stop_date [shape="component"]
@@ -817,8 +845,8 @@ digraph package_dependencies {
 
     subgraph cluster_test_statements {
         label="test_statements"
-        style="dotted"
-        pencolor="#857e7a"
+        style="dashed"
+        color="#5cb8b2"
 
         test_format_list_for_stdout_with_list [shape="component"]
         test_format_list_for_stdout_with_generator [shape="component"]
@@ -828,8 +856,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_StatisticsSources {
         label="test_StatisticsSources"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         current_month_like_most_recent_month_with_usage [shape="note"]
         StatisticsSources_fixture [shape="note"]
@@ -866,7 +895,8 @@ digraph package_dependencies {
 
     subgraph cluster_test_SUSHICallAndResponse {
         label="test_SUSHICallAndResponse"
-        style="dotted"
+        style="dashed"
+        color="#5cb8b2"
 
         SUSHI_credentials_fixture_in_test_SUSHICallAndResponse [
             label="SUSHI_credentials_fixture"
@@ -888,7 +918,8 @@ digraph package_dependencies {
 
     subgraph cluster_test_UploadCOUNTERReports {
         label="test_UploadCOUNTERReports"
-        style="dotted"
+        style="dashed"
+        color="#5cb8b2"
 
         sample_COUNTER_report_workbook [shape="note"]
         test_create_dataframe_from_single_workbook [shape="component"]
@@ -899,8 +930,9 @@ digraph package_dependencies {
 
     subgraph cluster_test_Vendors {
         label="test_Vendors"
-        style="dotted"
-        bgcolor="#e9dfc9"
+        style="dashed"
+        color="#ceb888"
+        penwidth=5
 
         test_get_statisticsSources_records [shape="component"]
         test_get_resourceSources_records [shape="component"]
