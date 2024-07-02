@@ -1547,6 +1547,7 @@ digraph package_dependencies {
     upload_COUNTER_data -> ingest_usage_homepage
     harvest_SUSHI_statistics -> ingest_usage_homepage
     upload_non_COUNTER_reports -> ingest_usage_homepage
+    upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1564,6 +1565,7 @@ digraph package_dependencies {
     collect_sources_data -> state_data_types_in_resourceSources
     collect_sources_data -> state_data_types_in_resourceSourceNotes
     collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
 
     // nolcat.login.views
 
@@ -1625,6 +1627,7 @@ digraph package_dependencies {
 
     // nolcat.models.ResourceSources
     change_StatisticsSource -> state_data_types_in_statisticsResourceSources
+    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
 
     // nolcat.models.ResourceSourceNotes
 
@@ -2021,6 +2024,10 @@ digraph package_dependencies {
     sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
     sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
     sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
+    test_create_dataframe_from_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_IR -> create_dataframe_in_ConvertJSONDictToDataframe
 
     // tests.test_FiscalYears
     test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
@@ -2119,6 +2126,8 @@ digraph package_dependencies {
     sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
     sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
     test_create_dataframe -> COUNTERData_relation
+    test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
 
     // tests.test_Vendors
     test_add_note_in_test_Vendors -> add_note_in_vendors
