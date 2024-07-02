@@ -205,13 +205,13 @@ digraph package_dependencies {
         style="rounded"
         penwidth=5
 
-        make_SUSHI_call
-        _make_API_call
-        _convert_Response_to_JSON
-        _save_raw_Response_text
-        _handle_SUSHI_exceptions
-        _evaluate_individual_SUSHI_exception
-        _stdout_API_response_based_on_size
+        make_SUSHI_call [shape="box"]
+        _make_API_call [shape="box"]
+        _convert_Response_to_JSON [shape="box"]
+        _save_raw_Response_text [shape="box"]
+        _handle_SUSHI_exceptions [shape="box"]
+        _evaluate_individual_SUSHI_exception [shape="box"]
+        _stdout_API_response_based_on_size [shape="box"]
     }
 
 
@@ -1634,6 +1634,8 @@ digraph package_dependencies {
     collect_usage_statistics -> _harvest_R5_SUSHI
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_single_report -> _check_if_data_in_database
+    _harvest_R5_SUSHI -> make_SUSHI_call
+    _harvest_single_report -> make_SUSHI_call
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1654,6 +1656,12 @@ digraph package_dependencies {
 
     // nolcat.SUSHICallAndResponse
     _evaluate_individual_SUSHI_exception -> add_note_in_statisticsSources
+    make_SUSHI_call -> _make_API_call
+    make_SUSHI_call -> _convert_Response_to_JSON
+    make_SUSHI_call -> _save_raw_Response_text
+    make_SUSHI_call -> _handle_SUSHI_exceptions
+    _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
+    make_SUSHI_call -> _stdout_API_response_based_on_size
 
     // nolcat.UploadCOUNTERReports
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
@@ -1833,6 +1841,7 @@ digraph package_dependencies {
     non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
     non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
 
     // tests.test_AnnualStatistics
     test_add_annual_statistic_value -> add_annual_statistic_value
@@ -2160,6 +2169,15 @@ digraph package_dependencies {
     test_TR_call_validity -> list_of_reports
     test_IR_call_validity -> list_of_reports
     list_of_reports -> COUNTER_reports_offered_by_statistics_source
+    test_status_call -> make_SUSHI_call
+    test_status_call_validity -> make_SUSHI_call
+    test_reports_call -> make_SUSHI_call
+    test_reports_call_validity -> make_SUSHI_call
+    test_PR_call_validity -> make_SUSHI_call
+    test_DR_call_validity -> make_SUSHI_call
+    test_TR_call_validity -> make_SUSHI_call
+    test_IR_call_validity -> make_SUSHI_call
+    test_call_with_invalid_credentials -> make_SUSHI_call
 
     // tests.test_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
