@@ -100,11 +100,11 @@ digraph package_dependencies {
             label="state_data_types"
             shape="box"
         ]
-        fetch_SUSHI_information
-        _harvest_R5_SUSHI
-        _harvest_single_report
-        _check_if_data_in_database
-        collect_usage_statistics
+        fetch_SUSHI_information [shape="box"]
+        _harvest_R5_SUSHI [shape="box"]
+        _harvest_single_report [shape="box"]
+        _check_if_data_in_database [shape="box"]
+        collect_usage_statistics [shape="box"]
         add_note_in_statisticsSources [
             label="add_note"
             shape="box"
@@ -1548,6 +1548,7 @@ digraph package_dependencies {
     harvest_SUSHI_statistics -> ingest_usage_homepage
     upload_non_COUNTER_reports -> ingest_usage_homepage
     upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    harvest_SUSHI_statistics -> collect_usage_statistics
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1612,6 +1613,7 @@ digraph package_dependencies {
 
     // nolcat.models.FiscalYears
     create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
 
     // nolcat.models.AnnualStatistics
 
@@ -1622,6 +1624,10 @@ digraph package_dependencies {
     // nolcat.models.StatisticsSources
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
     _harvest_single_report -> state_data_types_in_COUNTERData
+    _harvest_R5_SUSHI -> fetch_SUSHI_information
+    collect_usage_statistics -> _harvest_R5_SUSHI
+    _harvest_R5_SUSHI -> _harvest_single_report
+    _harvest_single_report -> _check_if_data_in_database
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1634,6 +1640,7 @@ digraph package_dependencies {
     // nolcat.models.StatisticsResourceSources
 
     // nolcat.models.AnnualUsageCollectionTracking
+    collect_annual_usage_statistics -> _harvest_R5_SUSHI
 
     // nolcat.models.COUNTERData
 
@@ -1836,6 +1843,7 @@ digraph package_dependencies {
     test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
+    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
@@ -2102,6 +2110,18 @@ digraph package_dependencies {
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_add_note_in_test_StatisticsSources -> add_note_in_statisticsSources
+    test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_display -> fetch_SUSHI_information
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
+    test_harvest_single_report -> _harvest_single_report
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report
+    test_check_if_data_in_database_no -> _check_if_data_in_database
+    test_check_if_data_in_database_yes -> _check_if_data_in_database
+    test_collect_usage_statistics -> collect_usage_statistics
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
