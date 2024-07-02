@@ -135,9 +135,9 @@ digraph package_dependencies {
             label="state_data_types"
             shape="box"
         ]
-        add_access_stop_date
-        remove_access_stop_date
-        change_StatisticsSource
+        add_access_stop_date [shape="box"]
+        remove_access_stop_date [shape="box"]
+        change_StatisticsSource [shape="box"]
         add_note_in_resourceSources [
             label="add_note"
             shape="box"
@@ -2064,6 +2064,9 @@ digraph package_dependencies {
 
     // tests.test_ResourceSources
     test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
+    test_add_access_stop_date -> add_access_stop_date
+    test_remove_access_stop_date -> remove_access_stop_date
+    test_change_StatisticsSource -> change_StatisticsSource
 
     // tests.test_statements
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
