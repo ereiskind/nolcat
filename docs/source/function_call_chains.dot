@@ -1646,16 +1646,16 @@ digraph package_dependencies {
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
 
     // tests.data.relations
-    fiscalYears_relation -> state_data_types_in_fiscalYears
-    annualStatistics_relation -> state_data_types_in_annualStatistics
-    vendors_relation -> state_data_types_in_vendors
-    vendorNotes_relation -> state_data_types_in_vendorNotes
-    statisticsSources_relation -> state_data_types_in_statisticsSources
-    statisticsSourceNotes_relation -> state_data_types_in_statisticsSourceNotes
-    resourceSources_relation -> state_data_types_in_resourceSources
-    resourceSourceNotes_relation -> state_data_types_in_resourceSourceNotes
-    statisticsResourceSources_relation -> state_data_types_in_statisticsResourceSources
-    annualUsageCollectionTracking_relation -> state_data_types_in_annualUsageCollectionTracking
+    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
+    annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
+    vendors_relation_in_relations -> state_data_types_in_vendors
+    vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
+    statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
+    statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
+    resourceSources_relation_in_relations -> state_data_types_in_resourceSources
+    resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
+    statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
+    annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
     workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
     workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
     workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
