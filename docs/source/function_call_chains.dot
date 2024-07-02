@@ -303,7 +303,7 @@ digraph package_dependencies {
         label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
         color="#5cb8b2"
 
-        PATH_TO_CREDENTIALS_FILE
+        PATH_TO_CREDENTIALS_FILE [shape="box"]
     }
 
 
@@ -1583,6 +1583,7 @@ digraph package_dependencies {
     // nolcat.models.VendorNotes
 
     // nolcat.models.StatisticsSources
+    fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1935,6 +1936,7 @@ digraph package_dependencies {
     test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record
     test_create_usage_tracking_records_for_fiscal_year -> load_new_record_into_fiscalYears
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
+    test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
 
     // tests.test_ResourceSources
 
@@ -1979,6 +1981,7 @@ digraph package_dependencies {
     month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
     test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
     reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
+    StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
