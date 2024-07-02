@@ -30,7 +30,7 @@ digraph package_dependencies {
 
         state_data_types_in_fiscalYears [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
         calculate_depreciated_ACRL_60b
         calculate_depreciated_ACRL_63
@@ -52,7 +52,7 @@ digraph package_dependencies {
 
         state_data_types_in_annualStatistics [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
         add_annual_statistic_value
     }
@@ -85,7 +85,7 @@ digraph package_dependencies {
 
         state_data_types_in_vendorNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -98,7 +98,7 @@ digraph package_dependencies {
 
         state_data_types_in_statisticsSources [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
         fetch_SUSHI_information
         _harvest_R5_SUSHI
@@ -120,7 +120,7 @@ digraph package_dependencies {
 
         state_data_types_in_statisticsSourceNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -133,7 +133,7 @@ digraph package_dependencies {
 
         state_data_types_in_resourceSources [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
         add_access_stop_date
         remove_access_stop_date
@@ -153,7 +153,7 @@ digraph package_dependencies {
 
         state_data_types_in_resourceSourceNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -166,7 +166,7 @@ digraph package_dependencies {
 
         state_data_types_in_statisticsResourceSources [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -179,7 +179,7 @@ digraph package_dependencies {
 
         state_data_types_in_annualUsageCollectionTracking [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
         collect_annual_usage_statistics
         upload_nonstandard_usage_file
@@ -195,7 +195,7 @@ digraph package_dependencies {
 
         state_data_types_in_COUNTERData [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -1540,6 +1540,8 @@ digraph package_dependencies {
     // nolcat.annual_stats.views
     show_fiscal_year_details -> annual_stats_homepage
     annual_stats_homepage -> show_fiscal_year_details
+    show_fiscal_year_details -> state_data_types_in_fiscalYears
+    show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
 
     // nolcat.ingest_usage.views
     upload_COUNTER_data -> ingest_usage_homepage
@@ -1553,6 +1555,15 @@ digraph package_dependencies {
     collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
     collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
     upload_historical_non_COUNTER_usage -> data_load_complete
+    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    collect_FY_and_vendor_data -> state_data_types_in_vendors
+    collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    collect_sources_data -> state_data_types_in_statisticsSources
+    collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    collect_sources_data -> state_data_types_in_resourceSources
+    collect_sources_data -> state_data_types_in_resourceSourceNotes
+    collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
 
     // nolcat.login.views
 
@@ -1588,12 +1599,14 @@ digraph package_dependencies {
     download_non_COUNTER_usage -> view_usage_homepage
     query_wizard_sort_redirect -> start_query_wizard
     start_query_wizard -> query_wizard_sort_redirect
+    download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
 
     // nolcat.app
 
     // nolcat.ConvertJSONDictToDataframe
 
     // nolcat.models.FiscalYears
+    create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
 
     // nolcat.models.AnnualStatistics
 
@@ -1603,10 +1616,12 @@ digraph package_dependencies {
 
     // nolcat.models.StatisticsSources
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
+    _harvest_single_report -> state_data_types_in_COUNTERData
 
     // nolcat.models.StatisticsSourceNotes
 
     // nolcat.models.ResourceSources
+    change_StatisticsSource -> state_data_types_in_statisticsResourceSources
 
     // nolcat.models.ResourceSourceNotes
 
@@ -1621,8 +1636,33 @@ digraph package_dependencies {
     // nolcat.SUSHICallAndResponse
 
     // nolcat.UploadCOUNTERReports
+    create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
 
     // tests.data.relations
+    fiscalYears_relation -> state_data_types_in_fiscalYears
+    annualStatistics_relation -> state_data_types_in_annualStatistics
+    vendors_relation -> state_data_types_in_vendors
+    vendorNotes_relation -> state_data_types_in_vendorNotes
+    statisticsSources_relation -> state_data_types_in_statisticsSources
+    statisticsSourceNotes_relation -> state_data_types_in_statisticsSourceNotes
+    resourceSources_relation -> state_data_types_in_resourceSources
+    resourceSourceNotes_relation -> state_data_types_in_resourceSourceNotes
+    statisticsResourceSources_relation -> state_data_types_in_statisticsResourceSources
+    annualUsageCollectionTracking_relation -> state_data_types_in_annualUsageCollectionTracking
+    workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
 
     // tests.conftest
     fiscalYears_relation_in_conftest -> fiscalYears_relation_in_relations
@@ -1772,6 +1812,7 @@ digraph package_dependencies {
     non_COUNTER_AUCT_object_before_upload -> path_to_sample_file
     non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
     non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
+    match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
 
     // tests.test_AnnualStatistics
 
@@ -1800,6 +1841,13 @@ digraph package_dependencies {
     test_upload_file_to_S3_bucket -> remove_file_from_S3
     file_name_stem_and_data -> most_recent_month_with_usage
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
+    test_query_database -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
+    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    vendors_relation_after_test_update_database -> state_data_types_in_vendors
+    test_update_database -> state_data_types_in_vendors
+    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
@@ -1827,6 +1875,10 @@ digraph package_dependencies {
     test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
+    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
@@ -1877,6 +1929,20 @@ digraph package_dependencies {
     test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> 
+    state_data_types_in_annualStatistics
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendors
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    test_collect_sources_data -> state_data_types_in_statisticsSources
+    test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    test_collect_sources_data -> state_data_types_in_resourceSources
+    test_collect_sources_data -> state_data_types_in_resourceSourceNotes
+    test_collect_sources_data -> state_data_types_in_statisticsResourceSources
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
 
     // tests.test_bp_login
     test_login_homepage -> login_homepage
@@ -1932,6 +1998,11 @@ digraph package_dependencies {
     test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
     test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
     test_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
+    test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
@@ -1942,6 +2013,10 @@ digraph package_dependencies {
     test_create_dataframe_from_DR -> sample_SUSHI_DR_response_dataframe
     test_create_dataframe_from_TR -> sample_SUSHI_TR_response_dataframe
     test_create_dataframe_from_IR -> sample_SUSHI_IR_response_dataframe
+    sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
 
     // tests.test_FiscalYears
     test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
@@ -1956,6 +2031,7 @@ digraph package_dependencies {
     test_create_usage_tracking_records_for_fiscal_year -> load_new_record_into_fiscalYears
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
+    test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
 
     // tests.test_ResourceSources
 
@@ -2001,6 +2077,8 @@ digraph package_dependencies {
     test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
     reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
     StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
+    partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
+    non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
