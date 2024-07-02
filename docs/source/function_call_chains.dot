@@ -647,11 +647,11 @@ digraph package_dependencies {
             style="dotted"
         ]
         remove_file_from_S3 [
-            shape="box"
+            shape="folder"
             style="dotted"
         ]
         non_COUNTER_AUCT_object_before_upload [
-            shape="box"
+            shape="folder"
             style="dotted"
         ]
         non_COUNTER_AUCT_object_after_upload [
@@ -659,7 +659,7 @@ digraph package_dependencies {
             style="dotted"
         ]
         non_COUNTER_file_to_download_from_S3 [
-            shape="box"
+            shape="folder"
             style="dotted"
         ]
         header_value [
