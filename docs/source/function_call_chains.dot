@@ -32,15 +32,15 @@ digraph package_dependencies {
             label="state_data_types"
             shape="box"
         ]
-        calculate_depreciated_ACRL_60b
-        calculate_depreciated_ACRL_63
-        calculate_ACRL_61a
-        calculate_ACRL_61b
-        calculate_ARL_18
-        calculate_ARL_19
-        calculate_ARL_20
-        create_usage_tracking_records_for_fiscal_year
-        collect_fiscal_year_usage_statistics
+        calculate_depreciated_ACRL_60b [shape="box"]
+        calculate_depreciated_ACRL_63 [shape="box"]
+        calculate_ACRL_61a [shape="box"]
+        calculate_ACRL_61b [shape="box"]
+        calculate_ARL_18 [shape="box"]
+        calculate_ARL_19 [shape="box"]
+        calculate_ARL_20 [shape="box"]
+        create_usage_tracking_records_for_fiscal_year [shape="box"]
+        collect_fiscal_year_usage_statistics [shape="box"]
     }
 
 
@@ -2043,6 +2043,15 @@ digraph package_dependencies {
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63
+    test_calculate_ACRL_61a -> calculate_ACRL_61a
+    test_calculate_ACRL_61b -> calculate_ACRL_61b
+    test_calculate_ARL_18 -> calculate_ARL_18
+    test_calculate_ARL_19 -> calculate_ARL_19
+    test_calculate_ARL_20 -> calculate_ARL_20
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
 
     // tests.test_ResourceSources
     test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
