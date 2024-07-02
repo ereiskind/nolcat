@@ -236,9 +236,9 @@ digraph package_dependencies {
             label="create_dataframe"
             shape="box"
         ]
-        _transform_R5_JSON
-        _transform_R5b1_JSON
-        _serialize_dates
+        _transform_R5_JSON [shape="box"]
+        _transform_R5b1_JSON [shape="box"]
+        _serialize_dates [shape="box"]
     }
 
 
@@ -1613,6 +1613,9 @@ digraph package_dependencies {
     // nolcat.app
 
     // nolcat.ConvertJSONDictToDataframe
+    create_dataframe -> _transform_R5_JSON
+    create_dataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
 
     // nolcat.models.FiscalYears
     create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
