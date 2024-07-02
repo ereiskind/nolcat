@@ -1613,8 +1613,8 @@ digraph package_dependencies {
     // nolcat.app
 
     // nolcat.ConvertJSONDictToDataframe
-    create_dataframe -> _transform_R5_JSON
-    create_dataframe -> _transform_R5b1_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
     _transform_R5_JSON -> _serialize_dates
 
     // nolcat.models.FiscalYears
@@ -1849,7 +1849,7 @@ digraph package_dependencies {
     test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
-    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_download_nonstandard_usage_file -> download_nonstandard_usage_file
@@ -2128,7 +2128,7 @@ digraph package_dependencies {
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
-    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     test_harvest_single_report -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_check_if_data_in_database_no -> _check_if_data_in_database
