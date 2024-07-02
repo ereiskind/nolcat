@@ -222,7 +222,7 @@ digraph package_dependencies {
 
         create_dataframe_in_UploadCOUNTERReports [
             label="create_dataframe"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -234,7 +234,7 @@ digraph package_dependencies {
 
         create_dataframe_in_ConvertJSONDictToDataframe [
             label="create_dataframe"
-            /*shape=""*/
+            shape="box"
         ]
         _transform_R5_JSON
         _transform_R5b1_JSON
