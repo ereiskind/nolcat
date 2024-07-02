@@ -58,6 +58,25 @@ digraph package_dependencies {
     }
 
 
+    subgraph cluster_vendors {
+        label="vendors"
+        style="rounded"
+        color="#ceb888"
+        penwidth=5
+
+        state_data_types_in_vendors [
+            label="state_data_types"
+            shape="box"
+        ]
+        get_statisticsSources_records
+        get_resourceSources_records
+        add_note_in_vendors [
+            label="add_note"
+            /*shape=""*/
+        ]
+    }
+
+
     subgraph cluster_vendorNotes {
         label="vendorNotes"
         style="rounded"
