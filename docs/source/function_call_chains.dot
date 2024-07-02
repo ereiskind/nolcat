@@ -181,9 +181,9 @@ digraph package_dependencies {
             label="state_data_types"
             shape="box"
         ]
-        collect_annual_usage_statistics
-        upload_nonstandard_usage_file
-        download_nonstandard_usage_file
+        collect_annual_usage_statistics [shape="box"]
+        upload_nonstandard_usage_file [shape="box"]
+        download_nonstandard_usage_file [shape="folder"]
     }
 
 
@@ -1549,6 +1549,7 @@ digraph package_dependencies {
     upload_non_COUNTER_reports -> ingest_usage_homepage
     upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
     harvest_SUSHI_statistics -> collect_usage_statistics
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1567,6 +1568,7 @@ digraph package_dependencies {
     collect_sources_data -> state_data_types_in_resourceSourceNotes
     collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
 
     // nolcat.login.views
 
@@ -1606,6 +1608,7 @@ digraph package_dependencies {
     query_wizard_sort_redirect -> start_query_wizard
     start_query_wizard -> query_wizard_sort_redirect
     download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
+    download_non_COUNTER_usage -> download_nonstandard_usage_file
 
     // nolcat.app
 
@@ -1844,6 +1847,9 @@ digraph package_dependencies {
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
     harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
+    test_download_nonstandard_usage_file -> download_nonstandard_usage_file
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
