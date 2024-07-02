@@ -334,6 +334,7 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     Returns:
         str: the statement for outputting the arguments to logging
     """
+    #ToDo: Handle `COUNTERData` relation data being moved to S3
     update_statement = database_update_fail_statement(update_statement)
     return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
 
@@ -350,6 +351,7 @@ def database_function_skip_statements(return_value, is_test_function=True, SUSHI
     Returns:
         str: the statement for outputting the arguments to logging
     """
+    #ToDo: Handle `COUNTERData` relation data being moved to S3
     if is_test_function:
         if SUSHI_error:
             return f"Unable to run test because the API call raised a server-based SUSHI error, specifically {return_value[0].lower()}{return_value[1:]}"
@@ -370,6 +372,7 @@ def load_data_into_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
+    #ToDo: Handle `COUNTERData` relation data being moved to S3
     return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
 
 
@@ -494,6 +497,7 @@ def reports_with_no_usage_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
+    #ToDo: Handle `COUNTERData` relation data being moved to S3
     return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 

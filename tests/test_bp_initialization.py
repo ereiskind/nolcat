@@ -14,7 +14,6 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
@@ -357,22 +356,6 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
     os.remove(tmp_path / 'annualUsageCollectionTracking_relation.csv')
 
 
-@pytest.fixture
-def zip_dicts_by_common_keys(*dicts):
-    """Zips together dictionaries based on common key values.
-
-    This function was taken from https://stackoverflow.com/a/16458780.
-    
-    Args:
-        *dicts (dict): a variable length list of dictionaries
-
-    Yields:
-        list: a list of tuples containing the keys followed by their values from all the argument dictionaries
-    """
-    for i in set(dicts[0]).intersection(*dicts[1:]):
-        yield (i,) + tuple(d[i] for d in dicts)
-
-
 #Section: Tests
 def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
@@ -586,6 +569,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.slow
 def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    #ToDo: Function will be redone to make `df` a parquet file and save it to S3
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     

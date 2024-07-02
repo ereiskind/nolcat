@@ -924,7 +924,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def construct_PR_query_with_wizard_without_string_match(client, header_value):
+def test_construct_PR_query_with_wizard_without_string_match(client, header_value):
     """Tests using the PR query wizard with a string that won't return any matches."""
     form_input = {
         'begin_date': date.fromisoformat('2019-01-01'),

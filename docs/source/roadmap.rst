@@ -20,6 +20,12 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
+Using Parquet
+=============
+* Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
+* Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
+* Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
+
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
