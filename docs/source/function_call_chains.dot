@@ -228,8 +228,8 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        annual_stats_homepage
-        show_fiscal_year_details
+        annual_stats_homepage [shape="cds"]
+        show_fiscal_year_details [shape="cds"]
     }
 
 
@@ -238,10 +238,10 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        ingest_usage_homepage
-        upload_COUNTER_data
-        harvest_SUSHI_statistics
-        upload_non_COUNTER_reports
+        ingest_usage_homepage [shape="cds"]
+        upload_COUNTER_data [shape="cds"]
+        harvest_SUSHI_statistics [shape="cds"]
+        upload_non_COUNTER_reports [shape="cds"]
     }
 
 
@@ -250,11 +250,11 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        collect_FY_and_vendor_data
-        collect_sources_data
-        collect_AUCT_and_historical_COUNTER_data
-        upload_historical_non_COUNTER_usage
-        data_load_complete
+        collect_FY_and_vendor_data [shape="cds"]
+        collect_sources_data [shape="cds"]
+        collect_AUCT_and_historical_COUNTER_data [shape="cds"]
+        upload_historical_non_COUNTER_usage [shape="cds"]
+        data_load_complete [shape="cds"]
     }
 
 
@@ -263,7 +263,7 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        login_homepage
+        login_homepage [shape="cds"]
     }
 
 
@@ -272,9 +272,9 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        view_lists_homepage
-        view_list_record
-        edit_list_record
+        view_lists_homepage [shape="cds"]
+        view_list_record [shape="cds"]
+        edit_list_record [shape="cds"]
     }
 
 
@@ -283,19 +283,19 @@ digraph package_dependencies {
         color="#782f40"
         penwidth=5
 
-        create_COUNTER_fixed_vocab_list
-        set_encoding
-        create_downloads_folder
-        view_usage_homepage
-        run_custom_SQL_query
-        use_predefined_SQL_query
-        start_query_wizard
-        query_wizard_sort_redirect
-        construct_PR_query_with_wizard
-        construct_DR_query_with_wizard
-        construct_TR_query_with_wizard
-        construct_IR_query_with_wizard
-        download_non_COUNTER_usage
+        create_COUNTER_fixed_vocab_list [shape="box"]
+        set_encoding [shape="box"]
+        create_downloads_folder [shape="box"]
+        view_usage_homepage [shape="cds"]
+        run_custom_SQL_query [shape="cds"]
+        use_predefined_SQL_query [shape="cds"]
+        start_query_wizard [shape="cds"]
+        query_wizard_sort_redirect [shape="cds"]
+        construct_PR_query_with_wizard [shape="cds"]
+        construct_DR_query_with_wizard [shape="cds"]
+        construct_TR_query_with_wizard [shape="cds"]
+        construct_IR_query_with_wizard [shape="cds"]
+        download_non_COUNTER_usage [shape="cds"]
     }
 
 
@@ -1512,18 +1512,63 @@ digraph package_dependencies {
     }
 
     
-    /* *** Calls Between Functions (Organized by Calling Function) *** */
+    /* *** Calls Between Functions *** */
+    /*
+        Edges are organized by calling function
+        Flask redirects to a route function's URL via `url_for()` count as a function call
+        Accessing a route via the Flask test client counts as a function call
+    */
     // nolcat.annual_stats.views
+    show_fiscal_year_details -> annual_stats_homepage
+    annual_stats_homepage -> show_fiscal_year_details
 
     // nolcat.ingest_usage.views
+    upload_COUNTER_data -> ingest_usage_homepage
+    harvest_SUSHI_statistics -> ingest_usage_homepage
+    upload_non_COUNTER_reports -> ingest_usage_homepage
 
     // nolcat.initialization.views
+    collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
+    collect_FY_and_vendor_data -> collect_sources_data
+    collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
+    collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
+    collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
+    upload_historical_non_COUNTER_usage -> data_load_complete
 
     // nolcat.login.views
 
     // nolcat.view_lists.views
+    edit_list_record -> view_lists_homepage
+    edit_list_record -> view_list_record
 
     // nolcat.view_usage.views
+    construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_DR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_TR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_IR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    run_custom_SQL_query -> set_encoding
+    use_predefined_SQL_query -> set_encoding
+    construct_PR_query_with_wizard -> set_encoding
+    construct_DR_query_with_wizard -> set_encoding
+    construct_TR_query_with_wizard -> set_encoding
+    construct_IR_query_with_wizard -> set_encoding
+    run_custom_SQL_query -> create_downloads_folder
+    use_predefined_SQL_query -> create_downloads_folder
+    construct_PR_query_with_wizard -> create_downloads_folder
+    construct_DR_query_with_wizard -> create_downloads_folder
+    construct_TR_query_with_wizard -> create_downloads_folder
+    construct_IR_query_with_wizard -> create_downloads_folder
+    download_non_COUNTER_usage -> create_downloads_folder
+    run_custom_SQL_query -> view_usage_homepage
+    use_predefined_SQL_query -> view_usage_homepage
+    start_query_wizard -> view_usage_homepage
+    construct_PR_query_with_wizard -> view_usage_homepage
+    construct_DR_query_with_wizard -> view_usage_homepage
+    construct_TR_query_with_wizard -> view_usage_homepage
+    construct_IR_query_with_wizard -> view_usage_homepage
+    download_non_COUNTER_usage -> view_usage_homepage
+    query_wizard_sort_redirect -> start_query_wizard
+    start_query_wizard -> query_wizard_sort_redirect
 
     // nolcat.app
 
@@ -1737,6 +1782,10 @@ digraph package_dependencies {
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
 
     // tests.test_bp_annual_stats
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
+    test_GET_request_for_show_fiscal_year_details -> show_fiscal_year_details
+    test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm -> show_fiscal_year_details
+    test_show_fiscal_year_details_submitting_EditFiscalYearForm -> show_fiscal_year_details
 
     // tests.test_bp_ingest_usage
     test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
@@ -1751,6 +1800,13 @@ digraph package_dependencies {
     test_match_direct_SUSHI_harvest_result -> 
     test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
     test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
+    test_ingest_usage_homepage -> ingest_usage_homepage
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
@@ -1793,10 +1849,25 @@ digraph package_dependencies {
     test_collect_sources_data -> header_value
     test_collect_AUCT_and_historical_COUNTER_data -> header_value
     test_upload_historical_non_COUNTER_usage -> header_value
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_collect_sources_data -> collect_sources_data
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
 
     // tests.test_bp_login
+    test_login_homepage -> login_homepage
 
     // tests.test_bp_view_lists
+    test_view_lists_homepage -> view_lists_homepage
+    test_GET_request_for_view_list_record -> view_list_record
+    test_view_list_record -> view_list_record
+    test_GET_request_for_edit_list_record_for_existing_record -> edit_list_record
+    test_GET_request_for_edit_list_record_for_new_record -> edit_list_record
+    test_edit_list_record -> edit_list_record
 
     // tests.test_bp_view_usage
     test_run_custom_SQL_query -> COUNTER_download_CSV
@@ -1824,6 +1895,23 @@ digraph package_dependencies {
     test_construct_PR_query_with_wizard_without_string_match -> header_value
     test_download_non_COUNTER_usage -> header_value
     test_construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
+    test_create_COUNTER_fixed_vocab_list -> create_COUNTER_fixed_vocab_list
+    test_set_encoding -> set_encoding
+    COUNTER_download_CSV -> create_downloads_folder
+    test_download_non_COUNTER_usage -> create_downloads_folder
+    test_view_usage_homepage -> view_usage_homepage
+    test_run_custom_SQL_query -> run_custom_SQL_query
+    test_use_predefined_SQL_query -> use_predefined_SQL_query
+    test_start_query_wizard -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> query_wizard_sort_redirect
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
+    test_construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
