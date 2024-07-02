@@ -72,7 +72,7 @@ digraph package_dependencies {
         get_resourceSources_records
         add_note_in_vendors [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -107,7 +107,7 @@ digraph package_dependencies {
         collect_usage_statistics
         add_note_in_statisticsSources [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -140,7 +140,7 @@ digraph package_dependencies {
         change_StatisticsSource
         add_note_in_resourceSources [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -1570,6 +1570,9 @@ digraph package_dependencies {
     // nolcat.view_lists.views
     edit_list_record -> view_lists_homepage
     edit_list_record -> view_list_record
+    view_list_record -> add_note_in_resourceSources
+    view_list_record -> add_note_in_statisticsSources
+    view_list_record -> add_note_in_vendors
 
     // nolcat.view_usage.views
     construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
@@ -1634,6 +1637,7 @@ digraph package_dependencies {
     // nolcat.statements
 
     // nolcat.SUSHICallAndResponse
+    _evaluate_individual_SUSHI_exception -> add_note_in_statisticsSources
 
     // nolcat.UploadCOUNTERReports
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
@@ -2034,6 +2038,7 @@ digraph package_dependencies {
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
 
     // tests.test_ResourceSources
+    test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
 
     // tests.test_statements
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
@@ -2079,6 +2084,7 @@ digraph package_dependencies {
     StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
+    test_add_note_in_test_StatisticsSources -> add_note_in_statisticsSources
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
@@ -2115,4 +2121,5 @@ digraph package_dependencies {
     test_create_dataframe -> COUNTERData_relation
 
     // tests.test_Vendors
+    test_add_note_in_test_Vendors -> add_note_in_vendors
 }
