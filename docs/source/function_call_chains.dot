@@ -68,8 +68,8 @@ digraph package_dependencies {
             label="state_data_types"
             shape="box"
         ]
-        get_statisticsSources_records
-        get_resourceSources_records
+        get_statisticsSources_records [shape="box"]
+        get_resourceSources_records [shape="box"]
         add_note_in_vendors [
             label="add_note"
             shape="box"
@@ -2141,4 +2141,6 @@ digraph package_dependencies {
 
     // tests.test_Vendors
     test_add_note_in_test_Vendors -> add_note_in_vendors
+    test_get_statisticsSources_records -> get_statisticsSources_records
+    test_get_resourceSources_records -> get_resourceSources_records
 }
