@@ -281,6 +281,28 @@ digraph package_dependencies {
         upload_nonstandard_usage_file [shape="box"]
         download_nonstandard_usage_file [shape="folder"]
     }
+    collect_annual_usage_statistics -> _harvest_R5_SUSHI
+    collect_annual_usage_statistics -> initialize_relation_class_object_statement
+    collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_annual_usage_statistics -> return_value_from_query_statement
+    collect_annual_usage_statistics -> database_query_fail_statement
+    collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement
+    collect_annual_usage_statistics -> harvest_R5_SUSHI_success_statement
+    collect_annual_usage_statistics -> load_data_into_database_success_regex
+    collect_annual_usage_statistics -> update_database_success_regex
+    collect_annual_usage_statistics -> query_database
+    collect_annual_usage_statistics -> load_data_into_database
+    collect_annual_usage_statistics -> update_database
+    collect_annual_usage_statistics -> first_new_PK_value
+    upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    upload_nonstandard_usage_file -> file_IO_statement
+    upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement
+    upload_nonstandard_usage_file -> update_database_success_regex
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket
+    upload_nonstandard_usage_file -> update_database
+    download_nonstandard_usage_file -> file_IO_statement
 
 
     subgraph cluster_COUNTERData {
@@ -1857,32 +1879,6 @@ digraph package_dependencies {
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
-
-    // nolcat.models.AnnualUsageCollectionTracking
-    collect_annual_usage_statistics -> _harvest_R5_SUSHI
-    upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    collect_annual_usage_statistics -> initialize_relation_class_object_statement
-    collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    upload_nonstandard_usage_file -> file_IO_statement
-    download_nonstandard_usage_file -> file_IO_statement
-    upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-    upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    collect_annual_usage_statistics -> return_value_from_query_statement
-    collect_annual_usage_statistics -> database_query_fail_statement
-    collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement
-    upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement
-    collect_annual_usage_statistics -> harvest_R5_SUSHI_success_statement
-    collect_annual_usage_statistics -> load_data_into_database_success_regex
-    collect_annual_usage_statistics -> update_database_success_regex
-    upload_nonstandard_usage_file -> update_database_success_regex
-    upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    collect_annual_usage_statistics -> query_database
-    collect_annual_usage_statistics -> load_data_into_database
-    collect_annual_usage_statistics -> update_database
-    upload_nonstandard_usage_file -> update_database
-    collect_annual_usage_statistics -> first_new_PK_value
-
-    // nolcat.models.COUNTERData
 
     // nolcat.statements
     list_folder_contents_statement -> format_list_for_stdout
