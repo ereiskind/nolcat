@@ -42,6 +42,52 @@ digraph package_dependencies {
         create_usage_tracking_records_for_fiscal_year [shape="box"]
         collect_fiscal_year_usage_statistics [shape="box"]
     }
+    calculate_depreciated_ACRL_60b -> return_value_from_query_statement
+    calculate_depreciated_ACRL_60b -> database_query_fail_statement
+    calculate_depreciated_ACRL_60b -> query_database
+    calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
+    calculate_depreciated_ACRL_63 -> return_value_from_query_statement
+    calculate_depreciated_ACRL_63 -> database_query_fail_statement
+    calculate_depreciated_ACRL_63 -> query_database
+    calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
+    calculate_ACRL_61a -> return_value_from_query_statement
+    calculate_ACRL_61a -> database_query_fail_statement
+    calculate_ACRL_61a -> query_database
+    calculate_ACRL_61a -> extract_value_from_single_value_df
+    calculate_ACRL_61b -> return_value_from_query_statement
+    calculate_ACRL_61b -> database_query_fail_statement
+    calculate_ACRL_61b -> query_database
+    calculate_ACRL_61b -> extract_value_from_single_value_df
+    calculate_ARL_18 -> return_value_from_query_statement
+    calculate_ARL_18 -> database_query_fail_statement
+    calculate_ARL_18 -> query_database
+    calculate_ARL_18 -> extract_value_from_single_value_df
+    calculate_ARL_19 -> return_value_from_query_statement
+    calculate_ARL_19 -> database_query_fail_statement
+    calculate_ARL_19 -> query_database
+    calculate_ARL_19 -> extract_value_from_single_value_df
+    calculate_ARL_20 -> return_value_from_query_statement
+    calculate_ARL_20 -> database_query_fail_statement
+    calculate_ARL_20 -> query_database
+    calculate_ARL_20 -> extract_value_from_single_value_df
+    create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    create_usage_tracking_records_for_fiscal_year -> return_dataframe_from_query_statement
+    create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
+    create_usage_tracking_records_for_fiscal_year -> query_database
+    create_usage_tracking_records_for_fiscal_year -> load_data_into_database
+    create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
+    collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
+    collect_fiscal_year_usage_statistics -> format_list_for_stdout
+    collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_fiscal_year_usage_statistics -> database_query_fail_statement
+    collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement
+    collect_fiscal_year_usage_statistics -> harvest_R5_SUSHI_success_statement
+    collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
+    collect_fiscal_year_usage_statistics -> update_database_success_regex
+    collect_fiscal_year_usage_statistics -> query_database
+    collect_fiscal_year_usage_statistics -> load_data_into_database
+    collect_fiscal_year_usage_statistics -> update_database
+    collect_fiscal_year_usage_statistics -> first_new_PK_value
 
 
     subgraph cluster_annualStatistics {
@@ -1761,54 +1807,6 @@ digraph package_dependencies {
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
-
-    // nolcat.models.FiscalYears
-    create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
-    collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
-    collect_fiscal_year_usage_statistics -> format_list_for_stdout
-    collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    calculate_depreciated_ACRL_60b -> return_value_from_query_statement
-    calculate_depreciated_ACRL_63 -> return_value_from_query_statement
-    calculate_ACRL_61a -> return_value_from_query_statement
-    calculate_ACRL_61b -> return_value_from_query_statement
-    calculate_ARL_18 -> return_value_from_query_statement
-    calculate_ARL_19 -> return_value_from_query_statement
-    calculate_ARL_20 -> return_value_from_query_statement
-    create_usage_tracking_records_for_fiscal_year -> return_dataframe_from_query_statement
-    calculate_depreciated_ACRL_60b -> database_query_fail_statement
-    calculate_depreciated_ACRL_63 -> database_query_fail_statement
-    calculate_ACRL_61a -> database_query_fail_statement
-    calculate_ACRL_61b -> database_query_fail_statement
-    calculate_ARL_18 -> database_query_fail_statement
-    calculate_ARL_19 -> database_query_fail_statement
-    calculate_ARL_20 -> database_query_fail_statement
-    create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
-    collect_fiscal_year_usage_statistics -> database_query_fail_statement
-    collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement
-    collect_fiscal_year_usage_statistics -> harvest_R5_SUSHI_success_statement
-    collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
-    collect_fiscal_year_usage_statistics -> update_database_success_regex
-    calculate_depreciated_ACRL_60b -> query_database
-    calculate_depreciated_ACRL_63 -> query_database
-    calculate_ACRL_61a
-    calculate_ACRL_61b -> query_database
-    calculate_ARL_18 -> query_database
-    calculate_ARL_19 -> query_database
-    calculate_ARL_20 -> query_database
-    create_usage_tracking_records_for_fiscal_year -> query_database
-    collect_fiscal_year_usage_statistics -> query_database
-    create_usage_tracking_records_for_fiscal_year -> load_data_into_database
-    collect_fiscal_year_usage_statistics -> load_data_into_database
-    collect_fiscal_year_usage_statistics -> update_database
-    collect_fiscal_year_usage_statistics -> first_new_PK_value
-    create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
-    calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
-    calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
-    calculate_ACRL_61a -> extract_value_from_single_value_df
-    calculate_ACRL_61b -> extract_value_from_single_value_df
-    calculate_ARL_18 -> extract_value_from_single_value_df
-    calculate_ARL_19 -> extract_value_from_single_value_df
-    calculate_ARL_20 -> extract_value_from_single_value_df
 
     // nolcat.models.AnnualStatistics
 
