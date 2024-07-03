@@ -333,8 +333,8 @@ digraph package_dependencies {
 
         filter_empty_parentheses
         configure_logging
-        page_not_found
-        internal_server_error
+        page_not_found [shape="box"]
+        internal_server_error [shape="box"]
         create_app [shape="box"]
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
@@ -2087,6 +2087,7 @@ digraph package_dependencies {
     test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
     test_update_database -> update_database_success_regex
     test_update_database_with_insert_statement -> update_database_success_regex
+    test_404_page -> page_not_found
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
