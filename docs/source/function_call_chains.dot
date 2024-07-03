@@ -226,6 +226,19 @@ digraph package_dependencies {
             shape="box"
         ]
     }
+    add_access_stop_date -> database_update_fail_statement
+    add_access_stop_date -> update_database_success_regex
+    add_access_stop_date -> update_database
+    remove_access_stop_date -> database_update_fail_statement
+    remove_access_stop_date -> update_database_success_regex
+    remove_access_stop_date -> update_database
+    change_StatisticsSource -> state_data_types_in_statisticsResourceSources
+    change_StatisticsSource -> database_query_fail_statement
+    change_StatisticsSource -> database_update_fail_statement
+    change_StatisticsSource -> update_database_success_regex
+    change_StatisticsSource -> query_database
+    change_StatisticsSource -> load_data_into_database
+    change_StatisticsSource -> update_database
 
 
     subgraph cluster_resourceSourceNotes {
@@ -1844,26 +1857,6 @@ digraph package_dependencies {
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
-
-    // nolcat.models.ResourceSources
-    change_StatisticsSource -> state_data_types_in_statisticsResourceSources
-    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
-    change_StatisticsSource -> database_query_fail_statement
-    add_access_stop_date -> database_update_fail_statement
-    remove_access_stop_date -> database_update_fail_statement
-    change_StatisticsSource -> database_update_fail_statement
-    add_access_stop_date -> update_database_success_regex
-    remove_access_stop_date -> update_database_success_regex
-    change_StatisticsSource -> update_database_success_regex
-    change_StatisticsSource -> query_database
-    change_StatisticsSource -> load_data_into_database
-    add_access_stop_date -> update_database
-    remove_access_stop_date -> update_database
-    change_StatisticsSource -> update_database
-
-    // nolcat.models.ResourceSourceNotes
-
-    // nolcat.models.StatisticsResourceSources
 
     // nolcat.models.AnnualUsageCollectionTracking
     collect_annual_usage_statistics -> _harvest_R5_SUSHI
