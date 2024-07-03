@@ -398,6 +398,16 @@ digraph package_dependencies {
         annual_stats_homepage [shape="cds"]
         show_fiscal_year_details [shape="cds"]
     }
+    annual_stats_homepage -> show_fiscal_year_details
+    annual_stats_homepage -> Flask_error_statement
+    annual_stats_homepage -> database_query_fail_statement
+    annual_stats_homepage -> query_database
+    show_fiscal_year_details -> annual_stats_homepage
+    show_fiscal_year_details -> state_data_types_in_fiscalYears
+    show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
+    show_fiscal_year_details -> Flask_error_statement
+    show_fiscal_year_details -> database_query_fail_statement
+    show_fiscal_year_details -> query_database
 
 
     subgraph cluster_ingest_usage {
@@ -1686,17 +1696,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-    // nolcat.annual_stats.views
-    show_fiscal_year_details -> annual_stats_homepage
-    annual_stats_homepage -> show_fiscal_year_details
-    show_fiscal_year_details -> state_data_types_in_fiscalYears
-    show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
-    annual_stats_homepage -> Flask_error_statement
-    show_fiscal_year_details -> Flask_error_statement
-    annual_stats_homepage -> database_query_fail_statement
-    show_fiscal_year_details -> database_query_fail_statement
-    annual_stats_homepage -> query_database
-    show_fiscal_year_details -> query_database
 
     // nolcat.ingest_usage.views
     upload_COUNTER_data -> ingest_usage_homepage
