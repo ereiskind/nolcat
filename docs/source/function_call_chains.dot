@@ -339,24 +339,24 @@ digraph package_dependencies {
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
-        first_new_PK_value
-        return_string_of_dataframe_info
-        change_single_field_dataframe_into_series
-        restore_boolean_values_to_boolean_field
+        first_new_PK_value [shape="box"]
+        return_string_of_dataframe_info [shape="box"]
+        change_single_field_dataframe_into_series [shape="box"]
+        restore_boolean_values_to_boolean_field [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
-        create_AUCT_SelectField_options
+        create_AUCT_SelectField_options [shape="box"]
         load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
-        check_if_data_already_in_COUNTERData
-        truncate_longer_lines
+        check_if_data_already_in_COUNTERData [shape="box"]
+        truncate_longer_lines [shape="box"]
         update_database [shape="cylinder"]
-        save_unconverted_data_via_upload
-        ISSN_regex
-        ISBN_regex
+        save_unconverted_data_via_upload [shape="box"]
+        ISSN_regex [shape="box"]
+        ISBN_regex [shape="box"]
         last_day_of_month
-        extract_value_from_single_value_df
-        S3_file_name_timestamp
-        non_COUNTER_file_name_regex
+        extract_value_from_single_value_df [shape="box"]
+        S3_file_name_timestamp [shape="box"]
+        non_COUNTER_file_name_regex [shape="box"]
     }
 
 
@@ -1574,6 +1574,10 @@ digraph package_dependencies {
     upload_non_COUNTER_reports -> query_database
     upload_COUNTER_data -> load_data_into_database
     upload_COUNTER_data -> update_database
+    upload_COUNTER_data -> first_new_PK_value
+    upload_non_COUNTER_reports -> create_AUCT_SelectField_options
+    upload_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_COUNTER_data -> truncate_longer_lines
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1614,6 +1618,12 @@ digraph package_dependencies {
     collect_sources_data -> load_data_into_database
     collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
     collect_AUCT_and_historical_COUNTER_data -> update_database
+    collect_FY_and_vendor_data -> first_new_PK_value
+    collect_sources_data -> first_new_PK_value
+    collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value
+    upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
 
     // nolcat.login.views
 
@@ -1710,6 +1720,13 @@ digraph package_dependencies {
     construct_TR_query_with_wizard -> query_database
     construct_IR_query_with_wizard -> query_database
     download_non_COUNTER_usage -> query_database
+    construct_PR_query_with_wizard -> return_string_of_dataframe_info
+    construct_DR_query_with_wizard -> return_string_of_dataframe_info
+    construct_TR_query_with_wizard -> return_string_of_dataframe_info
+    construct_IR_query_with_wizard -> return_string_of_dataframe_info
+    download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
+    download_non_COUNTER_usage -> non_COUNTER_file_name_regex
 
     // nolcat.app
     "create_app.download_file" -> file_extensions_and_mimetypes
@@ -1730,11 +1747,18 @@ digraph package_dependencies {
     first_new_PK_value -> query_database
     check_if_data_already_in_COUNTERData -> query_database
     update_database -> query_database
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    update_database -> truncate_longer_lines
+    first_new_PK_value -> extract_value_from_single_value_df
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    update_database -> extract_value_from_single_value_df
 
     // nolcat.ConvertJSONDictToDataframe
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
     _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
 
     // nolcat.models.FiscalYears
     create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
@@ -1774,6 +1798,15 @@ digraph package_dependencies {
     create_usage_tracking_records_for_fiscal_year -> load_data_into_database
     collect_fiscal_year_usage_statistics -> load_data_into_database
     collect_fiscal_year_usage_statistics -> update_database
+    collect_fiscal_year_usage_statistics -> first_new_PK_value
+    create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
+    calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
+    calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
+    calculate_ACRL_61a -> extract_value_from_single_value_df
+    calculate_ACRL_61b -> extract_value_from_single_value_df
+    calculate_ARL_18 -> extract_value_from_single_value_df
+    calculate_ARL_19 -> extract_value_from_single_value_df
+    calculate_ARL_20 -> extract_value_from_single_value_df
 
     // nolcat.models.AnnualStatistics
 
@@ -1812,6 +1845,11 @@ digraph package_dependencies {
     _harvest_single_report -> upload_file_to_S3_bucket
     _check_if_data_in_database -> query_database
     collect_usage_statistics -> load_data_into_database
+    collect_usage_statistics -> first_new_PK_value
+    _harvest_single_report -> return_string_of_dataframe_info
+    _harvest_single_report -> save_unconverted_data_via_upload
+    _check_if_data_in_database -> extract_value_from_single_value_df
+    _harvest_single_report -> S3_file_name_timestamp
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1857,6 +1895,7 @@ digraph package_dependencies {
     collect_annual_usage_statistics -> load_data_into_database
     collect_annual_usage_statistics -> update_database
     upload_nonstandard_usage_file -> update_database
+    collect_annual_usage_statistics -> first_new_PK_value
 
     // nolcat.models.COUNTERData
 
@@ -1885,9 +1924,14 @@ digraph package_dependencies {
     make_SUSHI_call -> no_data_returned_by_SUSHI_statement
     _save_raw_Response_text -> query_database
     _evaluate_individual_SUSHI_exception -> query_database
+    _save_raw_Response_text -> save_unconverted_data_via_upload
+    _save_raw_Response_text -> extract_value_from_single_value_df
+    _save_raw_Response_text -> S3_file_name_timestamp
 
     // nolcat.UploadCOUNTERReports
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
+    create_dataframe_in_UploadCOUNTERReports -> return_string_of_dataframe_info
+    create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
     // tests.data.relations
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
@@ -2124,6 +2168,8 @@ digraph package_dependencies {
     test_collect_annual_usage_statistics -> query_database
     test_upload_nonstandard_usage_file -> query_database
     test_collect_annual_usage_statistics -> load_data_into_database
+    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
+    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
@@ -2165,6 +2211,18 @@ digraph package_dependencies {
     test_loading_connected_data_into_other_relation -> load_data_into_database
     test_update_database -> update_database
     test_update_database_with_insert_statement -> update_database
+    test_first_new_PK_value -> first_new_PK_value
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
+    test_truncate_longer_lines -> truncate_longer_lines
+    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
+    test_ISSN_regex -> ISSN_regex
+    test_ISBN_regex -> ISBN_regex
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    file_name_stem_and_data -> S3_file_name_timestamp
+    test_S3_file_name_timestamp -> S3_file_name_timestamp
+    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
@@ -2212,6 +2270,9 @@ digraph package_dependencies {
     test_harvest_SUSHI_statistics -> query_database
     test_GET_request_for_upload_non_COUNTER_reports -> query_database
     test_upload_non_COUNTER_reports -> query_database
+    test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
+    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
+    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
@@ -2289,6 +2350,9 @@ digraph package_dependencies {
     test_collect_AUCT_and_historical_COUNTER_data -> query_database
     test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
     test_upload_historical_non_COUNTER_usage -> query_database
+    test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
+    test_collect_sources_data -> change_single_field_dataframe_into_series
 
     // tests.test_bp_login
     test_login_homepage -> login_homepage
@@ -2368,6 +2432,11 @@ digraph package_dependencies {
     test_construct_TR_query_with_wizard -> query_database
     test_construct_IR_query_with_wizard -> query_database
     test_GET_request_for_download_non_COUNTER_usage -> query_database
+    test_construct_PR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_DR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
+    test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
@@ -2427,6 +2496,8 @@ digraph package_dependencies {
     test_collect_fiscal_year_usage_statistics -> query_database
     load_new_record_into_fiscalYears -> load_data_into_database
     test_collect_fiscal_year_usage_statistics -> update_database
+    test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
+    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
 
     // tests.test_ResourceSources
     test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
@@ -2506,6 +2577,9 @@ digraph package_dependencies {
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
     StatisticsSources_fixture -> query_database
     test_check_if_data_already_in_COUNTERData -> query_database
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData
+    StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
@@ -2561,6 +2635,7 @@ digraph package_dependencies {
     test_TR_call_validity -> reports_with_no_usage_regex
     test_IR_call_validity -> reports_with_no_usage_regex
     StatisticsSource_instance_name -> query_database
+    StatisticsSource_instance_name -> extract_value_from_single_value_df
 
     // tests.test_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
