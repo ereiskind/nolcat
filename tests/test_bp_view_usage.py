@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2024-07-03 ##########
+########## Passing 2024-07-03 ##########
 
 import pytest
 import logging
