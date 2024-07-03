@@ -346,7 +346,7 @@ digraph package_dependencies {
         upload_file_to_S3_bucket [shape="folder"]
         create_AUCT_SelectField_options
         load_data_into_database // shape="cylinder"
-        query_database // shape="cylinder"
+        query_database [shape="cylinder"]
         check_if_data_already_in_COUNTERData
         truncate_longer_lines
         update_database // shape="cylinder"
@@ -1547,6 +1547,8 @@ digraph package_dependencies {
     show_fiscal_year_details -> Flask_error_statement
     annual_stats_homepage -> database_query_fail_statement
     show_fiscal_year_details -> database_query_fail_statement
+    annual_stats_homepage -> query_database
+    show_fiscal_year_details -> query_database
 
     // nolcat.ingest_usage.views
     upload_COUNTER_data -> ingest_usage_homepage
@@ -1568,6 +1570,8 @@ digraph package_dependencies {
     upload_non_COUNTER_reports -> database_query_fail_statement
     upload_COUNTER_data -> database_update_fail_statement
     upload_COUNTER_data -> update_database_success_regex
+    harvest_SUSHI_statistics -> query_database
+    upload_non_COUNTER_reports -> query_database
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1602,6 +1606,8 @@ digraph package_dependencies {
     collect_sources_data -> load_data_into_database_success_regex
     collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
     collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+    collect_AUCT_and_historical_COUNTER_data -> query_database
+    upload_historical_non_COUNTER_usage -> query_database
 
     // nolcat.login.views
 
@@ -1616,6 +1622,9 @@ digraph package_dependencies {
     edit_list_record -> Flask_error_statement
     view_lists_homepage -> database_query_fail_statement
     edit_list_record -> database_query_fail_statement
+    view_lists_homepage -> query_database
+    view_list_record -> query_database
+    edit_list_record -> query_database
 
     // nolcat.view_usage.views
     construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
@@ -1687,6 +1696,14 @@ digraph package_dependencies {
     download_non_COUNTER_usage -> database_query_fail_statement
     use_predefined_SQL_query -> attempted_SUSHI_call_with_invalid_dates_statement
     query_wizard_sort_redirect -> attempted_SUSHI_call_with_invalid_dates_statement
+    run_custom_SQL_query -> query_database
+    use_predefined_SQL_query -> query_database
+    start_query_wizard -> query_database
+    construct_PR_query_with_wizard -> query_database
+    construct_DR_query_with_wizard -> query_database
+    construct_TR_query_with_wizard -> query_database
+    construct_IR_query_with_wizard -> query_database
+    download_non_COUNTER_usage -> query_database
 
     // nolcat.app
     "create_app.download_file" -> file_extensions_and_mimetypes
@@ -1704,6 +1721,9 @@ digraph package_dependencies {
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
+    first_new_PK_value -> query_database
+    check_if_data_already_in_COUNTERData -> query_database
+    update_database -> query_database
 
     // nolcat.ConvertJSONDictToDataframe
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
@@ -1736,6 +1756,15 @@ digraph package_dependencies {
     collect_fiscal_year_usage_statistics -> harvest_R5_SUSHI_success_statement
     collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     collect_fiscal_year_usage_statistics -> update_database_success_regex
+    calculate_depreciated_ACRL_60b -> query_database
+    calculate_depreciated_ACRL_63 -> query_database
+    calculate_ACRL_61a
+    calculate_ACRL_61b -> query_database
+    calculate_ARL_18 -> query_database
+    calculate_ARL_19 -> query_database
+    calculate_ARL_20 -> query_database
+    create_usage_tracking_records_for_fiscal_year -> query_database
+    collect_fiscal_year_usage_statistics -> query_database
 
     // nolcat.models.AnnualStatistics
 
@@ -1744,6 +1773,8 @@ digraph package_dependencies {
     get_resourceSources_records -> return_dataframe_from_query_statement
     get_statisticsSources_records -> database_query_fail_statement
     get_resourceSources_records -> database_query_fail_statement
+    get_statisticsSources_records -> query_database
+    get_resourceSources_records -> query_database
 
     // nolcat.models.VendorNotes
 
@@ -1770,6 +1801,7 @@ digraph package_dependencies {
     _harvest_R5_SUSHI -> reports_with_no_usage_regex
     _harvest_single_report -> reports_with_no_usage_regex
     _harvest_single_report -> upload_file_to_S3_bucket
+    _check_if_data_in_database -> query_database
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1783,6 +1815,7 @@ digraph package_dependencies {
     add_access_stop_date -> update_database_success_regex
     remove_access_stop_date -> update_database_success_regex
     change_StatisticsSource -> update_database_success_regex
+    change_StatisticsSource -> query_database
 
     // nolcat.models.ResourceSourceNotes
 
@@ -1806,6 +1839,7 @@ digraph package_dependencies {
     collect_annual_usage_statistics -> update_database_success_regex
     upload_nonstandard_usage_file -> update_database_success_regex
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
+    collect_annual_usage_statistics -> query_database
 
     // nolcat.models.COUNTERData
 
@@ -1832,6 +1866,8 @@ digraph package_dependencies {
     make_SUSHI_call -> failed_SUSHI_call_statement
     _convert_Response_to_JSON -> failed_SUSHI_call_statement
     make_SUSHI_call -> no_data_returned_by_SUSHI_statement
+    _save_raw_Response_text -> query_database
+    _evaluate_individual_SUSHI_exception -> query_database
 
     // nolcat.UploadCOUNTERReports
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
@@ -2029,6 +2065,9 @@ digraph package_dependencies {
     app -> create_app
     app -> configure_logging
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
+    non_COUNTER_AUCT_object_before_upload -> query_database
+    non_COUNTER_AUCT_object_after_upload -> query_database
+    match_direct_SUSHI_harvest_result -> query_database
 
     // tests.test_AnnualStatistics
     test_add_annual_statistic_value -> add_annual_statistic_value
@@ -2063,6 +2102,10 @@ digraph package_dependencies {
     test_upload_nonstandard_usage_file -> database_function_skip_statements
     test_collect_annual_usage_statistics -> load_data_into_database_success_regex
     test_collect_annual_usage_statistics -> update_database_success_regex
+    AUCT_fixture_for_SUSHI -> query_database
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
+    test_collect_annual_usage_statistics -> query_database
+    test_upload_nonstandard_usage_file -> query_database
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
@@ -2096,6 +2139,10 @@ digraph package_dependencies {
     test_update_database_with_insert_statement -> update_database_success_regex
     test_404_page -> page_not_found
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
+    test_query_database -> query_database
+    test_loading_connected_data_into_other_relation -> query_database
+    test_update_database -> query_database
+    test_update_database_with_insert_statement -> query_database
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
@@ -2103,6 +2150,7 @@ digraph package_dependencies {
     test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm -> show_fiscal_year_details
     test_show_fiscal_year_details_submitting_EditFiscalYearForm -> show_fiscal_year_details
     test_GET_request_for_annual_stats_homepage -> database_function_skip_statements
+    test_GET_request_for_annual_stats_homepage -> query_database
 
     // tests.test_bp_ingest_usage
     test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
@@ -2136,6 +2184,12 @@ digraph package_dependencies {
     test_harvest_SUSHI_statistics -> database_function_skip_statements
     test_GET_request_for_upload_non_COUNTER_reports -> database_function_skip_statements
     test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
+    test_upload_COUNTER_data_via_Excel -> query_database
+    test_upload_COUNTER_data_via_SQL_insert -> query_database
+    test_GET_request_for_harvest_SUSHI_statistics -> query_database
+    test_harvest_SUSHI_statistics -> query_database
+    test_GET_request_for_upload_non_COUNTER_reports -> query_database
+    test_upload_non_COUNTER_reports -> query_database
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
@@ -2208,6 +2262,11 @@ digraph package_dependencies {
     test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
     test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
     test_upload_historical_non_COUNTER_usage -> database_function_skip_statements
+    test_collect_FY_and_vendor_data -> query_database
+    test_collect_sources_data -> query_database
+    test_collect_AUCT_and_historical_COUNTER_data -> query_database
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
+    test_upload_historical_non_COUNTER_usage -> query_database
 
     // tests.test_bp_login
     test_login_homepage -> login_homepage
@@ -2280,6 +2339,13 @@ digraph package_dependencies {
     test_construct_TR_query_with_wizard -> database_function_skip_statements
     test_construct_IR_query_with_wizard -> database_function_skip_statements
     test_GET_request_for_download_non_COUNTER_usage -> database_function_skip_statements
+    test_use_predefined_SQL_query -> query_database
+    start_query_wizard_form_data -> query_database
+    test_construct_PR_query_with_wizard -> query_database
+    test_construct_DR_query_with_wizard -> query_database
+    test_construct_TR_query_with_wizard -> query_database
+    test_construct_IR_query_with_wizard -> query_database
+    test_GET_request_for_download_non_COUNTER_usage -> query_database
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
@@ -2333,6 +2399,10 @@ digraph package_dependencies {
     test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
     test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     test_collect_fiscal_year_usage_statistics -> update_database_success_regex
+    FY2020_FiscalYears_object -> query_database
+    test_create_usage_tracking_records_for_fiscal_year -> query_database
+    FY2022_FiscalYears_object -> query_database
+    test_collect_fiscal_year_usage_statistics -> query_database
 
     // tests.test_ResourceSources
     test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
@@ -2410,6 +2480,8 @@ digraph package_dependencies {
     test_check_if_data_already_in_COUNTERData -> database_function_skip_statements
     test_harvest_single_report -> reports_with_no_usage_regex
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
+    StatisticsSources_fixture -> query_database
+    test_check_if_data_already_in_COUNTERData -> query_database
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
@@ -2464,6 +2536,7 @@ digraph package_dependencies {
     test_DR_call_validity -> reports_with_no_usage_regex
     test_TR_call_validity -> reports_with_no_usage_regex
     test_IR_call_validity -> reports_with_no_usage_regex
+    StatisticsSource_instance_name -> query_database
 
     // tests.test_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
