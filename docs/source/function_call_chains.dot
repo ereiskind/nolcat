@@ -383,6 +383,11 @@ digraph package_dependencies {
         _transform_R5b1_JSON [shape="box"]
         _serialize_dates [shape="box"]
     }
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
 
 
     subgraph cluster_annual_stats {
@@ -1897,13 +1902,6 @@ digraph package_dependencies {
     first_new_PK_value -> extract_value_from_single_value_df
     check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
     update_database -> extract_value_from_single_value_df
-
-    // nolcat.ConvertJSONDictToDataframe
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
-    _transform_R5_JSON -> _serialize_dates
-    _transform_R5_JSON -> return_string_of_dataframe_info
-    _transform_R5_JSON -> ISSN_regex
 
     // nolcat.statements
     list_folder_contents_statement -> format_list_for_stdout
