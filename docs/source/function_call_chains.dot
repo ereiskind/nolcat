@@ -331,6 +331,28 @@ digraph package_dependencies {
         _evaluate_individual_SUSHI_exception [shape="box"]
         _stdout_API_response_based_on_size [shape="box"]
     }
+    make_SUSHI_call -> _make_API_call
+    make_SUSHI_call -> _convert_Response_to_JSON
+    make_SUSHI_call -> _save_raw_Response_text
+    make_SUSHI_call -> _handle_SUSHI_exceptions
+    make_SUSHI_call -> _stdout_API_response_based_on_size
+    make_SUSHI_call -> format_list_for_stdout
+    make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    make_SUSHI_call -> failed_SUSHI_call_statement
+    make_SUSHI_call -> no_data_returned_by_SUSHI_statement
+    _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    _save_raw_Response_text -> file_IO_statement
+    _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    _save_raw_Response_text -> database_query_fail_statement
+    _save_raw_Response_text -> query_database
+    _save_raw_Response_text -> save_unconverted_data_via_upload
+    _save_raw_Response_text -> extract_value_from_single_value_df
+    _save_raw_Response_text -> S3_file_name_timestamp
+    _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
+    _handle_SUSHI_exceptions -> format_list_for_stdout
+    _evaluate_individual_SUSHI_exception -> add_note_in_statisticsSources
+    _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    _evaluate_individual_SUSHI_exception -> query_database
 
 
     subgraph cluster_UploadCOUNTERReports {
@@ -1884,30 +1906,6 @@ digraph package_dependencies {
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
-
-    // nolcat.SUSHICallAndResponse
-    _evaluate_individual_SUSHI_exception -> add_note_in_statisticsSources
-    make_SUSHI_call -> _make_API_call
-    make_SUSHI_call -> _convert_Response_to_JSON
-    make_SUSHI_call -> _save_raw_Response_text
-    make_SUSHI_call -> _handle_SUSHI_exceptions
-    _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
-    make_SUSHI_call -> _stdout_API_response_based_on_size
-    make_SUSHI_call -> format_list_for_stdout
-    _handle_SUSHI_exceptions -> format_list_for_stdout
-    _save_raw_Response_text -> file_IO_statement
-    make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    _save_raw_Response_text -> database_query_fail_statement
-    _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    make_SUSHI_call -> failed_SUSHI_call_statement
-    _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    make_SUSHI_call -> no_data_returned_by_SUSHI_statement
-    _save_raw_Response_text -> query_database
-    _evaluate_individual_SUSHI_exception -> query_database
-    _save_raw_Response_text -> save_unconverted_data_via_upload
-    _save_raw_Response_text -> extract_value_from_single_value_df
-    _save_raw_Response_text -> S3_file_name_timestamp
 
     // nolcat.UploadCOUNTERReports
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
