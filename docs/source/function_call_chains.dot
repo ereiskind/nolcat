@@ -121,6 +121,12 @@ digraph package_dependencies {
             shape="box"
         ]
     }
+    get_statisticsSources_records -> return_dataframe_from_query_statement
+    get_statisticsSources_records -> database_query_fail_statement
+    get_statisticsSources_records -> query_database
+    get_resourceSources_records -> return_dataframe_from_query_statement
+    get_resourceSources_records -> database_query_fail_statement
+    get_resourceSources_records -> query_database
 
 
     subgraph cluster_vendorNotes {
@@ -1807,18 +1813,6 @@ digraph package_dependencies {
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
-
-    // nolcat.models.AnnualStatistics
-
-    // nolcat.models.Vendors
-    get_statisticsSources_records -> return_dataframe_from_query_statement
-    get_resourceSources_records -> return_dataframe_from_query_statement
-    get_statisticsSources_records -> database_query_fail_statement
-    get_resourceSources_records -> database_query_fail_statement
-    get_statisticsSources_records -> query_database
-    get_resourceSources_records -> query_database
-
-    // nolcat.models.VendorNotes
 
     // nolcat.models.StatisticsSources
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
