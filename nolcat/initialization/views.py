@@ -464,7 +464,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             log.warning(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if COUNTER_reports_df is None:  # `is None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
+        if COUNTER_reports_df is not None:  # `is not None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
             COUNTERData_load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
                 df=COUNTER_reports_df,
                 relation='COUNTERData',
