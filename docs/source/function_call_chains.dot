@@ -331,8 +331,8 @@ digraph package_dependencies {
         label="nolcat.app"
         color="#5cb8b2"
 
-        filter_empty_parentheses
-        configure_logging
+        filter_empty_parentheses [shape="box"]
+        configure_logging [shape="box"]
         page_not_found [shape="box"]
         internal_server_error [shape="box"]
         create_app [shape="box"]
@@ -1701,6 +1701,8 @@ digraph package_dependencies {
     check_if_data_already_in_COUNTERData -> database_query_fail_statement
     update_database -> database_query_fail_statement
     create_app -> "create_app.create_db"
+    configure_logging -> filter_empty_parentheses
+    create_app -> configure_logging
 
     // nolcat.ConvertJSONDictToDataframe
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
@@ -2022,6 +2024,7 @@ digraph package_dependencies {
     non_COUNTER_AUCT_object_after_upload -> database_function_skip_statements
     match_direct_SUSHI_harvest_result -> database_function_skip_statements
     app -> create_app
+    app -> configure_logging
 
     // tests.test_AnnualStatistics
     test_add_annual_statistic_value -> add_annual_statistic_value
