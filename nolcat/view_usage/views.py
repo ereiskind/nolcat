@@ -95,7 +95,9 @@ def run_custom_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         
         file_path = create_downloads_folder() / 'NoLCAT_download.csv'
@@ -237,7 +239,9 @@ def use_predefined_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
@@ -277,7 +281,9 @@ def start_query_wizard():
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
-            flash(database_query_fail_statement(fiscal_year_options))
+            message = database_query_fail_statement(fiscal_year_options)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('view_usage/query-wizard-start.html', form=form)
@@ -293,7 +299,9 @@ def start_query_wizard():
                 engine=db.engine,
             )
             if isinstance(fiscal_year_dates, str):
-                flash(database_query_fail_statement(fiscal_year_dates))
+                message = database_query_fail_statement(fiscal_year_dates)
+                log.warning(message)
+                flash(message)
                 return redirect(url_for('view_usage.view_usage_homepage'))
             begin_date = fiscal_year_dates['start_date'][0].isoformat()
             end_date = fiscal_year_dates['end_date'][0].isoformat()
@@ -331,7 +339,9 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
-            flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
+            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database")
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
             flash_statement = "The usage data being requested includes COUNTER Release 4 data for all usage"
@@ -339,6 +349,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
                 flash_statement = flash_statement + "."
             else:
                 flash_statement = flash_statement + " before 2019-07-01."
+            log.warning(flash_statement)
             flash(flash_statement)
         logging.debug(f"The query date range is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
         
@@ -945,7 +956,9 @@ def download_non_COUNTER_usage(testing):
             engine=db.engine,
         )
         if isinstance(file_download_options, str):
-            flash(database_query_fail_statement(file_download_options))
+            message = database_query_fail_statement(file_download_options)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form, testing=testing)
@@ -968,7 +981,9 @@ def download_non_COUNTER_usage(testing):
             engine=db.engine,
         )
         if isinstance(AUCT_object, str):
-            flash(database_query_fail_statement(AUCT_object))
+            message = database_query_fail_statement(AUCT_object)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
         AUCT_object['manual_collection_required'] = restore_boolean_values_to_boolean_field(AUCT_object['manual_collection_required'])

@@ -42,7 +42,9 @@ def view_lists_homepage(list):
     #     engine=db.engine,
     # )
     # if isinstance(df, str):
-    #     flash(database_query_fail_statement(df))
+    #     message = database_query_fail_statement(df)
+    #     log.warning(message)
+    #     flash(message)
     #     return abort(404)
     # df = df.astype({dict setting correct dtypes})
     # Add field with links to see details for each record
@@ -107,7 +109,9 @@ def edit_list_record(list, PK):
             #     engine=db.engine,
             # )
             # if isinstance(df, str):
-            #     flash(database_query_fail_statement(df))
+            #     message = database_query_fail_statement(df)
+            #     log.warning(message)
+            #     flash(message)
             #     return redirect(url_for(view_lists.view_lists_homepage))
             # df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
