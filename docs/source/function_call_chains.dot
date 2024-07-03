@@ -1727,6 +1727,8 @@ digraph package_dependencies {
     download_non_COUNTER_usage -> create_AUCT_SelectField_options
     download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
     download_non_COUNTER_usage -> non_COUNTER_file_name_regex
+    use_predefined_SQL_query -> last_day_of_month
+    start_query_wizard -> last_day_of_month
 
     // nolcat.app
     "create_app.download_file" -> file_extensions_and_mimetypes
@@ -1850,6 +1852,7 @@ digraph package_dependencies {
     _harvest_single_report -> save_unconverted_data_via_upload
     _check_if_data_in_database -> extract_value_from_single_value_df
     _harvest_single_report -> S3_file_name_timestamp
+    _harvest_single_report -> last_day_of_month
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -2129,6 +2132,7 @@ digraph package_dependencies {
     non_COUNTER_AUCT_object_before_upload -> query_database
     non_COUNTER_AUCT_object_after_upload -> query_database
     match_direct_SUSHI_harvest_result -> query_database
+    most_recent_month_with_usage -> last_day_of_month
 
     // tests.test_AnnualStatistics
     test_add_annual_statistic_value -> add_annual_statistic_value
@@ -2223,6 +2227,7 @@ digraph package_dependencies {
     file_name_stem_and_data -> S3_file_name_timestamp
     test_S3_file_name_timestamp -> S3_file_name_timestamp
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
+    test_last_day_of_month -> last_day_of_month
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
@@ -2437,6 +2442,7 @@ digraph package_dependencies {
     test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
     test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
     test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    start_query_wizard_form_data -> last_day_of_month
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
@@ -2580,6 +2586,11 @@ digraph package_dependencies {
     test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData
     StatisticsSources_fixture -> extract_value_from_single_value_df
     test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    current_month_like_most_recent_month_with_usage -> last_day_of_month
+    test_harvest_single_report -> last_day_of_month
+    test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
+    test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
+    month_before_month_like_most_recent_month_with_usage -> last_day_of_month
 
     // tests.test_SUSHICallAndResponse
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
@@ -2636,6 +2647,7 @@ digraph package_dependencies {
     test_IR_call_validity -> reports_with_no_usage_regex
     StatisticsSource_instance_name -> query_database
     StatisticsSource_instance_name -> extract_value_from_single_value_df
+    SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
 
     // tests.test_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
