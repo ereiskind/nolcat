@@ -926,26 +926,14 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
 def test_construct_PR_query_with_wizard_without_string_match(client, header_value):
     """Tests using the PR query wizard with a string that won't return any matches."""
-    form_input = {
+    form_input = {  # On 2024-06-12, accepted tuples containing tuple pairs matching form display fields and return values; 2024-07-03, such values were no longer allowed--unclear how change happened (aiobotocore, botocore, Bottleneck, setuptools were the only packages with version changes)
         'begin_date': date.fromisoformat('2019-01-01'),
         'end_date': date.fromisoformat('2019-12-31'),
-        'display_fields': (
-            'platform',
-            #TEST: ('data_type', "Data Type"),
-            #TEST: ('access_method', "Access Method"),
-        ),
+        'display_fields': 'platform',
         'platform_filter': "not going to match",
-        'data_type_filter': (forms.data_type_values['Platform']),
-        'access_method_filter': tuple(forms.access_method_values),
-        'metric_type_filter': (
-            forms.metric_type_values['Searches_Platform'],
-            forms.metric_type_values['Total_Item_Investigations'],
-            forms.metric_type_values['Unique_Item_Investigations'],
-            forms.metric_type_values['Unique_Title_Investigations'],
-            forms.metric_type_values['Total_Item_Requests'],
-            forms.metric_type_values['Unique_Item_Requests'],
-            forms.metric_type_values['Unique_Title_Requests'],
-        ),
+        'data_type_filter': forms.data_type_values['Platform'][0],
+        'access_method_filter': 'Regular',
+        'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
         'open_in_Excel': False,
     }
     POST_response = client.post(
