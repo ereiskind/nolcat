@@ -72,6 +72,7 @@ def upload_COUNTER_data():
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             if df is None:
+                log.warning(message_to_flash)
                 flash(message_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             if message_to_flash:
@@ -81,8 +82,9 @@ def upload_COUNTER_data():
                 df.index += first_new_PK_value('COUNTERData')
             except Exception as error:
                 message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
+                log.info(message)
                 messages_to_flash.append(message)
+                log.warning(messages_to_flash)
                 flash(messages_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
@@ -94,6 +96,7 @@ def upload_COUNTER_data():
                 index_field_name='COUNTER_data_ID',
             )
             messages_to_flash.append(load_result)
+            log.warning(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         elif list(mimetype_set)[0] == 'application/sql':
@@ -118,6 +121,7 @@ def upload_COUNTER_data():
                     log.warning(message)
                     messages_to_flash.append(message)   
             
+            log.warning(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         else:
@@ -150,7 +154,9 @@ def harvest_SUSHI_statistics(testing):
             engine=db.engine,
         )
         if isinstance(statistics_source_options, str):
-            flash(database_query_fail_statement(statistics_source_options))
+            message = database_query_fail_statement(statistics_source_options)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
@@ -160,7 +166,9 @@ def harvest_SUSHI_statistics(testing):
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -198,9 +206,11 @@ def harvest_SUSHI_statistics(testing):
             )
             log.info(result_message)
             if [item for sublist in flash_messages.values() for item in sublist]:
-                flash(flash_messages)
+                message = flash_messages
             else:  # So success message shows instead of a lack of error messages
-                flash(result_message)
+                message = result_message
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"The SUSHI call raised {error}."
@@ -248,7 +258,9 @@ def upload_non_COUNTER_reports(testing):
             engine=db.engine,
         )
         if isinstance(non_COUNTER_files_needed, str):
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            message = database_query_fail_statement(non_COUNTER_files_needed)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
@@ -278,7 +290,9 @@ def upload_non_COUNTER_reports(testing):
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(
             AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],

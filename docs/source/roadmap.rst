@@ -98,11 +98,11 @@ Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 
-Iteration 6: Create UI Design and Jinja Templates
-==================================================
-* Clean up CSS file
+Iteration 6: Miscellaneous
+==========================
 * Create CSS class for flashed messages
-* Create Jinja template header and footer in "nolcat/templates/layout.html"
+* Add FSU Libraries wordmark as link to library homepage in footer
+* Consolidate ``nolcat.models.StatisticsSources._check_if_data_in_database()`` and ``nolcat.app.check_if_data_already_in_COUNTERData()``
 
 Iteration 7: Interact with Host File System
 ============================================

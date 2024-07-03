@@ -143,6 +143,7 @@ def collect_FY_and_vendor_data():
         if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
             data_load_errors.append(vendorNotes_load_result)
         if data_load_errors:
+            log.warning(data_load_errors)
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         
@@ -297,6 +298,7 @@ def collect_sources_data():
         if not load_data_into_database_success_regex().fullmatch(statisticsResourceSources_load_result):
             data_load_errors.append(statisticsResourceSources_load_result)
         if data_load_errors:
+            log.warning(data_load_errors)
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_sources_data'))
         
@@ -327,7 +329,9 @@ def collect_AUCT_and_historical_COUNTER_data():
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
@@ -430,6 +434,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             if COUNTER_reports_df is None:
+                log.warning(message_to_flash)
                 flash(message_to_flash)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             if message_to_flash:
@@ -439,8 +444,9 @@ def collect_AUCT_and_historical_COUNTER_data():
                 COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
             except Exception as error:
                 message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
+                log.info(message)
                 messages_to_flash.append(message)
+                log.warning(messages_to_flash)
                 flash(messages_to_flash)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
@@ -455,9 +461,10 @@ def collect_AUCT_and_historical_COUNTER_data():
         )
         if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
+            log.warning(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if COUNTER_reports_df is None:  # `is None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
+        if COUNTER_reports_df is not None:  # `is not None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
             COUNTERData_load_result = load_data_into_database(  #ToDo: Make `df` a parquet file and save it to S3
                 df=COUNTER_reports_df,
                 relation='COUNTERData',
@@ -467,6 +474,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
                 messages_to_flash.append(COUNTERData_load_result)
         if messages_to_flash:
+            log.warning(messages_to_flash)
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
 
@@ -513,7 +521,9 @@ def upload_historical_non_COUNTER_usage(testing):
             engine=db.engine,
         )
         if isinstance(non_COUNTER_files_needed, str):
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            message = database_query_fail_statement(non_COUNTER_files_needed)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.data_load_complete'))
         list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
