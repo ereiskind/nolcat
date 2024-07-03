@@ -343,7 +343,7 @@ digraph package_dependencies {
         return_string_of_dataframe_info
         change_single_field_dataframe_into_series
         restore_boolean_values_to_boolean_field
-        upload_file_to_S3_bucket
+        upload_file_to_S3_bucket [shape="folder"]
         create_AUCT_SelectField_options
         load_data_into_database // shape="cylinder"
         query_database // shape="cylinder"
@@ -1703,6 +1703,7 @@ digraph package_dependencies {
     create_app -> "create_app.create_db"
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
 
     // nolcat.ConvertJSONDictToDataframe
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
@@ -1768,6 +1769,7 @@ digraph package_dependencies {
     _harvest_single_report -> no_data_returned_by_SUSHI_statement
     _harvest_R5_SUSHI -> reports_with_no_usage_regex
     _harvest_single_report -> reports_with_no_usage_regex
+    _harvest_single_report -> upload_file_to_S3_bucket
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1803,6 +1805,7 @@ digraph package_dependencies {
     collect_annual_usage_statistics -> load_data_into_database_success_regex
     collect_annual_usage_statistics -> update_database_success_regex
     upload_nonstandard_usage_file -> update_database_success_regex
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket
 
     // nolcat.models.COUNTERData
 
@@ -2025,6 +2028,7 @@ digraph package_dependencies {
     match_direct_SUSHI_harvest_result -> database_function_skip_statements
     app -> create_app
     app -> configure_logging
+    non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
 
     // tests.test_AnnualStatistics
     test_add_annual_statistic_value -> add_annual_statistic_value
@@ -2091,6 +2095,7 @@ digraph package_dependencies {
     test_update_database -> update_database_success_regex
     test_update_database_with_insert_statement -> update_database_success_regex
     test_404_page -> page_not_found
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
