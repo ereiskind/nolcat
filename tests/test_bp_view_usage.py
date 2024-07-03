@@ -930,7 +930,7 @@ def test_construct_PR_query_with_wizard_without_string_match(client, header_valu
         'begin_date': date.fromisoformat('2019-01-01'),
         'end_date': date.fromisoformat('2019-12-31'),
         'display_fields': (
-            ('platform', "Platform"),
+            'platform',
             #TEST: ('data_type', "Data Type"),
             #TEST: ('access_method', "Access Method"),
         ),
