@@ -365,6 +365,9 @@ digraph package_dependencies {
             shape="box"
         ]
     }
+    create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
+    create_dataframe_in_UploadCOUNTERReports -> return_string_of_dataframe_info
+    create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
 
     subgraph cluster_ConvertJSONDictToDataframe {
@@ -1906,11 +1909,6 @@ digraph package_dependencies {
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
-
-    // nolcat.UploadCOUNTERReports
-    create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
-    create_dataframe_in_UploadCOUNTERReports -> return_string_of_dataframe_info
-    create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
     // tests.data.relations
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
