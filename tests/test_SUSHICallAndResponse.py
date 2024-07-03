@@ -71,7 +71,9 @@ def SUSHI_credentials_fixture():
                 '%Y/%m', # yyyy/mm
             ]
         )
+    log.error(f"Before `SUSHI_credentials['end_date']` (type {type(SUSHI_credentials['end_date'])}): {SUSHI_credentials['end_date']}")  #TEST: temp
     SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
+    log.error(f"After `SUSHI_credentials['end_date']` (type {type(SUSHI_credentials['end_date'])}): {SUSHI_credentials['end_date']}")  #TEST: temp
 
     yield (URL, SUSHI_credentials)
 

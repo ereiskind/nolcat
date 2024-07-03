@@ -143,7 +143,9 @@ def use_predefined_SQL_query():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
+        log.error(f"Before `end_date` (type {type(end_date)}): {end_date}")  #TEST: temp
         end_date = last_day_of_month(end_date)
+        log.error(f"After `end_date` (type {type(end_date)}): {end_date}")  #TEST: temp
         log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         
         if form.query_options.data == "PR_P1":
@@ -284,7 +286,10 @@ def start_query_wizard():
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
+            log.error(f"`form.end_date.data` (type {type(form.end_date.data)}): {form.end_date.data}")  #TEST: temp
+            log.error(f"`last_day_of_month(form.end_date.data)` (type {type(last_day_of_month(form.end_date.data))}): {last_day_of_month(form.end_date.data)}")  #TEST: temp
             end_date = last_day_of_month(form.end_date.data).isoformat()
+            log.error(f"`end_date` (type {type(end_date)}): {end_date}")  #TEST: temp
             begin_date = form.begin_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:
             log.debug(f"Using the fiscal year with ID {form.fiscal_year.data} as the date range.")
