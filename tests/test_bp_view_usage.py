@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2024-06-12 ##########
+########## Failing 2024-07-03 ##########
 
 import pytest
 import logging
@@ -156,8 +156,6 @@ def start_query_wizard_form_data(engine):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
-    log.error(f"`df.at[0,'usage_date']` (type {type(df.at[0,'usage_date'])}): {df.at[0,'usage_date']}")  #TEST: temp
-    log.error(f"`last_day_of_month(df.at[0,'usage_date'])` (type {type(last_day_of_month(df.at[0,'usage_date']))}): {last_day_of_month(df.at[0,'usage_date'])}")  #TEST: temp
     yield {
         'begin_date': df.at[0,'usage_date'],
         'end_date': last_day_of_month(df.at[0,'usage_date']),
