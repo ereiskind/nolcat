@@ -345,11 +345,11 @@ digraph package_dependencies {
         restore_boolean_values_to_boolean_field
         upload_file_to_S3_bucket [shape="folder"]
         create_AUCT_SelectField_options
-        load_data_into_database // shape="cylinder"
+        load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
         check_if_data_already_in_COUNTERData
         truncate_longer_lines
-        update_database // shape="cylinder"
+        update_database [shape="cylinder"]
         save_unconverted_data_via_upload
         ISSN_regex
         ISBN_regex
@@ -1572,6 +1572,8 @@ digraph package_dependencies {
     upload_COUNTER_data -> update_database_success_regex
     harvest_SUSHI_statistics -> query_database
     upload_non_COUNTER_reports -> query_database
+    upload_COUNTER_data -> load_data_into_database
+    upload_COUNTER_data -> update_database
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -1608,6 +1610,10 @@ digraph package_dependencies {
     collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
     collect_AUCT_and_historical_COUNTER_data -> query_database
     upload_historical_non_COUNTER_usage -> query_database
+    collect_FY_and_vendor_data -> load_data_into_database
+    collect_sources_data -> load_data_into_database
+    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
+    collect_AUCT_and_historical_COUNTER_data -> update_database
 
     // nolcat.login.views
 
@@ -1765,6 +1771,9 @@ digraph package_dependencies {
     calculate_ARL_20 -> query_database
     create_usage_tracking_records_for_fiscal_year -> query_database
     collect_fiscal_year_usage_statistics -> query_database
+    create_usage_tracking_records_for_fiscal_year -> load_data_into_database
+    collect_fiscal_year_usage_statistics -> load_data_into_database
+    collect_fiscal_year_usage_statistics -> update_database
 
     // nolcat.models.AnnualStatistics
 
@@ -1802,6 +1811,7 @@ digraph package_dependencies {
     _harvest_single_report -> reports_with_no_usage_regex
     _harvest_single_report -> upload_file_to_S3_bucket
     _check_if_data_in_database -> query_database
+    collect_usage_statistics -> load_data_into_database
 
     // nolcat.models.StatisticsSourceNotes
 
@@ -1816,6 +1826,10 @@ digraph package_dependencies {
     remove_access_stop_date -> update_database_success_regex
     change_StatisticsSource -> update_database_success_regex
     change_StatisticsSource -> query_database
+    change_StatisticsSource -> load_data_into_database
+    add_access_stop_date -> update_database
+    remove_access_stop_date -> update_database
+    change_StatisticsSource -> update_database
 
     // nolcat.models.ResourceSourceNotes
 
@@ -1840,6 +1854,9 @@ digraph package_dependencies {
     upload_nonstandard_usage_file -> update_database_success_regex
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     collect_annual_usage_statistics -> query_database
+    collect_annual_usage_statistics -> load_data_into_database
+    collect_annual_usage_statistics -> update_database
+    upload_nonstandard_usage_file -> update_database
 
     // nolcat.models.COUNTERData
 
@@ -2106,6 +2123,7 @@ digraph package_dependencies {
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
     test_collect_annual_usage_statistics -> query_database
     test_upload_nonstandard_usage_file -> query_database
+    test_collect_annual_usage_statistics -> load_data_into_database
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
@@ -2143,6 +2161,10 @@ digraph package_dependencies {
     test_loading_connected_data_into_other_relation -> query_database
     test_update_database -> query_database
     test_update_database_with_insert_statement -> query_database
+    test_load_data_into_database -> load_data_into_database
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    test_update_database -> update_database
+    test_update_database_with_insert_statement -> update_database
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
@@ -2403,6 +2425,8 @@ digraph package_dependencies {
     test_create_usage_tracking_records_for_fiscal_year -> query_database
     FY2022_FiscalYears_object -> query_database
     test_collect_fiscal_year_usage_statistics -> query_database
+    load_new_record_into_fiscalYears -> load_data_into_database
+    test_collect_fiscal_year_usage_statistics -> update_database
 
     // tests.test_ResourceSources
     test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
