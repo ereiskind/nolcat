@@ -162,6 +162,37 @@ digraph package_dependencies {
             shape="box"
         ]
     }
+    fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
+    _harvest_R5_SUSHI -> fetch_SUSHI_information
+    _harvest_R5_SUSHI -> _harvest_single_report
+    _harvest_R5_SUSHI -> make_SUSHI_call
+    _harvest_R5_SUSHI -> successful_SUSHI_call_statement
+    _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+    _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+    _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    _harvest_single_report -> state_data_types_in_COUNTERData
+    _harvest_single_report -> _check_if_data_in_database
+    _harvest_single_report -> make_SUSHI_call
+    _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    _harvest_single_report -> failed_upload_to_S3_statement
+    _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    _harvest_single_report -> no_data_returned_by_SUSHI_statement
+    _harvest_single_report -> reports_with_no_usage_regex
+    _harvest_single_report -> upload_file_to_S3_bucket
+    _harvest_single_report -> return_string_of_dataframe_info
+    _harvest_single_report -> save_unconverted_data_via_upload
+    _harvest_single_report -> S3_file_name_timestamp
+    _harvest_single_report -> last_day_of_month
+    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
+    _check_if_data_in_database -> return_value_from_query_statement
+    _check_if_data_in_database -> database_query_fail_statement
+    _check_if_data_in_database -> query_database
+    _check_if_data_in_database -> extract_value_from_single_value_df
+    collect_usage_statistics -> _harvest_R5_SUSHI
+    collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_usage_statistics -> harvest_R5_SUSHI_success_statement
+    collect_usage_statistics -> load_data_into_database
+    collect_usage_statistics -> first_new_PK_value
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -1813,40 +1844,6 @@ digraph package_dependencies {
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
-
-    // nolcat.models.StatisticsSources
-    fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
-    _harvest_single_report -> state_data_types_in_COUNTERData
-    _harvest_R5_SUSHI -> fetch_SUSHI_information
-    collect_usage_statistics -> _harvest_R5_SUSHI
-    _harvest_R5_SUSHI -> _harvest_single_report
-    _harvest_single_report -> _check_if_data_in_database
-    _harvest_R5_SUSHI -> make_SUSHI_call
-    _harvest_single_report -> make_SUSHI_call
-    _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    _harvest_single_report -> failed_upload_to_S3_statement
-    _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    _check_if_data_in_database -> return_value_from_query_statement
-    _check_if_data_in_database -> database_query_fail_statement
-    _harvest_R5_SUSHI -> successful_SUSHI_call_statement
-    collect_usage_statistics -> harvest_R5_SUSHI_success_statement
-    _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-    _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-    _harvest_single_report -> no_data_returned_by_SUSHI_statement
-    _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    _harvest_single_report -> reports_with_no_usage_regex
-    _harvest_single_report -> upload_file_to_S3_bucket
-    _check_if_data_in_database -> query_database
-    collect_usage_statistics -> load_data_into_database
-    collect_usage_statistics -> first_new_PK_value
-    _harvest_single_report -> return_string_of_dataframe_info
-    _harvest_single_report -> save_unconverted_data_via_upload
-    _check_if_data_in_database -> extract_value_from_single_value_df
-    _harvest_single_report -> S3_file_name_timestamp
-    _harvest_single_report -> last_day_of_month
-
-    // nolcat.models.StatisticsSourceNotes
 
     // nolcat.models.ResourceSources
     change_StatisticsSource -> state_data_types_in_statisticsResourceSources
