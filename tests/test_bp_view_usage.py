@@ -931,8 +931,8 @@ def test_construct_PR_query_with_wizard_without_string_match(client, header_valu
         'end_date': date.fromisoformat('2019-12-31'),
         'display_fields': (
             ('platform', "Platform"),
-            ('data_type', "Data Type"),
-            ('access_method', "Access Method"),
+            #TEST: ('data_type', "Data Type"),
+            #TEST: ('access_method', "Access Method"),
         ),
         'platform_filter': "not going to match",
         'data_type_filter': (forms.data_type_values['Platform']),
