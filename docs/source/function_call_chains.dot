@@ -2065,6 +2065,22 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
+    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
+    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_dataframe
+    test_create_dataframe_from_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_JSON_dict
+    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_dataframe
+    test_create_dataframe_from_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_JSON_dict
+    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_dataframe
+    test_create_dataframe_from_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_JSON_dict
+    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_dataframe
+    test_create_dataframe_from_IR -> create_dataframe_in_ConvertJSONDictToDataframe
 
 
     subgraph cluster_test_FiscalYears {
@@ -2379,24 +2395,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_ConvertJSONDictToDataframe
-    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
-    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_JSON_dict
-    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_JSON_dict
-    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_JSON_dict
-    test_create_dataframe_from_PR -> sample_SUSHI_PR_response_dataframe
-    test_create_dataframe_from_DR -> sample_SUSHI_DR_response_dataframe
-    test_create_dataframe_from_TR -> sample_SUSHI_TR_response_dataframe
-    test_create_dataframe_from_IR -> sample_SUSHI_IR_response_dataframe
-    sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
-    test_create_dataframe_from_PR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_DR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_TR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_IR -> create_dataframe_in_ConvertJSONDictToDataframe
 
     // tests.test_FiscalYears
     test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
