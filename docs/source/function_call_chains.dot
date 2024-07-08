@@ -2542,6 +2542,14 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
+    test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
+    test_create_dataframe_from_single_workbook -> workbooks_and_relations
+    test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
+    sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
+    test_create_dataframe -> sample_COUNTER_report_workbooks
+    test_create_dataframe -> COUNTERData_relation
+    test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
 
 
     subgraph cluster_test_Vendors {
@@ -2572,16 +2580,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_UploadCOUNTERReports
-    test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
-    test_create_dataframe -> sample_COUNTER_report_workbooks
-    test_create_dataframe_from_single_workbook -> workbooks_and_relations
-    sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
-    sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
-    test_create_dataframe -> COUNTERData_relation
-    test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
-    test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
 
     // tests.test_Vendors
     test_add_note_in_test_Vendors -> add_note_in_vendors
