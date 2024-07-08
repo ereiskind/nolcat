@@ -420,6 +420,33 @@ digraph package_dependencies {
         harvest_SUSHI_statistics [shape="cds"]
         upload_non_COUNTER_reports [shape="cds"]
     }
+    upload_COUNTER_data -> ingest_usage_homepage
+    upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    upload_COUNTER_data -> format_list_for_stdout
+    upload_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
+    upload_COUNTER_data -> Flask_error_statement
+    upload_COUNTER_data -> database_update_fail_statement
+    upload_COUNTER_data -> update_database_success_regex
+    upload_COUNTER_data -> load_data_into_database
+    upload_COUNTER_data -> update_database
+    upload_COUNTER_data -> first_new_PK_value
+    upload_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_COUNTER_data -> truncate_longer_lines
+    harvest_SUSHI_statistics -> ingest_usage_homepage
+    harvest_SUSHI_statistics -> collect_usage_statistics
+    harvest_SUSHI_statistics -> initialize_relation_class_object_statement
+    harvest_SUSHI_statistics -> Flask_error_statement
+    harvest_SUSHI_statistics -> database_query_fail_statement
+    harvest_SUSHI_statistics -> query_database
+    upload_non_COUNTER_reports -> ingest_usage_homepage
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file
+    collect_AUCT_and_historical_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    upload_non_COUNTER_reports -> Flask_error_statement
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file_success_regex
+    upload_non_COUNTER_reports -> database_query_fail_statement
+    upload_non_COUNTER_reports -> query_database
+    upload_non_COUNTER_reports -> create_AUCT_SelectField_options
 
 
     subgraph cluster_initialization {
@@ -1696,35 +1723,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // nolcat.ingest_usage.views
-    upload_COUNTER_data -> ingest_usage_homepage
-    harvest_SUSHI_statistics -> ingest_usage_homepage
-    upload_non_COUNTER_reports -> ingest_usage_homepage
-    upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
-    harvest_SUSHI_statistics -> collect_usage_statistics
-    upload_non_COUNTER_reports -> upload_nonstandard_usage_file
-    upload_COUNTER_data -> format_list_for_stdout
-    harvest_SUSHI_statistics -> initialize_relation_class_object_statement
-    upload_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    collect_AUCT_and_historical_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
-    upload_COUNTER_data -> Flask_error_statement
-    harvest_SUSHI_statistics -> Flask_error_statement
-    upload_non_COUNTER_reports -> Flask_error_statement
-    upload_non_COUNTER_reports -> upload_nonstandard_usage_file_success_regex
-    harvest_SUSHI_statistics -> database_query_fail_statement
-    upload_non_COUNTER_reports -> database_query_fail_statement
-    upload_COUNTER_data -> database_update_fail_statement
-    upload_COUNTER_data -> update_database_success_regex
-    harvest_SUSHI_statistics -> query_database
-    upload_non_COUNTER_reports -> query_database
-    upload_COUNTER_data -> load_data_into_database
-    upload_COUNTER_data -> update_database
-    upload_COUNTER_data -> first_new_PK_value
-    upload_non_COUNTER_reports -> create_AUCT_SelectField_options
-    upload_COUNTER_data -> check_if_data_already_in_COUNTERData
-    upload_COUNTER_data -> truncate_longer_lines
 
     // nolcat.initialization.views
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
