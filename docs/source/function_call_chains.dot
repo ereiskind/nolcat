@@ -460,6 +460,50 @@ digraph package_dependencies {
         upload_historical_non_COUNTER_usage [shape="cds"]
         data_load_complete [shape="cds"]
     }
+    collect_FY_and_vendor_data -> collect_sources_data
+    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    collect_FY_and_vendor_data -> state_data_types_in_vendors
+    collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    collect_FY_and_vendor_data -> Flask_error_statement
+    collect_FY_and_vendor_data -> load_data_into_database_success_regex
+    collect_FY_and_vendor_data -> load_data_into_database
+    collect_FY_and_vendor_data -> first_new_PK_value
+    collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
+    collect_sources_data -> state_data_types_in_statisticsSources
+    collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    collect_sources_data -> state_data_types_in_resourceSources
+    collect_sources_data -> state_data_types_in_resourceSourceNotes
+    collect_sources_data -> Flask_error_statement
+    collect_sources_data -> load_data_into_database_success_regex
+    collect_sources_data -> load_data_into_database
+    collect_sources_data -> first_new_PK_value
+    collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
+    collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
+    collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
+    collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    collect_AUCT_and_historical_COUNTER_data -> format_list_for_stdout
+    upload_historical_non_COUNTER_usage -> initialize_relation_class_object_statement
+    collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
+    collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
+    collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
+    collect_AUCT_and_historical_COUNTER_data -> database_query_fail_statement
+    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+    collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+    collect_AUCT_and_historical_COUNTER_data -> query_database
+    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
+    collect_AUCT_and_historical_COUNTER_data -> update_database
+    collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value
+    collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_historical_non_COUNTER_usage -> data_load_complete
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
+    upload_historical_non_COUNTER_usage -> Flask_error_statement
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
+    upload_historical_non_COUNTER_usage -> database_query_fail_statement
+    upload_historical_non_COUNTER_usage -> query_database
+    upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
 
 
     subgraph cluster_login {
@@ -1723,54 +1767,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // nolcat.initialization.views
-    collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
-    collect_FY_and_vendor_data -> collect_sources_data
-    collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
-    collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
-    collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
-    upload_historical_non_COUNTER_usage -> data_load_complete
-    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
-    collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
-    collect_FY_and_vendor_data -> state_data_types_in_vendors
-    collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
-    collect_sources_data -> state_data_types_in_statisticsSources
-    collect_sources_data -> state_data_types_in_statisticsSourceNotes
-    collect_sources_data -> state_data_types_in_resourceSources
-    collect_sources_data -> state_data_types_in_resourceSourceNotes
-    collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
-    collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
-    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
-    collect_AUCT_and_historical_COUNTER_data -> format_list_for_stdout
-    upload_historical_non_COUNTER_usage -> initialize_relation_class_object_statement
-    collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
-    collect_FY_and_vendor_data -> Flask_error_statement
-    collect_sources_data -> Flask_error_statement
-    collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
-    upload_historical_non_COUNTER_usage -> Flask_error_statement
-    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-    collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
-    collect_AUCT_and_historical_COUNTER_data -> database_query_fail_statement
-    upload_historical_non_COUNTER_usage -> database_query_fail_statement
-    collect_FY_and_vendor_data -> load_data_into_database_success_regex
-    collect_sources_data -> load_data_into_database_success_regex
-    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-    collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-    collect_AUCT_and_historical_COUNTER_data -> query_database
-    upload_historical_non_COUNTER_usage -> query_database
-    collect_FY_and_vendor_data -> load_data_into_database
-    collect_sources_data -> load_data_into_database
-    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
-    collect_AUCT_and_historical_COUNTER_data -> update_database
-    collect_FY_and_vendor_data -> first_new_PK_value
-    collect_sources_data -> first_new_PK_value
-    collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value
-    upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
-    collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
-    upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
-
-    // nolcat.login.views
 
     // nolcat.view_lists.views
     edit_list_record -> view_lists_homepage
