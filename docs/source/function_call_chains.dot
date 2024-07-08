@@ -1937,6 +1937,78 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    COUNTER_download_CSV -> create_downloads_folder
+    COUNTER_download_CSV -> unable_to_delete_test_file_in_S3_statement
+    test_create_COUNTER_fixed_vocab_list -> create_COUNTER_fixed_vocab_list
+    test_set_encoding -> set_encoding
+    test_view_usage_homepage -> view_usage_homepage
+    test_run_custom_SQL_query -> COUNTER_download_CSV
+    test_run_custom_SQL_query -> header_value
+    test_run_custom_SQL_query -> run_custom_SQL_query
+    test_use_predefined_SQL_query -> COUNTER_download_CSV
+    test_use_predefined_SQL_query -> header_value
+    test_use_predefined_SQL_query -> use_predefined_SQL_query
+    test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
+    test_use_predefined_SQL_query -> database_function_skip_statements
+    test_use_predefined_SQL_query -> query_database
+    start_query_wizard_form_data -> database_function_skip_statements
+    start_query_wizard_form_data -> query_database
+    start_query_wizard_form_data -> last_day_of_month
+    test_start_query_wizard -> start_query_wizard_form_data
+    test_start_query_wizard -> header_value
+    test_start_query_wizard -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data
+    test_GET_query_wizard_sort_redirect -> header_value
+    test_GET_query_wizard_sort_redirect -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> query_wizard_sort_redirect
+    test_construct_PR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_PR_query_with_wizard -> PR_parameters
+    test_construct_PR_query_with_wizard -> header_value
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
+    test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_PR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_PR_query_with_wizard -> database_function_skip_statements
+    test_construct_PR_query_with_wizard -> query_database
+    test_construct_PR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_DR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_DR_query_with_wizard -> DR_parameters
+    test_construct_DR_query_with_wizard -> header_value
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
+    test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_DR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_DR_query_with_wizard -> database_function_skip_statements
+    test_construct_DR_query_with_wizard -> query_database
+    test_construct_DR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_TR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_TR_query_with_wizard -> TR_parameters
+    test_construct_TR_query_with_wizard -> header_value
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
+    test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_TR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_TR_query_with_wizard -> database_function_skip_statements
+    test_construct_TR_query_with_wizard -> query_database
+    test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_IR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_IR_query_with_wizard -> IR_parameters
+    test_construct_IR_query_with_wizard -> header_value
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
+    test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_IR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_IR_query_with_wizard -> database_function_skip_statements
+    test_construct_IR_query_with_wizard -> query_database
+    test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_PR_query_with_wizard_without_string_match -> header_value
+    test_construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
+    test_construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_GET_request_for_download_non_COUNTER_usage -> database_function_skip_statements
+    test_GET_request_for_download_non_COUNTER_usage -> query_database
+    test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
+    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
+    test_download_non_COUNTER_usage -> header_value
+    test_download_non_COUNTER_usage -> create_downloads_folder
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage
 
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
@@ -2307,80 +2379,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_view_usage
-    test_run_custom_SQL_query -> COUNTER_download_CSV
-    test_use_predefined_SQL_query -> COUNTER_download_CSV
-    test_construct_PR_query_with_wizard -> COUNTER_download_CSV
-    test_construct_DR_query_with_wizard -> COUNTER_download_CSV
-    test_construct_TR_query_with_wizard -> COUNTER_download_CSV
-    test_construct_IR_query_with_wizard -> COUNTER_download_CSV
-    test_start_query_wizard -> start_query_wizard_form_data
-    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data
-    test_construct_PR_query_with_wizard -> PR_parameters
-    test_construct_DR_query_with_wizard -> DR_parameters
-    test_construct_TR_query_with_wizard -> TR_parameters
-    test_construct_IR_query_with_wizard -> IR_parameters
-    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
-    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
-    test_run_custom_SQL_query -> header_value
-    test_use_predefined_SQL_query -> header_value
-    test_start_query_wizard -> header_value
-    test_GET_query_wizard_sort_redirect -> header_value
-    test_construct_PR_query_with_wizard -> header_value
-    test_construct_DR_query_with_wizard -> header_value
-    test_construct_TR_query_with_wizard -> header_value
-    test_construct_IR_query_with_wizard -> header_value
-    test_construct_PR_query_with_wizard_without_string_match -> header_value
-    test_download_non_COUNTER_usage -> header_value
-    test_construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
-    test_create_COUNTER_fixed_vocab_list -> create_COUNTER_fixed_vocab_list
-    test_set_encoding -> set_encoding
-    COUNTER_download_CSV -> create_downloads_folder
-    test_download_non_COUNTER_usage -> create_downloads_folder
-    test_view_usage_homepage -> view_usage_homepage
-    test_run_custom_SQL_query -> run_custom_SQL_query
-    test_use_predefined_SQL_query -> use_predefined_SQL_query
-    test_start_query_wizard -> start_query_wizard
-    test_GET_query_wizard_sort_redirect -> start_query_wizard
-    test_GET_query_wizard_sort_redirect -> query_wizard_sort_redirect
-    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
-    test_construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
-    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
-    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
-    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
-    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage
-    test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
-    test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
-    test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
-    test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
-    test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
-    test_construct_PR_query_with_wizard -> check_if_file_exists_statement
-    test_construct_DR_query_with_wizard -> check_if_file_exists_statement
-    test_construct_TR_query_with_wizard -> check_if_file_exists_statement
-    test_construct_IR_query_with_wizard -> check_if_file_exists_statement
-    COUNTER_download_CSV -> unable_to_delete_test_file_in_S3_statement
-    test_use_predefined_SQL_query -> database_function_skip_statements
-    start_query_wizard_form_data -> database_function_skip_statements
-    test_construct_PR_query_with_wizard -> database_function_skip_statements
-    test_construct_DR_query_with_wizard -> database_function_skip_statements
-    test_construct_TR_query_with_wizard -> database_function_skip_statements
-    test_construct_IR_query_with_wizard -> database_function_skip_statements
-    test_GET_request_for_download_non_COUNTER_usage -> database_function_skip_statements
-    test_use_predefined_SQL_query -> query_database
-    start_query_wizard_form_data -> query_database
-    test_construct_PR_query_with_wizard -> query_database
-    test_construct_DR_query_with_wizard -> query_database
-    test_construct_TR_query_with_wizard -> query_database
-    test_construct_IR_query_with_wizard -> query_database
-    test_GET_request_for_download_non_COUNTER_usage -> query_database
-    test_construct_PR_query_with_wizard -> return_string_of_dataframe_info
-    test_construct_DR_query_with_wizard -> return_string_of_dataframe_info
-    test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
-    test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
-    test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
-    start_query_wizard_form_data -> last_day_of_month
 
     // tests.test_ConvertJSONDictToDataframe
     test_create_dataframe_from_PR -> sample_SUSHI_PR_response_JSON_dict
