@@ -1577,6 +1577,44 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_ingest_usage_homepage -> ingest_usage_homepage
+    test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
+    test_upload_COUNTER_data_via_Excel -> COUNTERData_relation
+    test_upload_COUNTER_data_via_Excel -> header_value
+    test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
+    test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_Excel -> format_list_for_stdout
+    test_upload_COUNTER_data_via_Excel -> database_function_skip_statements
+    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
+    test_upload_COUNTER_data_via_Excel -> query_database
+    test_upload_COUNTER_data_via_SQL_insert -> header_value
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
+    test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_SQL_insert -> database_function_skip_statements
+    test_upload_COUNTER_data_via_SQL_insert -> query_database
+    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
+    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_GET_request_for_harvest_SUSHI_statistics -> database_function_skip_statements
+    test_GET_request_for_harvest_SUSHI_statistics -> query_database
+    test_harvest_SUSHI_statistics -> header_value
+    test_harvest_SUSHI_statistics -> most_recent_month_with_usage
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_harvest_SUSHI_statistics -> database_function_skip_statements
+    test_harvest_SUSHI_statistics -> query_database
+    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_GET_request_for_upload_non_COUNTER_reports -> database_function_skip_statements
+    test_GET_request_for_upload_non_COUNTER_reports -> query_database
+    test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
+    test_upload_non_COUNTER_reports -> path_to_sample_file
+    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
+    test_upload_non_COUNTER_reports -> header_value
+    test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_non_COUNTER_reports -> format_list_for_stdout
+    test_upload_non_COUNTER_reports -> query_database
 
 
     subgraph cluster_test_bp_initialization {
@@ -2183,48 +2221,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_ingest_usage
-    test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
-    test_upload_COUNTER_data_via_Excel -> COUNTERData_relation
-    test_upload_non_COUNTER_reports -> path_to_sample_file
-    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
-    test_upload_COUNTER_data_via_Excel -> header_value
-    test_upload_COUNTER_data_via_SQL_insert -> header_value
-    test_harvest_SUSHI_statistics -> header_value
-    test_upload_non_COUNTER_reports -> header_value
-    test_harvest_SUSHI_statistics -> most_recent_month_with_usage
-    test_match_direct_SUSHI_harvest_result -> 
-    test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
-    test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
-    test_ingest_usage_homepage -> ingest_usage_homepage
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
-    test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
-    test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
-    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
-    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
-    test_upload_COUNTER_data_via_Excel -> format_list_for_stdout
-    test_upload_non_COUNTER_reports -> format_list_for_stdout
-    test_upload_COUNTER_data_via_Excel -> database_function_skip_statements
-    test_upload_COUNTER_data_via_SQL_insert -> database_function_skip_statements
-    test_GET_request_for_harvest_SUSHI_statistics -> database_function_skip_statements
-    test_harvest_SUSHI_statistics -> database_function_skip_statements
-    test_GET_request_for_upload_non_COUNTER_reports -> database_function_skip_statements
-    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
-    test_upload_COUNTER_data_via_Excel -> query_database
-    test_upload_COUNTER_data_via_SQL_insert -> query_database
-    test_GET_request_for_harvest_SUSHI_statistics -> query_database
-    test_harvest_SUSHI_statistics -> query_database
-    test_GET_request_for_upload_non_COUNTER_reports -> query_database
-    test_upload_non_COUNTER_reports -> query_database
-    test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
-    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
-    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
 
     // tests.test_bp_initialization
     create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
