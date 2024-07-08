@@ -1530,6 +1530,12 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
+    test_GET_request_for_annual_stats_homepage -> database_function_skip_statements
+    test_GET_request_for_annual_stats_homepage -> query_database
+    test_GET_request_for_show_fiscal_year_details -> show_fiscal_year_details
+    test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm -> show_fiscal_year_details
+    test_show_fiscal_year_details_submitting_EditFiscalYearForm -> show_fiscal_year_details
 
 
     subgraph cluster_test_bp_ingest_usage {
@@ -2177,14 +2183,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_annual_stats
-    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
-    test_GET_request_for_show_fiscal_year_details -> show_fiscal_year_details
-    test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm -> show_fiscal_year_details
-    test_show_fiscal_year_details_submitting_EditFiscalYearForm -> show_fiscal_year_details
-    test_GET_request_for_annual_stats_homepage -> database_function_skip_statements
-    test_GET_request_for_annual_stats_homepage -> query_database
 
     // tests.test_bp_ingest_usage
     test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
