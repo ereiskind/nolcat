@@ -852,6 +852,30 @@ digraph package_dependencies {
             shape="box"
         ]
     }
+    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
+    annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
+    vendors_relation_in_relations -> state_data_types_in_vendors
+    vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
+    statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
+    statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
+    resourceSources_relation_in_relations -> state_data_types_in_resourceSources
+    resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
+    statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
+    annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
+    workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_conftest {
@@ -1892,32 +1916,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.data.relations
-    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
-    annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
-    vendors_relation_in_relations -> state_data_types_in_vendors
-    vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
-    statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
-    statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
-    resourceSources_relation_in_relations -> state_data_types_in_resourceSources
-    resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
-    statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
-    annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
-    workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_0_2018_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_1_2018_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_2_2018_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_0_2019_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_1_2019_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_2_2019_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_3_2019_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_0_2020_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
-    workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
 
     // tests.conftest
     fiscalYears_relation_in_conftest -> fiscalYears_relation_in_relations
