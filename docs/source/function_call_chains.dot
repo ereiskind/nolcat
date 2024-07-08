@@ -1808,6 +1808,7 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_login_homepage -> login_homepage
 
 
     subgraph cluster_test_bp_view_lists {
@@ -2300,9 +2301,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_login
-    test_login_homepage -> login_homepage
 
     // tests.test_bp_view_lists
     test_view_lists_homepage -> view_lists_homepage
