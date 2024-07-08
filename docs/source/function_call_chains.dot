@@ -1255,6 +1255,7 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_add_annual_statistic_value -> add_annual_statistic_value
 
 
     subgraph cluster_test_AnnualUsageCollectionTracking {
@@ -2086,9 +2087,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_AnnualStatistics
-    test_add_annual_statistic_value -> add_annual_statistic_value
 
     // tests.test_AnnualUsageCollectionTracking
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
