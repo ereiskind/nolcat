@@ -21,6 +21,14 @@ digraph package_dependencies {
 
 
     /* *** All Functions *** */
+    /*
+        Edges reporesent function calls
+            Edges are instantiated under the cluster containing the calling function
+            Edges go from the calling function to the called function
+        Function calls include
+            Flask redirects to a route function's URL via `url_for()`
+            Accessing a route via the Flask test client
+    */
 
     subgraph cluster_fiscalYears {
         label="fiscalYears"
@@ -2575,13 +2583,4 @@ digraph package_dependencies {
     test_get_statisticsSources_records -> get_statisticsSources_records
     test_get_resourceSources_records -> get_resourceSources_records
     test_add_note_in_test_Vendors -> add_note_in_vendors
-
-    
-    /* *** Calls Between Functions *** */
-    /*
-        Edges are organized by calling function
-        Flask redirects to a route function's URL via `url_for()` count as a function call
-        Accessing a route via the Flask test client counts as a function call
-    */
-
 }
