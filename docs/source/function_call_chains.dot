@@ -1704,6 +1704,85 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
+    create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
+    create_annualStatistics_CSV_file -> annualStatistics_relation_in_conftest
+    create_vendors_CSV_file -> vendors_relation_in_conftest
+    create_vendorNotes_CSV_file -> vendorNotes_relation_in_conftest
+    create_statisticsSources_CSV_file -> statisticsSources_relation_in_conftest
+    create_statisticsSourceNotes_CSV_file -> statisticsSourceNotes_relation_in_conftest
+    create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
+    create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
+    create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
+    create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
+    create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_collect_FY_and_vendor_data -> create_fiscalYears_CSV_file
+    test_collect_FY_and_vendor_data -> create_annualStatistics_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendors_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendorNotes_CSV_file
+    test_collect_FY_and_vendor_data -> fiscalYears_relation_in_conftest
+    test_collect_FY_and_vendor_data -> annualStatistics_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
+    test_collect_FY_and_vendor_data -> header_value
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> 
+    state_data_types_in_annualStatistics
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendors
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    test_collect_FY_and_vendor_data -> database_function_skip_statements
+    test_collect_FY_and_vendor_data -> query_database
+    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
+    test_collect_sources_data -> create_statisticsSources_CSV_file
+    test_collect_sources_data -> create_statisticsSourceNotes_CSV_file
+    test_collect_sources_data -> create_resourceSources_CSV_file
+    test_collect_sources_data -> create_resourceSourceNotes_CSV_file
+    test_collect_sources_data -> create_statisticsResourceSources_CSV_file
+    test_collect_sources_data -> statisticsSources_relation_in_conftest
+    test_collect_sources_data -> statisticsSourceNotes_relation_in_conftest
+    test_collect_sources_data -> resourceSources_relation_in_conftest
+    test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
+    test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
+    test_collect_sources_data -> header_value
+    test_collect_sources_data -> collect_sources_data
+    test_collect_sources_data -> state_data_types_in_statisticsSources
+    test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    test_collect_sources_data -> state_data_types_in_resourceSources
+    test_collect_sources_data -> state_data_types_in_resourceSourceNotes
+    test_collect_sources_data -> state_data_types_in_statisticsResourceSources
+    test_collect_sources_data -> database_function_skip_statements
+    test_collect_sources_data -> query_database
+    test_collect_sources_data -> change_single_field_dataframe_into_series
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> blank_annualUsageCollectionTracking_data_types
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
+    test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
+    test_collect_AUCT_and_historical_COUNTER_data -> create_COUNTERData_workbook_iterdir_list
+    test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
+    test_collect_AUCT_and_historical_COUNTER_data -> header_value
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
+    test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
+    test_collect_AUCT_and_historical_COUNTER_data -> query_database
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
+    files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    files_for_test_upload_historical_non_COUNTER_usage -> check_if_file_exists_statement
+    files_for_test_upload_historical_non_COUNTER_usage -> unable_to_delete_test_file_in_S3_statement
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> header_value
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> format_list_for_stdout
+    test_upload_historical_non_COUNTER_usage -> database_function_skip_statements
+    test_upload_historical_non_COUNTER_usage -> query_database
+    test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
 
 
     subgraph cluster_test_bp_login {
@@ -2221,86 +2300,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_initialization
-    create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> blank_annualUsageCollectionTracking_data_types
-    test_collect_FY_and_vendor_data -> create_fiscalYears_CSV_file
-    test_collect_FY_and_vendor_data -> create_annualStatistics_CSV_file
-    test_collect_FY_and_vendor_data -> create_vendors_CSV_file
-    test_collect_FY_and_vendor_data -> create_vendorNotes_CSV_file
-    test_collect_sources_data -> create_statisticsSources_CSV_file
-    test_collect_sources_data -> create_statisticsSourceNotes_CSV_file
-    test_collect_sources_data -> create_resourceSources_CSV_file
-    test_collect_sources_data -> create_resourceSourceNotes_CSV_file
-    test_collect_sources_data -> create_statisticsResourceSources_CSV_file
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
-    test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
-    create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
-    test_collect_FY_and_vendor_data -> fiscalYears_relation_in_conftest
-    create_annualStatistics_CSV_file -> annualStatistics_relation_in_conftest
-    test_collect_FY_and_vendor_data -> annualStatistics_relation_in_conftest
-    create_vendors_CSV_file -> vendors_relation_in_conftest
-    test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
-    create_vendorNotes_CSV_file -> vendorNotes_relation_in_conftest
-    test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
-    create_statisticsSources_CSV_file -> statisticsSources_relation_in_conftest
-    test_collect_sources_data -> statisticsSources_relation_in_conftest
-    create_statisticsSourceNotes_CSV_file -> statisticsSourceNotes_relation_in_conftest
-    test_collect_sources_data -> statisticsSourceNotes_relation_in_conftest
-    create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
-    test_collect_sources_data -> resourceSources_relation_in_conftest
-    create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
-    test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
-    create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
-    test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
-    create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
-    test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
-    test_collect_AUCT_and_historical_COUNTER_data -> create_COUNTERData_workbook_iterdir_list
-    test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
-    test_collect_FY_and_vendor_data -> header_value
-    test_collect_sources_data -> header_value
-    test_collect_AUCT_and_historical_COUNTER_data -> header_value
-    test_upload_historical_non_COUNTER_usage -> header_value
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
-    test_collect_sources_data -> collect_sources_data
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
-    files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
-    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
-    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
-    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
-    test_collect_FY_and_vendor_data -> 
-    state_data_types_in_annualStatistics
-    test_collect_FY_and_vendor_data -> state_data_types_in_vendors
-    test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
-    test_collect_sources_data -> state_data_types_in_statisticsSources
-    test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
-    test_collect_sources_data -> state_data_types_in_resourceSources
-    test_collect_sources_data -> state_data_types_in_resourceSourceNotes
-    test_collect_sources_data -> state_data_types_in_statisticsResourceSources
-    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
-    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
-    test_upload_historical_non_COUNTER_usage -> format_list_for_stdout
-    files_for_test_upload_historical_non_COUNTER_usage -> check_if_file_exists_statement
-    files_for_test_upload_historical_non_COUNTER_usage -> unable_to_delete_test_file_in_S3_statement
-    test_collect_FY_and_vendor_data -> database_function_skip_statements
-    test_collect_sources_data -> database_function_skip_statements
-    test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
-    test_upload_historical_non_COUNTER_usage -> database_function_skip_statements
-    test_collect_FY_and_vendor_data -> query_database
-    test_collect_sources_data -> query_database
-    test_collect_AUCT_and_historical_COUNTER_data -> query_database
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
-    test_upload_historical_non_COUNTER_usage -> query_database
-    test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
-    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
-    test_collect_sources_data -> change_single_field_dataframe_into_series
 
     // tests.test_bp_login
     test_login_homepage -> login_homepage
