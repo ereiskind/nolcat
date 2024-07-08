@@ -2233,6 +2233,10 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_format_list_for_stdout_with_list -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
+    test_format_list_for_stdout_with_generator -> format_list_for_stdout
+    test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_test_StatisticsSources {
@@ -2440,12 +2444,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_statements
-    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
-    test_format_list_for_stdout_with_list -> format_list_for_stdout
-    test_format_list_for_stdout_with_generator -> format_list_for_stdout
-    test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
 
     // tests.test_StatisticsSources
     test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
