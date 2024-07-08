@@ -2572,6 +2572,9 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_get_statisticsSources_records -> get_statisticsSources_records
+    test_get_resourceSources_records -> get_resourceSources_records
+    test_add_note_in_test_Vendors -> add_note_in_vendors
 
     
     /* *** Calls Between Functions *** */
@@ -2581,8 +2584,4 @@ digraph package_dependencies {
         Accessing a route via the Flask test client counts as a function call
     */
 
-    // tests.test_Vendors
-    test_add_note_in_test_Vendors -> add_note_in_vendors
-    test_get_statisticsSources_records -> get_statisticsSources_records
-    test_get_resourceSources_records -> get_resourceSources_records
 }
