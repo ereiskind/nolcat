@@ -1447,6 +1447,60 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_homepage -> "create_app.homepage"
+    test_404_page -> page_not_found
+    test_load_data_into_database -> vendors_relation_in_conftest
+    test_load_data_into_database -> load_data_into_database_success_regex
+    test_load_data_into_database -> load_data_into_database
+    test_query_database -> vendors_relation_in_conftest
+    test_query_database -> state_data_types_in_vendors
+    test_query_database -> query_database
+    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
+    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
+    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> database_function_skip_statements
+    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+    test_loading_connected_data_into_other_relation -> query_database
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    test_download_file -> "create_app.download_file"
+    test_download_file -> path_to_sample_file
+    test_download_file -> file_extensions_and_mimetypes
+    test_first_new_PK_value -> first_new_PK_value
+    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
+    test_upload_file_to_S3_bucket -> path_to_sample_file
+    test_upload_file_to_S3_bucket -> remove_file_from_S3
+    test_upload_file_to_S3_bucket -> format_list_for_stdout
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_truncate_longer_lines -> truncate_longer_lines
+    vendors_relation_after_test_update_database -> state_data_types_in_vendors
+    vendors_relation_after_test_update_database -> database_function_skip_statements
+    test_update_database -> vendors_relation_after_test_update_database
+    test_update_database -> state_data_types_in_vendors
+    test_update_database -> update_database_success_regex
+    test_update_database -> query_database
+    test_update_database -> update_database
+    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> database_function_skip_statements
+    test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> query_database
+    test_update_database_with_insert_statement -> update_database
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
+    file_name_stem_and_data -> most_recent_month_with_usage
+    file_name_stem_and_data -> S3_file_name_timestamp
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
+    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
+    test_ISSN_regex -> ISSN_regex
+    test_ISBN_regex -> ISBN_regex
+    test_last_day_of_month -> last_day_of_month
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_S3_file_name_timestamp -> S3_file_name_timestamp
+    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
 
 
     subgraph cluster_test_bp_annual_stats {
@@ -2123,60 +2177,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_app
-    test_update_database -> vendors_relation_after_test_update_database
-    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
-    test_save_unconverted_data_via_upload -> file_name_stem_and_data
-    test_load_data_into_database -> vendors_relation_in_conftest
-    test_query_database -> vendors_relation_in_conftest
-    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
-    test_download_file -> path_to_sample_file
-    test_upload_file_to_S3_bucket -> path_to_sample_file
-    test_upload_file_to_S3_bucket -> remove_file_from_S3
-    file_name_stem_and_data -> most_recent_month_with_usage
-    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
-    test_query_database -> state_data_types_in_vendors
-    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
-    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
-    vendors_relation_after_test_update_database -> state_data_types_in_vendors
-    test_update_database -> state_data_types_in_vendors
-    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
-    test_update_database_with_insert_statement -> state_data_types_in_vendors
-    test_download_file -> file_extensions_and_mimetypes
-    test_upload_file_to_S3_bucket -> format_list_for_stdout
-    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
-    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
-    test_loading_connected_data_into_other_relation -> database_function_skip_statements
-    vendors_relation_after_test_update_database -> database_function_skip_statements
-    test_update_database_with_insert_statement -> database_function_skip_statements
-    test_load_data_into_database -> load_data_into_database_success_regex
-    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
-    test_update_database -> update_database_success_regex
-    test_update_database_with_insert_statement -> update_database_success_regex
-    test_404_page -> page_not_found
-    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
-    test_query_database -> query_database
-    test_loading_connected_data_into_other_relation -> query_database
-    test_update_database -> query_database
-    test_update_database_with_insert_statement -> query_database
-    test_load_data_into_database -> load_data_into_database
-    test_loading_connected_data_into_other_relation -> load_data_into_database
-    test_update_database -> update_database
-    test_update_database_with_insert_statement -> update_database
-    test_first_new_PK_value -> first_new_PK_value
-    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
-    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
-    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
-    test_truncate_longer_lines -> truncate_longer_lines
-    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
-    test_ISSN_regex -> ISSN_regex
-    test_ISBN_regex -> ISBN_regex
-    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    file_name_stem_and_data -> S3_file_name_timestamp
-    test_S3_file_name_timestamp -> S3_file_name_timestamp
-    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
-    test_last_day_of_month -> last_day_of_month
 
     // tests.test_bp_annual_stats
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
