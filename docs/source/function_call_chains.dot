@@ -1842,6 +1842,12 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_view_lists_homepage -> view_lists_homepage
+    test_GET_request_for_view_list_record -> view_list_record
+    test_view_list_record -> view_list_record
+    test_GET_request_for_edit_list_record_for_existing_record -> edit_list_record
+    test_GET_request_for_edit_list_record_for_new_record -> edit_list_record
+    test_edit_list_record -> edit_list_record
 
 
     subgraph cluster_test_bp_view_usage {
@@ -2301,14 +2307,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_bp_view_lists
-    test_view_lists_homepage -> view_lists_homepage
-    test_GET_request_for_view_list_record -> view_list_record
-    test_view_list_record -> view_list_record
-    test_GET_request_for_edit_list_record_for_existing_record -> edit_list_record
-    test_GET_request_for_edit_list_record_for_new_record -> edit_list_record
-    test_edit_list_record -> edit_list_record
 
     // tests.test_bp_view_usage
     test_run_custom_SQL_query -> COUNTER_download_CSV
