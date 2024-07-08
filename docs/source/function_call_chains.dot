@@ -524,6 +524,19 @@ digraph package_dependencies {
         view_list_record [shape="cds"]
         edit_list_record [shape="cds"]
     }
+    view_lists_homepage -> Flask_error_statement
+    view_lists_homepage -> database_query_fail_statement
+    view_lists_homepage -> query_database
+    edit_list_record -> view_lists_homepage
+    edit_list_record -> view_list_record
+    edit_list_record -> Flask_error_statement
+    edit_list_record -> database_query_fail_statement
+    edit_list_record -> query_database
+    view_list_record -> add_note_in_resourceSources
+    view_list_record -> add_note_in_statisticsSources
+    view_list_record -> add_note_in_vendors
+    view_list_record -> Flask_error_statement
+    view_list_record -> query_database
 
 
     subgraph cluster_view_usage {
@@ -1767,21 +1780,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // nolcat.view_lists.views
-    edit_list_record -> view_lists_homepage
-    edit_list_record -> view_list_record
-    view_list_record -> add_note_in_resourceSources
-    view_list_record -> add_note_in_statisticsSources
-    view_list_record -> add_note_in_vendors
-    view_lists_homepage -> Flask_error_statement
-    view_list_record -> Flask_error_statement
-    edit_list_record -> Flask_error_statement
-    view_lists_homepage -> database_query_fail_statement
-    edit_list_record -> database_query_fail_statement
-    view_lists_homepage -> query_database
-    view_list_record -> query_database
-    edit_list_record -> query_database
 
     // nolcat.view_usage.views
     construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
