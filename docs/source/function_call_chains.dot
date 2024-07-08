@@ -2209,6 +2209,10 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    test_add_access_stop_date -> add_access_stop_date
+    test_remove_access_stop_date -> remove_access_stop_date
+    test_change_StatisticsSource -> change_StatisticsSource
+    test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
 
 
     subgraph cluster_test_statements {
@@ -2436,12 +2440,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_ResourceSources
-    test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
-    test_add_access_stop_date -> add_access_stop_date
-    test_remove_access_stop_date -> remove_access_stop_date
-    test_change_StatisticsSource -> change_StatisticsSource
 
     // tests.test_statements
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
