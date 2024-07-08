@@ -1290,6 +1290,42 @@ digraph package_dependencies {
             style="dashed"
         ]
     }
+    AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
+    AUCT_fixture_for_SUSHI -> database_function_skip_statements
+    AUCT_fixture_for_SUSHI -> query_database
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> unable_to_delete_test_file_in_S3_statement
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> return_value_from_query_statement
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> database_function_skip_statements
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
+    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
+    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics
+    test_collect_annual_usage_statistics -> database_function_skip_statements
+    test_collect_annual_usage_statistics -> load_data_into_database_success_regex
+    test_collect_annual_usage_statistics -> update_database_success_regex
+    test_collect_annual_usage_statistics -> query_database
+    test_collect_annual_usage_statistics -> load_data_into_database
+    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
+    sample_FileStorage_object -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> sample_FileStorage_object
+    test_upload_nonstandard_usage_file -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
+    test_upload_nonstandard_usage_file -> format_list_for_stdout
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file_success_regex
+    test_upload_nonstandard_usage_file -> return_value_from_query_statement
+    test_upload_nonstandard_usage_file -> database_function_skip_statements
+    test_upload_nonstandard_usage_file -> query_database
+    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
+    test_download_nonstandard_usage_file -> download_destination
+    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
+    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
+    test_download_nonstandard_usage_file -> download_nonstandard_usage_file
+    test_download_nonstandard_usage_file -> list_folder_contents_statement
 
 
     subgraph cluster_test_app {
@@ -2087,44 +2123,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // tests.test_AnnualUsageCollectionTracking
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
-    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
-    test_upload_nonstandard_usage_file -> sample_FileStorage_object
-    test_download_nonstandard_usage_file -> download_destination
-    sample_FileStorage_object -> path_to_sample_file
-    test_upload_nonstandard_usage_file -> path_to_sample_file
-    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
-    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
-    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
-    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
-    test_download_nonstandard_usage_file -> download_nonstandard_usage_file
-    test_upload_nonstandard_usage_file -> format_list_for_stdout
-    AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
-    test_download_nonstandard_usage_file -> list_folder_contents_statement
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> unable_to_delete_test_file_in_S3_statement
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file_success_regex
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> return_value_from_query_statement
-    test_upload_nonstandard_usage_file -> return_value_from_query_statement
-    AUCT_fixture_for_SUSHI -> database_function_skip_statements
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> database_function_skip_statements
-    test_collect_annual_usage_statistics -> database_function_skip_statements
-    test_upload_nonstandard_usage_file -> database_function_skip_statements
-    test_collect_annual_usage_statistics -> load_data_into_database_success_regex
-    test_collect_annual_usage_statistics -> update_database_success_regex
-    AUCT_fixture_for_SUSHI -> query_database
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
-    test_collect_annual_usage_statistics -> query_database
-    test_upload_nonstandard_usage_file -> query_database
-    test_collect_annual_usage_statistics -> load_data_into_database
-    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
-    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
 
     // tests.test_app
     test_update_database -> vendors_relation_after_test_update_database
