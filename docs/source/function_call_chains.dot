@@ -686,6 +686,29 @@ digraph package_dependencies {
         S3_file_name_timestamp [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
     }
+    filter_empty_parentheses -> remove_IDE_spacing_from_statement
+    configure_logging -> filter_empty_parentheses
+    create_app -> "create_app.create_db"
+    create_app -> configure_logging
+    "create_app.download_file" -> file_extensions_and_mimetypes
+    first_new_PK_value -> return_value_from_query_statement
+    first_new_PK_value -> database_query_fail_statement
+    first_new_PK_value -> query_database
+    first_new_PK_value -> extract_value_from_single_value_df
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    query_database -> remove_IDE_spacing_from_statement
+    check_if_data_already_in_COUNTERData -> format_list_for_stdout
+    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
+    check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    check_if_data_already_in_COUNTERData -> query_database
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    update_database -> remove_IDE_spacing_from_statement
+    update_database -> database_query_fail_statement
+    update_database -> query_database
+    update_database -> truncate_longer_lines
+    update_database -> extract_value_from_single_value_df
+    save_unconverted_data_via_upload -> format_list_for_stdout
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
 
 
     subgraph cluster_statements {
@@ -1866,31 +1889,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // nolcat.app
-    "create_app.download_file" -> file_extensions_and_mimetypes
-    check_if_data_already_in_COUNTERData -> format_list_for_stdout
-    save_unconverted_data_via_upload -> format_list_for_stdout
-    filter_empty_parentheses -> remove_IDE_spacing_from_statement
-    query_database -> remove_IDE_spacing_from_statement
-    update_database -> remove_IDE_spacing_from_statement
-    first_new_PK_value -> return_value_from_query_statement
-    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
-    first_new_PK_value -> database_query_fail_statement
-    check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    update_database -> database_query_fail_statement
-    create_app -> "create_app.create_db"
-    configure_logging -> filter_empty_parentheses
-    create_app -> configure_logging
-    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    first_new_PK_value -> query_database
-    check_if_data_already_in_COUNTERData -> query_database
-    update_database -> query_database
-    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-    update_database -> truncate_longer_lines
-    first_new_PK_value -> extract_value_from_single_value_df
-    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    update_database -> extract_value_from_single_value_df
 
     // nolcat.statements
     list_folder_contents_statement -> format_list_for_stdout
