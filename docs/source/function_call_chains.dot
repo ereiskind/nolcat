@@ -746,6 +746,9 @@ digraph package_dependencies {
         reports_with_no_usage_regex [shape="box"]
         skip_test_due_to_SUSHI_error_regex [shape="box"]
     }
+    list_folder_contents_statement -> format_list_for_stdout
+    database_update_fail_statement -> remove_IDE_spacing_from_statement
+    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
 
 
     subgraph cluster_relations {
@@ -1889,11 +1892,6 @@ digraph package_dependencies {
         Flask redirects to a route function's URL via `url_for()` count as a function call
         Accessing a route via the Flask test client counts as a function call
     */
-
-    // nolcat.statements
-    list_folder_contents_statement -> format_list_for_stdout
-    database_update_fail_statement -> remove_IDE_spacing_from_statement
-    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
 
     // tests.data.relations
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
