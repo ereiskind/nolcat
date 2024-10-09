@@ -39,7 +39,7 @@ class ConvertJSONDictToDataframe:
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
     RESOURCE_NAME_LENGTH = 3600
     PUBLISHER_LENGTH = 425
-    PUBLISHER_ID_LENGTH = 50
+    PUBLISHER_ID_LENGTH = 70
     PLATFORM_LENGTH = 135
     AUTHORS_LENGTH = 4400
     DOI_LENGTH = 110
