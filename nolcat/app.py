@@ -221,21 +221,6 @@ def create_app():
     return app
 
 
-def last_day_of_month(first_day_of_month):
-    """The function for returning the last day of a given month.
-
-    When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
-
-    Args:
-        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[ns] data type, but within this function, the data type is Timestamp
-    
-    Returns:
-        str: the last day of the given month in ISO format
-    """
-    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
-    return year_and_month_string + str(first_day_of_month.days_in_month)
-
-
 def first_new_PK_value(relation):
     """The function for getting the next value in the primary key sequence.
 

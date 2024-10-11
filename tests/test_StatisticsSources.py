@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-06-12 ##########
+########## Passing 2024-07-03 ##########
 
 import pytest
 import logging
@@ -127,20 +127,20 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
-def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
+def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI_credentials_fixture):
     """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
 
     Args:
         StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
     
     Yields:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
-    SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     yield COUNTER_reports_offered_by_statistics_source(
         StatisticsSources_fixture.statistics_source_name,
-        SUSHI_data['URL'],
-        {k: v for (k, v) in SUSHI_data.items() if k != "URL"},
+        SUSHI_credentials_fixture['URL'],
+        {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
     )
 
 
@@ -362,6 +362,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    #ToDo: Function will be redone to make `df` a parquet file and save it to S3
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
         month_before_month_like_most_recent_month_with_usage[0],

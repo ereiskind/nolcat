@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2024-06-12 ##########
+########## Passing 2024-07-03 ##########
 
 import pytest
 import logging
@@ -276,6 +276,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
+
 
 def test_create_AUCT_SelectField_options():
     """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""

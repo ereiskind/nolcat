@@ -28,7 +28,9 @@ def annual_stats_homepage():
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
-            flash(database_query_fail_statement(fiscal_year_options))
+            message = database_query_fail_statement(fiscal_year_options)
+            log.warning(message)
+            flash(message)
             return abort(404)
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
@@ -63,7 +65,9 @@ def show_fiscal_year_details(PK):
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
-            flash(database_query_fail_statement(fiscal_year_details))
+            message = database_query_fail_statement(fiscal_year_details)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
@@ -73,7 +77,9 @@ def show_fiscal_year_details(PK):
             index='AUCT_statistics_source',
         )
         if isinstance(fiscal_year_reporting, str):
-            flash(database_query_fail_statement(fiscal_year_reporting))
+            message = database_query_fail_statement(fiscal_year_reporting)
+            log.warning(message)
+            flash(message)
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
