@@ -310,12 +310,7 @@ class SUSHICallAndResponse:
                     message = f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}."
                     log.error(message)
                     return (json.JSONDecodeError(error), [message])
-            else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
-                log.error(message)
-                return (json.JSONDecodeError(message), [message])
-                
-            if isinstance(API_response, list):
+            elif isinstance(API_response, list):
                 if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
                     message = failed_SUSHI_call_statement("reports", self.calling_to, API_response)
                     log.error(message)
@@ -323,7 +318,7 @@ class SUSHICallAndResponse:
                 log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
                 API_response = dict(reports = API_response)
             else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
+                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} type and a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
                 log.error(message)
                 return (json.JSONDecodeError(message), [message])
         
