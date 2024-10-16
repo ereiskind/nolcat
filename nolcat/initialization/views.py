@@ -453,14 +453,12 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
-        log.warning(f"annualUsageCollectionTracking_load_result: {annualUsageCollectionTracking_load_result}")  #TEST: temp
-        log.warning(f"load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result): {load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result)}")  #TEST: temp
         if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        log.warning("error not at expected place")  #TEST: temp
-        if COUNTER_reports_df is None:  # `is None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
+        if COUNTER_reports_df is not None:  # `is not None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
+            log.warning("entered block for loading COUNTER data")  #TEST: temp
             COUNTERData_load_result = load_data_into_database(
                 df=COUNTER_reports_df,
                 relation='COUNTERData',
