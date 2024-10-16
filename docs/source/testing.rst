@@ -128,7 +128,7 @@ The preferred setup for testing database interactions involves performing all te
 
   * ``test_bp_ingest_usage``
 
-4. Tests needing all test data in all relations and/or capable of running with data in all relations
+4. Tests needing all test data in all relations and/or capable of running with data in all relations (exact sequence below known to cause failures)
 
   * ``test_AnnualStatistics``
   * ``test_AnnualUsageCollectionTracking``
