@@ -119,6 +119,7 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
+        #ToDo: For error 3060: InvalidReportFilter Value, redo the call without the invalid filters
         if API_response.get('Report_Header') and isinstance(API_response.get('Report_Header'), dict):  # Checks that the `Report_Header` key exists and that its value is a dict (any other data type would cause an error in the sequence of `get` methods below)
             if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
                 if API_response.get('Report_Header').get('Exception'):
@@ -288,6 +289,11 @@ class SUSHICallAndResponse:
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
+            #TEST: temp -- How does file of type dict in final else message compare to other responses? PNAS had `\t\n` in a string
+            log.warning(f"API_response:\n{API_response}")
+            log.warning(f"repr(type(API_response)):\n{repr(type(API_response))}")
+            log.warning(f"API_response.text:\n{API_response.text}")
+            #TEST: end temp
             if isinstance(API_response.text, str):
                 try:
                     log.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
