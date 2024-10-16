@@ -631,7 +631,7 @@ def update_database(update_statement, engine):
         if isinstance(before_df, str):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
-            log.debug(f"The records to be updated:\n{before_df}")
+            log.warning(f"The records to be updated:\n{before_df}")  #TEST: temp level, should be 'debug'
     elif INSERT_regex:
         query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
         before_df = query_database(
@@ -642,9 +642,9 @@ def update_database(update_statement, engine):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             before_number = extract_value_from_single_value_df(before_df)
-            log.debug(f"There are {before_number} records in the relation to be updated.")
+            log.warning(f"There are {before_number} records in the relation to be updated.")  #TEST: temp level, should be 'debug'
     elif TRUNCATE_regex:
-        log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
+        log.warning(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")  #TEST: temp level, should be 'debug'
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
 
@@ -653,6 +653,7 @@ def update_database(update_statement, engine):
             try:
                 connection.execute(text(update_statement))
                 connection.commit()
+                log.warning("Immediately after `connection.commit()`")  #TEST: temp
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
@@ -670,7 +671,7 @@ def update_database(update_statement, engine):
         if isinstance(after_df, str):
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
-            log.debug(f"The records after being updated:\n{after_df}")
+            log.warning(f"The records after being updated:\n{after_df}")  #TEST: temp level, should be 'debug'
             if before_df.equals(after_df):
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
@@ -684,7 +685,7 @@ def update_database(update_statement, engine):
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             after_number = extract_value_from_single_value_df(after_df)
-            log.debug(f"There are {after_number} records in the relation that was updated.")
+            log.warning(f"There are {after_number} records in the relation that was updated.")  #TEST: temp level, should be 'debug'
             if before_number >= after_number:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)

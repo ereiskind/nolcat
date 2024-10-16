@@ -634,7 +634,16 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
+    #TEST: temp
+    try:
+        log.warning(f"Comparison:\n{annualUsageCollectionTracking_relation_data.compare(annualUsageCollectionTracking_relation, result_names=('first', 'second'))}")
+    except:
+        log.warning(f"annualUsageCollectionTracking_relation_data.index:\n{annualUsageCollectionTracking_relation_data.index}")
+        log.warning(f"annualUsageCollectionTracking_relation.index:\n{annualUsageCollectionTracking_relation.index}")
+        log.warning(f"annualUsageCollectionTracking_relation_data.columns:\n{annualUsageCollectionTracking_relation_data.columns}")
+        log.warning(f"annualUsageCollectionTracking_relation.columns:\n{annualUsageCollectionTracking_relation.columns}")
+    #TEST: end temp
+    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)  #TEST: AssertionError: DataFrame are different
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
