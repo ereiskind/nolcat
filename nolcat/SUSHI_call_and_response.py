@@ -119,6 +119,7 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
+        #ToDo: For error 3060: InvalidReportFilter Value, redo the call without the invalid filters
         if API_response.get('Report_Header') and isinstance(API_response.get('Report_Header'), dict):  # Checks that the `Report_Header` key exists and that its value is a dict (any other data type would cause an error in the sequence of `get` methods below)
             if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
                 if API_response.get('Report_Header').get('Exception'):
@@ -498,6 +499,9 @@ class SUSHICallAndResponse:
             'Requestor Not Authorized to Access Service': '2000',
             'Requestor is Not Authorized to Access Usage for Institution': '2010',
             'APIKey Invalid': '2020',
+            'IP Address Not Authorized to Access Service': '2030',  #R5.0 only
+            'Report Not Supported': '3000',  # Would only come up with an individual report request, R5.0 only
+            'Report Version Not Supported': '3010',  #R5.0 only
             'Invalid Date Arguments': '3020',
             'No Usage Available for Requested Dates': '3030',
             'Usage Not Ready for Requested Dates': '3031',
@@ -507,6 +511,8 @@ class SUSHICallAndResponse:
             'Invalid ReportFilter Value': '3060',
             'Incongruous ReportFilter Value': '3061',
             'Invalid ReportAttribute Value': '3062',
+            'Components Not Supported': '3063',
+            'Required ReportFilter Missing': '3070'
         }
         if error_contents.get('Message') is None:
             message = f" had no key `Message`; this is not a standard error message and thus isn't being managed as such."

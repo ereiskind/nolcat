@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-06-12 ##########
+########## Passing 2024-10-16 ##########
 
 import pytest
 import logging
@@ -635,6 +635,15 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
+    #TEST: temp
+    try:
+        log.warning(f"Comparison:\n{COUNTERData_relation_data.compare(COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], result_names=('first', 'second'))}")
+    except:
+        log.warning(f"COUNTERData_relation_data.index:\n{COUNTERData_relation_data.index}")
+        log.warning(f"COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].index:\n{COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].index}")
+        log.warning(f"COUNTERData_relation_data.columns:\n{COUNTERData_relation_data.columns}")
+        log.warning(f"COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].columns:\n{COUNTERData_relation[COUNTERData_relation_data.columns.tolist()].columns}")
+    #TEST: end temp
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 

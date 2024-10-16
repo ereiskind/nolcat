@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2024-06-12 ##########
+########## Passing 2024-10-16 ##########
 
 import pytest
 import logging
@@ -156,7 +156,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?[PpDdTtIi]?[Rr](_\w\d)?", report["Report_ID"]):
+            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?(sciencedirect:)?[PpDdTtIi]?[Rr](_\wJ?\d)?", report["Report_ID"]):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
