@@ -156,7 +156,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?[PpDdTtIi]?[Rr](_\w\d)?", report["Report_ID"]):
+            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?(sciencedirect:)?[PpDdTtIi]?[Rr](_\wJ?\d)?", report["Report_ID"]):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
