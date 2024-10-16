@@ -289,11 +289,6 @@ class SUSHICallAndResponse:
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
-            #TEST: temp -- How does file of type dict in final else message compare to other responses? PNAS had `\t\n` in a string
-            log.warning(f"API_response:\n{API_response}")
-            log.warning(f"repr(type(API_response)):\n{repr(type(API_response))}")
-            log.warning(f"API_response.text:\n{API_response.text}")
-            #TEST: end temp
             if isinstance(API_response.text, str):
                 try:
                     log.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
