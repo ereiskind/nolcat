@@ -631,7 +631,7 @@ def update_database(update_statement, engine):
         if isinstance(before_df, str):
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
-            log.warning(f"The records to be updated:\n{before_df}")  #TEST: temp level, should be 'debug'
+            log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
         query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
         before_df = query_database(

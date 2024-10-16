@@ -306,16 +306,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
-    #TEST: temp
-    try:
-        log.warning(f"Comparison:\n{retrieved_data.compare(expected_output_data, result_names=('first', 'second'))}")
-    except:
-        log.warning(f"retrieved_data.index:\n{retrieved_data.index}")
-        log.warning(f"expected_output_data.index:\n{expected_output_data.index}")
-        log.warning(f"retrieved_data.columns:\n{retrieved_data.columns}")
-        log.warning(f"expected_output_data.columns:\n{expected_output_data.columns}")
-    #TEST: end temp
-    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes  #TEST: AssertionError: DataFrame.iloc[:, 4] (column name="collection_status") are different
+    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
 #Section: Test Collecting Usage Statistics
@@ -384,7 +375,6 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
         pytest.skip(database_function_skip_statements(before_count, False))
     before_count = extract_value_from_single_value_df(before_count)
     logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
-    log.warning(f"logging_statement: {logging_statement}")  #TEST: temp
     if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
         pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
     after_count = query_database(
