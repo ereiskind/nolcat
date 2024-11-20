@@ -309,7 +309,7 @@ class ConvertJSONDictToDataframe:
                             include_in_df_dtypes['ISBN'] = 'string'
                             log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
-                        #subsection: Capture `print_ISSN` Value
+                        #Subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
                             if ISSN_regex().fullmatch(type_and_value['Value']):
                                 record_dict['print_ISSN'] = type_and_value['Value'].strip()
