@@ -31,7 +31,7 @@ class ConvertJSONDictToDataframe:
         self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
     Methods:
-       create_dataframe: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
+        create_dataframe: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
         _transform_R5_JSON: This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
         _transform_R5b1_JSON: This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
@@ -82,6 +82,7 @@ class ConvertJSONDictToDataframe:
             except Exception as error:
                 message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
                 log.error(message)
+                #ToDo: Save JSON as file
                 return message
         elif COUNTER_release == "5.1":
             try:
@@ -89,10 +90,12 @@ class ConvertJSONDictToDataframe:
             except Exception as error:
                 message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
                 log.error(message)
+                #ToDo: Save JSON as file
                 return message
         else:
             message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
             log.error(message)
+            #ToDo: Save JSON as file
             return message
         return df  # The method will only get here if one of the private harvest methods was successful
 
@@ -105,6 +108,7 @@ class ConvertJSONDictToDataframe:
 
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+            str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`.")
         records_orient_list = []
@@ -588,6 +592,7 @@ class ConvertJSONDictToDataframe:
 
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+            str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`.")
         pass

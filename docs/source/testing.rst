@@ -101,10 +101,18 @@ Create R5 SUSHI Response JSON Reports
 1. For each worksheet in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" with an R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
 2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
 3. Download each of the above projects in Excel and save to "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" and adjust any pre-1900 publication dates if necessary (in creating test data, the date "1753-01-01" in OpenRefine became "-1" when exported to Excel, which in turn became Timestamp object with the value "1899-12-29" when the worksheet was uploaded).
-4. For each type of report and vendor combination with a file in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\", make a SUSHI API call in the browser, copy the result into a JSON file named with the statistics source ID, an underscore, and the report name abbreviation (the test data contains only one year of R5 reports, preventing repetitions with this naming convention) in the "\\tests\\data\\COUNTER_JSONs_for_tests" folder.
+4. For each type of report and vendor combination with a file in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\", make a SUSHI API call in the browser, copy the result into a JSON file named with the statistics source ID, an underscore, and the report name abbreviation (the test data contains only one year of R5 reports, preventing repetitions with this naming convention) in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder.
 5. In each newly created JSON file, anonymize the data in ``Report_Header``, change the ``Created`` value in ``Report_Header`` to ``2019-07-01T00:00:00Z``, and delete the data in ``Report_Items``.
-6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\COUNTER_JSONs_for_tests".
+6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\R5_COUNTER_JSONs_for_tests".
 7. Unescape the slashes (/) in each JSON file via find and replace (replace ``\/`` with ``/``).
+
+Create R5.1 SUSHI Response JSON Reports
+---------------------------------------
+Code of Practice 5.1 was released on 2023-05-05, featuring minor changes in the way the data is captured and a change to the JSON schema. The latter change required the creation of a second set of test data JSONs matching this new schema.
+
+1. For each file in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder, create a copy in the "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests" folder.
+2. Using the example schemas from the R5.1 Code of Practice, create the report header based on the data from the R5 JSON report header and leave a sample of the formatted data for all of the files created above.
+3. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_R5.1_SUSHI_JSON_from_tabular_R5.py"
 
 Create ``ConvertJSONDictToDataframe`` Test Fixtures
 ---------------------------------------------------

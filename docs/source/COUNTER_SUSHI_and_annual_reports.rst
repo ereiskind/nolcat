@@ -88,31 +88,19 @@ COUNTER refers to the fields in their reports as "elements." Not all elements ar
 * Reporting Period HTML (JR1) -- Not preserved in NoLCAT
 * Reporting Period PDF (JR1) -- Not preserved in NoLCAT
 
-COUNTER 5.1 Proposals
-=====================
-* Many changes are designed to improve OA reporting
-* Item is the unit of reporting
+COUNTER 5.1
+===========
+COUNTER Code of Practice 5.1 was released 2023-05-05, and it brought a few changes to the standard:
 
-  * For books, chapter is the unit of reporting; full book download is an item request per chapter of book--item counts will increase but title metrics remain constant
-  * `Section_Type` to be removed
+* The item is the unit of reporting for all data types; in R5, the chapter was the level of reporting for books
 
-* `Data_Types` fixed vocab list increasing for improved granularity (proposal has detailed descriptions)
-* `Access_Type` changing
+  * In R5, books were reported at the chapter level, meaning the item-level metrics won't align
+  * The Section_Type attribute is depreciated
 
-  * Access is the related to the access on the platform where it occurs
-  * Access refers to the full text
-  * `Open` means explicitly OA; `Free_To_Read` means free but not explicitly OA--deliberately avoiding models of OA controlled by other orgs
-  * `Controlled` includes content that has no financial access requirements but requires registration to read
+* The fixed vocabulary for Data_Types is expanded
+* The Access_Type terms have been clarified
 
-* **JSON structure may be changing**
-* SUSHI
-
-  * Dropping IP-based authentication
-  * `/status` won't require credentials
-  * `/reports` will include information on dates for which SUSHI cam provide data
-  * Planning to add release number in URL path
-
-* Optional global reports provide total usage for content--provide usage for OA sponsorships
+For the official information about transitioning from R5 to R5.1, see https://cop5.projectcounter.org/en/5.1/13-transitioning/03-transitioning-from-counter-r5-to-r51.html.
 
 Annual Usage Statistics
 ***********************

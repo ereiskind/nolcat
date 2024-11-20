@@ -17,56 +17,56 @@ log = logging.getLogger(__name__)
 
 #Section: Fixtures
 @pytest.fixture
-def sample_SUSHI_PR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls.
+def sample_SUSHI_PR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI PR API calls.
     
     Yields:
         dict: test COUNTER data
     """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
-def sample_SUSHI_DR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls.
+def sample_SUSHI_DR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI DR API calls.
     
     Yields:
         dict: test COUNTER data
     """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
-def sample_SUSHI_TR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls.
+def sample_SUSHI_TR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI TR API calls.
     
     Yields:
         dict: test COUNTER data
     """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
-def sample_SUSHI_IR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls.
+def sample_SUSHI_IR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI IR API calls.
     
     Yields:
         dict: test COUNTER data
     """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
 def sample_SUSHI_PR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe.
+    """Creates a dataframe with the result of changing the data in the PR JSON fixtures into a dataframe.
     
     Yields:
         dataframe: test COUNTER data
@@ -180,7 +180,7 @@ def sample_SUSHI_PR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_DR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe.
+    """Creates a dataframe with the result of changing the data in the DR JSON fixtures into a dataframe.
     
     Yields:
         dataframe: test COUNTER data
@@ -608,7 +608,7 @@ def sample_SUSHI_DR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_TR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe.
+    """Creates a dataframe with the result of changing the data in the TR JSON fixtures into a dataframe.
     
     Yields:
         dataframe: test COUNTER data
@@ -656,7 +656,7 @@ def sample_SUSHI_TR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_IR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe.
+    """Creates a dataframe with the result of changing the data in the IR JSON fixtures into a dataframe.
     
     Yields:
         dataframe: test COUNTER data
@@ -4499,25 +4499,25 @@ def sample_SUSHI_IR_response_dataframe():
 
 
 #Section: Tests
-def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUSHI_PR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_PR(sample_SUSHI_PR_response_R5_JSON_dict, sample_SUSHI_PR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_PR_response_dataframe[df.columns.tolist()])
 
 
-def test_create_dataframe_from_DR(sample_SUSHI_DR_response_JSON_dict, sample_SUSHI_DR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_DR(sample_SUSHI_DR_response_R5_JSON_dict, sample_SUSHI_DR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_DR_response_dataframe[df.columns.tolist()])
 
 
-def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUSHI_TR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_TR(sample_SUSHI_TR_response_R5_JSON_dict, sample_SUSHI_TR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_TR_response_dataframe[df.columns.tolist()])
 
 
-def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_IR(sample_SUSHI_IR_response_R5_JSON_dict, sample_SUSHI_IR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_IR_response_dataframe[df.columns.tolist()])
