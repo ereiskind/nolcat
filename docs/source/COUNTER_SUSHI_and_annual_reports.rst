@@ -104,15 +104,15 @@ For the official information about transitioning from R5 to R5.1, see https://co
 
 Annual Usage Statistics
 ***********************
-Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the ``fiscalYears`` relation. That relation's class contains methods to calculate all of the metrics described below.
+Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the ``annualStatistics`` relation. That relation's class contains methods to calculate all of the metrics described below.
 
-ACRL/IPEDS 60b. Initial Circulation: Digital/Electronic
-=======================================================
-"Report usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." The instructions say to use TR_B1 "unique title requests" for e-books and IR_M1 "total_item_requests" for e-media.
+ACRL/IPEDS 61a. Total E-book & E-media Usage
+============================================
+"Report usage of digital/electronic titles whether viewed, downloaded, or streamed. Do not include institutional repository documents. Include usage for e-books and e-media titles only, even if the title was purchased as part of a database." The instructions say to use TR_B1 "unique title requests" for e-books and IR_M1 "total_item_requests" for e-media.
 
-ACRL/IPEDS 63. E-Serials Usage: Digital/Electronic
-==================================================
-"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded." The instructions say to use TR_J1 "unique item requests."
+ACRL/IPEDS 61b. E-serials Usage
+===============================
+"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded...If available, include the count for open access e-journal usage if the title is accessible through the library’s catalog or discovery system." The instructions say to use TR_J1 "unique item requests" and add open access "if discoverable/available," which means not including the Access_Type filter traditionally included in the TR_J1 (for filtering purposes, this makes it a TR_J3).
 
 ARL 18. Number of successful full-text article requests (journals)
 ==================================================================
@@ -125,3 +125,16 @@ ARL 19. Number of regular searches (databases)
 ARL 20. Number of federated searches (databases)
 ================================================
 "The COUNTER 5 report that corresponds to Question 20 is DR_D1 Searches_Federated. Metric options include "Searches_Federated",...The goal is to capture the totality of federated searches. In a footnote, please include the types of resources for which you are reporting data, and please specify the COUNTER 5 metric used to report this value. It is recommended that ONLY data that follow the COUNTER definitions be reported."
+
+Depreciated Metrics
+===================
+
+ACRL/IPEDS 60b. Initial Circulation: Digital/Electronic
+-------------------------------------------------------
+**Last requested: ACRL 2022 Benchmark**
+"Report usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." The instructions say to use TR_B1 "unique title requests" for e-books and IR_M1 "total_item_requests" for e-media.
+
+ACRL/IPEDS 63. E-Serials Usage: Digital/Electronic
+--------------------------------------------------
+**Last requested: ACRL 2022 Benchmark**
+"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded." The instructions say to use TR_J1 "unique item requests."

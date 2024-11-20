@@ -122,7 +122,7 @@ h1 {
 }
 h2 {
     font-size: 37px;
-}  
+}
 h3 {
     font-size: 29px;
 }
@@ -168,8 +168,8 @@ a:hover, a:focus {
     color: #ceb888;
     text-decoration: none;
     /* shared with `a` */
-    
-}  
+
+}
 a:focus {
     outline: 5px auto -webkit-focus-ring-color; /* outline: 3px auto -webkit-focus-ring-color */
     outline-offset: -2px;
@@ -264,7 +264,7 @@ input[type="radio"] label, input[type="checkbox"] label {
     font-weight: 400;
     cursor: pointer;
 }
-  
+
 
 
 /*** TABLES ***/

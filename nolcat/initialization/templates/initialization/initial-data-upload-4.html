@@ -10,33 +10,28 @@
 <body>
     <h1>Database Initialization Wizard: Page 4</h1>
 
-    <!--
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+        <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
+    <h2>8. Upload the Non-COUNTER Files</h2>
     <ol>
-        <li><h2>Upload Historical R4 Usage</h2>
-            <p>Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.</p>
-            <ol>
-                <li>Create a folder containing nothing but the reformatted R4 report CSVs with every file named using the naming convention `{Statistics_Source_ID}_{R4 report type abbreviation}_{calendar year assigned to fiscal year in "yyyy" format}.csv`</li>
-                <li>Click on the "Open" button below to get to the file navigation window, navigate to the folder created above, then use `Ctrl + a` to select all the files in the folder</li>
-                <li><form action="{{ url_for('ingest.wizard_page_4') }}" method="POST" enctype="multipart/form-data">
+        <li>Locate the folder from step 6.2 where all of the non-COUNTER files with the appropriate naming convention were saved.</li>
+        <li>For each of the file selection fields below, select the non-COUNTER file corresponding to the given statistics source and fiscal year.
+            <form action="{{ url_for('initialization.upload_historical_non_COUNTER_usage', testing=testing) }}" method="POST" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+                {% for file in form.usage_files %}
                     <label>
-                        Upload all the selected files
-                        <input name="R4_files" type="file" multiple>
+                        {{ file.usage_file.label }}<br>
+                        {{ file.usage_file.data }}&nbsp;{{ file.usage_file }}
                     </label>
-                    <button type="submit">Submit</button>
-                </form></li>
-            </ol>
+                    <br><br>
+                {% endfor %}
+                <input type="submit" value="Submit">
+            </form>
         </li>
     </ol>
-    -->
-
-    <!-- From the route function:
-    form = FormClass()
-    if request.method == 'GET':
-        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
-        #ToDo: Create an iterable to pass all the records returned by the above to a form
-        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        return render_template('initialization/initial-data-upload-4.html', form=form)
-    -->
-    
 </body>
 </html>

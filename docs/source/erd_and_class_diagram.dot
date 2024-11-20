@@ -6,40 +6,45 @@ digraph erd_and_classes {
         folder = FK
         component = FK that makes up a composite PK
         Mrecord = methods
-        
-        Starting with two underscores means not from user stories
     */
 
-    /* *** ESTABLISHED RELATIONS/CLASSES *** */
-    
 
     subgraph cluster_fiscalYears {
         label="fiscalYears"
 
         // Attributes
         fiscal_year_ID [shape="note"]
-        year
-        _start_date // The FY start as date data type to go in SQL queries
-        _end_date // The FY end as date data type to go in SQL queries
-        // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
-        ACRL_60b // Initial Circulation: Digital/Electronic
-        ACRL_63 // E-Serials Usage: Digital/Electronic
-        ARL_18 // Number of successful full-text article requests (journals)
-        ARL_19 // Number of regular searches (databases)
-        ARL_20 // Number of federated searches (databases)
-        // Should the date when the numbers were collected be saved?
+        fiscal_year
+        start_date
+        end_date
         notes_on_statisticsSources_used
-        notes_on_corrections_after_submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
+        notes_on_corrections_after_submission
 
         // Methods
-        // Should each number have its own method, or should all of them be calculated at the same time?
-        calculate_ACRL_60b [shape="Mrecord"]
-        calculate_ACRL_63 [shape="Mrecord"]
+        state_data_types [shape="Mrecord"]
+        calculate_depreciated_ACRL_60b [shape="Mrecord"]
+        calculate_depreciated_ACRL_63 [shape="Mrecord"]
+        calculate_ACRL_61a [shape="Mrecord"]
+        calculate_ACRL_61b [shape="Mrecord"]
         calculate_ARL_18 [shape="Mrecord"]
         calculate_ARL_19 [shape="Mrecord"]
         calculate_ARL_20 [shape="Mrecord"]
-        __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
+        create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
         collect_fiscal_year_usage_statistics [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_annualStatistics {
+        label="annualStatistics"
+
+        // Attributes
+        fiscal_year_ID_in_annualStatistics [shape="component" note="fiscal_year_ID"]
+        question [shape="note"]
+        count
+
+        // Methods
+        state_data_types [shape="Mrecord"]
+        add_annual_statistic_value [shape="Mrecord"]
     }
 
 
@@ -52,12 +57,13 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
+        state_data_types [shape="Mrecord"]
         get_statisticsSources_records [shape="Mrecord"]
         get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
-    
+
     subgraph cluster_vendorNotes {
         label="vendorNotes"
 
@@ -72,6 +78,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -88,8 +95,11 @@ digraph erd_and_classes {
         ]
 
         // Methods
+        state_data_types [shape="Mrecord"]
         fetch_SUSHI_information [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
+        _harvest_single_report [shape="Mrecord"]
+        _check_if_data_in_database [shape="Mrecord"]
         collect_usage_statistics [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
@@ -109,6 +119,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -119,15 +130,17 @@ digraph erd_and_classes {
         resource_source_ID [shape="note"]
         resource_source_name
         source_in_use
-        use_stop_date
+        access_stop_date
         vendor_ID_in_resourceSources [
             label="vendor_ID"
             shape="folder"
         ]
 
         // Methods
+        state_data_types [shape="Mrecord"]
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
+        change_StatisticsSource [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
@@ -146,6 +159,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -155,9 +169,10 @@ digraph erd_and_classes {
         // Attributes
         SRS_statistics_source [shape="component"]
         SRS_resource_source [shape="component"]
-        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
+        current_statistics_source
 
         // Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -168,16 +183,18 @@ digraph erd_and_classes {
         AUCT_statistics_source [shape="component"]
         AUCT_fiscal_year [shape="component"]
         usage_is_being_collected
-        __manual_collection_required
-        __collection_via_email
-        __is_COUNTER_compliant
-        __collection_status
-        __usage_file_path
+        manual_collection_required
+        collection_via_email
+        is_COUNTER_compliant
+        collection_status
+        usage_file_path
         notes
 
         // Methods
+        state_data_types [shape="Mrecord"]
         collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
+        download_nonstandard_usage_file [shape="Mrecord"]
     }
 
 
@@ -190,42 +207,43 @@ digraph erd_and_classes {
             label="statistics_source_ID"
             shape="folder"
         ]
+        report_type
         resource_name
-        __report_type
         publisher
         publisher_ID
         platform
-        __authors
-        __publication_date
-        __article_version
+        authors
+        publication_date
+        article_version
         DOI
         proprietary_ID
         ISBN
         print_ISSN
         online_ISSN
-        __URI
+        URI
         data_type
-        __section_type
-        __YOP
-        __access_type
-        __access_method
+        section_type
+        YOP
+        access_type
+        access_method
         parent_title
-        __parent_authors
-        __parent_publication_date
-        __parent_article_version
+        parent_authors
+        parent_publication_date
+        parent_article_version
         parent_data_type
         parent_DOI
         parent_proprietary_ID
         parent_ISBN
         parent_print_ISSN
         parent_online_ISSN
-        __parent_URI
-        __metric_type
-        __usage_date
+        parent_URI
+        metric_type
+        usage_date
         usage_count
-        __report_creation_date
+        report_creation_date
 
         // Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -233,6 +251,7 @@ digraph erd_and_classes {
         label="CLASS: SUSHICallAndResponse"
 
         // Attributes
+        header_value
         calling_to
         call_URL
         call_path
@@ -240,8 +259,12 @@ digraph erd_and_classes {
 
         // Methods
         make_SUSHI_call [shape="Mrecord"]
+        _make_API_call [shape="Mrecord"]
+        _convert_Response_to_JSON [shape="Mrecord"]
+        _save_raw_Response_text [shape="Mrecord"]
         _handle_SUSHI_exceptions [shape="Mrecord"]
-        _create_error_query_text [shape="Mrecord"]
+        _evaluate_individual_SUSHI_exception [shape="Mrecord"]
+        _stdout_API_response_based_on_size [shape="Mrecord"]
     }
 
 
@@ -260,40 +283,23 @@ digraph erd_and_classes {
         label="CLASS: ConvertJSONDictToDataframe"
 
         // Attributes
+        RESOURCE_NAME_LENGTH
+        PUBLISHER_LENGTH
+        PUBLISHER_ID_LENGTH
+        PLATFORM_LENGTH
+        AUTHORS_LENGTH
+        DOI_LENGTH
+        PROPRIETARY_ID_LENGTH
+        URI_LENGTH
+        proprietary_ID_regex
+        author_regex
         SUSHI_JSON_dictionary
 
         // Methods
         create_dataframe [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_Blueprints {
-        label="CLASS: Blueprints"
-
-        annual_stats [
-            shape="record"
-            label="\N"
-        ]
-        ingest_usage [
-            shape="record"
-            label="\N|COUNTER reports|R4 reports|R5 SUSHI"
-        ]
-        initialization [
-            shape="record"
-            label="\N|COUNTER reports|historical usage data"
-        ]
-        login [
-            shape="record"
-            label="\N|librarians (as users)"
-        ]
-        view_lists [
-            shape="record"
-            label="\N"
-        ]
-        view_usage [
-            shape="record"
-            label="\N|COUNTER stats"
-        ]
+        _transform_R5_JSON [shape="Mrecord"]
+        _transform_R5b1_JSON [shape="Mrecord"]
+        _serialize_dates [shape="Mrecord"]
     }
 
 
@@ -303,7 +309,7 @@ digraph erd_and_classes {
         table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
         arrowhead = how PK table can connect to FK table
         arrowtail = how FK table can connect to PK table
-        
+
         teeodot = 0..1 (unique but optional)
         crowodot = 0..N (optional, not unique)
         teetee = 1..1 (exactly one)
@@ -311,6 +317,13 @@ digraph erd_and_classes {
     */
 
     fiscal_year_ID -> AUCT_fiscal_year [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+
+    fiscal_year_ID -> fiscal_year_ID_in_annualStatistics [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
@@ -378,54 +391,4 @@ digraph erd_and_classes {
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
-
-
-    /* *** OBJECTS TO BE ORGANIZED *** */
-
-    // Nouns: Classes or Attributes
-    "Databases A to Z"
-    "Databases A to Z items"
-    "names a databases goes and has gone by"
-    /* Do these need to be kept?
-        reference
-        location
-        databases
-        aggregator
-        initial database data
-        unique resource list
-    */
-
-    //Verbs: Methods
-    store
-    match
-    connect
-    change
-
-    subgraph cluster_Technical_Terms {
-        // Nouns: Classes or Attributes
-        spreadsheets
-        emails
-        files
-        "file format"
-        workbooks
-        database
-        "normalized list of resources"
-        // Verbs: Methods
-        download
-        "generate emails"
-        upload
-        dedupe
-        copy
-        paste
-    }
-
-    subgraph cluster_Acquisitions_Terms {
-        // Nouns: Classes or Attributes
-        "order numbers"
-        "current ILS"
-        "legacy ILS"
-        "price data"
-        invoices
-        // Verbs: Methods
-    }
 }

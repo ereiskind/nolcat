@@ -15,22 +15,27 @@
         {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('ingest_usage.harvest_SUSHI_statistics') }}" method="POST">
+    <form action="{{ url_for('ingest_usage.harvest_SUSHI_statistics', testing=testing) }}" method="POST">
         {{ form.csrf_token }}
-        <li><label>
+        <label>
             {{ form.statistics_source.label }}
             {{ form.statistics_source }}
-        </label></li>
+        </label>
         <br>
-        <li><label>
+        <label>
             {{ form.begin_date.label }}
             {{ form.begin_date }}
-        </label></li>
+        </label>
         <br>
-        <li><label>
+        <label>
             {{ form.end_date.label }}
             {{ form.end_date }}
-        </label></li>
+        </label>
+        <br>
+        <label>
+            {{ form.report_to_harvest.label }}
+            {{ form.report_to_harvest }}
+        </label>
         <input type="submit" value="Submit">
     </form>
 </body>

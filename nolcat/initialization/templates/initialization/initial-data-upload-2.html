@@ -10,6 +10,12 @@
 <body>
     <h1>Database Initialization Wizard: Page 2</h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+        <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <h2>4. Create the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` Relations</h2>
     <p>In handling usage statistics for electronic resources, there are two information sources to consider--the resource source, also called the platform and often equivalent to a HTTP domain, which is the source of the e-resource content, and the statistics source, where the usage statistics come from. There's a complex, many-to-many relationship between these two sources with situations/use cases that include
         <ul>
@@ -22,7 +28,7 @@
         </ul>
     To handle this complexity, three relations in a junction table-like relationship are employed: the `resourceSources` relation contains records for sources of e-resource content, including if that content is still available to patrons; the `statisticsSources` relation contains records for all the different usage statistics sources and a field for linking to externally stored SUSHI R5 credentials; and the `statisticsResourceSources` relation is a junction table for the other two relations with an additional field to indicate if the given statistics source currently provides usage for the given resource source. This model can integrate with other e-resource management tools through the `resourceSources` relation and track changes to system backends that don't cause frontend changes.</p>
     <ol>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.csv') }}">"initialize_resourceSources.csv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.csv') }}">"initialize_statisticsSources.csv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.csv') }}">"initialize_resourceSourceNotes.csv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.csv') }}">"initialize_statisticsSourceNotes.csv"</a>.</li>
+        <li>Download <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_resourceSources.csv') }}">"initialize_resourceSources.csv"</a>, <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_statisticsSources.csv') }}">"initialize_statisticsSources.csv"</a>, <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_resourceSourceNotes.csv') }}">"initialize_resourceSourceNotes.csv"</a>, and <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_statisticsSourceNotes.csv') }}">"initialize_statisticsSourceNotes.csv"</a>.</li>
         <li>Open a spreadsheet program and create a spreadsheet named "temp" with all the field names from "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", then adding the field name `current_statistics_source`.</li>
         <li>In the "temp" spreadsheet, replace the two `vendor_ID` fields with `Resource Vendor` and `Stats Vendor`.</li>
         <li>In the "temp" spreadsheet, create the list of statistics sources and resource sources pairings, adding to the notes CSVs whenever appropriate. This is a comprehensive listing, so the best methods to use will depend on how much data is already gathered and what form it is in. Below are some ideas that form a potential procedure.
@@ -36,8 +42,8 @@
         <li>If numbers weren't added to `statistics_source_ID` and `resource_source_ID` in all records as the "temp" spreadsheet was being filled in, finish adding sequential numbering to those fields (any records that have duplicates or a note should already have an ID number). Remember that the numbering should start at `0`.</li>
         <li>Copy values from the fields in the "temp" spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `vendor_ID` fields in the appropriate CSV.</li>
         <li>Remove duplicate records (meaning all values in the record match) from "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", then double check that there are no duplicated values in `resource_source_ID` or `statistics_source_ID`; if there are duplicates, return to the "temp" spreadsheet, find and fix the error, and start again at the previous step.</li>
-        <li>Save all four CSVs, ensuring the encodings are UTF-8.</li>
-        <li>Delete all fields but `resource_source_ID`, `statistics_source_ID`, and `current_statistics_source` from the "temp" spreadsheet, then save it as a CSV with UTF-8 encoding named "initialize_statisticsResourceSources.csv".</li>
+        <li>Save all four CSVs, ensuring the encodings are UTF-8 and that any date fields appear as dates.</li>
+        <li>Delete all fields but `resource_source_ID`, `statistics_source_ID`, and `current_statistics_source` from the "temp" spreadsheet, then save it as a CSV with UTF-8 encoding and and with date fields appearing as dates named "initialize_statisticsResourceSources.csv".</li>
         <li>In "initialize_statisticsResourceSources.csv", change `statistics_source_ID` to `SRS_statistics_source` and `resource_source_ID` to `SRS_resource_source`, then save the CSV again.</li>
     </ol>
 

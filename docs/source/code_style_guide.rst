@@ -3,9 +3,6 @@ Source Code Style Guide
 
 What follows are details about the style of the code and its documentation that have been recorded for the sake of consistent application across the code base.
 
-Python Code
-***********
-
 reStructured Text
 *****************
 

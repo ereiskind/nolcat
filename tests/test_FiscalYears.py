@@ -1,294 +1,124 @@
 """Tests the methods in FiscalYears."""
-########## Data in no relations ##########
+########## Passing 2024-10-16 ##########
 
 import pytest
+import logging
 from datetime import date
+from random import choice
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_single_field_dataframe_into_series, return_string_of_dataframe_info, restore_Boolean_values_to_Boolean_field
-from nolcat.models import FiscalYears
+from nolcat.app import *
+from nolcat.models import *
+from nolcat.statements import *
+
+log = logging.getLogger(__name__)
 
 
-@pytest.mark.dependency()
-def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation, vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, annualUsageCollectionTracking_relation, COUNTERData_relation):
-    """This test loads data into all the relations and confirms the data ingest was successful.
-    
-    All of the methods being tested in this module require there to be data in the database, so the database needs to be filled with the test data if any of the tests are going to pass. Placing the `to_sql` statements in a fixture scoped for the module didn't load them successfully, so both the methods to load them and the checks to ensure they were loaded are contained in this test function.
+#Section: Test Annual Usage Statistics Methods
+@pytest.fixture
+def FY2020_FiscalYears_object(engine, caplog):
+    """Creates a FiscalYears object for the fiscal year with COUNTER R5 test data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
     """
-    fiscalYears_relation.to_sql(
-        'fiscalYears',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='fiscal_year_ID',
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
+        engine=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
     )
-    vendors_relation.to_sql(
-        'vendors',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='vendor_ID',
+    if isinstance(record, str):
+        pytest.skip(database_function_skip_statements(record, False))
+    yield_object = FiscalYears(
+        fiscal_year_ID=record.at[0,'fiscal_year_ID'],
+        fiscal_year=record.at[0,'fiscal_year'],
+        start_date=record.at[0,'start_date'],
+        end_date=record.at[0,'end_date'],
+        notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
+        notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
     )
-    vendorNotes_relation.to_sql(
-        'vendorNotes',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='vendor_notes_ID',
-    )
-    statisticsSources_relation.to_sql(
-        'statisticsSources',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='statistics_source_ID',
-    )
-    statisticsSourceNotes_relation.to_sql(
-        'statisticsSourceNotes',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='statistics_source_notes_ID',
-    )
-    resourceSources_relation.to_sql(
-        'resourceSources',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='resource_source_ID',
-    )
-    resourceSourceNotes_relation.to_sql(
-        'resourceSourceNotes',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='resource_source_notes_ID',
-    )
-    statisticsResourceSources_relation.to_sql(
-        'statisticsResourceSources',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label=['SRS_statistics_source', 'SRS_resource_source'],
-    )
-    annualUsageCollectionTracking_relation.to_sql(
-        'annualUsageCollectionTracking',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-    )
-    COUNTERData_relation.to_sql(
-        'COUNTERData',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='COUNTER_data_ID',
-    )
-
-    fiscalYears_relation_data = pd.read_sql(
-        sql="SELECT * FROM fiscalYears;",
-        con=engine,
-        index_col='fiscal_year_ID',
-    )
-    fiscalYears_relation_data = fiscalYears_relation_data.astype({
-        "fiscal_year": 'string',
-        "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
-        "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
-        "notes_on_statisticsSources_used": 'string',  # For `text` data type
-        "notes_on_corrections_after_submission": 'string',  # For `text` data type
-    })
-    fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
-    fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
-
-    vendors_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendors;",
-        con=engine,
-        index_col='vendor_ID',
-    )
-    vendors_relation_data = vendors_relation_data.astype({
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
-    })
-
-    vendorNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendorNotes;",
-        con=engine,
-        index_col='vendor_notes_ID',
-    )
-    vendorNotes_relation_data = vendorNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "vendor_ID": 'int',
-    })
-    vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
-
-    statisticsSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSources;",
-        con=engine,
-        index_col='statistics_source_ID',
-    )
-    statisticsSources_relation_data = statisticsSources_relation_data.astype({
-        "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
-        "vendor_ID": 'int',
-    })
-
-    statisticsSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSourceNotes;",
-        con=engine,
-        index_col='statistics_source_notes_ID',
-    )
-    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "statistics_source_ID": 'int',
-    })
-    statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
-
-    resourceSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSources;",
-        con=engine,
-        index_col='resource_source_ID',
-    )
-    resourceSources_relation_data = resourceSources_relation_data.astype({
-        "resource_source_name": 'string',
-        "vendor_ID": 'int',
-    })
-    resourceSources_relation_data['source_in_use'] = restore_Boolean_values_to_Boolean_field(resourceSources_relation_data['source_in_use'])
-    resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
-
-    resourceSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSourceNotes;",
-        con=engine,
-        index_col='resource_source_notes_ID',
-    )
-    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "resource_source_ID": 'int',
-    })
-    resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
-
-    statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        sql="SELECT * FROM statisticsResourceSources;",
-        con=engine,
-        index_col=['SRS_statistics_source', 'SRS_resource_source'],
-    )
-    statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
-    statisticsResourceSources_relation_data = restore_Boolean_values_to_Boolean_field(statisticsResourceSources_relation_data)  # The relation is a series, so an index reference on its only non-index field raises a KeyError
-
-    annualUsageCollectionTracking_relation_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    )
-    annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
-    })
-
-    COUNTERData_relation_data = pd.read_sql(
-        sql="SELECT * FROM COUNTERData;",
-        con=engine,
-        index_col="COUNTER_data_ID",
-    )
-    COUNTERData_relation_data = COUNTERData_relation_data.astype({
-        "statistics_source_ID": 'int',
-        "report_type": 'string',
-        "resource_name": 'string',
-        "publisher": 'string',
-        "publisher_ID": 'string',
-        "platform": 'string',
-        "authors": 'string',
-        "article_version": 'string',
-        "DOI": 'string',
-        "proprietary_ID": 'string',
-        "ISBN": 'string',
-        "print_ISSN": 'string',
-        "online_ISSN": 'string',
-        "URI": 'string',
-        "data_type": 'string',
-        "section_type": 'string',
-        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-        "access_type": 'string',
-        "access_method": 'string',
-        "parent_title": 'string',
-        "parent_authors": 'string',
-        "parent_article_version": 'string',
-        "parent_data_type": 'string',
-        "parent_DOI": 'string',
-        "parent_proprietary_ID": 'string',
-        "parent_ISBN": 'string',
-        "parent_print_ISSN": 'string',
-        "parent_online_ISSN": 'string',
-        "parent_URI": 'string',
-        "metric_type": 'string',
-    })
-    COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
-    COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
-    COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
-    COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
-
-    assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
-    assert_frame_equal(vendors_relation_data, vendors_relation)
-    assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
-    assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
-    assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
-    assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
-    assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
-    assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
-    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
+    log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
+    yield yield_object
 
 
-def test_calculate_ACRL_60b():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
-
-
-def test_calculate_ACRL_63():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
-
-
-def test_calculate_ARL_18():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
-
-
-def test_calculate_ARL_19():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
-
-
-def test_calculate_ARL_20():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
-
-
-def test_create_usage_tracking_records_for_fiscal_year(engine, client):
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
+def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object):
+    """Tests getting the old ACRL 60b value.
     
-    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
+    Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
     """
-    #Section: Create `FiscalYears` Object and `fiscalYears` Record
+    with client:
+        assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
+
+
+def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object):
+    """Tests getting the old ACRL 63 value.
+    
+    Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
+
+
+def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object):
+    """Tests getting the ACRL 61a value.
+    
+    Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_ACRL_61a() == 73
+
+
+def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object):
+    """Tests getting the ACRL 61b value.
+    
+    Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_ACRL_61b() == 2190
+
+
+def test_calculate_ARL_18(client, FY2020_FiscalYears_object):
+    """Tests getting the ARL 18 value.
+    
+    Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_ARL_18() == 2190
+
+
+def test_calculate_ARL_19(client, FY2020_FiscalYears_object):
+    """Tests getting the ARL 19 value.
+    
+    Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_ARL_19() == 85613
+
+
+def test_calculate_ARL_20(client, FY2020_FiscalYears_object):
+    """Tests getting the ARL 20 value.
+    
+    Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+    """
+    with client:
+        assert FY2020_FiscalYears_object.calculate_ARL_20() == 0
+
+
+#Section: Test Creating New `annualUsageCollectionTracking` Records
+@pytest.fixture
+def FY2023_FiscalYears_object_and_record():
+    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
+
+    Yields:
+        tuple: the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+    """
     primary_key_value = 6
     fiscal_year_value = "2023"
     start_date_value = date.fromisoformat('2022-07-01')
@@ -299,51 +129,69 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         fiscal_year = fiscal_year_value,
         start_date = start_date_value,
         end_date = end_date_value,
-        ACRL_60b = None,
-        ACRL_63 = None,
-        ARL_18 = None,
-        ARL_19 = None,
-        ARL_20 = None,
         notes_on_statisticsSources_used = None,
         notes_on_corrections_after_submission = None,
     )
     FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
+        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
         index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
+    yield (FY_instance, FY_df)
 
-    #Section: Update Relation and Run Method
-    FY_df.to_sql(
-        name='fiscalYears',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index=True,
-        index_label='fiscal_year_ID',
+
+@pytest.fixture
+def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_record, caplog):
+    """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    
+    Yields:
+        None
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
+    method_result = load_data_into_database(
+        df=FY2023_FiscalYears_object_and_record[1],
+        relation='fiscalYears',
+        engine=engine,
+        index_field_name='fiscal_year_ID',
     )
-    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
-    if "error" in method_result:  # If this is true,  pass
-        assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
+    if not load_data_into_database_success_regex().fullmatch(method_result):
+        pytest.skip(database_function_skip_statements(method_result, False))
+    yield None
+
+
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    #Section: Call Method
+    with client:
+        method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+    if not load_data_into_database_success_regex().fullmatch(method_result):
+        assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
-    retrieved_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    retrieved_data = query_database(
+        query="SELECT * FROM annualUsageCollectionTracking;",
+        engine=engine,
+        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    if isinstance(retrieved_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype({
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
+        "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
+        "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
+        "notes": AnnualUsageCollectionTracking.state_data_types()["notes"],
     })
-    retrieved_data['usage_is_being_collected'] = restore_Boolean_values_to_Boolean_field(retrieved_data['usage_is_being_collected'])
-    retrieved_data['manual_collection_required'] = restore_Boolean_values_to_Boolean_field(retrieved_data['manual_collection_required'])
-    retrieved_data['collection_via_email'] = restore_Boolean_values_to_Boolean_field(retrieved_data['collection_via_email'])
-    retrieved_data['is_COUNTER_compliant'] = restore_Boolean_values_to_Boolean_field(retrieved_data['is_COUNTER_compliant'])
-    print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
+    retrieved_data['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(retrieved_data['usage_is_being_collected'])
+    retrieved_data['manual_collection_required'] = restore_boolean_values_to_boolean_field(retrieved_data['manual_collection_required'])
+    retrieved_data['collection_via_email'] = restore_boolean_values_to_boolean_field(retrieved_data['collection_via_email'])
+    retrieved_data['is_COUNTER_compliant'] = restore_boolean_values_to_boolean_field(retrieved_data['is_COUNTER_compliant'])
     
     multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order
         [
@@ -443,29 +291,102 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
 
             [True, True, True, False, "Usage not provided", None, "Simulating a resource that starts offering usage statistics"],
             [True, True, True, False, "Usage not provided", None, None],
-            [True, True, False, False, "Collection complete", None, "This is the first FY with usage statistics"],
-            [True, True, False, False, "Collection complete", None, None],
-            [True, True, False, False, "Collection complete", None, None],
-            [True, True, False, False, "Collection not started", None, None],
+            [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
+            [True, True, False, False, "Collection complete", "11_3.csv", None],
+            [True, True, False, False, "Collection complete", "11_4.csv", None],
+            [True, False, False, False, "Collection not started", None, "This is the record for `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`"],
             [None, None, None, None, None, None, None],
         ],
         index=multiindex,
         columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
     )
-    expected_output_data = expected_output_data.astype({
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
-    })
+    expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
+    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
+    assert regex_match_object is not None
+    assert int(regex_match_object.group(1)) == 10
+    assert regex_match_object.group(2) == "annualUsageCollectionTracking"
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
-def test_collect_fiscal_year_usage_statistics():
-    """Create a test calling the StatisticsSources._harvest_R5_SUSHI method with the FiscalYears.start_date and FiscalYears.end_date as the arguments."""
-    #ToDo: With each year's results changing, and with each API call having the date and time of the call in it, how can matching be done?
-    pass
+#Section: Test Collecting Usage Statistics
+@pytest.fixture
+def FY2022_FiscalYears_object(engine, caplog):
+    """Creates a FiscalYears object for the fiscal year with an `annualUsageCollectionTracking` record that meets the criteria for inclusion in `FiscalYears.collect_fiscal_year_usage_statistics()`.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
+        engine=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    )
+    if isinstance(record, str):
+        pytest.skip(database_function_skip_statements(record, False))
+    yield_object = FiscalYears(
+        fiscal_year_ID=record.at[0,'fiscal_year_ID'],
+        fiscal_year=record.at[0,'fiscal_year'],
+        start_date=record.at[0,'start_date'],
+        end_date=record.at[0,'end_date'],
+        notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
+        notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
+    )
+    log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
+    yield yield_object
+
+
+@pytest.mark.slow
+def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
+    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+
+    #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
+    # A random value is added at this point for greater variability in the testing
+    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
+    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+        SUSHI_data_file = json.load(JSON_file)
+        for vendor in SUSHI_data_file:
+            for statistics_source_dict in vendor['interface']:
+                if "interface_id" in list(statistics_source_dict.keys()):
+                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
+    retrieval_code = str(choice(retrieval_codes_as_interface_IDs)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+
+    update_result = update_database(
+        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",
+        engine=engine,
+    )
+    if not update_database_success_regex().fullmatch(update_result):
+        pytest.skip("Unable to add statistics source retrieval code to relevant record.")
+    
+    #Section: Make Function Call
+    before_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(before_count, str):
+        pytest.skip(database_function_skip_statements(before_count, False))
+    before_count = extract_value_from_single_value_df(before_count)
+    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
+        pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
+    after_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(after_count, str):
+        pytest.skip(database_function_skip_statements(after_count, False))
+    after_count = extract_value_from_single_value_df(after_count)
+
+    #Section: Assert Statements
+    assert before_count < after_count
+    assert load_data_into_database_success_regex().match(logging_statement)
+    assert update_database_success_regex().search(logging_statement)
+    assert isinstance(flash_messages, dict)

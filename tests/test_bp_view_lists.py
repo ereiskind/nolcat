@@ -1,27 +1,27 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## Data in all relations but `COUNTERData` ##########
+########## No tests written 2024-10-16 ##########
 
 import pytest
-from pathlib import Path
-import os
+import logging
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import *
 from nolcat.view_lists import *
+
+log = logging.getLogger(__name__)
 
 
 def test_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
-    #Section: Get Data from `GET` Requested Page
+
     #page = client.get('/view_lists/')  #ToDo: Add variable route element
     #GET_soup = BeautifulSoup(page.data, 'lxml')
     #GET_response_title = GET_soup.head.title
     #GET_response_page_title = GET_soup.body.h1
 
-    #Section: Get Data from HTML File
-    #with open(Path(os.getcwd(), 'nolcat', 'view_lists', 'templates', 'view_lists', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_lists' / 'templates' / 'view_lists' / 'index.html', 'br') as HTML_file:
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
     #    HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
