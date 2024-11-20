@@ -4506,18 +4506,18 @@ def test_create_dataframe_from_R5_PR(sample_SUSHI_PR_response_R5_JSON_dict, samp
 
 
 def test_create_dataframe_from_R5_DR(sample_SUSHI_DR_response_R5_JSON_dict, sample_SUSHI_DR_response_dataframe):
-    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    """Tests transforming dictionaries derived from R5 SUSHI DR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_DR_response_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5_TR(sample_SUSHI_TR_response_R5_JSON_dict, sample_SUSHI_TR_response_dataframe):
-    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    """Tests transforming dictionaries derived from R5 SUSHI TR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_TR_response_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5_IR(sample_SUSHI_IR_response_R5_JSON_dict, sample_SUSHI_IR_response_dataframe):
-    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    """Tests transforming dictionaries derived from R5 SUSHI IR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_IR_response_dataframe[df.columns.tolist()])
