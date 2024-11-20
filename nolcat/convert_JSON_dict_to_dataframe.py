@@ -64,10 +64,20 @@ class ConvertJSONDictToDataframe:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
             str: the error message if the conversion fails
         """
-        logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
+        pass
+
+
+    def _transform_R5_JSON(self, report_creation_date):
+        """This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+
+        Args:
+            report_creation_date (datetime.date): The date the report was created
+
+        Returns:
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+        """
+        log.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`.")
         records_orient_list = []
-        report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
-        logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
         include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
