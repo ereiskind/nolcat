@@ -64,7 +64,34 @@ class ConvertJSONDictToDataframe:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
             str: the error message if the conversion fails
         """
-        pass
+        log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
+        try:
+            report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
+        except Exception as error:
+            log.warning(f"Parsing the `Created` field from the SUSHI report header into a Python date data type returned the error {error}. The current date, which is the likely value, is being substituted.")
+            report_header_creation_date = date.today()
+        log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}.")
+        COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
+        if COUNTER_release == "5":
+            try:
+                df = self._transform_R5_JSON(report_header_creation_date)
+            except Exception as error:
+                message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                log.error(message)
+                return message
+        elif COUNTER_release == "5.1":
+            try:
+                df = self._transform_R5b1_JSON()
+            except Exception as error:
+                message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                log.error(message)
+                return message
+        else:
+            message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+            log.error(message)
+            #ToDo: Save JSON into file
+            return message
+        return df  # The method will only get here if one of the private harvest methods was successful
 
 
     def _transform_R5_JSON(self, report_creation_date):
