@@ -595,6 +595,46 @@ class ConvertJSONDictToDataframe:
             str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`.")
+        records_orient_list = []
+        
+        #Section: Set Up Tracking of Fields to Include in `df_dtypes`
+
+        #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
+            #Subsection: Capture `resource_name` Value
+            #Subsection: Capture `publisher` Value
+            #Subsection: Capture `publisher_ID` Value
+            #Subsection: Capture `platform` Value
+            #Subsection: Capture `authors` Value
+            #Subsection: Capture `publication_date` Value
+            #Subsection: Capture `article_version` Value
+            #Subsection: Capture Standard Identifiers
+                #Subsection: Capture `DOI` Value
+                #Subsection: Capture `proprietary_ID` Value
+                #Subsection: Capture `ISBN` Value
+                #Subsection: Capture `print_ISSN` Value
+                #Subsection: Capture `online_ISSN` Value
+                #Subsection: Capture `URI` Value
+            #Subsection: Capture `data_type` Value
+            #Subsection: Capture `section_Type` Value
+            #Subsection: Capture `YOP` Value
+            #Subsection: Capture `access_type` Value
+            #Subsection: Capture `access_method` Value
+            #Subsection: Capture Parent Resource Metadata
+                #Subsection: Capture `parent_title` Value
+                #Subsection: Capture `parent_authors` Value
+                #Subsection: Capture `parent_publication_date` Value
+                #Subsection: Capture `parent_article_version` Value
+                #Subsection: Capture `parent_data_type` Value
+                #Subsection: Capture `parent_DOI` Value
+                #Subsection: Capture `parent_proprietary_ID` Value
+                #Subsection: Capture `parent_ISBN` Value
+                #Subsection: Capture `parent_print_ISSN` Value
+                #Subsection: Capture `parent_online_ISSN` Value
+                #Subsection: Capture `parent_URI` Value
+        
+        #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
+
+        #Section: Create Dataframe
         pass
     
 
