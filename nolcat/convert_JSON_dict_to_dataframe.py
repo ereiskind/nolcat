@@ -733,36 +733,17 @@ class ConvertJSONDictToDataframe:
                         elif ap_key == "Performance":
                             for p_key, p_value in ap_value.items():
                                 performance_dict = deepcopy(attribute_performance_dict)
-                                #Subsection: Capture `publisher` Value
-                                #Subsection: Capture `publisher_ID` Value
-                                #Subsection: Capture `platform` Value
-                                #Subsection: Capture `authors` Value
-                                #Subsection: Capture `publication_date` Value
-                                #Subsection: Capture `article_version` Value
-                                #Subsection: Capture Standard Identifiers
-                                    #Subsection: Capture `DOI` Value
-                                    #Subsection: Capture `proprietary_ID` Value
-                                    #Subsection: Capture `ISBN` Value
-                                    #Subsection: Capture `print_ISSN` Value
-                                    #Subsection: Capture `online_ISSN` Value
-                                    #Subsection: Capture `URI` Value
-                                #Subsection: Capture `data_type` Value
-                                #Subsection: Capture `section_Type` Value
-                                #Subsection: Capture `YOP` Value
-                                #Subsection: Capture `access_type` Value
-                                #Subsection: Capture `access_method` Value
-                                #Subsection: Capture Parent Resource Metadata
-                                    #Subsection: Capture `parent_title` Value
-                                    #Subsection: Capture `parent_authors` Value
-                                    #Subsection: Capture `parent_publication_date` Value
-                                    #Subsection: Capture `parent_article_version` Value
-                                    #Subsection: Capture `parent_data_type` Value
-                                    #Subsection: Capture `parent_DOI` Value
-                                    #Subsection: Capture `parent_proprietary_ID` Value
-                                    #Subsection: Capture `parent_ISBN` Value
-                                    #Subsection: Capture `parent_print_ISSN` Value
-                                    #Subsection: Capture `parent_online_ISSN` Value
-                                    #Subsection: Capture `parent_URI` Value
+                                log.debug(f"Preparing to add {p_key} metric_type values to the record.")
+                                performance_dict['metric_type'] = p_key
+                                for usage_date, usage_count in p_value.items():
+                                    final_dict = {
+                                        **deepcopy(performance_dict),
+                                        'usage_date': usage_date,
+                                        'usage_count': usage_count,
+                                    }
+                                    records_orient_list.append(final_dict)
+                                    log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                    
 
         #Section: Create Dataframe
         pass
