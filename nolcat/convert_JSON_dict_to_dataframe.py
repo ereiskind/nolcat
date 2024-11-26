@@ -702,7 +702,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `data_type` Value
                         elif ap_key == "Data_Type":
                             log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
-                            attribute_performance_dict['data_type'] = value
+                            attribute_performance_dict['data_type'] = ap_value
                             include_in_df_dtypes['data_type'] = 'string'
                             log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `attribute_performance_dict`.")
                         
