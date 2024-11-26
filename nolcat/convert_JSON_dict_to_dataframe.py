@@ -598,6 +598,36 @@ class ConvertJSONDictToDataframe:
         records_orient_list = []
         
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
+        include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
+            'resource_name': False,
+            'publisher': False,
+            'publisher_ID': False,
+            'authors': False,
+            'publication_date': False,
+            'article_version': False,
+            'DOI': False,
+            'proprietary_ID': False,
+            'ISBN': False,
+            'print_ISSN': False,
+            'online_ISSN': False,
+            'URI': False,
+            'data_type': False,
+            'section_type': False,
+            'YOP': False,
+            'access_type': False,
+            'access_method': False,
+            'parent_title': False,
+            'parent_authors': False,
+            'parent_publication_date': False,
+            'parent_article_version': False,
+            'parent_data_type': False,
+            'parent_DOI': False,
+            'parent_proprietary_ID': False,
+            'parent_ISBN': False,
+            'parent_print_ISSN': False,
+            'parent_online_ISSN': False,
+            'parent_URI': False,
+        }
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
             #Subsection: Capture `resource_name` Value
