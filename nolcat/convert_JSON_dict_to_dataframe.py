@@ -730,36 +730,39 @@ class ConvertJSONDictToDataframe:
                             #Subsection: Capture `parent_URI` Value
 
                         #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
-                            #Subsection: Capture `publisher` Value
-                            #Subsection: Capture `publisher_ID` Value
-                            #Subsection: Capture `platform` Value
-                            #Subsection: Capture `authors` Value
-                            #Subsection: Capture `publication_date` Value
-                            #Subsection: Capture `article_version` Value
-                            #Subsection: Capture Standard Identifiers
-                                #Subsection: Capture `DOI` Value
-                                #Subsection: Capture `proprietary_ID` Value
-                                #Subsection: Capture `ISBN` Value
-                                #Subsection: Capture `print_ISSN` Value
-                                #Subsection: Capture `online_ISSN` Value
-                                #Subsection: Capture `URI` Value
-                            #Subsection: Capture `data_type` Value
-                            #Subsection: Capture `section_Type` Value
-                            #Subsection: Capture `YOP` Value
-                            #Subsection: Capture `access_type` Value
-                            #Subsection: Capture `access_method` Value
-                            #Subsection: Capture Parent Resource Metadata
-                                #Subsection: Capture `parent_title` Value
-                                #Subsection: Capture `parent_authors` Value
-                                #Subsection: Capture `parent_publication_date` Value
-                                #Subsection: Capture `parent_article_version` Value
-                                #Subsection: Capture `parent_data_type` Value
-                                #Subsection: Capture `parent_DOI` Value
-                                #Subsection: Capture `parent_proprietary_ID` Value
-                                #Subsection: Capture `parent_ISBN` Value
-                                #Subsection: Capture `parent_print_ISSN` Value
-                                #Subsection: Capture `parent_online_ISSN` Value
-                                #Subsection: Capture `parent_URI` Value
+                        elif ap_key == "Performance":
+                            for p_key, p_value in ap_value.items():
+                                performance_dict = deepcopy(attribute_performance_dict)
+                                #Subsection: Capture `publisher` Value
+                                #Subsection: Capture `publisher_ID` Value
+                                #Subsection: Capture `platform` Value
+                                #Subsection: Capture `authors` Value
+                                #Subsection: Capture `publication_date` Value
+                                #Subsection: Capture `article_version` Value
+                                #Subsection: Capture Standard Identifiers
+                                    #Subsection: Capture `DOI` Value
+                                    #Subsection: Capture `proprietary_ID` Value
+                                    #Subsection: Capture `ISBN` Value
+                                    #Subsection: Capture `print_ISSN` Value
+                                    #Subsection: Capture `online_ISSN` Value
+                                    #Subsection: Capture `URI` Value
+                                #Subsection: Capture `data_type` Value
+                                #Subsection: Capture `section_Type` Value
+                                #Subsection: Capture `YOP` Value
+                                #Subsection: Capture `access_type` Value
+                                #Subsection: Capture `access_method` Value
+                                #Subsection: Capture Parent Resource Metadata
+                                    #Subsection: Capture `parent_title` Value
+                                    #Subsection: Capture `parent_authors` Value
+                                    #Subsection: Capture `parent_publication_date` Value
+                                    #Subsection: Capture `parent_article_version` Value
+                                    #Subsection: Capture `parent_data_type` Value
+                                    #Subsection: Capture `parent_DOI` Value
+                                    #Subsection: Capture `parent_proprietary_ID` Value
+                                    #Subsection: Capture `parent_ISBN` Value
+                                    #Subsection: Capture `parent_print_ISSN` Value
+                                    #Subsection: Capture `parent_online_ISSN` Value
+                                    #Subsection: Capture `parent_URI` Value
 
         #Section: Create Dataframe
         pass
