@@ -704,12 +704,18 @@ class ConvertJSONDictToDataframe:
                             log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
                             attribute_performance_dict['data_type'] = value
                             include_in_df_dtypes['data_type'] = 'string'
-                            log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `attribute_performance_dict`.")
                         
                         #Subsection: Capture `section_Type` Value
                         #Subsection: Capture `YOP` Value
                         #Subsection: Capture `access_type` Value
                         #Subsection: Capture `access_method` Value
+                        elif ap_key == "Access_Method":
+                            log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
+                            attribute_performance_dict['access_method'] = ap_value
+                            include_in_df_dtypes['access_method'] = 'string'
+                            log.debug(f"Added `COUNTERData.access_method` value {attribute_performance_dict['access_method']} to `attribute_performance_dict`.")
+                
                         #Subsection: Capture Parent Resource Metadata
                             #Subsection: Capture `parent_title` Value
                             #Subsection: Capture `parent_authors` Value
