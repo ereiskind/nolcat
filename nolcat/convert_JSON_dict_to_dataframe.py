@@ -633,37 +633,42 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
-            #Subsection: Capture `resource_name` Value
-            #Subsection: Capture `publisher` Value
-            #Subsection: Capture `publisher_ID` Value
-            #Subsection: Capture `platform` Value
-            #Subsection: Capture `authors` Value
-            #Subsection: Capture `publication_date` Value
-            #Subsection: Capture `article_version` Value
-            #Subsection: Capture Standard Identifiers
-                #Subsection: Capture `DOI` Value
-                #Subsection: Capture `proprietary_ID` Value
-                #Subsection: Capture `ISBN` Value
-                #Subsection: Capture `print_ISSN` Value
-                #Subsection: Capture `online_ISSN` Value
-                #Subsection: Capture `URI` Value
-            #Subsection: Capture `data_type` Value
-            #Subsection: Capture `section_Type` Value
-            #Subsection: Capture `YOP` Value
-            #Subsection: Capture `access_type` Value
-            #Subsection: Capture `access_method` Value
-            #Subsection: Capture Parent Resource Metadata
-                #Subsection: Capture `parent_title` Value
-                #Subsection: Capture `parent_authors` Value
-                #Subsection: Capture `parent_publication_date` Value
-                #Subsection: Capture `parent_article_version` Value
-                #Subsection: Capture `parent_data_type` Value
-                #Subsection: Capture `parent_DOI` Value
-                #Subsection: Capture `parent_proprietary_ID` Value
-                #Subsection: Capture `parent_ISBN` Value
-                #Subsection: Capture `parent_print_ISSN` Value
-                #Subsection: Capture `parent_online_ISSN` Value
-                #Subsection: Capture `parent_URI` Value
+        for record in self.SUSHI_JSON_dictionary['Report_Items']:
+            log.debug(f"Starting iteration for new JSON record {record}.")
+            record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            for key, value in record.items():
+
+                #Subsection: Capture `resource_name` Value
+                #Subsection: Capture `publisher` Value
+                #Subsection: Capture `publisher_ID` Value
+                #Subsection: Capture `platform` Value
+                #Subsection: Capture `authors` Value
+                #Subsection: Capture `publication_date` Value
+                #Subsection: Capture `article_version` Value
+                #Subsection: Capture Standard Identifiers
+                    #Subsection: Capture `DOI` Value
+                    #Subsection: Capture `proprietary_ID` Value
+                    #Subsection: Capture `ISBN` Value
+                    #Subsection: Capture `print_ISSN` Value
+                    #Subsection: Capture `online_ISSN` Value
+                    #Subsection: Capture `URI` Value
+                #Subsection: Capture `data_type` Value
+                #Subsection: Capture `section_Type` Value
+                #Subsection: Capture `YOP` Value
+                #Subsection: Capture `access_type` Value
+                #Subsection: Capture `access_method` Value
+                #Subsection: Capture Parent Resource Metadata
+                    #Subsection: Capture `parent_title` Value
+                    #Subsection: Capture `parent_authors` Value
+                    #Subsection: Capture `parent_publication_date` Value
+                    #Subsection: Capture `parent_article_version` Value
+                    #Subsection: Capture `parent_data_type` Value
+                    #Subsection: Capture `parent_DOI` Value
+                    #Subsection: Capture `parent_proprietary_ID` Value
+                    #Subsection: Capture `parent_ISBN` Value
+                    #Subsection: Capture `parent_print_ISSN` Value
+                    #Subsection: Capture `parent_online_ISSN` Value
+                    #Subsection: Capture `parent_URI` Value
         
         #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
 
