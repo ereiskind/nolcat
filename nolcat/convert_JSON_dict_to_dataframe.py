@@ -642,6 +642,19 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publisher` Value
                 #Subsection: Capture `publisher_ID` Value
                 #Subsection: Capture `platform` Value
+                elif key == "Platform":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
+                    if value is None:  # This value handled first because `len()` of null value raises an error
+                        record_dict['platform'] = value
+                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                    elif len(value) > self.PLATFORM_LENGTH:
+                        message = f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}."
+                        log.critical(message)
+                        return message
+                    else:
+                        record_dict['platform'] = value
+                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+
                 #Subsection: Capture `authors` Value
                 #Subsection: Capture `publication_date` Value
                 #Subsection: Capture `article_version` Value
