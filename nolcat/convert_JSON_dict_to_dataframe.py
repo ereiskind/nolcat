@@ -685,42 +685,43 @@ class ConvertJSONDictToDataframe:
         
                 #Section: Create Records by Iterating Through `Attribute_Performance` Section of SUSHI JSON
                 elif key == "Attribute_Performance":
-                    for ap_key, ap_value in value.items():
-                        attribute_performance_dict = deepcopy(report_items_dict)
+                    for dict_item in value:
+                        for ap_key, ap_value in dict_item.items():
+                            attribute_performance_dict = deepcopy(report_items_dict)
 
-                    #Subsection: Capture `authors` Value
-                    #Subsection: Capture `publication_date` Value
-                    #Subsection: Capture `article_version` Value
-                    #Subsection: Capture Standard Identifiers
-                        #Subsection: Capture `DOI` Value
-                        #Subsection: Capture `proprietary_ID` Value
-                        #Subsection: Capture `ISBN` Value
-                        #Subsection: Capture `print_ISSN` Value
-                        #Subsection: Capture `online_ISSN` Value
-                        #Subsection: Capture `URI` Value
-                    #Subsection: Capture `data_type` Value
-                    elif ap_key == "Data_Type":
-                        log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
-                        attribute_performance_dict['data_type'] = value
-                        include_in_df_dtypes['data_type'] = 'string'
-                        log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `record_dict`.")
-                
-                    #Subsection: Capture `section_Type` Value
-                    #Subsection: Capture `YOP` Value
-                    #Subsection: Capture `access_type` Value
-                    #Subsection: Capture `access_method` Value
-                    #Subsection: Capture Parent Resource Metadata
-                        #Subsection: Capture `parent_title` Value
-                        #Subsection: Capture `parent_authors` Value
-                        #Subsection: Capture `parent_publication_date` Value
-                        #Subsection: Capture `parent_article_version` Value
-                        #Subsection: Capture `parent_data_type` Value
-                        #Subsection: Capture `parent_DOI` Value
-                        #Subsection: Capture `parent_proprietary_ID` Value
-                        #Subsection: Capture `parent_ISBN` Value
-                        #Subsection: Capture `parent_print_ISSN` Value
-                        #Subsection: Capture `parent_online_ISSN` Value
-                        #Subsection: Capture `parent_URI` Value
+                        #Subsection: Capture `authors` Value
+                        #Subsection: Capture `publication_date` Value
+                        #Subsection: Capture `article_version` Value
+                        #Subsection: Capture Standard Identifiers
+                            #Subsection: Capture `DOI` Value
+                            #Subsection: Capture `proprietary_ID` Value
+                            #Subsection: Capture `ISBN` Value
+                            #Subsection: Capture `print_ISSN` Value
+                            #Subsection: Capture `online_ISSN` Value
+                            #Subsection: Capture `URI` Value
+                        #Subsection: Capture `data_type` Value
+                        elif ap_key == "Data_Type":
+                            log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
+                            attribute_performance_dict['data_type'] = value
+                            include_in_df_dtypes['data_type'] = 'string'
+                            log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `record_dict`.")
+                        
+                        #Subsection: Capture `section_Type` Value
+                        #Subsection: Capture `YOP` Value
+                        #Subsection: Capture `access_type` Value
+                        #Subsection: Capture `access_method` Value
+                        #Subsection: Capture Parent Resource Metadata
+                            #Subsection: Capture `parent_title` Value
+                            #Subsection: Capture `parent_authors` Value
+                            #Subsection: Capture `parent_publication_date` Value
+                            #Subsection: Capture `parent_article_version` Value
+                            #Subsection: Capture `parent_data_type` Value
+                            #Subsection: Capture `parent_DOI` Value
+                            #Subsection: Capture `parent_proprietary_ID` Value
+                            #Subsection: Capture `parent_ISBN` Value
+                            #Subsection: Capture `parent_print_ISSN` Value
+                            #Subsection: Capture `parent_online_ISSN` Value
+                            #Subsection: Capture `parent_URI` Value
 
         #Section: Create Dataframe
         pass
