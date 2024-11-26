@@ -698,6 +698,12 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `online_ISSN` Value
                         #Subsection: Capture `URI` Value
                     #Subsection: Capture `data_type` Value
+                    elif ap_key == "Data_Type":
+                        log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
+                        record_dict['data_type'] = value
+                        include_in_df_dtypes['data_type'] = 'string'
+                        log.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
+                
                     #Subsection: Capture `section_Type` Value
                     #Subsection: Capture `YOP` Value
                     #Subsection: Capture `access_type` Value
