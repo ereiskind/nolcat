@@ -685,8 +685,8 @@ class ConvertJSONDictToDataframe:
         
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
                 elif key == "Attribute_Performance":
-                    for dict_item in value:
-                        for ap_key, ap_value in dict_item.items():
+                    for attribute_performance_item in value:
+                        for ap_key, ap_value in attribute_performance_item.items():
                             attribute_performance_dict = deepcopy(report_items_dict)
 
                         #Subsection: Capture `authors` Value
