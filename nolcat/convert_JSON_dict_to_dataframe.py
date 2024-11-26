@@ -86,7 +86,7 @@ class ConvertJSONDictToDataframe:
                 return message
         elif COUNTER_release == "5.1":
             try:
-                df = self._transform_R5b1_JSON()
+                df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
                 message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
                 log.error(message)
@@ -587,8 +587,11 @@ class ConvertJSONDictToDataframe:
         return df
 
 
-    def _transform_R5b1_JSON(self):
+    def _transform_R5b1_JSON(self, report_creation_date):
         """This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+
+        Args:
+            report_creation_date (datetime.date): The date the report was created
 
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
