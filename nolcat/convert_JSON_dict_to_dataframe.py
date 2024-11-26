@@ -601,7 +601,7 @@ class ConvertJSONDictToDataframe:
         records_orient_list = []
         
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
-        include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
+        include_in_df_dtypes = {
             'resource_name': False,
             'publisher': False,
             'publisher_ID': False,
@@ -635,7 +635,7 @@ class ConvertJSONDictToDataframe:
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             log.debug(f"Starting iteration for new JSON record {record}.")
-            record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
                 #Subsection: Capture `resource_name` Value
@@ -645,15 +645,15 @@ class ConvertJSONDictToDataframe:
                 elif key == "Platform":
                     log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
-                        record_dict['platform'] = value
-                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                        report_items_dict['platform'] = value
+                        log.debug(f"Added `COUNTERData.platform` value {report_items_dict['platform']} to `report_items_dict`.")
                     elif len(value) > self.PLATFORM_LENGTH:
                         message = f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}."
                         log.critical(message)
                         return message
                     else:
-                        record_dict['platform'] = value
-                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                        report_items_dict['platform'] = value
+                        log.debug(f"Added `COUNTERData.platform` value {report_items_dict['platform']} to `report_items_dict`.")
 
                 #Subsection: Capture `authors` Value
                 #Subsection: Capture `publication_date` Value
@@ -686,6 +686,7 @@ class ConvertJSONDictToDataframe:
                 #Section: Create Records by Iterating Through `Attribute_Performance` Section of SUSHI JSON
                 elif key == "Attribute_Performance":
                     for ap_key, ap_value in value.items():
+                        attribute_performance_dict = deepcopy(report_items_dict)
 
                     #Subsection: Capture `authors` Value
                     #Subsection: Capture `publication_date` Value
@@ -700,9 +701,9 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `data_type` Value
                     elif ap_key == "Data_Type":
                         log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
-                        record_dict['data_type'] = value
+                        attribute_performance_dict['data_type'] = value
                         include_in_df_dtypes['data_type'] = 'string'
-                        log.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `record_dict`.")
                 
                     #Subsection: Capture `section_Type` Value
                     #Subsection: Capture `YOP` Value
