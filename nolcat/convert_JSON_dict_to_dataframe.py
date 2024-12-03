@@ -640,8 +640,17 @@ class ConvertJSONDictToDataframe:
             for key, value in record.items():
 
                 #Subsection: Capture `resource_name` Value
+                if key == "Database" or key == "Title" or key == "Item":
+                    pass
+
                 #Subsection: Capture `publisher` Value
+                elif key == "Publisher":
+                    pass
+
                 #Subsection: Capture `publisher_ID` Value
+                elif key == "Publisher_ID":
+                    pass
+
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
                     log.debug(f"Preparing to add {key} value `{value}` to the record.")
@@ -657,9 +666,22 @@ class ConvertJSONDictToDataframe:
                         log.debug(f"Added `COUNTERData.platform` value {report_items_dict['platform']} to `report_items_dict`.")
 
                 #Subsection: Capture `authors` Value
+                elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                    pass
+
                 #Subsection: Capture `publication_date` Value
+                elif key == "Item_Dates":
+                    pass
+
                 #Subsection: Capture `article_version` Value
+                elif key == "Item_Attributes":
+                    pass
+
                 #Subsection: Capture Standard Identifiers
+                # Null value handling isn't needed because all null values are removed
+                elif key == "Item_ID":
+                    pass
+
                     #Subsection: Capture `DOI` Value
                     #Subsection: Capture `proprietary_ID` Value
                     #Subsection: Capture `ISBN` Value
@@ -667,11 +689,30 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `online_ISSN` Value
                     #Subsection: Capture `URI` Value
                 #Subsection: Capture `data_type` Value
+                elif key == "Data_Type":
+                    pass
+
                 #Subsection: Capture `section_Type` Value
+                elif key == "Section_Type":
+                    pass
+
                 #Subsection: Capture `YOP` Value
+                elif key == "YOP":
+                    pass
+
                 #Subsection: Capture `access_type` Value
+                elif key == "Access_Type":
+                    pass
+
                 #Subsection: Capture `access_method` Value
+                elif key == "Access_Method":
+                    pass
+
                 #Subsection: Capture Parent Resource Metadata
+                # Null value handling isn't needed because all null values are removed
+                elif key == "Item_Parent":
+                    pass
+
                     #Subsection: Capture `parent_title` Value
                     #Subsection: Capture `parent_authors` Value
                     #Subsection: Capture `parent_publication_date` Value
@@ -692,9 +733,22 @@ class ConvertJSONDictToDataframe:
                             attribute_performance_dict = deepcopy(report_items_dict)
 
                         #Subsection: Capture `authors` Value
+                        if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                            pass
+
                         #Subsection: Capture `publication_date` Value
+                        elif ap_key == "Item_Dates":
+                            pass
+
                         #Subsection: Capture `article_version` Value
+                        elif ap_key == "Item_Attributes":
+                            pass
+
                         #Subsection: Capture Standard Identifiers
+                        # Null value handling isn't needed because all null values are removed
+                        elif ap_key == "Item_ID":
+                            pass
+
                             #Subsection: Capture `DOI` Value
                             #Subsection: Capture `proprietary_ID` Value
                             #Subsection: Capture `ISBN` Value
@@ -709,8 +763,17 @@ class ConvertJSONDictToDataframe:
                             log.debug(f"Added `COUNTERData.data_type` value {attribute_performance_dict['data_type']} to `attribute_performance_dict`.")
                         
                         #Subsection: Capture `section_Type` Value
+                        elif ap_key == "Section_Type":
+                            pass
+
                         #Subsection: Capture `YOP` Value
+                        elif ap_key == "YOP":
+                            pass
+
                         #Subsection: Capture `access_type` Value
+                        elif ap_key == "Access_Type":
+                            pass
+
                         #Subsection: Capture `access_method` Value
                         elif ap_key == "Access_Method":
                             log.debug(f"Preparing to add {ap_key} value `{ap_value}` to the record.")
@@ -719,6 +782,10 @@ class ConvertJSONDictToDataframe:
                             log.debug(f"Added `COUNTERData.access_method` value {attribute_performance_dict['access_method']} to `attribute_performance_dict`.")
                         
                         #Subsection: Capture Parent Resource Metadata
+                        # Null value handling isn't needed because all null values are removed
+                        elif ap_key == "Item_Parent":
+                            pass
+
                             #Subsection: Capture `parent_title` Value
                             #Subsection: Capture `parent_authors` Value
                             #Subsection: Capture `parent_publication_date` Value
