@@ -4519,7 +4519,43 @@ def sample_SUSHI_PR_response_R5b1_dataframe():
     Yields:
         dataframe: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_PR.json` as a dataframe
     """
-    pass
+    df = pd.DataFrame(
+        [
+            ["Duke University Press", "Book", "Regular", "Unique_Item_Requests", "2024-09-01", 50, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Item_Requests", "2024-10-01", 25, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Total_Item_Requests", "2024-09-01", 53, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Total_Item_Requests", "2024-10-01", 32, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Item_Investigations", "2024-09-01", 56, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Item_Investigations", "2024-10-01", 65, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Total_Item_Investigations", "2024-09-01", 89, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Total_Item_Investigations", "2024-10-01", 72, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Title_Investigations", "2024-09-01", 43, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Title_Investigations", "2024-10-01", 44, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Title_Requests", "2024-09-01", 22, "2024-11-20"],
+            ["Duke University Press", "Book", "Regular", "Unique_Title_Requests", "2024-10-01", 17, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Unique_Item_Requests", "2024-09-01", 353, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Unique_Item_Requests", "2024-10-01", 342, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Total_Item_Requests", "2024-09-01", 485, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Total_Item_Requests", "2024-10-01", 477, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Unique_Item_Investigations", "2024-09-01", 395, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Unique_Item_Investigations", "2024-10-01", 421, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Total_Item_Investigations", "2024-09-01", 678, "2024-11-20"],
+            ["Duke University Press", "Journal", "Regular", "Total_Item_Investigations", "2024-10-01", 769, "2024-11-20"],
+            ["Duke University Press", "Platform", "Regular", "Searches_Platform", "2024-09-01", 87, "2024-11-20"],
+            ["Duke University Press", "Platform", "Regular", "Searches_Platform", "2024-10-01", 93, "2024-11-20"],
+        ],
+        columns=['platform', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],
+    )
+    df = df.astype({
+        'platform': COUNTERData.state_data_types()['platform'],
+        'data_type': COUNTERData.state_data_types()['data_type'],
+        'access_method': COUNTERData.state_data_types()['access_method'],
+        'metric_type': COUNTERData.state_data_types()['metric_type'],
+        'usage_count': COUNTERData.state_data_types()['usage_count'],
+    })
+    df['usage_date'] = pd.to_datetime(df['usage_date'])
+    df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    yield df
 
 
 @pytest.fixture(scope='session')
