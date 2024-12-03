@@ -453,6 +453,7 @@ class ConvertJSONDictToDataframe:
                             include_in_df_dtypes['parent_data_type'] = 'string'
                             log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
+                        #Subsection: Capture Parent Standard Identifiers
                         elif key_for_parent == "Item_ID":
                             log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
@@ -676,13 +677,14 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `parent_publication_date` Value
                     #Subsection: Capture `parent_article_version` Value
                     #Subsection: Capture `parent_data_type` Value
-                    #Subsection: Capture `parent_DOI` Value
-                    #Subsection: Capture `parent_proprietary_ID` Value
-                    #Subsection: Capture `parent_ISBN` Value
-                    #Subsection: Capture `parent_print_ISSN` Value
-                    #Subsection: Capture `parent_online_ISSN` Value
-                    #Subsection: Capture `parent_URI` Value
-        
+                    #Subsection: Capture Parent Standard Identifiers
+                        #Subsection: Capture `parent_DOI` Value
+                        #Subsection: Capture `parent_proprietary_ID` Value
+                        #Subsection: Capture `parent_ISBN` Value
+                        #Subsection: Capture `parent_print_ISSN` Value
+                        #Subsection: Capture `parent_online_ISSN` Value
+                        #Subsection: Capture `parent_URI` Value
+
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
                 elif key == "Attribute_Performance":
                     for attribute_performance_item in value:
@@ -715,19 +717,20 @@ class ConvertJSONDictToDataframe:
                             attribute_performance_dict['access_method'] = ap_value
                             include_in_df_dtypes['access_method'] = 'string'
                             log.debug(f"Added `COUNTERData.access_method` value {attribute_performance_dict['access_method']} to `attribute_performance_dict`.")
-                
+                        
                         #Subsection: Capture Parent Resource Metadata
                             #Subsection: Capture `parent_title` Value
                             #Subsection: Capture `parent_authors` Value
                             #Subsection: Capture `parent_publication_date` Value
                             #Subsection: Capture `parent_article_version` Value
                             #Subsection: Capture `parent_data_type` Value
-                            #Subsection: Capture `parent_DOI` Value
-                            #Subsection: Capture `parent_proprietary_ID` Value
-                            #Subsection: Capture `parent_ISBN` Value
-                            #Subsection: Capture `parent_print_ISSN` Value
-                            #Subsection: Capture `parent_online_ISSN` Value
-                            #Subsection: Capture `parent_URI` Value
+                            #Subsection: Capture Parent Standard Identifiers
+                                #Subsection: Capture `parent_DOI` Value
+                                #Subsection: Capture `parent_proprietary_ID` Value
+                                #Subsection: Capture `parent_ISBN` Value
+                                #Subsection: Capture `parent_print_ISSN` Value
+                                #Subsection: Capture `parent_online_ISSN` Value
+                                #Subsection: Capture `parent_URI` Value
 
                         #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
                         elif ap_key == "Performance":
