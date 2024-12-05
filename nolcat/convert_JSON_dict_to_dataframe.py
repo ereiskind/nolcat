@@ -819,7 +819,7 @@ class ConvertJSONDictToDataframe:
         pass
     
 
-    def _serialize_dates(dates):
+    def _serialize_dates(self, dates):
         """This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
 
         This method and its use in are adapted from https://stackoverflow.com/a/22238613.
