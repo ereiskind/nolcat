@@ -35,6 +35,9 @@ class ConvertJSONDictToDataframe:
         _transform_R5_JSON: This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
         _transform_R5b1_JSON: This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
+        _extraction_start_logging_statement: This method creates the logging statement at the beginning of an attribute value extraction.
+        _extraction_complete_logging_statement: This method creates the logging statement indicating a successful attribute value extraction.
+        _increase_field_length_logging_statement: This method creates the logging statement indicating a field length needs to be increased.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
     RESOURCE_NAME_LENGTH = 3600
@@ -834,3 +837,43 @@ class ConvertJSONDictToDataframe:
             return dates.isoformat()
         else:
             raise TypeError  # So any unexpected non-serializable data types raise a type error
+    
+
+    def _extraction_start_logging_statement(self, value, key, field):
+        """This method creates the logging statement at the beginning of an attribute value extraction.
+
+        Args:
+            value (str): the value being extracted
+            key (str): the dictionary key of the value being extracted
+            field (str): the `nolcat.methods.COUNTERData` field the value is being assigned to
+
+        Returns:
+            str: the logging statement
+        """
+        return f"Preparing to move '{value}' from the key '{key}' to `{field}`."
+    
+
+    def _extraction_complete_logging_statement(self, field, value):
+        """This method creates the logging statement indicating a successful attribute value extraction.
+
+        Args:
+            field (str): the `nolcat.methods.COUNTERData` field the value is assigned to
+            value (str): the extracted value
+
+        Returns:
+            str: the logging statement
+        """
+        return f"Added `{field}` value '{value}' to `record_dict`."
+    
+
+    def _increase_field_length_logging_statement(self, field, length):
+        """This method creates the logging statement indicating a field length needs to be increased.
+
+        Args:
+            field (str): the `nolcat.methods.COUNTERData` field to adjust
+            length (int): the new suggested minimum length for the field
+
+        Returns:
+            str: the logging statement
+        """
+        return f"Increase the `COUNTERData.{field}` max field length to {length}."
