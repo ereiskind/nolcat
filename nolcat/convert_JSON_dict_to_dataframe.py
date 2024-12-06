@@ -894,6 +894,9 @@ class ConvertJSONDictToDataframe:
         Returns:
             str: the logging statement
         """
+        log.warning(f"`value`: {value}")  #TEST: temp
+        log.warning(f"`key`: {key}")  #TEST: temp
+        log.warning(f"`field`: {field}")  #TEST: temp
         return f"Preparing to move '{value}' from the key '{key}' to {field}."
     
 
