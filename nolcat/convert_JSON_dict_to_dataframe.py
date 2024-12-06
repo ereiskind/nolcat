@@ -157,8 +157,7 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
-                    log.warning("The line before `ConvertJSONDictToDataframe._extraction_start_logging_statement()`")  #TEST: temp
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.resource_name`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.resource_name`", "this is a test"))  #TEST: Last arg is for testing
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['resource_name'] = value
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", record_dict['resource_name']))
