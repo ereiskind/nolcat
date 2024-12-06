@@ -345,6 +345,7 @@ class ConvertJSONDictToDataframe:
                                 record_dict['URI'] = type_and_value['Value']
                                 include_in_df_dtypes['URI'] = 'string'
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("URI", record_dict['URI']))
+                        
                         else:
                             continue  # The `for type_and_value in value` loop
                 
@@ -365,7 +366,6 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
-                    try:
                     try:
                         record_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
