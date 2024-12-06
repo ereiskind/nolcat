@@ -866,7 +866,8 @@ class ConvertJSONDictToDataframe:
         pass
     
 
-    def _serialize_dates(self, dates):
+    @staticmethod
+    def _serialize_dates(dates):
         """This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
 
         This method and its use in are adapted from https://stackoverflow.com/a/22238613.
@@ -883,7 +884,8 @@ class ConvertJSONDictToDataframe:
             raise TypeError  # So any unexpected non-serializable data types raise a type error
     
 
-    def _extraction_start_logging_statement(self, value, key, field):
+    @staticmethod
+    def _extraction_start_logging_statement(value, key, field):
         """This method creates the logging statement at the beginning of an attribute value extraction.
 
         Args:
@@ -900,7 +902,8 @@ class ConvertJSONDictToDataframe:
         return f"Preparing to move '{value}' from the key '{key}' to {field}."
     
 
-    def _extraction_complete_logging_statement(self, field, value):
+    @staticmethod
+    def _extraction_complete_logging_statement(field, value):
         """This method creates the logging statement indicating a successful attribute value extraction.
 
         Args:
@@ -913,7 +916,8 @@ class ConvertJSONDictToDataframe:
         return f"Added `COUNTERData.{field}` value '{value}' to the row dictionary."
     
 
-    def _increase_field_length_logging_statement(self, field, length):
+    @staticmethod
+    def _increase_field_length_logging_statement(field, length):
         """This method creates the logging statement indicating a field length needs to be increased.
 
         Args:
