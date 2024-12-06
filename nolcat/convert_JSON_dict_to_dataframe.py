@@ -643,6 +643,11 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
+                #TEST: temp
+                timestamp = datetime.today().isoformat().replace(":", ".")
+                with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_record_at_start.json", 'w') as f:
+                    json.dump(record, f)
+                #TEST: end temp
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
@@ -672,6 +677,11 @@ class ConvertJSONDictToDataframe:
                     else:
                         report_items_dict['platform'] = value
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                    #TEST: temp
+                    location = "platform"
+                    with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                        json.dump(report_items_dict, f)
+                    #TEST: end temp
 
                 #Subsection: Capture `authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
@@ -783,6 +793,11 @@ class ConvertJSONDictToDataframe:
                             attribute_performance_dict['data_type'] = ap_value
                             include_in_df_dtypes['data_type'] = 'string'
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+                            #TEST: temp
+                            location = "data_type"
+                            with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                                json.dump(attribute_performance_dict, f)
+                            #TEST: end temp
                         
                         #Subsection: Capture `section_Type` Value
                         elif ap_key == "Section_Type":
@@ -805,6 +820,11 @@ class ConvertJSONDictToDataframe:
                             attribute_performance_dict['access_method'] = ap_value
                             include_in_df_dtypes['access_method'] = 'string'
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+                            #TEST: temp
+                            location = "access_method"
+                            with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                                json.dump(attribute_performance_dict, f)
+                            #TEST: end temp
                         
                         #Subsection: Capture Parent Resource Metadata
                         # Null value handling isn't needed because all null values are removed
