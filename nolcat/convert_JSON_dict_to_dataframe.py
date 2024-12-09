@@ -865,7 +865,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
                                         final_dict = {
                                             **deepcopy(performance_dict),
-                                            'usage_date': usage_date,
+                                            'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
                                             'usage_count': usage_count,
                                         }
                                         records_orient_list.append(final_dict)
