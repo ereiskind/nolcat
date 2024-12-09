@@ -645,10 +645,6 @@ class ConvertJSONDictToDataframe:
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             log.warning(f"List of keys:\n{record.keys()}")  #TEST: temp
             for key, value in record.items():
-                #TEST: temp
-                with open(TOP_NOLCAT_DIRECTORY / f"{report}_record_at_start.json", 'w') as f:
-                    json.dump(record, f)
-                #TEST: end temp
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
