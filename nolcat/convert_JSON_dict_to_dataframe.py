@@ -864,7 +864,11 @@ class ConvertJSONDictToDataframe:
                     
 
         #Section: Create Dataframe
-        log.warning(f"Flattened JSON to make into dataframe:\n{records_orient_list}")
+        #TEST: temp
+        location = "end"
+        with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
+            json.dump(records_orient_list, f, default=lambda x: x.isoformat())
+        #TEST: end temp
         pass
     
 
