@@ -863,7 +863,50 @@ class ConvertJSONDictToDataframe:
                     
 
         #Section: Create Dataframe
-        pass
+        log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `1 != False` returns `True` in Python
+        log.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
+        df_dtypes['platform'] = 'string'
+        df_dtypes['metric_type'] = 'string'
+        df_dtypes['usage_count'] = 'int'
+        log.info(f"`df_dtypes`: {df_dtypes}")
+
+        log.debug(f"`records_orient_list` before `json.dumps()`  is type {type(records_orient_list)}.")
+        records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
+            records_orient_list,
+            default=ConvertJSONDictToDataframe._serialize_dates,
+        )
+        if len(records_orient_list) > 1500:
+            log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}) is too long to display.")
+        else:
+            log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}):\n{records_orient_list}")
+        df = pd.read_json(
+            io.StringIO(records_orient_list),  # Originally from https://stackoverflow.com/a/63655099 in `except` block; now only option due to `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.`
+            orient='records',
+            dtype=df_dtypes,  # This only sets numeric data types
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        log.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
+
+        df = df.astype(df_dtypes)  # This sets the string data types
+        log.debug(f"Dataframe dtypes after conversion:\n{return_string_of_dataframe_info(df)}")
+        if include_in_df_dtypes.get('publication_date'):  # Meaning the value was changed to `True`
+            df['publication_date'] = pd.to_datetime(
+                df['publication_date'],
+                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            )
+        if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
+            df['parent_publication_date'] = pd.to_datetime(
+                df['parent_publication_date'],
+                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            )
+        df['usage_date'] = pd.to_datetime(df['usage_date'])
+        df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
+
+        log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
+        return df
     
 
     @staticmethod
