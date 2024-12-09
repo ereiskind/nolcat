@@ -639,16 +639,14 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through `Report_Items` of SUSHI JSON to Create Single-Level Dictionaries
-        report = self.SUSHI_JSON_dictionary['Report_Header']['Release']  #TEST: temp
+        report = self.SUSHI_JSON_dictionary['Report_Header']['Report_ID']  #TEST: temp
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             log.warning(f"List of keys:\n{record.keys()}")  #TEST: temp
             for key, value in record.items():
                 #TEST: temp
-                timestamp = datetime.today().isoformat().replace(":", ".")
-                timestamp = f"{report}_{timestamp}"
-                with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_record_at_start.json", 'w') as f:
+                with open(TOP_NOLCAT_DIRECTORY / f"{report}_record_at_start.json", 'w') as f:
                     json.dump(record, f)
                 #TEST: end temp
 
@@ -684,7 +682,7 @@ class ConvertJSONDictToDataframe:
                     location = "platform"
                     log.warning(f"`type(report_items_dict)`: {type(report_items_dict)}")
                     log.warning(f"`report_items_dict`:\n{report_items_dict}")
-                    with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                    with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
                         json.dump(report_items_dict, f, default=lambda x: x.isoformat())
                     #TEST: end temp
 
@@ -800,7 +798,7 @@ class ConvertJSONDictToDataframe:
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
                             #TEST: temp
                             location = "data_type"
-                            with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                            with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
                                 json.dump(attribute_performance_dict, f, default=lambda x: x.isoformat())
                             #TEST: end temp
                         
@@ -827,7 +825,7 @@ class ConvertJSONDictToDataframe:
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
                             #TEST: temp
                             location = "access_method"
-                            with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
+                            with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
                                 json.dump(attribute_performance_dict, f, default=lambda x: x.isoformat())
                             #TEST: end temp
                         
