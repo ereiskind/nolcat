@@ -754,10 +754,10 @@ class ConvertJSONDictToDataframe:
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
                 elif key == "Attribute_Performance":
                     for attribute_performance_item in value:
+                        attribute_performance_dict = deepcopy(report_items_dict)
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_item, key, "their appropriate fields"))
                         log.warning(f"`attribute_performance_item.keys()`: {attribute_performance_item.keys()}")  #TEST: temp
                         for ap_key, ap_value in attribute_performance_item.items():
-                            attribute_performance_dict = deepcopy(report_items_dict)
                             #TEST: temp
                             import difflib
                             log.warning(f"`ap_key`: {ap_key}")
