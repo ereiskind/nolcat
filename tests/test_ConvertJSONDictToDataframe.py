@@ -1,5 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## Passing 2024-10-16 ##########
+########## Failing due to work in progress 2024-12-09 ##########
 
 import pytest
 import logging
@@ -4651,27 +4651,23 @@ def test_create_dataframe_from_R5_IR(sample_SUSHI_IR_response_R5_JSON_dict, samp
 
 def test_create_dataframe_from_R5b1_PR(sample_SUSHI_PR_response_R5b1_JSON_dict, sample_SUSHI_PR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5b1_JSON_dict).create_dataframe()
-    log.warning(f"`df`:\n{df}")  #TEST: temp
+    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5b1_JSON_dict).create_dataframe()  #TEST: At this time, private method this redirects to returns `None`
     assert_frame_equal(df, sample_SUSHI_PR_response_R5b1_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_DR(sample_SUSHI_DR_response_R5b1_JSON_dict, sample_SUSHI_DR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI DR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5b1_JSON_dict).create_dataframe()
-    log.warning(f"`df`:\n{df}")  #TEST: temp
+    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5b1_JSON_dict).create_dataframe()  #TEST: At this time, private method this redirects to returns `None`
     assert_frame_equal(df, sample_SUSHI_DR_response_R5b1_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, sample_SUSHI_TR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI TR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5b1_JSON_dict).create_dataframe()
-    log.warning(f"`df`:\n{df}")  #TEST: temp
+    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5b1_JSON_dict).create_dataframe()  #TEST: At this time, private method this redirects to returns `None`
     assert_frame_equal(df, sample_SUSHI_TR_response_R5b1_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, sample_SUSHI_IR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI IR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5b1_JSON_dict).create_dataframe()
-    log.warning(f"`df`:\n{df}")  #TEST: temp
+    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5b1_JSON_dict).create_dataframe()  #TEST: At this time, private method this redirects to returns `None`
     assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])

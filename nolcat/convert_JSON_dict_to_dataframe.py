@@ -676,7 +676,6 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
                     #TEST: temp
                     location = "platform"
-                    log.warning(f"`type(report_items_dict)`: {type(report_items_dict)}")
                     log.warning(f"`report_items_dict`:\n{report_items_dict}")
                     with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
                         json.dump(report_items_dict, f, default=lambda x: x.isoformat())
@@ -756,6 +755,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Attribute_Performance":
                     for attribute_performance_item in value:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_item, key, "their appropriate fields"))
+                        log.warning(f"`attribute_performance_item.keys()`: {attribute_performance_item.keys()}")  #TEST: temp
                         for ap_key, ap_value in attribute_performance_item.items():
                             attribute_performance_dict = deepcopy(report_items_dict)
 
@@ -862,6 +862,7 @@ class ConvertJSONDictToDataframe:
                     
 
         #Section: Create Dataframe
+        log.warning(f"Flattened JSON to make into dataframe:\n{records_orient_list}")
         pass
     
 
