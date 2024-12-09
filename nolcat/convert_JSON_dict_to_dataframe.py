@@ -758,6 +758,8 @@ class ConvertJSONDictToDataframe:
                         log.warning(f"`attribute_performance_item.keys()`: {attribute_performance_item.keys()}")  #TEST: temp
                         for ap_key, ap_value in attribute_performance_item.items():
                             attribute_performance_dict = deepcopy(report_items_dict)
+                            log.warning(f"`ap_key`: {ap_key}")  #TEST: temp
+                            log.warning(f"`ap_value`: {ap_value}")  #TEST: temp
 
                         #Subsection: Capture `authors` Value
                         if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
