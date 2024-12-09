@@ -762,6 +762,7 @@ class ConvertJSONDictToDataframe:
                             import difflib
                             log.warning(f"`ap_key`: {ap_key}")
                             log.warning(f"`ap_value`: {ap_value}")
+                            log.warning(ap_key == "Data_Type")
                             x = difflib.ndiff([ap_key], ["Data_Type"])
                             for i in x:
                                 log.warning(i)
