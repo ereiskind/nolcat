@@ -756,17 +756,7 @@ class ConvertJSONDictToDataframe:
                     for attribute_performance_item in value:
                         attribute_performance_dict = deepcopy(report_items_dict)
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_item, key, "their appropriate fields"))
-                        log.warning(f"`attribute_performance_item.keys()`: {attribute_performance_item.keys()}")  #TEST: temp
                         for ap_key, ap_value in attribute_performance_item.items():
-                            #TEST: temp
-                            import difflib
-                            log.warning(f"`ap_key`: {ap_key}")
-                            log.warning(f"`ap_value`: {ap_value}")
-                            log.warning(ap_key == "Data_Type")
-                            x = difflib.ndiff([ap_key], ["Data_Type"])
-                            for i in x:
-                                log.warning(i)
-                            #TEST: end temp
 
                             #Subsection: Capture `authors` Value
                             if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
@@ -873,11 +863,6 @@ class ConvertJSONDictToDataframe:
                     
 
         #Section: Create Dataframe
-        #TEST: temp
-        location = "end"
-        with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
-            json.dump(records_orient_list, f, default=lambda x: x.isoformat())
-        #TEST: end temp
         pass
     
 
