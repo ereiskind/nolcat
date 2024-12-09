@@ -685,7 +685,7 @@ class ConvertJSONDictToDataframe:
                     log.warning(f"`type(report_items_dict)`: {type(report_items_dict)}")
                     log.warning(f"`report_items_dict`:\n{report_items_dict}")
                     with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
-                        json.dump(report_items_dict, f)
+                        json.dump(report_items_dict, f, default=lambda x: x.isoformat())
                     #TEST: end temp
 
                 #Subsection: Capture `authors` Value
@@ -801,7 +801,7 @@ class ConvertJSONDictToDataframe:
                             #TEST: temp
                             location = "data_type"
                             with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
-                                json.dump(attribute_performance_dict, f)
+                                json.dump(attribute_performance_dict, f, default=lambda x: x.isoformat())
                             #TEST: end temp
                         
                         #Subsection: Capture `section_Type` Value
@@ -828,7 +828,7 @@ class ConvertJSONDictToDataframe:
                             #TEST: temp
                             location = "access_method"
                             with open(TOP_NOLCAT_DIRECTORY / f"{timestamp}_row_{location}.json", 'w') as f:
-                                json.dump(attribute_performance_dict, f)
+                                json.dump(attribute_performance_dict, f, default=lambda x: x.isoformat())
                             #TEST: end temp
                         
                         #Subsection: Capture Parent Resource Metadata
