@@ -663,10 +663,6 @@ class ConvertJSONDictToDataframe:
                         report_items_dict[field] = value
                         include_in_df_dtypes[field] = 'string'
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
-                    #TEST: temp
-                    with open(TOP_NOLCAT_DIRECTORY / f"{report_type}_row_{field}.json", 'w') as f:
-                        json.dump(report_items_dict, f, default=lambda x: x.isoformat())
-                    #TEST: end temp
 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
