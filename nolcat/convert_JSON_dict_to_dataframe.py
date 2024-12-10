@@ -604,6 +604,7 @@ class ConvertJSONDictToDataframe:
             str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`.")
+        report_type = self.SUSHI_JSON_dictionary['Report_Header']['Report_ID']
         records_orient_list = []
         
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
@@ -639,7 +640,6 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through `Report_Items` of SUSHI JSON to Create Single-Level Dictionaries
-        report = self.SUSHI_JSON_dictionary['Report_Header']['Report_ID']  #TEST: temp
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
@@ -906,7 +906,7 @@ class ConvertJSONDictToDataframe:
         log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         #TEST: temp
         df.to_csv(
-            TOP_NOLCAT_DIRECTORY / f"{report}_df.csv",
+            TOP_NOLCAT_DIRECTORY / f"{report_type}_df.csv",
             index_label="index",
             date_format='%Y-%m-%d',
             encoding='utf-8',

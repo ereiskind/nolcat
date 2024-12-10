@@ -5214,4 +5214,6 @@ def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, 
     sample_SUSHI_IR_response_R5b1_dataframe['usage_date'] = pd.to_datetime(sample_SUSHI_IR_response_R5b1_dataframe['usage_date'])
     sample_SUSHI_IR_response_R5b1_dataframe['report_creation_date'] = pd.to_datetime(sample_SUSHI_IR_response_R5b1_dataframe['report_creation_date'])
     #TEST: end temp
+    log.warning(f"`type(df)`: {type(df)}")  #TEST: temp
+    log.warning(f"`type(sample_SUSHI_IR_response_R5b1_dataframe)`: {type(sample_SUSHI_IR_response_R5b1_dataframe)}")  #TEST: temp
     assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])
