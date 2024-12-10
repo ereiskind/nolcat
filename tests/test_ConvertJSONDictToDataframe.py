@@ -4742,7 +4742,8 @@ def test_create_dataframe_from_R5b1_DR(sample_SUSHI_DR_response_R5b1_JSON_dict, 
     sample_SUSHI_DR_response_R5b1_dataframe['usage_date'] = pd.to_datetime(sample_SUSHI_DR_response_R5b1_dataframe['usage_date'])
     sample_SUSHI_DR_response_R5b1_dataframe['report_creation_date'] = pd.to_datetime(sample_SUSHI_DR_response_R5b1_dataframe['report_creation_date'])
     #TEST: end temp
-    assert_frame_equal(df, sample_SUSHI_DR_response_R5b1_dataframe[df.columns.tolist()])
+    assert_frame_equal(df[sample_SUSHI_DR_response_R5b1_dataframe.columns.tolist()], sample_SUSHI_DR_response_R5b1_dataframe)  #TEST: temp
+    #TEST: `assert_frame_equal(df, sample_SUSHI_DR_response_R5b1_dataframe[df.columns.tolist()])` passes when field are missing from `df` because they're not yet being captured in the class being tested, which isn't the desired behavior
 
 
 def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, sample_SUSHI_TR_response_R5b1_dataframe):
@@ -4941,7 +4942,8 @@ def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, 
     sample_SUSHI_TR_response_R5b1_dataframe['usage_date'] = pd.to_datetime(sample_SUSHI_TR_response_R5b1_dataframe['usage_date'])
     sample_SUSHI_TR_response_R5b1_dataframe['report_creation_date'] = pd.to_datetime(sample_SUSHI_TR_response_R5b1_dataframe['report_creation_date'])
     #TEST: end temp
-    assert_frame_equal(df, sample_SUSHI_TR_response_R5b1_dataframe[df.columns.tolist()])
+    assert_frame_equal(df[sample_SUSHI_TR_response_R5b1_dataframe.columns.tolist()], sample_SUSHI_TR_response_R5b1_dataframe)  #TEST: temp
+    #TEST: `assert_frame_equal(df, sample_SUSHI_TR_response_R5b1_dataframe[df.columns.tolist()])` passes when field are missing from `df` because they're not yet being captured in the class being tested, which isn't the desired behavior
 
 
 def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, sample_SUSHI_IR_response_R5b1_dataframe):
@@ -5216,4 +5218,5 @@ def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, 
     #TEST: end temp
     log.warning(f"`type(df)`: {type(df)}")  #TEST: temp
     log.warning(f"`type(sample_SUSHI_IR_response_R5b1_dataframe)`: {type(sample_SUSHI_IR_response_R5b1_dataframe)}")  #TEST: temp
-    assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])
+    assert_frame_equal(df[sample_SUSHI_IR_response_R5b1_dataframe.columns.tolist()], sample_SUSHI_IR_response_R5b1_dataframe)  #TEST: temp
+    #TEST: `assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])` passes when field are missing from `df` because they're not yet being captured in the class being tested, which isn't the desired behavior
