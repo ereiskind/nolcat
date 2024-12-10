@@ -4587,7 +4587,8 @@ def sample_SUSHI_TR_response_R5b1_JSON_dict():
     Yields:
         dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_TR.json`
     """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
+    #TEST: with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
+    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '0_TR.json') as JSON_file:  #TEST: temp
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -4609,7 +4610,8 @@ def sample_SUSHI_IR_response_R5b1_JSON_dict():
     Yields:
         dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_IR.json`
     """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
+    #TEST: with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
+    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '0_IR.json') as JSON_file:  #TEST: temp
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
