@@ -644,6 +644,7 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
+                inner_keys = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
                 if key == "Database" or key == "Title":
@@ -743,6 +744,7 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent metadata fields"))
                     pass
 
                     #Subsection: Capture `parent_authors` Value
@@ -757,33 +759,41 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `parent_online_ISSN` Value
                         #Subsection: Capture `parent_URI` Value
 
+                else:
+                    report_items_dict[key] = value
+                    inner_keys.append(key)
+                
+                #Section: Iterate Through Inner Sections of SUSHI JSON
+                log.warning(f"`report_items_dict`:\n{report_items_dict}")  #TEST: temp
+                log.warning(f"`inner_keys`: {inner_keys}")  #TEST: temp
+
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
-                elif key == "Attribute_Performance":
-                    for attribute_performance_item in value:
-                        attribute_performance_dict = deepcopy(report_items_dict)
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_item, key, "their appropriate fields"))
-                        for ap_key, ap_value in attribute_performance_item.items():
+                #elif key == "Attribute_Performance":
+                #    for attribute_performance_item in value:
+                #        attribute_performance_dict = deepcopy(report_items_dict)
+                #        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_item, key, "their appropriate fields"))
+                #        for ap_key, ap_value in attribute_performance_item.items():
 
-                            #Subsection: Capture `authors` Value
-                            if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
-                                pass
+                #            #Subsection: Capture `authors` Value
+                #            if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
+                #                pass
 
-                            #Subsection: Capture `publication_date` Value
-                            elif ap_key == "Item_Dates":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
-                                pass
+                #            #Subsection: Capture `publication_date` Value
+                #            elif ap_key == "Item_Dates":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
+                #                pass
 
-                            #Subsection: Capture `article_version` Value
-                            elif ap_key == "Item_Attributes":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
-                                pass
+                #            #Subsection: Capture `article_version` Value
+                #            elif ap_key == "Item_Attributes":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
+                #                pass
 
-                            #Subsection: Capture Standard Identifiers
-                            # Null value handling isn't needed because all null values are removed
-                            elif ap_key == "Item_ID":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the proprietary ID fields"))
-                                pass
+                #            #Subsection: Capture Standard Identifiers
+                #            # Null value handling isn't needed because all null values are removed
+                #            elif ap_key == "Item_ID":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the proprietary ID fields"))
+                #                pass
 
                                     #Subsection: Capture `DOI` Value
                                     #Subsection: Capture `proprietary_ID` Value
@@ -792,40 +802,40 @@ class ConvertJSONDictToDataframe:
                                     #Subsection: Capture `online_ISSN` Value
                                     #Subsection: Capture `URI` Value
 
-                            #Subsection: Capture `data_type` Value
-                            elif ap_key == "Data_Type":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
-                                attribute_performance_dict['data_type'] = ap_value
-                                include_in_df_dtypes['data_type'] = 'string'
-                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+                #            #Subsection: Capture `data_type` Value
+                #            elif ap_key == "Data_Type":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
+                #                attribute_performance_dict['data_type'] = ap_value
+                #                include_in_df_dtypes['data_type'] = 'string'
+                #                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
 
-                            #Subsection: Capture `section_Type` Value
-                            elif ap_key == "Section_Type":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.section_Type`"))
-                                pass
+                #            #Subsection: Capture `section_Type` Value
+                #            elif ap_key == "Section_Type":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.section_Type`"))
+                #                pass
 
-                            #Subsection: Capture `YOP` Value
-                            elif ap_key == "YOP":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
-                                pass
+                #            #Subsection: Capture `YOP` Value
+                #            elif ap_key == "YOP":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
+                #                pass
 
-                            #Subsection: Capture `access_type` Value
-                            elif ap_key == "Access_Type":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
-                                pass
+                #            #Subsection: Capture `access_type` Value
+                #            elif ap_key == "Access_Type":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
+                #                pass
 
-                            #Subsection: Capture `access_method` Value
-                            elif ap_key == "Access_Method":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
-                                attribute_performance_dict['access_method'] = ap_value
-                                include_in_df_dtypes['access_method'] = 'string'
-                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+                #            #Subsection: Capture `access_method` Value
+                #            elif ap_key == "Access_Method":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
+                #                attribute_performance_dict['access_method'] = ap_value
+                #                include_in_df_dtypes['access_method'] = 'string'
+                #                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
 
-                            #Subsection: Capture Parent Resource Metadata
-                            # Null value handling isn't needed because all null values are removed
-                            elif ap_key == "Item_Parent":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the parent metadata fields"))
-                                pass
+                #            #Subsection: Capture Parent Resource Metadata
+                #            # Null value handling isn't needed because all null values are removed
+                #            elif ap_key == "Item_Parent":
+                #                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the parent metadata fields"))
+                #                pass
 
                                 #Subsection: Capture `parent_authors` Value
                                 #Subsection: Capture `parent_publication_date` Value
@@ -839,23 +849,22 @@ class ConvertJSONDictToDataframe:
                                     #Subsection: Capture `parent_online_ISSN` Value
                                     #Subsection: Capture `parent_URI` Value
 
-                            #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
-                            elif ap_key == "Performance":
-                                log.warning(f"`attribute_performance_dict` before adding `Performance` data:\n{attribute_performance_dict}")  #TEST: temp
-                                for p_key, p_value in ap_value.items():
-                                    performance_dict = deepcopy(attribute_performance_dict)
-                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
-                                    performance_dict['metric_type'] = p_key
-                                    for usage_date, usage_count in p_value.items():
-                                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
-                                        final_dict = {
-                                            **deepcopy(performance_dict),
-                                            'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
-                                            'usage_count': usage_count,
-                                        }
-                                        records_orient_list.append(final_dict)
-                                        log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
-                    
+                #            #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
+                #            elif ap_key == "Performance":
+                #                log.warning(f"`attribute_performance_dict` before adding `Performance` data:\n{attribute_performance_dict}")  #TEST: temp
+                #                for p_key, p_value in ap_value.items():
+                #                    performance_dict = deepcopy(attribute_performance_dict)
+                #                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
+                #                    performance_dict['metric_type'] = p_key
+                #                    for usage_date, usage_count in p_value.items():
+                #                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
+                #                        final_dict = {
+                #                            **deepcopy(performance_dict),
+                #                            'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
+                #                            'usage_count': usage_count,
+                #                        }
+                #                        records_orient_list.append(final_dict)
+                #                        log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
         #Section: Create Dataframe
         log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
