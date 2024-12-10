@@ -645,23 +645,26 @@ class ConvertJSONDictToDataframe:
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
-                #Subsection: Capture `resource_name` Value
-                if key == "Database" or key == "Title" or key == "Item":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.resource_name`"))
+                #Subsection: Capture `resource_name` or `parent_title` Value
+                if key == "Database" or key == "Title":
+                    if report_type == "DR" or report_type == "TR":
+                        field = "resource_name"
+                    else:
+                        field = "parent_title"
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     if value is None:  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['resource_name'] = value
-                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", report_items_dict['resource_name']))
+                        report_items_dict[field] = value
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("resource_name", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(value))
                         log.critical(message)
                         return message
                     else:
-                        report_items_dict['resource_name'] = value
-                        include_in_df_dtypes['resource_name'] = 'string'
-                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", report_items_dict['resource_name']))
+                        report_items_dict[field] = value
+                        include_in_df_dtypes[field] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
                     #TEST: temp
-                    location = "resource_name"
-                    with open(TOP_NOLCAT_DIRECTORY / f"{report}_row_{location}.json", 'w') as f:
+                    with open(TOP_NOLCAT_DIRECTORY / f"{report_type}_row_{field}.json", 'w') as f:
                         json.dump(report_items_dict, f, default=lambda x: x.isoformat())
                     #TEST: end temp
 
@@ -746,7 +749,6 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Parent":
                     pass
 
-                    #Subsection: Capture `parent_title` Value
                     #Subsection: Capture `parent_authors` Value
                     #Subsection: Capture `parent_publication_date` Value
                     #Subsection: Capture `parent_article_version` Value
@@ -829,7 +831,6 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the parent metadata fields"))
                                 pass
 
-                                #Subsection: Capture `parent_title` Value
                                 #Subsection: Capture `parent_authors` Value
                                 #Subsection: Capture `parent_publication_date` Value
                                 #Subsection: Capture `parent_article_version` Value
