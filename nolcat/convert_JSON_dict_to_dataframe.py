@@ -776,7 +776,7 @@ class ConvertJSONDictToDataframe:
                         for i_key, i_value in i_item.items():
                             log.warning(f"`i_key`: {i_key}")  #TEST: temp
                             log.warning(f"`i_value`: {i_value}")  #TEST: temp
-                            third_iteration_keys = []
+                            #TEST: third_iteration_keys = []
 
                             #Subsection: Capture `resource_name` Value
                             if i_key == "Item":
@@ -833,15 +833,17 @@ class ConvertJSONDictToDataframe:
                             else:
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                                 items_dict[i_key] = i_value
-                                third_iteration_keys.append(i_key)
+                                #TEST: third_iteration_keys.append(i_key)
 
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
                 if "Attribute_Performance" in second_iteration_keys:
                     ap_item = report_items_dict['Attribute_Performance']
                     attribute_performance_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
-                elif "Attribute_Performance" in third_iteration_keys:
+                #TEST: elif "Attribute_Performance" in third_iteration_keys:
+                elif items_dict.get("Attribute_Performance"):  #TEST: temp
                     ap_item = items_dict['Attribute_Performance']
-                    attribute_performance_dict = {k:v for (k, v) in items_dict if k not in third_iteration_keys}
+                    #TEST: attribute_performance_dict = {k:v for (k, v) in items_dict if k not in third_iteration_keys}
+                    attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
                 else:
                     message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
                     log.critical(message)
