@@ -644,7 +644,7 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
-                inner_keys = []
+                second_iteration_keys = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
                 if key == "Database" or key == "Title":
@@ -761,11 +761,48 @@ class ConvertJSONDictToDataframe:
 
                 else:
                     report_items_dict[key] = value
-                    inner_keys.append(key)
+                    second_iteration_keys.append(key)
                 
-                #Section: Iterate Through Inner Sections of SUSHI JSON
-                log.warning(f"`report_items_dict`:\n{report_items_dict}")  #TEST: temp
-                log.warning(f"`inner_keys`: {inner_keys}")  #TEST: temp
+                #Section: Iterate Through `Items` Sections of IR SUSHI JSON
+                if "Items" in second_iteration_keys:
+                    for i_item in report_items_dict['Items']:
+                        items_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
+                        for i_key, i_value in i_item.items():
+                            third_iteration_keys = []
+
+                            #Subsection:
+
+                            #Subsection:
+
+                            #Subsection:
+
+                            else:
+                                items_dict[i_key] = i_value
+                                third_iteration_keys.append(i_key)
+
+                #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
+                if "Attribute_Performance" in second_iteration_keys:
+                    ap_item = report_items_dict['Attribute_Performance']
+                    attribute_performance_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
+                elif "Attribute_Performance" in third_iteration_keys:
+                    ap_item = items_dict['Attribute_Performance']
+                    attribute_performance_dict = {k:v for (k, v) in items_dict if k not in third_iteration_keys}
+                else:
+                    message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
+                    log.critical(message)
+                    return message
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
+                for ap_key, ap_value in ap_item.items():
+                    #ToDo: Is list of keys for another iteration needed?
+
+                    #Subsection:
+
+                    #Subsection:
+
+                    #Subsection:
+
+                    #ToDo: Is `else` needed?
 
                 #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
                 #elif key == "Attribute_Performance":
