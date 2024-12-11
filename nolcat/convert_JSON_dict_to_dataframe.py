@@ -767,9 +767,10 @@ class ConvertJSONDictToDataframe:
                     second_iteration_keys.append(key)
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
-            log.warning(f"Just before `Attribute_Performance` iteration")  #TEST: temp
+            log.warning(f"Just before `Items` iteration")  #TEST: temp
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
+                    log.warning(f"`i_item`:\n{i_item}")  #TEST: temp
                     items_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                     for i_key, i_value in i_item.items():
@@ -833,12 +834,14 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
             log.warning(f"Just before `Attribute_Performance` iteration")  #TEST: temp
             if report_items_dict.get("Attribute_Performance"):
-                log.warning("in `report_items_dict.get()`")  #TEST: temp
+                log.warning(f"After `get()`, `report_items_dict`:\n{report_items_dict}")  #TEST: temp
                 ap_item = report_items_dict['Attribute_Performance']
+                log.warning(f"`ap_item`:\n{ap_item}")  #TEST: temp
                 attribute_performance_dict = {k:v for (k, v) in report_items_dict if k != "Attribute_Performance"}
             elif items_dict.get("Attribute_Performance"):  # When `Attribute_Performance` is in `report_items_dict`, `items_dict` isn't initialized, raising an error, so it must be the second dist checked
-                log.warning("in `report_items_dict.get()`")  #TEST: temp
+                log.warning(f"After `get()`, `report_items_dict`:\n{report_items_dict}")  #TEST: temp
                 ap_item = items_dict['Attribute_Performance']
+                log.warning(f"`ap_item`:\n{ap_item}")  #TEST: temp
                 attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
             else:
                 message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
@@ -906,6 +909,7 @@ class ConvertJSONDictToDataframe:
 
                 #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
                 elif ap_key == "Performance":
+                    log.warning("In `performance`")  #TEST: temp
                     for p_key, p_value in ap_value.items():
                         performance_dict = deepcopy(attribute_performance_dict)
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
