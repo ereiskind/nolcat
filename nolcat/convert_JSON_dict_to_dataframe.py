@@ -768,6 +768,7 @@ class ConvertJSONDictToDataframe:
                     report_items_dict[key] = value
                     second_iteration_keys.append(key)
                 
+                log.warning("This is between the two loops")  #TEST: temp
                 #Section: Iterate Through `Items` Sections of IR SUSHI JSON
                 if "Items" in second_iteration_keys:
                     for i_item in report_items_dict['Items']:
