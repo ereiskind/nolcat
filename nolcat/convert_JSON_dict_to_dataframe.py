@@ -730,9 +730,9 @@ class ConvertJSONDictToDataframe:
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
                     if report_type == "DR" or report_type == "TR":
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the proprietary ID fields"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the standard ID fields"))
                     else:
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent proprietary ID fields"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent standard ID fields"))
                     for ID_type, ID_value in value.items():
 
                         #Subsection: Capture `DOI` or `parent_DOI` Value
