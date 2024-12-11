@@ -883,20 +883,38 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture Standard Identifiers
                         if i_key == "Item_ID":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the proprietary ID fields"))
-                            pass
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
+                            for ID_type, ID_value in i_value.items():
 
-                            #Subsection: Capture `DOI` Value
+                                #Subsection: Capture `DOI` Value
+                                if ID_type == "DOI":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
+                                    pass
 
-                            #Subsection: Capture `proprietary_ID` Value
+                                #Subsection: Capture `proprietary_ID` Value
+                                elif self.proprietary_ID_regex.search(ID_type):
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
+                                    pass
 
-                            #Subsection: Capture `ISBN` Value
+                                #Subsection: Capture `ISBN` Value
+                                elif ID_type == "ISBN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
+                                    pass
 
-                            #Subsection: Capture `print_ISSN` Value
+                                #Subsection: Capture `print_ISSN` Value
+                                elif ID_type == "Print_ISSN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
+                                    pass
 
-                            #Subsection: Capture `online_ISSN` Value
+                                #Subsection: Capture `online_ISSN` Value
+                                elif ID_type == "Online_ISSN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
+                                    pass
 
-                            #Subsection: Capture `URI` Value
+                                #Subsection: Capture `URI` Value
+                                elif ID_type == "URI":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
+                                    pass
 
                         else:
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
