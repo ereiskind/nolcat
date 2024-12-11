@@ -644,6 +644,8 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
+                log.warning(f"`key`: {key}")  #TEST: temp
+                log.warning(f"`value`: {value}")  #TEST: temp
                 second_iteration_keys = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
@@ -762,6 +764,7 @@ class ConvertJSONDictToDataframe:
                     pass
 
                 else:
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
                     report_items_dict[key] = value
                     second_iteration_keys.append(key)
                 
@@ -771,6 +774,8 @@ class ConvertJSONDictToDataframe:
                         items_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                         for i_key, i_value in i_item.items():
+                            log.warning(f"`i_key`: {i_key}")  #TEST: temp
+                            log.warning(f"`i_value`: {i_value}")  #TEST: temp
                             third_iteration_keys = []
 
                             #Subsection: Capture `resource_name` Value
@@ -826,6 +831,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `URI` Value
 
                             else:
+                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                                 items_dict[i_key] = i_value
                                 third_iteration_keys.append(i_key)
 
