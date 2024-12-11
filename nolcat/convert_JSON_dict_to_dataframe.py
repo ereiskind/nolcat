@@ -928,6 +928,19 @@ class ConvertJSONDictToDataframe:
         log.info(f"`df_dtypes`: {df_dtypes}")
 
         log.debug(f"`records_orient_list` before `json.dumps()`  is type {type(records_orient_list)}.")
+        #TEST: temp
+        import random
+        x = len(records_orient_list)
+        if x < 30:
+            log.warning(f"`records_orient_list` before `json.dumps()`:\n{records_orient_list}")
+        else:
+            if x > 300:
+                for n in random.sample(range(x), k=30):
+                    log.warning(f"A sample of `records_orient_list` before `json.dumps()`:\n{records_orient_list[n]}")
+            else:
+                for n in random.sample(range(x), k=int(x/10)):
+                    log.warning(f"A sample of `records_orient_list` before `json.dumps()`:\n{records_orient_list[n]}")
+        #TEST: end temp
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
             records_orient_list,
             default=ConvertJSONDictToDataframe._serialize_dates,
