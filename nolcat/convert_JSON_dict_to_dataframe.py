@@ -749,12 +749,14 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `data_type` or  `parent_data_type` Value
                 elif key == "Data_Type":
-                    if report_type == "DR" or report_type == "TR":
-                        field = "resource_name"
+                    if report_type == "IR":
+                        field = "parent_data_type"
                     else:
-                        field = "parent_title"
+                        field = "data_type"
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    pass
+                    report_items_dict[field] = value
+                    include_in_df_dtypes[field] = 'string'
+                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", report_items_dict[field]))
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
