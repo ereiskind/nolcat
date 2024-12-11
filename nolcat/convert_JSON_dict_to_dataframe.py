@@ -767,6 +767,7 @@ class ConvertJSONDictToDataframe:
                     second_iteration_keys.append(key)
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
+            log.warning(f"Just before `Attribute_Performance` iteration")  #TEST: temp
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
                     items_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
@@ -830,10 +831,13 @@ class ConvertJSONDictToDataframe:
                             items_dict[i_key] = i_value
 
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
+            log.warning(f"Just before `Attribute_Performance` iteration")  #TEST: temp
             if report_items_dict.get("Attribute_Performance"):
+                log.warning("in `report_items_dict.get()`")  #TEST: temp
                 ap_item = report_items_dict['Attribute_Performance']
                 attribute_performance_dict = {k:v for (k, v) in report_items_dict if k != "Attribute_Performance"}
             elif items_dict.get("Attribute_Performance"):  # When `Attribute_Performance` is in `report_items_dict`, `items_dict` isn't initialized, raising an error, so it must be the second dist checked
+                log.warning("in `report_items_dict.get()`")  #TEST: temp
                 ap_item = items_dict['Attribute_Performance']
                 attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
             else:
