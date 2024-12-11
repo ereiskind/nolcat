@@ -834,21 +834,18 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
             log.warning(f"Just before `Attribute_Performance` iteration")  #TEST: temp
             if report_items_dict.get("Attribute_Performance"):
-                log.warning(f"After `get()`, `report_items_dict`:\n{report_items_dict}")  #TEST: temp
-                ap_item = report_items_dict['Attribute_Performance']
-                log.warning(f"`ap_item`:\n{ap_item}")  #TEST: temp
-                attribute_performance_dict = {k:v for (k, v) in report_items_dict if k != "Attribute_Performance"}
+                shared_dict_name = report_items_dict
             elif items_dict.get("Attribute_Performance"):  # When `Attribute_Performance` is in `report_items_dict`, `items_dict` isn't initialized, raising an error, so it must be the second dist checked
-                log.warning(f"After `get()`, `report_items_dict`:\n{report_items_dict}")  #TEST: temp
-                ap_item = items_dict['Attribute_Performance']
-                log.warning(f"`ap_item`:\n{ap_item}")  #TEST: temp
-                attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
+                shared_dict_name = items_dict
             else:
                 message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
-            log.warning(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))  #TEST: revert to `debug` level
-            for ap_key, ap_value in ap_item.items():
+            for ap_item in shared_dict_name['Attribute_Performance']:
+                log.warning(f"`ap_item`:\n{ap_item}")  #TEST: temp
+                attribute_performance_dict = {k:v for (k, v) in shared_dict_name if k != "Attribute_Performance"}
+                log.warning(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))  #TEST: revert to `debug` level
+                for ap_key, ap_value in ap_item.items():
 
                 #Subsection: Capture `authors` Value
                 if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
