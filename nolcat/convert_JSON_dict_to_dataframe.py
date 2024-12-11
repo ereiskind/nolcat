@@ -770,7 +770,7 @@ class ConvertJSONDictToDataframe:
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
                     log.warning(f"`type(i_item)`:\n{type(i_item)}")  #TEST: temp
-                    items_dict = {k:v for (k, v) in report_items_dict if k not in second_iteration_keys}
+                    items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                     for i_key, i_value in i_item.items():
 
@@ -841,7 +841,7 @@ class ConvertJSONDictToDataframe:
                 return message
             for ap_item in shared_dict_name['Attribute_Performance']:
                 log.warning(f"`type(ap_item)`:\n{type(ap_item)}")  #TEST: temp
-                attribute_performance_dict = {k:v for (k, v) in shared_dict_name if k != "Attribute_Performance"}
+                attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.warning(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))  #TEST: revert to `debug` level
                 for ap_key, ap_value in ap_item.items():
 
