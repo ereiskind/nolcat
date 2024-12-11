@@ -951,21 +951,39 @@ class ConvertJSONDictToDataframe:
 
                     #Subsection: Capture Standard Identifiers
                     # Null value handling isn't needed because all null values are removed
-                    elif ap_key == "Item_ID":
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the proprietary ID fields"))
-                        pass
+                    elif ap_key == "Item_ID":  #ToDo: Are standard identifiers in the `Attribute_Performance` section?
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
+                        for ID_type, ID_value in ap_value.items():
 
-                        #Subsection: Capture `DOI` Value
+                            #Subsection: Capture `DOI` Value
+                            if ID_type == "DOI":
+                                log.warning("DOI in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
-                        #Subsection: Capture `proprietary_ID` Value
+                            #Subsection: Capture `proprietary_ID` Value
+                            elif self.proprietary_ID_regex.search(ID_type):
+                                log.warning("Proprietary ID in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
-                        #Subsection: Capture `ISBN` Value
+                            #Subsection: Capture `ISBN` Value
+                            elif ID_type == "ISBN":
+                                log.warning("ISBN in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
-                        #Subsection: Capture `print_ISSN` Value
+                            #Subsection: Capture `print_ISSN` Value
+                            elif ID_type == "Print_ISSN":
+                                log.warning("Print ISSN in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
-                        #Subsection: Capture `online_ISSN` Value
+                            #Subsection: Capture `online_ISSN` Value
+                            elif ID_type == "Online_ISSN":
+                                log.warning("Online ISSN in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
-                        #Subsection: Capture `URI` Value
+                            #Subsection: Capture `URI` Value
+                            elif ID_type == "URI":
+                                log.warning("URI in the `Attribute_Performance` section")  #TEST: temp, replace with capture if ever output to logging
+                                pass
 
                     #Subsection: Capture `data_type` Value
                     elif ap_key == "Data_Type":
