@@ -830,12 +830,12 @@ class ConvertJSONDictToDataframe:
                             items_dict[i_key] = i_value
 
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
-            if items_dict.get("Attribute_Performance"):
-                ap_item = items_dict['Attribute_Performance']
-                attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
-            elif report_items_dict.get("Attribute_Performance"):
+            if report_items_dict.get("Attribute_Performance"):
                 ap_item = report_items_dict['Attribute_Performance']
                 attribute_performance_dict = {k:v for (k, v) in report_items_dict if k != "Attribute_Performance"}
+            elif items_dict.get("Attribute_Performance"):  # When `Attribute_Performance` is in `report_items_dict`, `items_dict` isn't initialized, raising an error, so it must be the second dist checked
+                ap_item = items_dict['Attribute_Performance']
+                attribute_performance_dict = {k:v for (k, v) in items_dict if k != "Attribute_Performance"}
             else:
                 message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
                 log.critical(message)
