@@ -733,19 +733,61 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the proprietary ID fields"))
                     else:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent proprietary ID fields"))
-                    pass
+                    for ID_type, ID_value in value.items():
 
-                    #Subsection: Capture `DOI` or `parent_DOI` Value
+                        #Subsection: Capture `DOI` or `parent_DOI` Value
+                        if ID_type == "DOI":
+                            if report_type == "IR":
+                                field = "parent_DOI"
+                            else:
+                                field = "DOI"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
-                    #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
+                        #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
+                        elif self.proprietary_ID_regex.search(ID_type):
+                            if report_type == "IR":
+                                field = "parent_proprietary_ID"
+                            else:
+                                field = "proprietary_ID"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
-                    #Subsection: Capture `ISBN` or `parent_ISBN` Value
+                        #Subsection: Capture `ISBN` or `parent_ISBN` Value
+                        elif ID_type == "ISBN":
+                            if report_type == "IR":
+                                field = "parent_ISBN"
+                            else:
+                                field = "ISBN"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
-                    #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
+                        #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
+                        elif ID_type == "Print_ISSN":
+                            if report_type == "IR":
+                                field = "parent_print_ISSN"
+                            else:
+                                field = "print_ISSN"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
-                    #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
+                        #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
+                        elif ID_type == "Online_ISSN":
+                            if report_type == "IR":
+                                field = "parent_online_ISSN"
+                            else:
+                                field = "online_ISSN"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
-                    #Subsection: Capture `URI` or `parent_URI` Value
+                        #Subsection: Capture `URI` or `parent_URI` Value
+                        elif ID_type == "URI":
+                            if report_type == "IR":
+                                field = "parent_URI"
+                            else:
+                                field = "URI"
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            pass
 
                 #Subsection: Capture `data_type` or  `parent_data_type` Value
                 elif key == "Data_Type":
