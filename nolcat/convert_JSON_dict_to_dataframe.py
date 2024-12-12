@@ -783,7 +783,13 @@ class ConvertJSONDictToDataframe:
                             else:
                                 field = "print_ISSN"
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if ISSN_regex().fullmatch(ID_value):
+                                report_items_dict[field] = ID_value.strip()
+                                include_in_df_dtypes[field] = 'string'
+                            else:
+                                report_items_dict[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                include_in_df_dtypes[field] = 'string'
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
                         elif ID_type == "Online_ISSN":
