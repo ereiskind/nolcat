@@ -875,7 +875,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
 
                         #Subsection: Capture `publisher` Value
-                        if i_key == "Publisher":
+                        elif i_key == "Publisher":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher`"))
                             if i_value is None:  # This value handled first because `len()` of null value raises an error
                                 items_dict['publisher'] = i_value
@@ -892,12 +892,12 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
 
                         #Subsection: Capture `publisher_ID` Value
-                        if i_key == "Publisher_ID":
+                        elif i_key == "Publisher_ID":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher_ID`"))
                             pass
 
                         #Subsection: Capture `platform` Value
-                        if i_key == "Platform":
+                        elif i_key == "Platform":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.platform`"))
                             if i_value is None:  # This value handled first because `len()` of null value raises an error
                                 items_dict['platform'] = i_value
@@ -913,7 +913,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
 
                         #Subsection: Capture `authors` Value
-                        if i_key == "Authors":
+                        elif i_key == "Authors":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
                             number_of_authors = len(i_value)
                             for type_and_value in i_value:
@@ -942,17 +942,17 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
 
                         #Subsection: Capture `publication_date` Value
-                        if i_key == "Publication_Date":
+                        elif i_key == "Publication_Date":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
                             pass
 
                         #Subsection:  Capture `article_version` Value
-                        if i_key == "Item_Attributes":
+                        elif i_key == "Item_Attributes":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.article_version`"))
                             pass
 
                         #Subsection: Capture Standard Identifiers
-                        if i_key == "Item_ID":
+                        elif i_key == "Item_ID":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
                             for ID_type, ID_value in i_value.items():
 
