@@ -816,7 +816,7 @@ class ConvertJSONDictToDataframe:
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
-                #Subsection: Capture `data_type` or  `parent_data_type` Value
+                #Subsection: Capture `data_type` or `parent_data_type` Value
                 elif key == "Data_Type":
                     if report_type == "IR":
                         field = "parent_data_type"
