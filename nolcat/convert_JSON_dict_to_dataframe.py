@@ -758,7 +758,14 @@ class ConvertJSONDictToDataframe:
                             else:
                                 field = "proprietary_ID"
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if len(ID_value) > self.PROPRIETARY_ID_LENGTH:
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(ID_value))
+                                log.critical(message)
+                                return message
+                            else:
+                                report_items_dict[field] = ID_value
+                                include_in_df_dtypes[field] = 'string'
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `ISBN` or `parent_ISBN` Value
                         elif ID_type == "ISBN":
