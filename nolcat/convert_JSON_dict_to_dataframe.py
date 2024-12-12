@@ -897,9 +897,31 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
 
                         #Subsection: Capture `authors` Value
-                        if i_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                        if i_key == "Authors":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
-                            pass
+                            number_of_authors = len(i_value)
+                            for type_and_value in i_value:
+                                if number_of_authors > 1:  # Multiple authors
+                                    for name in type_and_value.values():
+                                        if items_dict['authors'].endswith(" et al."):
+                                            break  # The loop of adding author names
+                                        elif len(items_dict['authors']) + len(name) + 10 < self.AUTHORS_LENGTH:
+                                            items_dict['authors'] = items_dict['authors'] + ", " + name.strip()
+                                        else:
+                                            items_dict['authors'] = items_dict['authors'] + " et al."
+                                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))  #ALERT: Original update statement used "Updated" instead of "Added"; does that change need to be preserved?
+                                else:
+                                    if type_and_value['Name'] is None:  # This value handled first because `len()` of null value raises an error
+                                        items_dict['authors'] = type_and_value['Name']
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
+                                    elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
+                                        log.critical(message)
+                                        return message
+                                    else:
+                                        items_dict['authors'] = type_and_value['Name']
+                                        include_in_df_dtypes['authors'] = 'string'
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
 
                         #Subsection: Capture `publication_date` Value
                         if i_key == "Publication_Date":
