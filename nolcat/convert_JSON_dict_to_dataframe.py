@@ -963,7 +963,13 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `print_ISSN` Value
                                 elif ID_type == "Print_ISSN":
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
-                                    pass
+                                    if ISSN_regex().fullmatch(ID_value):
+                                        items_dict['print_ISSN'] = ID_value.strip()
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    else:
+                                        items_dict['print_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("print_ISSN", items_dict['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":
