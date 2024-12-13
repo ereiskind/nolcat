@@ -997,7 +997,7 @@ class ConvertJSONDictToDataframe:
                 log.critical(message)
                 return message
             for ap_item in shared_dict_name['Attribute_Performance']:
-                log.warning(f"dict before initialization of `attribute_performance_dict`:\n{attribute_performance_dict}")  #TEST: temp
+                log.warning(f"dict before initialization of `attribute_performance_dict`:\n{shared_dict_name}")  #TEST: temp
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
                 log.warning(f"`attribute_performance_dict` at initialization:\n{attribute_performance_dict}")  #TEST: temp
