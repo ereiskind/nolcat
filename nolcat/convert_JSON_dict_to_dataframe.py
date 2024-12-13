@@ -640,15 +640,8 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through `Report_Items` of SUSHI JSON to Create Single-Level Dictionaries
-        #TEST: temp
-        i = 0
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.warning(f"Record first 30 characters {json.dumps(record)[:30]}")
-            i =+ 1
-        log.warning(f"{i} iterations")
-        #TEST: end temp
-        for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.warning(f"Starting iteration for new JSON record {record}.")  #TEST: temp level, should be `debug`
+            log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
                 second_iteration_keys = []
@@ -850,6 +843,7 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
+                    log.warning(f"`report_items_dict` before creation of `items_dict`:\n{report_items_dict}")  #TEST: temp
                     items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                     log.warning(f"`items_dict` at initialization:\n{items_dict}")  #TEST: temp
@@ -943,7 +937,7 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture Standard Identifiers
                         elif i_key == "Item_ID":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
                             for ID_type, ID_value in i_value.items():
 
                                 #Subsection: Capture `DOI` Value
@@ -1003,6 +997,7 @@ class ConvertJSONDictToDataframe:
                 log.critical(message)
                 return message
             for ap_item in shared_dict_name['Attribute_Performance']:
+                log.warning(f"dict before initialization of `attribute_performance_dict`:\n{attribute_performance_dict}")  #TEST: temp
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
                 log.warning(f"`attribute_performance_dict` at initialization:\n{attribute_performance_dict}")  #TEST: temp
