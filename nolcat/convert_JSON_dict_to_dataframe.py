@@ -843,10 +843,8 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
-                    log.warning(f"`report_items_dict` before creation of `items_dict`:\n{report_items_dict}")  #TEST: temp
                     items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
-                    log.warning(f"`items_dict` at initialization:\n{items_dict}")  #TEST: temp
                     for i_key, i_value in i_item.items():
 
                         #Subsection: Capture `resource_name` Value
@@ -997,10 +995,8 @@ class ConvertJSONDictToDataframe:
                 log.critical(message)
                 return message
             for ap_item in shared_dict_name['Attribute_Performance']:
-                log.warning(f"dict before initialization of `attribute_performance_dict`:\n{shared_dict_name}")  #TEST: temp
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
-                log.warning(f"`attribute_performance_dict` at initialization:\n{attribute_performance_dict}")  #TEST: temp
                 for ap_key, ap_value in ap_item.items():
 
                     #Subsection: Capture `authors` Value
