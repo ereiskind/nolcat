@@ -689,7 +689,7 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
                     pass
 
                 #Subsection: Capture `platform` Value
@@ -712,7 +712,7 @@ class ConvertJSONDictToDataframe:
                         field = "parent_authors"
                     else:
                         field = "authors"
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
@@ -721,7 +721,7 @@ class ConvertJSONDictToDataframe:
                         field = "parent_publication_date"
                     else:
                         field = "publication_date"
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture `article_version` or `parent_article_version` Value
@@ -730,16 +730,16 @@ class ConvertJSONDictToDataframe:
                         field = "parent_article_version"
                     else:
                         field = "article_version"
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture Standard Identifiers or Parent Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
-                    if report_type == "DR" or report_type == "TR":
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the standard ID fields"))
-                    else:
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent standard ID fields"))
+                    #TEST: if report_type == "DR" or report_type == "TR":
+                    #TEST:     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the standard ID fields"))
+                    #TEST: else:
+                    #TEST:     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent standard ID fields"))
                     for ID_type, ID_value in value.items():
 
                         #Subsection: Capture `DOI` or `parent_DOI` Value
@@ -780,7 +780,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_ISBN"
                             else:
                                 field = "ISBN"
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                         #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
@@ -804,7 +804,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_online_ISSN"
                             else:
                                 field = "online_ISSN"
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                         #Subsection: Capture `URI` or `parent_URI` Value
@@ -813,7 +813,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_URI"
                             else:
                                 field = "URI"
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
@@ -829,17 +829,17 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     pass
 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
                     pass
 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_method`"))
+                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_method`"))
                     pass
 
                 else:
@@ -851,7 +851,8 @@ class ConvertJSONDictToDataframe:
             if "Items" in second_iteration_keys:
                 for i_item in report_items_dict['Items']:
                     items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
+                    log.warning(f"`items_dict` at initialization:\n{items_dict}")  #TEST: temp
                     for i_key, i_value in i_item.items():
 
                         #Subsection: Capture `resource_name` Value
@@ -886,7 +887,7 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture `publisher_ID` Value
                         elif i_key == "Publisher_ID":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher_ID`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher_ID`"))
                             pass
 
                         #Subsection: Capture `platform` Value
@@ -932,12 +933,12 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture `publication_date` Value
                         elif i_key == "Publication_Date":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
                             pass
 
                         #Subsection:  Capture `article_version` Value
                         elif i_key == "Item_Attributes":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.article_version`"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.article_version`"))
                             pass
 
                         #Subsection: Capture Standard Identifiers
@@ -947,7 +948,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `DOI` Value
                                 if ID_type == "DOI":
-                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
+                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
                                     pass
 
                                 #Subsection: Capture `proprietary_ID` Value
@@ -964,7 +965,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `ISBN` Value
                                 elif ID_type == "ISBN":
-                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
+                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
                                     pass
 
                                 #Subsection: Capture `print_ISSN` Value
@@ -980,16 +981,16 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":
-                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
+                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
                                     pass
 
                                 #Subsection: Capture `URI` Value
                                 elif ID_type == "URI":
-                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
+                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
                                     pass
 
                         else:
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
+                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                             items_dict[i_key] = i_value
 
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
@@ -1003,22 +1004,23 @@ class ConvertJSONDictToDataframe:
                 return message
             for ap_item in shared_dict_name['Attribute_Performance']:
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
-                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
+                log.warning(f"`attribute_performance_dict` at initialization:\n{attribute_performance_dict}")  #TEST: temp
                 for ap_key, ap_value in ap_item.items():
 
                     #Subsection: Capture `authors` Value
                     if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
+                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
                         pass
 
                     #Subsection: Capture `publication_date` Value
                     elif ap_key == "Item_Dates":
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
+                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
                         pass
 
                     #Subsection: Capture `article_version` Value
                     elif ap_key == "Item_Attributes":
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
+                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
                         pass
 
                     #Subsection: Capture Standard Identifiers
