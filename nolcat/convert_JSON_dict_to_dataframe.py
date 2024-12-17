@@ -842,10 +842,13 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
+                i = 0  #TEST: temp
                 for i_item in report_items_dict['Items']:
+                    i += 1  #TEST: temp
                     items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                     for i_key, i_value in i_item.items():
+                        log.warning(f"At start of iteration {i} of `i_item`, `items_dict`:\n{items_dict}")  #TEST: temp
 
                         #Subsection: Capture `resource_name` Value
                         if i_key == "Item":
@@ -984,6 +987,8 @@ class ConvertJSONDictToDataframe:
                         else:
                             #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                             items_dict[i_key] = i_value
+                        
+                    log.warning(f"At end of iteration {i} of `i_item`, `items_dict`:\n{items_dict}")  #TEST: temp
 
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
             if report_items_dict.get("Attribute_Performance"):
