@@ -994,6 +994,7 @@ class ConvertJSONDictToDataframe:
                 message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
+            log.warning(f"`shared_dict_name`:\n{shared_dict_name}")  #TEST: temp
             for ap_item in shared_dict_name['Attribute_Performance']:
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
