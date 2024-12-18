@@ -849,7 +849,98 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
             elif report_type == "PR" or report_type == "DR" or report_type == "TR":
-                #ToDo: Existing `Attribute_Performance` iteration here
+                for ap_item in report_items_dict['Attribute_Performance']:
+                    attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
+                    for ap_key, ap_value in ap_item.items():
+
+                        #Subsection: Capture `authors` Value
+                        if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
+                            pass
+
+                        #Subsection: Capture Standard Identifiers
+                        # Null value handling isn't needed because all null values are removed
+                        elif ap_key == "Item_ID":  #ToDo: Are standard identifiers in the `Attribute_Performance` section?
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
+                            for ID_type, ID_value in ap_value.items():
+
+                                #Subsection: Capture `DOI` Value
+                                if ID_type == "DOI":
+                                    log.warning("DOI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                                #Subsection: Capture `proprietary_ID` Value
+                                elif self.proprietary_ID_regex.search(ID_type):
+                                    log.warning("Proprietary ID in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                                #Subsection: Capture `ISBN` Value
+                                elif ID_type == "ISBN":
+                                    log.warning("ISBN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                                #Subsection: Capture `print_ISSN` Value
+                                elif ID_type == "Print_ISSN":
+                                    log.warning("Print ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                                #Subsection: Capture `online_ISSN` Value
+                                elif ID_type == "Online_ISSN":
+                                    log.warning("Online ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                                #Subsection: Capture `URI` Value
+                                elif ID_type == "URI":
+                                    log.warning("URI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
+                                    pass
+
+                        #Subsection: Capture `data_type` Value
+                        elif ap_key == "Data_Type":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
+                            attribute_performance_dict['data_type'] = ap_value
+                            include_in_df_dtypes['data_type'] = 'string'
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+
+                        #Subsection: Capture `YOP` Value
+                        elif ap_key == "YOP":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
+                            try:
+                                attribute_performance_dict['YOP'] = int(ap_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                                include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
+                            except:
+                                attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
+
+                        #Subsection: Capture `access_type` Value
+                        elif ap_key == "Access_Type":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
+                            attribute_performance_dict['access_type'] = ap_value
+                            include_in_df_dtypes['access_type'] = 'string'
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
+
+                        #Subsection: Capture `access_method` Value
+                        elif ap_key == "Access_Method":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
+                            attribute_performance_dict['access_method'] = ap_value
+                            include_in_df_dtypes['access_method'] = 'string'
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+
+                        #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
+                        elif ap_key == "Performance":
+                            for p_key, p_value in ap_value.items():
+                                performance_dict = deepcopy(attribute_performance_dict)
+                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
+                                performance_dict['metric_type'] = p_key
+                                for usage_date, usage_count in p_value.items():
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
+                                    final_dict = {
+                                        **deepcopy(performance_dict),
+                                        'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
+                                        'usage_count': usage_count,
+                                    }
+                                    records_orient_list.append(final_dict)
+                                    log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
             else:
                 message = "The IR expected `Items` key was missing; the JSON cannot be converted into a dataframe."
