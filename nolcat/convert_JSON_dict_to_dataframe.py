@@ -843,7 +843,7 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
                 items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
-                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "keys at the top level of the JSON"))
                 i = 0  #TEST: temp
                 for i_item in report_items_dict['Items']:
                     i += 1  #TEST: temp
@@ -1002,7 +1002,7 @@ class ConvertJSONDictToDataframe:
             log.warning(f"`shared_dict_name`:\n{shared_dict_name}")  #TEST: temp
             for ap_item in shared_dict_name['Attribute_Performance']:
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
-                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "their appropriate fields"))
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
                 for ap_key, ap_value in ap_item.items():
 
                     #Subsection: Capture `authors` Value
