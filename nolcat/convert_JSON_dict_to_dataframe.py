@@ -652,10 +652,10 @@ class ConvertJSONDictToDataframe:
                         field = "parent_title"
                     else:
                         field = "resource_name"
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         report_items_dict[field] = value
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(value))
                         log.critical(message)
@@ -663,14 +663,14 @@ class ConvertJSONDictToDataframe:
                     else:
                         report_items_dict[field] = value
                         include_in_df_dtypes[field] = 'string'
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         report_items_dict['publisher'] = value
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
                     elif len(value) > self.PUBLISHER_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(value))
                         log.critical(message)
@@ -678,26 +678,26 @@ class ConvertJSONDictToDataframe:
                     else:
                         report_items_dict['publisher'] = value
                         include_in_df_dtypes['publisher'] = 'string'
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
                     pass
 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         report_items_dict['platform'] = value
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
                     elif len(value) > self.PLATFORM_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(value))
                         log.critical(message)
                         return message
                     else:
                         report_items_dict['platform'] = value
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
 
                 #Subsection: Capture `authors` or `parent_authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
@@ -705,7 +705,7 @@ class ConvertJSONDictToDataframe:
                         field = "parent_authors"
                     else:
                         field = "authors"
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
@@ -714,7 +714,7 @@ class ConvertJSONDictToDataframe:
                         field = "parent_publication_date"
                     else:
                         field = "publication_date"
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture `article_version` or `parent_article_version` Value
@@ -723,16 +723,16 @@ class ConvertJSONDictToDataframe:
                         field = "parent_article_version"
                     else:
                         field = "article_version"
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     pass
 
                 #Subsection: Capture Standard Identifiers or Parent Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
-                    #TEST: if report_type == "DR" or report_type == "TR":
-                    #TEST:     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the standard ID fields"))
-                    #TEST: else:
-                    #TEST:     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent standard ID fields"))
+                    if report_type == "DR" or report_type == "TR":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the standard ID fields"))
+                    else:
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "the parent standard ID fields"))
                     for ID_type, ID_value in value.items():
 
                         #Subsection: Capture `DOI` or `parent_DOI` Value
@@ -741,7 +741,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_DOI"
                             else:
                                 field = "DOI"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if len(ID_value) > self.DOI_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", len(ID_value))
                                 log.critical(message)
@@ -749,7 +749,7 @@ class ConvertJSONDictToDataframe:
                             else:
                                 report_items_dict[field] = ID_value
                                 include_in_df_dtypes[field] = 'string'
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
                         elif self.proprietary_ID_regex.search(ID_type):
@@ -757,7 +757,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_proprietary_ID"
                             else:
                                 field = "proprietary_ID"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if len(ID_value) > self.PROPRIETARY_ID_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(ID_value))
                                 log.critical(message)
@@ -765,7 +765,7 @@ class ConvertJSONDictToDataframe:
                             else:
                                 report_items_dict[field] = ID_value
                                 include_in_df_dtypes[field] = 'string'
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `ISBN` or `parent_ISBN` Value
                         elif ID_type == "ISBN":
@@ -773,7 +773,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_ISBN"
                             else:
                                 field = "ISBN"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                         #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
@@ -782,14 +782,14 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_print_ISSN"
                             else:
                                 field = "print_ISSN"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if ISSN_regex().fullmatch(ID_value):
                                 report_items_dict[field] = ID_value.strip()
                                 include_in_df_dtypes[field] = 'string'
                             else:
                                 report_items_dict[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
                                 include_in_df_dtypes[field] = 'string'
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
                         elif ID_type == "Online_ISSN":
@@ -797,7 +797,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_online_ISSN"
                             else:
                                 field = "online_ISSN"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                         #Subsection: Capture `URI` or `parent_URI` Value
@@ -806,7 +806,7 @@ class ConvertJSONDictToDataframe:
                                 field = "parent_URI"
                             else:
                                 field = "URI"
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             pass
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
@@ -815,28 +815,28 @@ class ConvertJSONDictToDataframe:
                         field = "parent_data_type"
                     else:
                         field = "data_type"
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     report_items_dict[field] = value
                     include_in_df_dtypes[field] = 'string'
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", report_items_dict[field]))
+                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", report_items_dict[field]))
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     pass
 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
                     pass
 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_method`"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_method`"))
                     pass
 
                 else:
-                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
                     report_items_dict[key] = value
                     second_iteration_keys.append(key)
 
@@ -859,21 +859,16 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
                 items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
-                log.warning(f"`items_dict` at creation:\n{items_dict}")  #TEST: temp
-                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "keys at the top level of the JSON"))
-                i = 0  #TEST: temp
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "keys at the top level of the JSON"))
                 for i_item in report_items_dict['Items']:
-                    log.warning(f"`i_item` at creation:\n{i_item}")  #TEST: temp
-                    i += 1  #TEST: temp
                     for i_key, i_value in i_item.items():
-                        log.warning(f"At start of iteration {i} of `i_item`, `items_dict`:\n{items_dict}")  #TEST: temp
 
                         #Subsection: Capture `resource_name` Value
                         if i_key == "Item":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
                             if i_value is None:  # This value handled first because `len()` of null value raises an error
                                 items_dict['resource_name'] = i_value
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
                             elif len(value) > self.RESOURCE_NAME_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(i_value))
                                 log.critical(message)
@@ -881,14 +876,14 @@ class ConvertJSONDictToDataframe:
                             else:
                                 items_dict['resource_name'] = i_value
                                 include_in_df_dtypes['resource_name'] = 'string'
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
 
                         #Subsection: Capture `publisher` Value
                         elif i_key == "Publisher":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher`"))
                             if i_value is None:  # This value handled first because `len()` of null value raises an error
                                 items_dict['publisher'] = i_value
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
                             elif len(i_value) > self.PUBLISHER_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(i_value))
                                 log.critical(message)
@@ -896,30 +891,30 @@ class ConvertJSONDictToDataframe:
                             else:
                                 items_dict['publisher'] = i_value
                                 include_in_df_dtypes['publisher'] = 'string'
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
 
                         #Subsection: Capture `publisher_ID` Value
                         elif i_key == "Publisher_ID":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher_ID`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher_ID`"))
                             pass
 
                         #Subsection: Capture `platform` Value
                         elif i_key == "Platform":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.platform`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.platform`"))
                             if i_value is None:  # This value handled first because `len()` of null value raises an error
                                 items_dict['platform'] = i_value
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
                             elif len(i_value) > self.PLATFORM_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(i_value))
                                 log.critical(message)
                                 return message
                             else:
                                 items_dict['platform'] = i_value
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
 
                         #Subsection: Capture `authors` Value
                         elif i_key == "Authors":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
                             number_of_authors = len(i_value)
                             for type_and_value in i_value:
                                 if number_of_authors > 1:  # Multiple authors
@@ -930,11 +925,11 @@ class ConvertJSONDictToDataframe:
                                             items_dict['authors'] = items_dict['authors'] + ", " + name.strip()
                                         else:
                                             items_dict['authors'] = items_dict['authors'] + " et al."
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))  #ALERT: Original update statement used "Updated" instead of "Added"; does that change need to be preserved?
+                                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))  #ALERT: Original update statement used "Updated" instead of "Added"; does that change need to be preserved?
                                 else:
                                     if type_and_value['Name'] is None:  # This value handled first because `len()` of null value raises an error
                                         items_dict['authors'] = type_and_value['Name']
-                                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
                                     elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
                                         log.critical(message)
@@ -942,31 +937,31 @@ class ConvertJSONDictToDataframe:
                                     else:
                                         items_dict['authors'] = type_and_value['Name']
                                         include_in_df_dtypes['authors'] = 'string'
-                                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
 
                         #Subsection: Capture `publication_date` Value
                         elif i_key == "Publication_Date":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
                             pass
 
                         #Subsection:  Capture `article_version` Value
                         elif i_key == "Item_Attributes":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.article_version`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.article_version`"))
                             pass
 
                         #Subsection: Capture Standard Identifiers
                         elif i_key == "Item_ID":
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "the standard ID fields"))
                             for ID_type, ID_value in i_value.items():
 
                                 #Subsection: Capture `DOI` Value
                                 if ID_type == "DOI":
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
                                     pass
 
                                 #Subsection: Capture `proprietary_ID` Value
                                 elif self.proprietary_ID_regex.search(ID_type):
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
                                     if len(ID_value) > self.PROPRIETARY_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(ID_value))
                                         log.critical(message)
@@ -974,39 +969,37 @@ class ConvertJSONDictToDataframe:
                                     else:
                                         items_dict['proprietary_ID'] = ID_value
                                         include_in_df_dtypes['proprietary_ID'] = 'string'
-                                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("proprietary_ID", items_dict['proprietary_ID']))
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("proprietary_ID", items_dict['proprietary_ID']))
 
                                 #Subsection: Capture `ISBN` Value
                                 elif ID_type == "ISBN":
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
                                     pass
 
                                 #Subsection: Capture `print_ISSN` Value
                                 elif ID_type == "Print_ISSN":
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
                                     if ISSN_regex().fullmatch(ID_value):
                                         items_dict['print_ISSN'] = ID_value.strip()
                                         include_in_df_dtypes['print_ISSN'] = 'string'
                                     else:
                                         items_dict['print_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
                                         include_in_df_dtypes['print_ISSN'] = 'string'
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("print_ISSN", items_dict['print_ISSN']))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("print_ISSN", items_dict['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
                                     pass
 
                                 #Subsection: Capture `URI` Value
                                 elif ID_type == "URI":
-                                    #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
                                     pass
 
                         else:
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                             items_dict[i_key] = i_value
-                        
-                    log.warning(f"At end of iteration {i} of `i_item`, `items_dict`:\n{items_dict}")  #TEST: temp
 
             #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
             if report_items_dict.get("Attribute_Performance"):
@@ -1017,7 +1010,6 @@ class ConvertJSONDictToDataframe:
                 message = "The expected `Attribute_Performance` key was missing; the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
-            log.warning(f"`shared_dict_name`:\n{shared_dict_name}")  #TEST: temp
             for ap_item in shared_dict_name['Attribute_Performance']:
                 attribute_performance_dict = {k: v for (k, v) in shared_dict_name.items() if k != "Attribute_Performance"}
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
@@ -1025,23 +1017,23 @@ class ConvertJSONDictToDataframe:
 
                     #Subsection: Capture `authors` Value
                     if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
                         pass
 
                     #Subsection: Capture `publication_date` Value
                     elif ap_key == "Item_Dates":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
                         pass
 
                     #Subsection: Capture `article_version` Value
                     elif ap_key == "Item_Attributes":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
                         pass
 
                     #Subsection: Capture Standard Identifiers
                     # Null value handling isn't needed because all null values are removed
                     elif ap_key == "Item_ID":  #ToDo: Are standard identifiers in the `Attribute_Performance` section?
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
                         for ID_type, ID_value in ap_value.items():
 
                             #Subsection: Capture `DOI` Value
@@ -1076,50 +1068,50 @@ class ConvertJSONDictToDataframe:
 
                     #Subsection: Capture `data_type` Value
                     elif ap_key == "Data_Type":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
                         attribute_performance_dict['data_type'] = ap_value
                         include_in_df_dtypes['data_type'] = 'string'
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
 
                     #Subsection: Capture `YOP` Value
                     elif ap_key == "YOP":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
                         try:
                             attribute_performance_dict['YOP'] = int(ap_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                             include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                         except:
                             attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
 
                     #Subsection: Capture `access_type` Value
                     elif ap_key == "Access_Type":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
                         attribute_performance_dict['access_type'] = ap_value
                         include_in_df_dtypes['access_type'] = 'string'
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
 
                     #Subsection: Capture `access_method` Value
                     elif ap_key == "Access_Method":
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
                         attribute_performance_dict['access_method'] = ap_value
                         include_in_df_dtypes['access_method'] = 'string'
-                        #TEST: log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
 
                     #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
                     elif ap_key == "Performance":
                         for p_key, p_value in ap_value.items():
                             performance_dict = deepcopy(attribute_performance_dict)
-                            #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
                             performance_dict['metric_type'] = p_key
                             for usage_date, usage_count in p_value.items():
-                                #TEST: log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
+                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
                                 final_dict = {
                                     **deepcopy(performance_dict),
                                     'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
                                     'usage_count': usage_count,
                                 }
                                 records_orient_list.append(final_dict)
-                                #TEST: log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                                log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
         #Section: Create Dataframe
         log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
