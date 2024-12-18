@@ -926,7 +926,14 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `publication_date` Value
                         elif i_key == "Publication_Date":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
-                            pass
+                            if i_value == "1000-01-01" or i_value == "1753-01-01" or i_value == "1900-01-01":
+                                pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
+                            try:
+                                items_dict['publication_date'] = date.fromisoformat(i_value)
+                                include_in_df_dtypes['publication_date'] = True
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publication_date", items_dict['publication_date']))
+                            except:
+                                pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
 
                         #Subsection:  Capture `article_version` Value
                         elif i_key == "Item_Attributes":
@@ -995,11 +1002,6 @@ class ConvertJSONDictToDataframe:
                             #Subsection: Capture `authors` Value
                             if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
-                                pass
-
-                            #Subsection: Capture `publication_date` Value
-                            elif ap_key == "Item_Dates":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.publication_date`"))
                                 pass
 
                             #Subsection: Capture `article_version` Value
