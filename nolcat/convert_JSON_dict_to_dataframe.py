@@ -842,11 +842,11 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
+                items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                 i = 0  #TEST: temp
                 for i_item in report_items_dict['Items']:
                     i += 1  #TEST: temp
-                    items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "their appropriate fields"))
                     for i_key, i_value in i_item.items():
                         log.warning(f"At start of iteration {i} of `i_item`, `items_dict`:\n{items_dict}")  #TEST: temp
 
