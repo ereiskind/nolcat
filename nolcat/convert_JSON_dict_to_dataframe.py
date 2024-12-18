@@ -842,10 +842,11 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys and report_type == "IR":
-                #ToDo: `Items` iteration here
+                for i_item in report_items_dict['Items']:
+                    #ToDo: Capture fields in `Items` section of JSON
 
-                #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
-                #ToDo: `Attribute_Performance` iteration for IR here
+                    #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
+                    #ToDo: `Attribute_Performance` iteration for IR here
 
             #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
             elif report_type == "PR" or report_type == "DR" or report_type == "TR":
