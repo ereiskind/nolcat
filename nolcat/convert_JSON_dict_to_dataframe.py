@@ -993,7 +993,6 @@ class ConvertJSONDictToDataframe:
                             items_dict[i_key] = i_value
 
                     #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
-                    log.warning(f"\n\n`items_dict` at start of IR `Attribute_Performance` iteration:\n{items_dict}\n\n")  #TEST: temp
                     for ap_item in items_dict['Attribute_Performance']:
                         attribute_performance_dict = {k: v for (k, v) in items_dict.items() if k != "Attribute_Performance"}
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
@@ -1203,19 +1202,6 @@ class ConvertJSONDictToDataframe:
         log.info(f"`df_dtypes`: {df_dtypes}")
 
         log.debug(f"`records_orient_list` before `json.dumps()`  is type {type(records_orient_list)}.")
-        #TEST: temp
-        import random
-        x = len(records_orient_list)
-        if x < 30:
-            log.warning(f"`records_orient_list` before `json.dumps()`:\n{records_orient_list}")
-        else:
-            if x > 100:
-                for n in random.sample(range(x), k=5):
-                    log.warning(f"A sample of `records_orient_list` before `json.dumps()`:\n{records_orient_list[n]}")
-            else:
-                for n in random.sample(range(x), k=int(x/20)):
-                    log.warning(f"A sample of `records_orient_list` before `json.dumps()`:\n{records_orient_list[n]}")
-        #TEST: end temp
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
             records_orient_list,
             default=ConvertJSONDictToDataframe._serialize_dates,
@@ -1249,15 +1235,6 @@ class ConvertJSONDictToDataframe:
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
 
         log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
-        #TEST: temp
-        df.to_csv(
-            TOP_NOLCAT_DIRECTORY / f"{report_type}_df.csv",
-            index_label="index",
-            date_format='%Y-%m-%d',
-            encoding='utf-8',
-            errors='backslashreplace',  # For encoding errors
-        )
-        #TEST: end temp
         return df
     
 
