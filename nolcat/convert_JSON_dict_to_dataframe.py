@@ -985,12 +985,12 @@ class ConvertJSONDictToDataframe:
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "a placeholder for later unpacking"))
                             items_dict[i_key] = i_value
 
-                        #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
-                        log.warning(f"\n\n`items_dict` at start of IR `Attribute_Performance` iteration:\n{items_dict}\n\n")  #TEST: temp
-                        for ap_item in items_dict['Attribute_Performance']:
-                            attribute_performance_dict = {k: v for (k, v) in items_dict.items() if k != "Attribute_Performance"}
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
-                            for ap_key, ap_value in ap_item.items():
+                    #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
+                    log.warning(f"\n\n`items_dict` at start of IR `Attribute_Performance` iteration:\n{items_dict}\n\n")  #TEST: temp
+                    for ap_item in items_dict['Attribute_Performance']:
+                        attribute_performance_dict = {k: v for (k, v) in items_dict.items() if k != "Attribute_Performance"}
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
+                        for ap_key, ap_value in ap_item.items():
 
                             #Subsection: Capture `authors` Value
                             if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
