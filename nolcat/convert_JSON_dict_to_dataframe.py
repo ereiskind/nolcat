@@ -841,6 +841,22 @@ class ConvertJSONDictToDataframe:
                     second_iteration_keys.append(key)
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
+            if "Items" in second_iteration_keys and report_type == "IR":
+                #ToDo: `Items` iteration here
+
+                #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
+                #ToDo: `Attribute_Performance` iteration for IR here
+
+            #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
+            elif report_type == "PR" or report_type == "DR" or report_type == "TR":
+                #ToDo: Existing `Attribute_Performance` iteration here
+
+            else:
+                message = "The IR expected `Items` key was missing; the JSON cannot be converted into a dataframe."
+                log.critical(message)
+                return message
+
+            #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys:
                 items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
                 log.warning(f"`items_dict` at creation:\n{items_dict}")  #TEST: temp
