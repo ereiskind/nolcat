@@ -843,6 +843,8 @@ class ConvertJSONDictToDataframe:
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
             if "Items" in second_iteration_keys and report_type == "IR":
                 for i_item in report_items_dict['Items']:
+                    items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
+                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_item, "Items", "keys at the top level of the JSON"))
                     for i_key, i_value in i_item.items():
 
                         #Subsection: Capture `resource_name` Value
