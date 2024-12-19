@@ -5217,6 +5217,8 @@ def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, 
     sample_SUSHI_IR_response_R5b1_dataframe['publication_date'] = pd.to_datetime(sample_SUSHI_IR_response_R5b1_dataframe['publication_date'])
     sample_SUSHI_IR_response_R5b1_dataframe['usage_date'] = pd.to_datetime(sample_SUSHI_IR_response_R5b1_dataframe['usage_date'])
     sample_SUSHI_IR_response_R5b1_dataframe['report_creation_date'] = pd.to_datetime(sample_SUSHI_IR_response_R5b1_dataframe['report_creation_date'])
+    log.warning(f"sample_SUSHI_IR_response_R5b1_dataframe['resource_name'][22]: {sample_SUSHI_IR_response_R5b1_dataframe['resource_name'][22]} (type {type(sample_SUSHI_IR_response_R5b1_dataframe['resource_name'][22])})")  #TEST: temp
+    log.warning(f"df['resource_name'][22]: {df['resource_name'][22]} (type {type(df['resource_name'][22])})")  #TEST: temp
     #TEST: end temp
     assert_frame_equal(df[sample_SUSHI_IR_response_R5b1_dataframe.columns.tolist()], sample_SUSHI_IR_response_R5b1_dataframe)  #TEST: temp
     #TEST: `assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])` passes when field are missing from `df` because they're not yet being captured in the class being tested, which isn't the desired behavior
