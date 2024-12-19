@@ -158,8 +158,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.resource_name`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        record_dict['resource_name'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        record_dict['resource_name'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", record_dict['resource_name']))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("resource_name", len(value))
@@ -173,8 +173,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        record_dict['publisher'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        record_dict['publisher'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", record_dict['publisher']))
                     elif len(value) > self.PUBLISHER_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(value))
@@ -188,8 +188,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        record_dict['publisher_ID'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        record_dict['publisher_ID'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
                     elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
@@ -217,8 +217,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        record_dict['platform'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        record_dict['platform'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", record_dict['platform']))
                     elif len(value) > self.PLATFORM_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(value))
@@ -244,8 +244,8 @@ class ConvertJSONDictToDataframe:
                                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", record_dict['authors']))
                             
                             else:
-                                if type_and_value['Name'] is None:  # This value handled first because `len()` of null value raises an error
-                                    record_dict['authors'] = type_and_value['Name']
+                                if type_and_value['Name'] is None or empty_string_regex().fullmatch(type_and_value['Name']):  # This value handled first because `len()` of null value raises an error
+                                    record_dict['authors'] = None
                                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", record_dict['authors']))
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
                                     message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
@@ -653,8 +653,8 @@ class ConvertJSONDictToDataframe:
                     else:
                         field = "resource_name"
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        report_items_dict[field] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        report_items_dict[field] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(value))
@@ -668,8 +668,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['publisher'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        report_items_dict['publisher'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
                     elif len(value) > self.PUBLISHER_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(value))
@@ -688,8 +688,8 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
-                    if value is None:  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['platform'] = value
+                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                        report_items_dict['platform'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
                     elif len(value) > self.PLATFORM_LENGTH:
                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(value))
@@ -850,8 +850,8 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `resource_name` Value
                         if i_key == "Item":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.resource_name`"))
-                            if i_value is None:  # This value handled first because `len()` of null value raises an error
-                                items_dict['resource_name'] = i_value
+                            if i_value is None or empty_string_regex().fullmatch(i_value):  # This value handled first because `len()` of null value raises an error
+                                items_dict['resource_name'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
                             elif len(value) > self.RESOURCE_NAME_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(i_value))
@@ -865,8 +865,8 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `publisher` Value
                         elif i_key == "Publisher":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.publisher`"))
-                            if i_value is None:  # This value handled first because `len()` of null value raises an error
-                                items_dict['publisher'] = i_value
+                            if i_value is None or empty_string_regex().fullmatch(i_value):  # This value handled first because `len()` of null value raises an error
+                                items_dict['publisher'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
                             elif len(i_value) > self.PUBLISHER_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(i_value))
@@ -885,8 +885,8 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `platform` Value
                         elif i_key == "Platform":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.platform`"))
-                            if i_value is None:  # This value handled first because `len()` of null value raises an error
-                                items_dict['platform'] = i_value
+                            if i_value is None or empty_string_regex().fullmatch(i_value):  # This value handled first because `len()` of null value raises an error
+                                items_dict['platform'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
                             elif len(i_value) > self.PLATFORM_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(i_value))
@@ -911,8 +911,8 @@ class ConvertJSONDictToDataframe:
                                             items_dict['authors'] = items_dict['authors'] + " et al."
                                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))  #ALERT: Original update statement used "Updated" instead of "Added"; does that change need to be preserved?
                                 else:
-                                    if type_and_value['Name'] is None:  # This value handled first because `len()` of null value raises an error
-                                        items_dict['authors'] = type_and_value['Name']
+                                    if type_and_value['Name'] is None or empty_string_regex().fullmatch(type_and_value['Name']):  # This value handled first because `len()` of null value raises an error
+                                        items_dict['authors'] = None
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
                                     elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
