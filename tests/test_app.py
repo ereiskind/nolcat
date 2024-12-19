@@ -512,3 +512,10 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("100_2021.xlsx") is not None
     assert non_COUNTER_file_name_regex().fullmatch("55_2016.pdf") is not None
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
+
+
+def test_empty_string_regex():
+    """Tests matching the regex object to empty and whitespace-only strings."""
+    assert empty_string_regex().fullmatch("") is not None
+    assert empty_string_regex().fullmatch(" ") is not None
+    assert empty_string_regex().fullmatch("\n") is not None
