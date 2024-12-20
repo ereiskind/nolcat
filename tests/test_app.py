@@ -277,6 +277,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     )
     assert cmp(path_to_sample_file, download_location)
 
+
 def test_create_AUCT_SelectField_options():
     """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
     df = pd.DataFrame(
