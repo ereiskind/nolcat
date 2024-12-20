@@ -1,3 +1,22 @@
+/*
+    FSU Garnet #782F40
+    FSU Gold #CEB888
+    White #FFFFFF
+    Stadium Night #2C2A29
+
+    Plaza Brick #572932
+    Gulf Sands #DFD1A7
+
+    Legacy Blue #425563
+    Wescott Water #5CB8B2
+    Vault Garnet #A6192E
+    Vault Gold #FFC72C
+
+    White background takes FSU Garnet, Stadium Night, Plaza Brick, Legacy Blue, Vault Garnet text
+    FSU Garnet background takes White text; FSU Gold, Gulf Sands large text
+    FSU Gold background takes FSU Garnet, Stadium Night, Plaza Brick, Wescott Water large text
+*/
+
 /*** BODY ***/
 body {
     margin: 0;
