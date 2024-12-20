@@ -23,31 +23,21 @@ Planned Iterations
 * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
 * Create new test data JSONs (will occur alongside above)
 * Update ``ConvertJSONDictToDataframe`` to handle R5.1 reports
+* Recreate function call chain diagram based on most recent code on its own branch
+* Determine if following from old Parquet branch need repeating (commits have links)
 
-Iteration 2: COUNTER Only Product
-=================================
-* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
-* Create "ingest_usage/upload-COUNTER-reports.html" page
-* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
+  * Temp logging for ``last_day_of_month()``: https://github.com/ereiskind/nolcat/pull/191/commits/381fc7216c613623ccb2f749d56e94ce7d4856cb
+  * Removal of above and update test status dates: https://github.com/ereiskind/nolcat/pull/191/commits/750601487bf11a2e5355bbeec3fcffe4efa28c60
+  * Pair all ``flash()`` with logging statements: https://github.com/ereiskind/nolcat/pull/191/commits/52dbb96081094d7d96533c40674c0a59baf7f98c
+  * Create constant for use in determining location of parquet files
+  * Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
+  * Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
+  * Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
+
+* Consolidate ``nolcat.models.StatisticsSources._check_if_data_in_database()`` and ``nolcat.app.check_if_data_already_in_COUNTERData()``
 
 Iteration 3: Minimum Viable Product
 ===================================
-* Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
-* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-4.html" page
-* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
-* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` as two separate int fields if needed
-* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
-* If able to get drop-down working, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Create "ingest_usage/save-non-COUNTER-usage.html" page
 * Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 * Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
@@ -128,7 +118,6 @@ Iteration 6: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
-* Create Jinja template header and footer in "nolcat/templates/layout.html"
 
 Iteration 7: Interact with Host File System
 ============================================
@@ -218,3 +207,7 @@ Iteration: Incorporate Embargo and Paywall Data
 ===============================================
 * Add fields to relation for resources for the embargo and paywall data
 * Create templates in query wizard that separates usage into before and after embargo and/or paywall dates based on the ``YOP`` field
+
+Iteration: Automatically Reharvest SUSHI
+========================================
+* Initiate automated reharvesting for statistics sources which take first calls as prompts to run query later and gives data on subsequent call
