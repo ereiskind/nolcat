@@ -1,0 +1,38 @@
+digraph function_call_chains {
+    graph [rankdir="LR"]
+
+    /* Cluster Types
+        `penwidth=5`
+        Class: `style="rounded"`
+        Tests: `style="dashed"`
+
+        Relation: `color="#ceb888"` (Gold)
+        Blueprint: `color="#782f40"` (Garnet)
+        Module collecting general functions: `color="#5cb8b2"`
+    */
+
+    node [  // To remove the fill color from the individual function nodes
+        style="filled"
+        fillcolor="white"
+    ]
+    /* Node Types
+        Route functions: `shape="cds"`
+        Function connecting to S3: `shape="folder"`
+        Function connecting to MySQL: `shape="cylinder"`
+        Other functions: `shape="box"`
+
+        Test function: `style="dashed"`
+        Fixture function: `style="dotted"`
+    */
+
+    /*
+        Edges represent function calls
+            Edges are instantiated under the cluster containing the calling function
+            Edges go from the calling function to the called function
+        Function calls include
+            Flask redirects to a route function's URL via `url_for()`
+            Accessing a route via the Flask test client
+    */
+
+    // 
+}
