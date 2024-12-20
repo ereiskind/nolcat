@@ -195,6 +195,19 @@ a:focus {
 }
 
 
+/*** HEADER AND FOOTER ***/
+header, footer {
+    /*ToDo: Set background color to garnet, text color to white*/
+}
+footer a:first-child {
+    /*ToDo: Align left*/
+}
+footer a:last-child {
+    /*ToDo: Align right*/
+}
+
+
+
 /*** NAVIGATION ***/
 nav {
     padding-left: 0;
