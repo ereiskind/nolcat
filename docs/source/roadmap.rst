@@ -118,6 +118,7 @@ Iteration 6: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
+* Use FSU Libraries wordmark to create a link to FSU Libraries homepage
 
 Iteration 7: Interact with Host File System
 ============================================
