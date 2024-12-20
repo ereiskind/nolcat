@@ -221,19 +221,27 @@ def create_app():
     return app
 
 
-def last_day_of_month(first_day_of_month):
+def last_day_of_month(original_date):
     """The function for returning the last day of a given month.
 
-    When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
+    When COUNTER date ranges include the day, the "End_Date" value needs to be the last day of the month. This function facilitates finding that last day while combining two previously existing functions, both named `last_day_of_month`: one accepting and returning datetime.date objects, the other getting pd.Timestamp objects and returning strings for use in pandas `map` functions.
 
     Args:
-        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[ns] data type, but within this function, the data type is Timestamp
+        original_date (datetime.date or pd.Timestamp): the original date; if from a dataframe, the dataframe of origin will have the date in a datetime64[ns] data type, but within this function, the data type is Timestamp
     
     Returns:
+        datetime.date: the last day of the month
         str: the last day of the given month in ISO format
     """
-    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
-    return year_and_month_string + str(first_day_of_month.days_in_month)
+    if isinstance(original_date, date):
+        return date(
+            original_date.year,
+            original_date.month,
+            calendar.monthrange(original_date.year, original_date.month)[1],
+        )
+    elif isinstance(original_date, pd.Timestamp):
+        year_and_month_string = original_date.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
+        return year_and_month_string + str(original_date.days_in_month)
 
 
 def first_new_PK_value(relation):
@@ -801,22 +809,6 @@ def ISBN_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
-
-
-def last_day_of_month(original_date):
-    """The last day of the month for the month of the given date.
-
-    Args:
-        original_date (datetime.date): the original date
-    
-    Returns:
-        datetime.date: the last day of the month
-    """
-    return date(
-        original_date.year,
-        original_date.month,
-        calendar.monthrange(original_date.year, original_date.month)[1],
-    )
 
 
 def extract_value_from_single_value_df(df, expect_int=True):
