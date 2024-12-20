@@ -34,5 +34,36 @@ digraph function_call_chains {
             Accessing a route via the Flask test client
     */
 
-    // 
+    // https://github.com/ereiskind/nolcat/pull/191/commits/43be9a3d7ae5429ba5d353c0e0efe0b061ffb731 (test_SUSHICallAndResponse has a typo, vendors class is missing)
+    // Organize section to contain edges(place edges immediately after subgraph of function making call, which is first in edge statement)
+    // Add calls to functions in test modules(`test_check_if_data_already_in_COUNTERData` didn't have shape; `SUSHI_credentials_fixture` in connections left unspecified)
+    // Add function calls for relation functions
+    // Add function calls for workbook functions
+    // Add connections to engine fixture
+    // Add connections to app fixture
+    // Add connections to remaining Flask fixtures
+    // Add connections to remaining conftest fixtures (note shape for S3 fixtures incorrect)
+    // Add connections to route functions
+    // Add connections to PATH_TO_CREDENTIALS_FILE
+    // Add connections to state_data_types methods (relation classes `_relation` in `tests.data.relations` as connection origin left unspecified)
+    // Add connections to add_note methods
+    // Add connections to create_dataframe methods (missing adding shapes to nodes)
+    // Add connections for FiscalYears methods
+    // Add connections for AnnualStatistics methods
+    // Add connections for Vendors methods
+    // Add connections for StatisticsSources methods (`harvest_R5_SUSHI_result` as connection origin left unspecified)
+    // Add connections for ResourceSources methods
+    // Add connections for AnnualUsageConnectionTracking methods
+    // Add connections for ConvertJSONDictToDataframe methods(`create_dataframe` as connection origin left unspecified)
+    // Add connections for SUSHICallAndResponse methods
+    // Add connections for statements functions
+    // Commit call by PATH_TO_CREDENTIALS_FILE
+    // Add connections for create_app and its subfunctions
+    // Add connections for Flask error functions
+    // Add connections for logging functions
+    // Add connections for upload_file_to_S3_bucket
+    // Add connections to query_database(first noted shape becomes valid here)
+    // Add connections for remaining MySQL functions(remaining noted shape becomes valid here)
+    // Add connections for remaining valid helper functions
+    // Finish adding function calls to mapping diagram
 }
