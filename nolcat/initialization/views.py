@@ -577,7 +577,7 @@ def upload_historical_non_COUNTER_usage(testing):
                     message = f"The dynamic route featured the invalid value {testing}."
                     log.error(message)
                     flash(message)
-                    return redirect(url_for('view_usage.view_usage_homepage'))
+                    return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
                 response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
                 if upload_nonstandard_usage_file_success_regex().fullmatch(response):
                     log.debug(response)

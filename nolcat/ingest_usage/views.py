@@ -300,7 +300,7 @@ def upload_non_COUNTER_reports(testing):
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)
             flash(message)
-            return redirect(url_for('view_usage.view_usage_homepage'))
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
         if upload_nonstandard_usage_file_success_regex().match(response) is None:
             #ToDo: Do any other actions need to be taken?
