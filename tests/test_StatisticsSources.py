@@ -127,20 +127,20 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
-def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
+def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI_credentials_fixture):
     """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
 
     Args:
         StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
     
     Yields:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
-    SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     yield COUNTER_reports_offered_by_statistics_source(
         StatisticsSources_fixture.statistics_source_name,
-        SUSHI_data['URL'],
-        {k: v for (k, v) in SUSHI_data.items() if k != "URL"},
+        SUSHI_credentials_fixture['URL'],
+        {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
     )
 
 
