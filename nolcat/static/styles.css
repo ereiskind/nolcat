@@ -24,7 +24,7 @@ body {
     font-size: 16px;
     line-height: 1.777;
     color: #2c2a29;
-    background-color: #ffffff;
+    background-color: #fff;
 }
 p {
     margin: 0 0 14px;
@@ -99,7 +99,7 @@ address {
 caption {
     padding-top: 0.4em;
     padding-bottom: 0.4em;
-    color: #969594;
+    color: #782f40;
     text-align: left;
 }
 q, pre {
@@ -167,7 +167,7 @@ a {
 }
 
 a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, p a, li a, dt a, a:hover, a:focus {
-    background-image: linear-gradient(to right, rgba(120, 47, 64, 1.0) 40%, rgba(206, 184, 136, 1.0) 60%); /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0.15) 40%, rgba(255, 255, 255, 0.15) 60%); */
+    background-image: linear-gradient(to right, #782f40 40%, #ceb888 60%); /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0.15) 40%, rgba(255, 255, 255, 0.15) 60%); */
     background-position: 50% calc(100% - 1px);
     background-position: 50% 100%;
     background-repeat: repeat-x;
@@ -213,7 +213,7 @@ nav > li > a {
 }
 nav > li > a:hover, nav > li > a:focus {
     text-decoration: none;
-    background-color: #f4f4f4;
+    background-color: #fff;
 }
 
 nav ul {
@@ -298,7 +298,7 @@ table {
 td, th {
     padding: 0;
     background-color: #fff;
-    border: 1px solid #ddd; /* for a bordered style */
+    border: 1px solid #dfd1a7; /* for a bordered style */
 }
 th {
     text-align: left;
@@ -311,11 +311,11 @@ table > thead > tr > th, table > tbody > tr > th, table > tfoot > tr > th, table
     padding: 0.4em;
     line-height: 1.777;
     vertical-align: top;
-    border-top: 1px solid #dddddd;
+    border-top: 1px solid #dfd1a7;
 }
 .table > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: 2px solid #dddddd;
+    border-bottom: 2px solid #dfd1a7;
 }
 
 table td[class*="col-"], table th[class*="col-"] {
