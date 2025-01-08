@@ -243,7 +243,7 @@ digraph function_call_chains {
 
         create_dataframe_in_UploadCOUNTERReports [
             label="create_dataframe"
-            /*shape=""*/
+            shape="box"
         ]
     }
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
@@ -286,6 +286,7 @@ digraph function_call_chains {
         harvest_SUSHI_statistics
         upload_non_COUNTER_reports
     }
+    upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
     harvest_SUSHI_statistics -> collect_usage_statistics
     upload_non_COUNTER_reports -> upload_nonstandard_usage_file
 
@@ -310,6 +311,7 @@ digraph function_call_chains {
     collect_sources_data -> state_data_types_in_resourceSources
     collect_sources_data -> state_data_types_in_resourceSourceNotes
     collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
 
 
@@ -1076,6 +1078,8 @@ digraph function_call_chains {
         sample_COUNTER_report_workbooks
         test_create_dataframe
     }
+    test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
 
 
     subgraph cluster_test_Vendors {
