@@ -128,6 +128,7 @@ digraph function_call_chains {
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_single_report -> _check_if_data_in_database
     _harvest_single_report -> state_data_types_in_COUNTERData
+    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
     collect_usage_statistics -> _harvest_R5_SUSHI
 
 
@@ -256,12 +257,15 @@ digraph function_call_chains {
 
         create_dataframe_in_ConvertJSONDictToDataframe [
             label="create_dataframe"
-            /*shape=""*/
+            shape="box"
         ]
-        _transform_R5_JSON
-        _transform_R5b1_JSON
-        _serialize_dates
+        _transform_R5_JSON [shape="box"]
+        _transform_R5b1_JSON [shape="box"]
+        _serialize_dates [shape="box"]
     }
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
 
 
     subgraph cluster_annual_stats {
@@ -929,6 +933,10 @@ digraph function_call_chains {
     sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
     sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
     sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
+    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
 
 
     subgraph cluster_test_FiscalYears {
@@ -1097,8 +1105,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections to create_dataframe methods (missing adding shapes to nodes) https://github.com/ereiskind/nolcat/pull/191/commits/e2498758d4182531ef0534a346653607d2e4e636
-    // Add connections for ConvertJSONDictToDataframe methods(`create_dataframe` as connection origin left unspecified) https://github.com/ereiskind/nolcat/pull/191/commits/28ba4a8087175b7725f01fc7c50b3f41e2cb9278
     // Add connections for SUSHICallAndResponse methods https://github.com/ereiskind/nolcat/pull/191/commits/2f4aad8aeef0da409f63125c7072064c1a97ce87
     // Add connections to route functions https://github.com/ereiskind/nolcat/pull/191/commits/cee0c74fbc8eb1a98bf81d1f0f37e37e69c2a632
     // Add connections for create_app and its subfunctions https://github.com/ereiskind/nolcat/pull/191/commits/089fdda24e2788ad73aeb1a88a7dd76b9d18fbc9
