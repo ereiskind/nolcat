@@ -149,14 +149,14 @@ digraph function_call_chains {
 
         state_data_types_in_resourceSources [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        add_access_stop_date
-        remove_access_stop_date
-        change_StatisticsSource
+        add_access_stop_date [shape="box"]
+        remove_access_stop_date [shape="box"]
+        change_StatisticsSource [shape="box"]
         add_note_in_resourceSources [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -300,6 +300,7 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     collect_sources_data -> state_data_types_in_statisticsSources
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    collect_sources_data -> state_data_types_in_resourceSources
 
 
     subgraph cluster_login {
@@ -531,6 +532,7 @@ digraph function_call_chains {
     vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
     statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
     statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
+    resourceSources_relation_in_relations -> state_data_types_in_resourceSources
 
 
     subgraph cluster_conftest {
@@ -797,6 +799,7 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    test_collect_sources_data -> state_data_types_in_resourceSources
 
 
     subgraph cluster_test_bp_login {
@@ -1035,7 +1038,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for ResourceSources methods: https://github.com/ereiskind/nolcat/pull/191/commits/721b779c66c443ff04f80e0dc74777fcfc80cf8e
     // Add connections for AnnualUsageConnectionTracking methods: https://github.com/ereiskind/nolcat/pull/191/commits/966d05e3821bbff25f1aa3179f56076a5427e8e1
     // Add connections to PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/dec8d4ad1a6d7dbf4cdd8d8a03a06f1aa06b65e1
     // Commit call by PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/da386620654dab8f77b9d30e684882ff513542db
