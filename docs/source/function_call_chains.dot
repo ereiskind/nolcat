@@ -126,6 +126,7 @@ digraph function_call_chains {
     _harvest_R5_SUSHI -> fetch_SUSHI_information
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_single_report -> _check_if_data_in_database
+    _harvest_single_report -> state_data_types_in_COUNTERData
     collect_usage_statistics -> _harvest_R5_SUSHI
 
 
@@ -214,7 +215,7 @@ digraph function_call_chains {
 
         state_data_types_in_COUNTERData [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -244,6 +245,7 @@ digraph function_call_chains {
             /*shape=""*/
         ]
     }
+    create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_ConvertJSONDictToDataframe {
@@ -545,6 +547,20 @@ digraph function_call_chains {
     resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
     statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
     annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
+    workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_conftest {
@@ -669,6 +685,7 @@ digraph function_call_chains {
         COUNTER_reports_offered_by_statistics_source
         prepare_HTML_page_for_comparison
     }
+    match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -776,6 +793,9 @@ digraph function_call_chains {
         test_GET_request_for_upload_non_COUNTER_reports
         test_upload_non_COUNTER_reports
     }
+    test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
+    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_bp_initialization {
@@ -819,6 +839,7 @@ digraph function_call_chains {
     test_collect_sources_data -> state_data_types_in_resourceSourceNotes
     test_collect_sources_data -> state_data_types_in_statisticsResourceSources
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_bp_login {
@@ -876,6 +897,11 @@ digraph function_call_chains {
         test_GET_request_for_download_non_COUNTER_usage
         test_download_non_COUNTER_usage
     }
+    test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
+    test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
@@ -896,6 +922,10 @@ digraph function_call_chains {
         test_create_dataframe_from_R5_TR
         test_create_dataframe_from_R5_IR
     }
+    sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_FiscalYears {
@@ -1006,6 +1036,8 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     test_collect_usage_statistics -> collect_usage_statistics
+    partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
+    non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_test_SUSHICallAndResponse {
