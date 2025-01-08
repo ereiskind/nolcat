@@ -296,13 +296,16 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        ingest_usage_homepage
-        upload_COUNTER_data
-        harvest_SUSHI_statistics
-        upload_non_COUNTER_reports
+        ingest_usage_homepage [shape="cds"]
+        upload_COUNTER_data [shape="cds"]
+        harvest_SUSHI_statistics [shape="cds"]
+        upload_non_COUNTER_reports [shape="cds"]
     }
+    upload_COUNTER_data -> ingest_usage_homepage
     upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    harvest_SUSHI_statistics -> ingest_usage_homepage
     harvest_SUSHI_statistics -> collect_usage_statistics
+    upload_non_COUNTER_reports -> ingest_usage_homepage
     upload_non_COUNTER_reports -> upload_nonstandard_usage_file
 
 
@@ -813,9 +816,16 @@ digraph function_call_chains {
         test_GET_request_for_upload_non_COUNTER_reports
         test_upload_non_COUNTER_reports
     }
+    test_ingest_usage_homepage -> ingest_usage_homepage
     test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
     test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
     test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
 
 
     subgraph cluster_test_bp_initialization {
