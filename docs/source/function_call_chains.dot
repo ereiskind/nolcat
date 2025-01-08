@@ -54,6 +54,7 @@ digraph function_call_chains {
         create_usage_tracking_records_for_fiscal_year [shape="box"]
         collect_fiscal_year_usage_statistics [shape="box"]
     }
+    collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
 
     subgraph cluster_annualStatistics {
         label="nolcat.models.annualStatistics"
@@ -109,18 +110,22 @@ digraph function_call_chains {
 
         state_data_types_in_statisticsSources [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        fetch_SUSHI_information
-        _harvest_R5_SUSHI
-        _harvest_single_report
-        _check_if_data_in_database
-        collect_usage_statistics
+        fetch_SUSHI_information [shape="box"]
+        _harvest_R5_SUSHI [shape="box"]
+        _harvest_single_report [shape="box"]
+        _check_if_data_in_database [shape="box"]
+        collect_usage_statistics [shape="box"]
         add_note_in_statisticsSources [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
+    _harvest_R5_SUSHI -> fetch_SUSHI_information
+    _harvest_R5_SUSHI -> _harvest_single_report
+    _harvest_single_report -> _check_if_data_in_database
+    collect_usage_statistics -> _harvest_R5_SUSHI
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -196,6 +201,7 @@ digraph function_call_chains {
         upload_nonstandard_usage_file
         download_nonstandard_usage_file
     }
+    collect_annual_usage_statistics -> _harvest_R5_SUSHI
 
 
     subgraph cluster_COUNTERData {
@@ -274,6 +280,7 @@ digraph function_call_chains {
         harvest_SUSHI_statistics
         upload_non_COUNTER_reports
     }
+    harvest_SUSHI_statistics -> collect_usage_statistics
 
 
     subgraph cluster_initialization {
@@ -291,6 +298,7 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     collect_FY_and_vendor_data -> state_data_types_in_vendors
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    collect_sources_data -> state_data_types_in_statisticsSources
 
 
     subgraph cluster_login {
@@ -520,6 +528,7 @@ digraph function_call_chains {
     annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
     vendors_relation_in_relations -> state_data_types_in_vendors
     vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
+    statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
 
 
     subgraph cluster_conftest {
@@ -672,6 +681,7 @@ digraph function_call_chains {
         test_upload_nonstandard_usage_file
         test_download_nonstandard_usage_file
     }
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
 
 
     subgraph cluster_test_app {
@@ -711,6 +721,7 @@ digraph function_call_chains {
     }
     test_query_database -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
@@ -777,10 +788,12 @@ digraph function_call_chains {
         test_upload_historical_non_COUNTER_usage
     }
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    test_collect_sources_data -> state_data_types_in_statisticsSources
 
 
     subgraph cluster_test_bp_login {
@@ -956,6 +969,17 @@ digraph function_call_chains {
         non_duplicate_COUNTER_data
         test_check_if_data_already_in_COUNTERData
     }
+    test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
+    test_check_if_data_in_database_no -> _check_if_data_in_database
+    test_check_if_data_in_database_yes -> _check_if_data_in_database
+    test_harvest_single_report -> _harvest_single_report
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
+    test_collect_usage_statistics -> collect_usage_statistics
 
 
     subgraph cluster_test_SUSHICallAndResponse {
@@ -1008,7 +1032,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for StatisticsSources methods (`harvest_R5_SUSHI_result` as connection origin left unspecified): https://github.com/ereiskind/nolcat/pull/191/commits/af181e6037c7ac91994cd063a7549adf9846b8cc
     // Add connections for ResourceSources methods: https://github.com/ereiskind/nolcat/pull/191/commits/721b779c66c443ff04f80e0dc74777fcfc80cf8e
     // Add connections for AnnualUsageConnectionTracking methods: https://github.com/ereiskind/nolcat/pull/191/commits/966d05e3821bbff25f1aa3179f56076a5427e8e1
     // Add connections to PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/dec8d4ad1a6d7dbf4cdd8d8a03a06f1aa06b65e1
