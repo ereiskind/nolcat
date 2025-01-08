@@ -30,8 +30,8 @@ digraph function_call_chains {
             Edges are instantiated under the cluster containing the calling function
             Edges go from the calling function to the called function
         Function calls include
-            Flask redirects to a route function's URL via `url_for()`
-            Accessing a route via the Flask test client
+            Redirects between Flask routes via `url_for()`
+            Calls to a Flask route function with the Flask test client (these use the URL in the decorator, not the function name)
     */
 
     subgraph cluster_fiscalYears {
