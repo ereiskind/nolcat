@@ -126,9 +126,11 @@ digraph function_call_chains {
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
     _harvest_R5_SUSHI -> fetch_SUSHI_information
     _harvest_R5_SUSHI -> _harvest_single_report
+    _harvest_R5_SUSHI -> make_SUSHI_call
     _harvest_single_report -> _check_if_data_in_database
     _harvest_single_report -> state_data_types_in_COUNTERData
     _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
+    _harvest_single_report -> make_SUSHI_call
     collect_usage_statistics -> _harvest_R5_SUSHI
 
 
@@ -227,14 +229,21 @@ digraph function_call_chains {
         penwidth=5
         style="rounded"
 
-        make_SUSHI_call
-        _make_API_call
-        _convert_Response_to_JSON
-        _save_raw_Response_text
-        _handle_SUSHI_exceptions
-        _evaluate_individual_SUSHI_exception
-        _stdout_API_response_based_on_size
+        make_SUSHI_call [shape="box"]
+        _make_API_call [shape="box"]
+        _convert_Response_to_JSON [shape="box"]
+        _save_raw_Response_text [shape="box"]
+        _handle_SUSHI_exceptions [shape="box"]
+        _evaluate_individual_SUSHI_exception [shape="box"]
+        _stdout_API_response_based_on_size [shape="box"]
     }
+    make_SUSHI_call -> _make_API_call
+    make_SUSHI_call -> _convert_Response_to_JSON
+    make_SUSHI_call -> _save_raw_Response_text
+    make_SUSHI_call -> _handle_SUSHI_exceptions
+    make_SUSHI_call -> _stdout_API_response_based_on_size
+    _convert_Response_to_JSON -> _stdout_API_response_based_on_size
+    _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
 
 
     subgraph cluster_UploadCOUNTERReports {
@@ -693,6 +702,7 @@ digraph function_call_chains {
         prepare_HTML_page_for_comparison
     }
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1074,6 +1084,15 @@ digraph function_call_chains {
         test_IR_call_validity
         test_call_with_invalid_credentials
     }
+    test_status_call -> make_SUSHI_call
+    test_status_call_validity -> make_SUSHI_call
+    test_reports_call -> make_SUSHI_call
+    test_reports_call_validity -> make_SUSHI_call
+    test_PR_call_validity -> make_SUSHI_call
+    test_DR_call_validity -> make_SUSHI_call
+    test_TR_call_validity -> make_SUSHI_call
+    test_IR_call_validity -> make_SUSHI_call
+    test_call_with_invalid_credentials -> make_SUSHI_call
 
 
     subgraph cluster_test_UploadCOUNTERReports {
@@ -1105,7 +1124,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for SUSHICallAndResponse methods https://github.com/ereiskind/nolcat/pull/191/commits/2f4aad8aeef0da409f63125c7072064c1a97ce87
     // Add connections to route functions https://github.com/ereiskind/nolcat/pull/191/commits/cee0c74fbc8eb1a98bf81d1f0f37e37e69c2a632
     // Add connections for create_app and its subfunctions https://github.com/ereiskind/nolcat/pull/191/commits/089fdda24e2788ad73aeb1a88a7dd76b9d18fbc9
     // Add connections for Flask error functions https://github.com/ereiskind/nolcat/pull/191/commits/54cc3e1869b0b401c3cbcf5e201bda3960f2ef04
