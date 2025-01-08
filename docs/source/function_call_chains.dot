@@ -123,6 +123,7 @@ digraph function_call_chains {
             shape="box"
         ]
     }
+    fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
     _harvest_R5_SUSHI -> fetch_SUSHI_information
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_single_report -> _check_if_data_in_database
@@ -359,7 +360,7 @@ digraph function_call_chains {
         label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
         penwidth=5
 
-        PATH_TO_CREDENTIALS_FILE
+        PATH_TO_CREDENTIALS_FILE [shape="box"]
     }
 
 
@@ -958,6 +959,7 @@ digraph function_call_chains {
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
 
 
     subgraph cluster_test_ResourceSources {
@@ -1025,6 +1027,7 @@ digraph function_call_chains {
         non_duplicate_COUNTER_data
         test_check_if_data_already_in_COUNTERData
     }
+    StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
     test_check_if_data_in_database_no -> _check_if_data_in_database
@@ -1090,8 +1093,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections to PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/dec8d4ad1a6d7dbf4cdd8d8a03a06f1aa06b65e1
-    // Commit call by PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/da386620654dab8f77b9d30e684882ff513542db
     // Add connections to create_dataframe methods (missing adding shapes to nodes) https://github.com/ereiskind/nolcat/pull/191/commits/e2498758d4182531ef0534a346653607d2e4e636
     // Add connections for ConvertJSONDictToDataframe methods(`create_dataframe` as connection origin left unspecified) https://github.com/ereiskind/nolcat/pull/191/commits/28ba4a8087175b7725f01fc7c50b3f41e2cb9278
     // Add connections for SUSHICallAndResponse methods https://github.com/ereiskind/nolcat/pull/191/commits/2f4aad8aeef0da409f63125c7072064c1a97ce87
