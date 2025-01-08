@@ -54,6 +54,7 @@ digraph function_call_chains {
         create_usage_tracking_records_for_fiscal_year [shape="box"]
         collect_fiscal_year_usage_statistics [shape="box"]
     }
+    create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
 
     subgraph cluster_annualStatistics {
@@ -196,11 +197,11 @@ digraph function_call_chains {
 
         state_data_types_in_annualUsageCollectionTracking [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        collect_annual_usage_statistics
-        upload_nonstandard_usage_file
-        download_nonstandard_usage_file
+        collect_annual_usage_statistics [shape="box"]
+        upload_nonstandard_usage_file [shape="box"]
+        download_nonstandard_usage_file [shape="box"]
     }
     collect_annual_usage_statistics -> _harvest_R5_SUSHI
 
@@ -269,6 +270,7 @@ digraph function_call_chains {
         show_fiscal_year_details
     }
     show_fiscal_year_details -> state_data_types_in_fiscalYears
+    show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
 
 
     subgraph cluster_ingest_usage {
@@ -282,6 +284,7 @@ digraph function_call_chains {
         upload_non_COUNTER_reports
     }
     harvest_SUSHI_statistics -> collect_usage_statistics
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file
 
 
     subgraph cluster_initialization {
@@ -303,6 +306,8 @@ digraph function_call_chains {
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
     collect_sources_data -> state_data_types_in_resourceSources
     collect_sources_data -> state_data_types_in_resourceSourceNotes
+    collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
 
 
     subgraph cluster_login {
@@ -344,6 +349,8 @@ digraph function_call_chains {
         construct_IR_query_with_wizard
         download_non_COUNTER_usage
     }
+    download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
+    download_non_COUNTER_usage -> download_nonstandard_usage_file
 
 
     subgraph cluster_PATH_TO_CREDENTIALS_FILE {
@@ -537,6 +544,7 @@ digraph function_call_chains {
     resourceSources_relation_in_relations -> state_data_types_in_resourceSources
     resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
     statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
+    annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
 
 
     subgraph cluster_conftest {
@@ -690,6 +698,9 @@ digraph function_call_chains {
         test_download_nonstandard_usage_file
     }
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
+    test_download_nonstandard_usage_file -> download_nonstandard_usage_file
 
 
     subgraph cluster_test_app {
@@ -797,6 +808,7 @@ digraph function_call_chains {
     }
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
@@ -806,6 +818,7 @@ digraph function_call_chains {
     test_collect_sources_data -> state_data_types_in_resourceSources
     test_collect_sources_data -> state_data_types_in_resourceSourceNotes
     test_collect_sources_data -> state_data_types_in_statisticsResourceSources
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
 
 
     subgraph cluster_test_bp_login {
@@ -914,6 +927,7 @@ digraph function_call_chains {
     test_calculate_ARL_20 -> calculate_ARL_20
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
+    test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
 
 
     subgraph cluster_test_ResourceSources {
@@ -1044,7 +1058,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for AnnualUsageConnectionTracking methods: https://github.com/ereiskind/nolcat/pull/191/commits/966d05e3821bbff25f1aa3179f56076a5427e8e1
     // Add connections to PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/dec8d4ad1a6d7dbf4cdd8d8a03a06f1aa06b65e1
     // Commit call by PATH_TO_CREDENTIALS_FILE https://github.com/ereiskind/nolcat/pull/191/commits/da386620654dab8f77b9d30e684882ff513542db
     // Add connections to create_dataframe methods (missing adding shapes to nodes) https://github.com/ereiskind/nolcat/pull/191/commits/e2498758d4182531ef0534a346653607d2e4e636
