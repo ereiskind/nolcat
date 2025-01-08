@@ -63,9 +63,9 @@ digraph function_call_chains {
 
         state_data_types_in_annualStatistics [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        add_annual_statistic_value
+        add_annual_statistic_value [shape="box"]
     }
 
 
@@ -288,6 +288,7 @@ digraph function_call_chains {
         data_load_complete
     }
     collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
 
 
     subgraph cluster_login {
@@ -514,6 +515,7 @@ digraph function_call_chains {
         ]
     }
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
+    annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
 
 
     subgraph cluster_conftest {
@@ -766,6 +768,7 @@ digraph function_call_chains {
     }
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
 
 
     subgraph cluster_test_bp_login {
@@ -993,7 +996,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for AnnualStatistics methods: https://github.com/ereiskind/nolcat/pull/191/commits/ac0e570fe3625c0c53d639408183b71b6befe0e7
     // Add connections for Vendors methods: https://github.com/ereiskind/nolcat/pull/191/commits/9f65f4a8e3d4c9d44e179cbd529e1cf67c7ba606
     // Add connections for StatisticsSources methods (`harvest_R5_SUSHI_result` as connection origin left unspecified): https://github.com/ereiskind/nolcat/pull/191/commits/af181e6037c7ac91994cd063a7549adf9846b8cc
     // Add connections for ResourceSources methods: https://github.com/ereiskind/nolcat/pull/191/commits/721b779c66c443ff04f80e0dc74777fcfc80cf8e
