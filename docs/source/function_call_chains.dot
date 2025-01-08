@@ -136,7 +136,7 @@ digraph function_call_chains {
 
         state_data_types_in_statisticsSourceNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -299,6 +299,7 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> state_data_types_in_vendors
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     collect_sources_data -> state_data_types_in_statisticsSources
+    collect_sources_data -> state_data_types_in_statisticsSourceNotes
 
 
     subgraph cluster_login {
@@ -529,6 +530,7 @@ digraph function_call_chains {
     vendors_relation_in_relations -> state_data_types_in_vendors
     vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
     statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
+    statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
 
 
     subgraph cluster_conftest {
@@ -794,6 +796,7 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     test_collect_sources_data -> state_data_types_in_statisticsSources
+    test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
 
 
     subgraph cluster_test_bp_login {
