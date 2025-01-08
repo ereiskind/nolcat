@@ -282,9 +282,11 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        annual_stats_homepage
-        show_fiscal_year_details
+        annual_stats_homepage [shape="cds"]
+        show_fiscal_year_details [shape="cds"]
     }
+    annual_stats_homepage -> show_fiscal_year_details
+    show_fiscal_year_details -> annual_stats_homepage
     show_fiscal_year_details -> state_data_types_in_fiscalYears
     show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
 
@@ -793,6 +795,7 @@ digraph function_call_chains {
         test_show_fiscal_year_details_submitting_EditFiscalYearForm
         test_show_fiscal_year_details_submitting_EditAUCTForm
     }
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
 
 
     subgraph cluster_test_bp_ingest_usage {
@@ -1124,7 +1127,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections to route functions https://github.com/ereiskind/nolcat/pull/191/commits/cee0c74fbc8eb1a98bf81d1f0f37e37e69c2a632
     // Add connections for create_app and its subfunctions https://github.com/ereiskind/nolcat/pull/191/commits/089fdda24e2788ad73aeb1a88a7dd76b9d18fbc9
     // Add connections for Flask error functions https://github.com/ereiskind/nolcat/pull/191/commits/54cc3e1869b0b401c3cbcf5e201bda3960f2ef04
     // Add connections for upload_file_to_S3_bucket https://github.com/ereiskind/nolcat/pull/191/commits/cdfa2e1ce058bf1e2129876b58ebe3c51be3b786
