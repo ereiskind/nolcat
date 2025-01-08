@@ -42,17 +42,17 @@ digraph function_call_chains {
 
         state_data_types_in_fiscalYears [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        calculate_depreciated_ACRL_60b
-        calculate_depreciated_ACRL_63
-        calculate_ACRL_61a
-        calculate_ACRL_61b
-        calculate_ARL_18
-        calculate_ARL_19
-        calculate_ARL_20
-        create_usage_tracking_records_for_fiscal_year
-        collect_fiscal_year_usage_statistics
+        calculate_depreciated_ACRL_60b [shape="box"]
+        calculate_depreciated_ACRL_63 [shape="box"]
+        calculate_ACRL_61a [shape="box"]
+        calculate_ACRL_61b [shape="box"]
+        calculate_ARL_18 [shape="box"]
+        calculate_ARL_19 [shape="box"]
+        calculate_ARL_20 [shape="box"]
+        create_usage_tracking_records_for_fiscal_year [shape="box"]
+        collect_fiscal_year_usage_statistics [shape="box"]
     }
 
     subgraph cluster_annualStatistics {
@@ -261,6 +261,7 @@ digraph function_call_chains {
         annual_stats_homepage
         show_fiscal_year_details
     }
+    show_fiscal_year_details -> state_data_types_in_fiscalYears
 
 
     subgraph cluster_ingest_usage {
@@ -286,6 +287,7 @@ digraph function_call_chains {
         upload_historical_non_COUNTER_usage
         data_load_complete
     }
+    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
 
 
     subgraph cluster_login {
@@ -511,6 +513,7 @@ digraph function_call_chains {
             /*shape=""*/
         ]
     }
+    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
 
 
     subgraph cluster_conftest {
@@ -761,6 +764,8 @@ digraph function_call_chains {
         "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage"
         test_upload_historical_non_COUNTER_usage
     }
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
 
 
     subgraph cluster_test_bp_login {
@@ -860,6 +865,15 @@ digraph function_call_chains {
         FY2022_FiscalYears_object
         test_collect_fiscal_year_usage_statistics
     }
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63
+    test_calculate_ACRL_61a -> calculate_ACRL_61a
+    test_calculate_ACRL_61b -> calculate_ACRL_61b
+    test_calculate_ARL_18 -> calculate_ARL_18
+    test_calculate_ARL_19 -> calculate_ARL_19
+    test_calculate_ARL_20 -> calculate_ARL_20
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
 
 
     subgraph cluster_test_ResourceSources {
@@ -979,9 +993,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections to state_data_types methods (relation classes `_relation` in `tests.data.relations` as connection origin left unspecified): https://github.com/ereiskind/nolcat/pull/191/commits/2ede702b43e0beffe403bac92f1ce3f2872d777f
-    // Add connections to add_note methods: https://github.com/ereiskind/nolcat/pull/191/commits/eb280e32223d9606594824363437fed8e3077419
-    // Add connections for FiscalYears methods: https://github.com/ereiskind/nolcat/pull/191/commits/8b52d440114a849300b958346bc6ab6968287522
     // Add connections for AnnualStatistics methods: https://github.com/ereiskind/nolcat/pull/191/commits/ac0e570fe3625c0c53d639408183b71b6befe0e7
     // Add connections for Vendors methods: https://github.com/ereiskind/nolcat/pull/191/commits/9f65f4a8e3d4c9d44e179cbd529e1cf67c7ba606
     // Add connections for StatisticsSources methods (`harvest_R5_SUSHI_result` as connection origin left unspecified): https://github.com/ereiskind/nolcat/pull/191/commits/af181e6037c7ac91994cd063a7549adf9846b8cc
