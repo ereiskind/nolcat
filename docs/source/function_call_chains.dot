@@ -96,7 +96,7 @@ digraph function_call_chains {
 
         state_data_types_in_vendorNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -290,6 +290,7 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     collect_FY_and_vendor_data -> state_data_types_in_vendors
+    collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
 
 
     subgraph cluster_login {
@@ -518,6 +519,7 @@ digraph function_call_chains {
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
     annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
     vendors_relation_in_relations -> state_data_types_in_vendors
+    vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
 
 
     subgraph cluster_conftest {
@@ -778,6 +780,7 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
 
 
     subgraph cluster_test_bp_login {
