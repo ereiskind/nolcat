@@ -169,7 +169,7 @@ digraph function_call_chains {
 
         state_data_types_in_resourceSourceNotes [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -301,6 +301,7 @@ digraph function_call_chains {
     collect_sources_data -> state_data_types_in_statisticsSources
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
     collect_sources_data -> state_data_types_in_resourceSources
+    collect_sources_data -> state_data_types_in_resourceSourceNotes
 
 
     subgraph cluster_login {
@@ -533,6 +534,7 @@ digraph function_call_chains {
     statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
     statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
     resourceSources_relation_in_relations -> state_data_types_in_resourceSources
+    resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
 
 
     subgraph cluster_conftest {
@@ -800,6 +802,7 @@ digraph function_call_chains {
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
+    test_collect_sources_data -> state_data_types_in_resourceSourceNotes
 
 
     subgraph cluster_test_bp_login {
