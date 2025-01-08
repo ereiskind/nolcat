@@ -77,13 +77,13 @@ digraph function_call_chains {
 
         state_data_types_in_vendors [
             label="state_data_types"
-            /*shape=""*/
+            shape="box"
         ]
-        get_statisticsSources_records
-        get_resourceSources_records
+        get_statisticsSources_records [shape="box"]
+        get_resourceSources_records [shape="box"]
         add_note_in_vendors [
             label="add_note"
-            /*shape=""*/
+            shape="box"
         ]
     }
 
@@ -289,6 +289,7 @@ digraph function_call_chains {
     }
     collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    collect_FY_and_vendor_data -> state_data_types_in_vendors
 
 
     subgraph cluster_login {
@@ -516,6 +517,7 @@ digraph function_call_chains {
     }
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
     annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
+    vendors_relation_in_relations -> state_data_types_in_vendors
 
 
     subgraph cluster_conftest {
@@ -705,6 +707,12 @@ digraph function_call_chains {
         test_S3_file_name_timestamp
         test_non_COUNTER_file_name_regex
     }
+    test_query_database -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    vendors_relation_after_test_update_database -> state_data_types_in_vendors
+    test_update_database -> state_data_types_in_vendors
+    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
 
 
     subgraph cluster_test_bp_annual_stats {
@@ -769,6 +777,7 @@ digraph function_call_chains {
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendors
 
 
     subgraph cluster_test_bp_login {
@@ -996,7 +1005,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for Vendors methods: https://github.com/ereiskind/nolcat/pull/191/commits/9f65f4a8e3d4c9d44e179cbd529e1cf67c7ba606
     // Add connections for StatisticsSources methods (`harvest_R5_SUSHI_result` as connection origin left unspecified): https://github.com/ereiskind/nolcat/pull/191/commits/af181e6037c7ac91994cd063a7549adf9846b8cc
     // Add connections for ResourceSources methods: https://github.com/ereiskind/nolcat/pull/191/commits/721b779c66c443ff04f80e0dc74777fcfc80cf8e
     // Add connections for AnnualUsageConnectionTracking methods: https://github.com/ereiskind/nolcat/pull/191/commits/966d05e3821bbff25f1aa3179f56076a5427e8e1
