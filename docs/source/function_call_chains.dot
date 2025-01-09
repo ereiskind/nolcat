@@ -424,8 +424,8 @@ digraph function_call_chains {
 
         filter_empty_parentheses
         configure_logging
-        page_not_found
-        internal_server_error
+        page_not_found [shape="box"]
+        internal_server_error [shape="box"]
         create_app [shape="box"]
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
@@ -813,6 +813,7 @@ digraph function_call_chains {
         test_non_COUNTER_file_name_regex
     }
     test_homepage -> "create_app.homepage"
+    test_404_page -> page_not_found
     test_query_database -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
@@ -1198,7 +1199,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for Flask error functions https://github.com/ereiskind/nolcat/pull/191/commits/54cc3e1869b0b401c3cbcf5e201bda3960f2ef04
     // Add connections for upload_file_to_S3_bucket https://github.com/ereiskind/nolcat/pull/191/commits/cdfa2e1ce058bf1e2129876b58ebe3c51be3b786
     // Add connections to query_database(first noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/5d2927afd632902a5a6ce3077cca1eb0b2a6cd5a
     // Add connections for remaining MySQL functions(remaining noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/e8e88a63b5909230b85b1d8b2f07f5be253beb6f
