@@ -314,22 +314,28 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        collect_FY_and_vendor_data
-        collect_sources_data
-        collect_AUCT_and_historical_COUNTER_data
-        upload_historical_non_COUNTER_usage
-        data_load_complete
+        collect_FY_and_vendor_data [shape="cds"]
+        collect_sources_data [shape="cds"]
+        collect_AUCT_and_historical_COUNTER_data [shape="cds"]
+        upload_historical_non_COUNTER_usage [shape="cds"]
+        data_load_complete [shape="cds"]
     }
+    collect_FY_and_vendor_data -> collect_sources_data
     collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     collect_FY_and_vendor_data -> state_data_types_in_vendors
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
     collect_sources_data -> state_data_types_in_statisticsSources
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
     collect_sources_data -> state_data_types_in_resourceSources
     collect_sources_data -> state_data_types_in_resourceSourceNotes
+    collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
+    collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
+    collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
     collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    upload_historical_non_COUNTER_usage -> data_load_complete
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
 
 
@@ -859,17 +865,24 @@ digraph function_call_chains {
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
     test_collect_sources_data -> state_data_types_in_resourceSourceNotes
     test_collect_sources_data -> state_data_types_in_statisticsResourceSources
+    test_collect_sources_data -> collect_sources_data
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
 
 
     subgraph cluster_test_bp_login {
