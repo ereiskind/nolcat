@@ -426,10 +426,10 @@ digraph function_call_chains {
         configure_logging
         page_not_found
         internal_server_error
-        create_app
-        "create_app.create_db"
-        "create_app.homepage"
-        "create_app.download_file"
+        create_app [shape="box"]
+        "create_app.create_db" [shape="box"]
+        "create_app.homepage" [shape="cds"]
+        "create_app.download_file" [shape="cds"]
         last_day_of_month
         first_new_PK_value
         return_string_of_dataframe_info
@@ -449,6 +449,7 @@ digraph function_call_chains {
         S3_file_name_timestamp
         non_COUNTER_file_name_regex
     }
+    "create_app.create_db" -> create_app
 
 
     subgraph cluster_statements {
@@ -739,6 +740,7 @@ digraph function_call_chains {
         COUNTER_reports_offered_by_statistics_source
         prepare_HTML_page_for_comparison
     }
+    app -> create_app
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
 
@@ -810,9 +812,11 @@ digraph function_call_chains {
         test_S3_file_name_timestamp
         test_non_COUNTER_file_name_regex
     }
+    test_homepage -> "create_app.homepage"
     test_query_database -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
+    test_download_file -> "create_app.download_file"
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
@@ -1194,7 +1198,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for create_app and its subfunctions https://github.com/ereiskind/nolcat/pull/191/commits/089fdda24e2788ad73aeb1a88a7dd76b9d18fbc9
     // Add connections for Flask error functions https://github.com/ereiskind/nolcat/pull/191/commits/54cc3e1869b0b401c3cbcf5e201bda3960f2ef04
     // Add connections for upload_file_to_S3_bucket https://github.com/ereiskind/nolcat/pull/191/commits/cdfa2e1ce058bf1e2129876b58ebe3c51be3b786
     // Add connections to query_database(first noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/5d2927afd632902a5a6ce3077cca1eb0b2a6cd5a
