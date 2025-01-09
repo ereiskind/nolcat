@@ -344,7 +344,7 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        login_homepage
+        login_homepage [shape="cds"]
     }
 
 
@@ -896,6 +896,7 @@ digraph function_call_chains {
         test_logging_in_as_admin
         test_creating_an_account
     }
+    test_login_homepage -> login_homepage
 
 
     subgraph cluster_test_bp_view_lists {
