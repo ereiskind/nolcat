@@ -364,20 +364,47 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        create_COUNTER_fixed_vocab_list
-        set_encoding
-        create_downloads_folder
-        view_usage_homepage
-        run_custom_SQL_query
-        use_predefined_SQL_query
-        start_query_wizard
-        query_wizard_sort_redirect
-        construct_PR_query_with_wizard
-        construct_DR_query_with_wizard
-        construct_TR_query_with_wizard
-        construct_IR_query_with_wizard
-        download_non_COUNTER_usage
+        create_COUNTER_fixed_vocab_list [shape="box"]
+        set_encoding [shape="box"]
+        create_downloads_folder [shape="box"]
+        view_usage_homepage [shape="cds"]
+        run_custom_SQL_query [shape="cds"]
+        use_predefined_SQL_query [shape="cds"]
+        start_query_wizard [shape="cds"]
+        query_wizard_sort_redirect [shape="cds"]
+        construct_PR_query_with_wizard [shape="cds"]
+        construct_DR_query_with_wizard [shape="cds"]
+        construct_TR_query_with_wizard [shape="cds"]
+        construct_IR_query_with_wizard [shape="cds"]
+        download_non_COUNTER_usage [shape="cds"]
     }
+    run_custom_SQL_query -> set_encoding
+    run_custom_SQL_query -> create_downloads_folder
+    run_custom_SQL_query -> view_usage_homepage
+    use_predefined_SQL_query -> set_encoding
+    use_predefined_SQL_query -> create_downloads_folder
+    use_predefined_SQL_query -> view_usage_homepage
+    start_query_wizard -> view_usage_homepage
+    start_query_wizard -> query_wizard_sort_redirect
+    query_wizard_sort_redirect -> start_query_wizard
+    construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_PR_query_with_wizard -> set_encoding
+    construct_PR_query_with_wizard -> create_downloads_folder
+    construct_PR_query_with_wizard -> view_usage_homepage
+    construct_DR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_DR_query_with_wizard -> set_encoding
+    construct_DR_query_with_wizard -> create_downloads_folder
+    construct_DR_query_with_wizard -> view_usage_homepage
+    construct_TR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_TR_query_with_wizard -> set_encoding
+    construct_TR_query_with_wizard -> create_downloads_folder
+    construct_TR_query_with_wizard -> view_usage_homepage
+    construct_IR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_IR_query_with_wizard -> set_encoding
+    construct_IR_query_with_wizard -> create_downloads_folder
+    construct_IR_query_with_wizard -> view_usage_homepage
+    download_non_COUNTER_usage -> create_downloads_folder
+    download_non_COUNTER_usage -> view_usage_homepage
     download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
     download_non_COUNTER_usage -> download_nonstandard_usage_file
 
@@ -941,11 +968,27 @@ digraph function_call_chains {
         test_GET_request_for_download_non_COUNTER_usage
         test_download_non_COUNTER_usage
     }
+    COUNTER_download_CSV -> create_downloads_folder
+    test_create_COUNTER_fixed_vocab_list -> create_COUNTER_fixed_vocab_list
+    test_set_encoding -> set_encoding
+    test_view_usage_homepage -> view_usage_homepage
+    test_run_custom_SQL_query -> run_custom_SQL_query
     test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
+    test_use_predefined_SQL_query -> use_predefined_SQL_query
+    test_start_query_wizard -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> start_query_wizard
     test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
     test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
     test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
     test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
+    construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_download_non_COUNTER_usage -> create_downloads_folder
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage
 
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
