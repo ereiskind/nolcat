@@ -353,9 +353,9 @@ digraph function_call_chains {
         penwidth=5
         color="#782f40"
 
-        view_lists_homepage
-        view_list_record
-        edit_list_record
+        view_lists_homepage [shape="cds"]
+        view_list_record [shape="cds"]
+        edit_list_record [shape="cds"]
     }
 
 
