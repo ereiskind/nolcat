@@ -422,8 +422,8 @@ digraph function_call_chains {
         penwidth=5
         color="#5cb8b2"
 
-        filter_empty_parentheses
-        configure_logging
+        filter_empty_parentheses [shape="box"]
+        configure_logging [shape="box"]
         page_not_found [shape="box"]
         internal_server_error [shape="box"]
         create_app [shape="box"]
@@ -449,6 +449,8 @@ digraph function_call_chains {
         S3_file_name_timestamp
         non_COUNTER_file_name_regex
     }
+    configure_logging -> filter_empty_parentheses
+    create_app -> configure_logging
     "create_app.create_db" -> create_app
 
 
@@ -741,6 +743,7 @@ digraph function_call_chains {
         prepare_HTML_page_for_comparison
     }
     app -> create_app
+    app -> configure_logging
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
 
@@ -1199,7 +1202,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for logging functions https://github.com/ereiskind/nolcat/pull/191/commits/ef180451ea4b49c91d5712d13684e7acb617dd33
     // Add connections for upload_file_to_S3_bucket https://github.com/ereiskind/nolcat/pull/191/commits/cdfa2e1ce058bf1e2129876b58ebe3c51be3b786
     // Add connections to query_database(first noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/5d2927afd632902a5a6ce3077cca1eb0b2a6cd5a
     // Add connections for remaining MySQL functions(remaining noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/e8e88a63b5909230b85b1d8b2f07f5be253beb6f
