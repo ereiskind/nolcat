@@ -56,19 +56,28 @@ digraph function_call_chains {
         collect_fiscal_year_usage_statistics [shape="box"]
     }
     calculate_depreciated_ACRL_60b -> query_database
+    calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
     calculate_depreciated_ACRL_63 -> query_database
+    calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
     calculate_ACRL_61a -> query_database
+    calculate_ACRL_61a -> extract_value_from_single_value_df
     calculate_ACRL_61b -> query_database
+    calculate_ACRL_61b -> extract_value_from_single_value_df
     calculate_ARL_18 -> query_database
+    calculate_ARL_18 -> extract_value_from_single_value_df
     calculate_ARL_19 -> query_database
+    calculate_ARL_19 -> extract_value_from_single_value_df
     calculate_ARL_20 -> query_database
+    calculate_ARL_20 -> extract_value_from_single_value_df
     create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     create_usage_tracking_records_for_fiscal_year -> load_data_into_database
     create_usage_tracking_records_for_fiscal_year -> query_database
+    create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
     collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
     collect_fiscal_year_usage_statistics -> load_data_into_database
     collect_fiscal_year_usage_statistics -> query_database
     collect_fiscal_year_usage_statistics -> update_database
+    collect_fiscal_year_usage_statistics -> first_new_PK_value
 
     subgraph cluster_annualStatistics {
         label="nolcat.models.annualStatistics"
@@ -144,9 +153,15 @@ digraph function_call_chains {
     _harvest_single_report -> state_data_types_in_COUNTERData
     _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
     _harvest_single_report -> make_SUSHI_call
+    _harvest_single_report -> last_day_of_month
+    _harvest_single_report -> return_string_of_dataframe_info
+    _harvest_single_report -> save_unconverted_data_via_upload
+    _harvest_single_report -> S3_file_name_timestamp
     _check_if_data_in_database -> query_database
+    _check_if_data_in_database -> extract_value_from_single_value_df
     collect_usage_statistics -> _harvest_R5_SUSHI
     collect_usage_statistics -> load_data_into_database
+    collect_usage_statistics -> first_new_PK_value
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -232,6 +247,7 @@ digraph function_call_chains {
     collect_annual_usage_statistics -> load_data_into_database
     collect_annual_usage_statistics -> query_database
     collect_annual_usage_statistics -> update_database
+    collect_annual_usage_statistics -> first_new_PK_value
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     upload_nonstandard_usage_file -> update_database
 
@@ -269,6 +285,9 @@ digraph function_call_chains {
     make_SUSHI_call -> _stdout_API_response_based_on_size
     _convert_Response_to_JSON -> _stdout_API_response_based_on_size
     _save_raw_Response_text -> query_database
+    _save_raw_Response_text -> save_unconverted_data_via_upload
+    _save_raw_Response_text -> extract_value_from_single_value_df
+    _save_raw_Response_text -> S3_file_name_timestamp
     _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
     _evaluate_individual_SUSHI_exception -> query_database
 
@@ -284,6 +303,8 @@ digraph function_call_chains {
         ]
     }
     create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
+    create_dataframe_in_UploadCOUNTERReports -> return_string_of_dataframe_info
+    create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
 
     subgraph cluster_ConvertJSONDictToDataframe {
@@ -302,6 +323,8 @@ digraph function_call_chains {
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
     _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
 
 
     subgraph cluster_annual_stats {
@@ -334,12 +357,16 @@ digraph function_call_chains {
     upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
     upload_COUNTER_data -> load_data_into_database
     upload_COUNTER_data -> update_database
+    upload_COUNTER_data -> first_new_PK_value
+    upload_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_COUNTER_data -> truncate_longer_lines
     harvest_SUSHI_statistics -> ingest_usage_homepage
     harvest_SUSHI_statistics -> collect_usage_statistics
     harvest_SUSHI_statistics -> query_database
     upload_non_COUNTER_reports -> ingest_usage_homepage
     upload_non_COUNTER_reports -> upload_nonstandard_usage_file
     upload_non_COUNTER_reports -> query_database
+    upload_non_COUNTER_reports -> create_AUCT_SelectField_options
 
 
     subgraph cluster_initialization {
@@ -359,12 +386,14 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> state_data_types_in_vendors
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     collect_FY_and_vendor_data -> load_data_into_database
+    collect_FY_and_vendor_data -> first_new_PK_value
     collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
     collect_sources_data -> state_data_types_in_statisticsSources
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
     collect_sources_data -> state_data_types_in_resourceSources
     collect_sources_data -> state_data_types_in_resourceSourceNotes
     collect_sources_data -> load_data_into_database
+    collect_sources_data -> first_new_PK_value
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
     collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
     collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
@@ -373,9 +402,13 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
     collect_AUCT_and_historical_COUNTER_data -> query_database
     collect_AUCT_and_historical_COUNTER_data -> update_database
+    collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value
+    collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
     upload_historical_non_COUNTER_usage -> data_load_complete
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
     upload_historical_non_COUNTER_usage -> query_database
+    upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
 
 
     subgraph cluster_login {
@@ -425,35 +458,44 @@ digraph function_call_chains {
     use_predefined_SQL_query -> create_downloads_folder
     use_predefined_SQL_query -> view_usage_homepage
     use_predefined_SQL_query -> query_database
+    use_predefined_SQL_query -> last_day_of_month
     start_query_wizard -> view_usage_homepage
     start_query_wizard -> query_wizard_sort_redirect
     start_query_wizard -> query_database
+    start_query_wizard -> last_day_of_month
     query_wizard_sort_redirect -> start_query_wizard
     construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_PR_query_with_wizard -> set_encoding
     construct_PR_query_with_wizard -> create_downloads_folder
     construct_PR_query_with_wizard -> view_usage_homepage
     construct_PR_query_with_wizard -> query_database
+    construct_PR_query_with_wizard -> return_string_of_dataframe_info
     construct_DR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_DR_query_with_wizard -> set_encoding
     construct_DR_query_with_wizard -> create_downloads_folder
     construct_DR_query_with_wizard -> view_usage_homepage
     construct_DR_query_with_wizard -> query_database
+    construct_DR_query_with_wizard -> return_string_of_dataframe_info
     construct_TR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_TR_query_with_wizard -> set_encoding
     construct_TR_query_with_wizard -> create_downloads_folder
     construct_TR_query_with_wizard -> view_usage_homepage
     construct_TR_query_with_wizard -> query_database
+    construct_TR_query_with_wizard -> return_string_of_dataframe_info
     construct_IR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_IR_query_with_wizard -> set_encoding
     construct_IR_query_with_wizard -> create_downloads_folder
     construct_IR_query_with_wizard -> view_usage_homepage
     construct_IR_query_with_wizard -> query_database
+    construct_IR_query_with_wizard -> return_string_of_dataframe_info
     download_non_COUNTER_usage -> create_downloads_folder
     download_non_COUNTER_usage -> view_usage_homepage
     download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
     download_non_COUNTER_usage -> download_nonstandard_usage_file
     download_non_COUNTER_usage -> query_database
+    download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
+    download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    download_non_COUNTER_usage -> non_COUNTER_file_name_regex
 
 
     subgraph cluster_PATH_TO_CREDENTIALS_FILE {
@@ -477,31 +519,36 @@ digraph function_call_chains {
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
-        last_day_of_month
-        first_new_PK_value
-        return_string_of_dataframe_info
-        change_single_field_dataframe_into_series
-        restore_boolean_values_to_boolean_field
+        last_day_of_month [shape="box"]
+        first_new_PK_value [shape="box"]
+        return_string_of_dataframe_info [shape="box"]
+        change_single_field_dataframe_into_series [shape="box"]
+        restore_boolean_values_to_boolean_field [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
-        create_AUCT_SelectField_options
+        create_AUCT_SelectField_options [shape="box"]
         load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
-        check_if_data_already_in_COUNTERData
-        truncate_longer_lines
+        check_if_data_already_in_COUNTERData [shape="box"]
+        truncate_longer_lines [shape="box"]
         update_database [shape="cylinder"]
-        save_unconverted_data_via_upload
-        ISSN_regex
-        ISBN_regex
-        extract_value_from_single_value_df
-        S3_file_name_timestamp
-        non_COUNTER_file_name_regex
+        save_unconverted_data_via_upload [shape="box"]
+        ISSN_regex [shape="box"]
+        ISBN_regex [shape="box"]
+        extract_value_from_single_value_df [shape="box"]
+        S3_file_name_timestamp [shape="box"]
+        non_COUNTER_file_name_regex [shape="box"]
     }
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
     "create_app.create_db" -> create_app
     first_new_PK_value -> query_database
+    first_new_PK_value -> extract_value_from_single_value_df
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
     check_if_data_already_in_COUNTERData -> query_database
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
     update_database -> query_database
+    update_database -> truncate_longer_lines
+    update_database -> extract_value_from_single_value_df
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
 
 
@@ -810,6 +857,7 @@ digraph function_call_chains {
     non_COUNTER_AUCT_object_before_upload -> query_database
     non_COUNTER_AUCT_object_after_upload -> query_database
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
+    most_recent_month_with_usage -> last_day_of_month
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     match_direct_SUSHI_harvest_result -> query_database
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
@@ -852,9 +900,11 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
     test_collect_annual_usage_statistics -> query_database
     test_collect_annual_usage_statistics -> engine
+    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
     test_upload_nonstandard_usage_file -> query_database
+    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
     test_download_nonstandard_usage_file -> download_nonstandard_usage_file
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
 
@@ -914,7 +964,12 @@ digraph function_call_chains {
     test_loading_connected_data_into_other_relation -> load_data_into_database
     test_loading_connected_data_into_other_relation -> query_database
     test_download_file -> "create_app.download_file"
+    test_first_new_PK_value -> first_new_PK_value
+    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_truncate_longer_lines -> truncate_longer_lines
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     test_update_database -> query_database
@@ -923,7 +978,15 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> query_database
     test_update_database_with_insert_statement -> update_database
+    file_name_stem_and_data -> S3_file_name_timestamp
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
+    test_ISSN_regex -> ISSN_regex
+    test_ISBN_regex -> ISBN_regex
+    test_last_day_of_month -> last_day_of_month
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_S3_file_name_timestamp -> S3_file_name_timestamp
+    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
 
 
     subgraph cluster_test_bp_annual_stats {
@@ -967,13 +1030,16 @@ digraph function_call_chains {
     test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
     test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
     test_upload_COUNTER_data_via_SQL_insert -> query_database
+    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
     test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_GET_request_for_harvest_SUSHI_statistics -> query_database
     test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_harvest_SUSHI_statistics -> query_database
+    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
     test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_GET_request_for_upload_non_COUNTER_reports -> query_database
+    test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
     test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
     test_upload_non_COUNTER_reports -> query_database
@@ -1023,6 +1089,7 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
     test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_collect_FY_and_vendor_data -> query_database
+    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
@@ -1030,6 +1097,7 @@ digraph function_call_chains {
     test_collect_sources_data -> state_data_types_in_statisticsResourceSources
     test_collect_sources_data -> collect_sources_data
     test_collect_sources_data -> query_database
+    test_collect_sources_data -> change_single_field_dataframe_into_series
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
@@ -1040,6 +1108,7 @@ digraph function_call_chains {
     test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
     test_upload_historical_non_COUNTER_usage -> query_database
+    test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
 
 
     subgraph cluster_test_bp_login {
@@ -1107,23 +1176,29 @@ digraph function_call_chains {
     test_use_predefined_SQL_query -> use_predefined_SQL_query
     test_use_predefined_SQL_query -> query_database
     start_query_wizard_form_data -> query_database
+    start_query_wizard_form_data -> last_day_of_month
     test_start_query_wizard -> start_query_wizard
     test_GET_query_wizard_sort_redirect -> start_query_wizard
     test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
     test_construct_PR_query_with_wizard -> query_database
+    test_construct_PR_query_with_wizard -> return_string_of_dataframe_info
     test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
     test_construct_DR_query_with_wizard -> query_database
+    test_construct_DR_query_with_wizard -> return_string_of_dataframe_info
     test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
     test_construct_TR_query_with_wizard -> query_database
+    test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
     test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
     test_construct_IR_query_with_wizard -> query_database
+    test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
     construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
     test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
     test_GET_request_for_download_non_COUNTER_usage -> query_database
+    test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
     test_download_non_COUNTER_usage -> create_downloads_folder
     test_download_non_COUNTER_usage -> download_non_COUNTER_usage
     test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
@@ -1189,11 +1264,13 @@ digraph function_call_chains {
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_create_usage_tracking_records_for_fiscal_year -> query_database
+    test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
     FY2022_FiscalYears_object -> query_database
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
     test_collect_fiscal_year_usage_statistics -> query_database
     test_collect_fiscal_year_usage_statistics -> update_database
+    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
 
 
     subgraph cluster_test_ResourceSources {
@@ -1261,22 +1338,30 @@ digraph function_call_chains {
         non_duplicate_COUNTER_data
         test_check_if_data_already_in_COUNTERData
     }
+    current_month_like_most_recent_month_with_usage -> last_day_of_month
     StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
     StatisticsSources_fixture -> query_database
+    StatisticsSources_fixture -> extract_value_from_single_value_df
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
     test_check_if_data_in_database_no -> _check_if_data_in_database
     test_check_if_data_in_database_yes -> _check_if_data_in_database
     test_harvest_single_report -> _harvest_single_report
+    test_harvest_single_report -> last_day_of_month
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
+    month_before_month_like_most_recent_month_with_usage -> last_day_of_month
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     test_collect_usage_statistics -> collect_usage_statistics
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData
+    test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
 
 
     subgraph cluster_test_SUSHICallAndResponse {
@@ -1300,7 +1385,9 @@ digraph function_call_chains {
         test_IR_call_validity
         test_call_with_invalid_credentials
     }
+    SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
     StatisticsSource_instance_name -> query_database
+    StatisticsSource_instance_name -> extract_value_from_single_value_df
     test_status_call -> make_SUSHI_call
     test_status_call_validity -> make_SUSHI_call
     test_reports_call -> make_SUSHI_call
@@ -1341,7 +1428,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for remaining valid helper functions https://github.com/ereiskind/nolcat/pull/191/commits/209cd5e119e363e864d8f714d5ed3a27206d7a6a
     // Add connections for statements functions https://github.com/ereiskind/nolcat/pull/191/commits/d4c3789b3b46fb828f4f6c8fcbb3a2ecf8528a8f
     // Add function calls for relation functions https://github.com/ereiskind/nolcat/pull/191/commits/88494ba9e6207ddcca37c9eb00e9ea54578c01bc
     // Add function calls for workbook functions https://github.com/ereiskind/nolcat/pull/191/commits/9d809f04b20a758147db5df0db99868de326e672
