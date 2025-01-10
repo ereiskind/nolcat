@@ -206,9 +206,10 @@ digraph function_call_chains {
         ]
         collect_annual_usage_statistics [shape="box"]
         upload_nonstandard_usage_file [shape="box"]
-        download_nonstandard_usage_file [shape="box"]
+        download_nonstandard_usage_file [shape="folder"]
     }
     collect_annual_usage_statistics -> _harvest_R5_SUSHI
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket
 
 
     subgraph cluster_COUNTERData {
@@ -435,7 +436,7 @@ digraph function_call_chains {
         return_string_of_dataframe_info
         change_single_field_dataframe_into_series
         restore_boolean_values_to_boolean_field
-        upload_file_to_S3_bucket
+        upload_file_to_S3_bucket [shape="folder"]
         create_AUCT_SelectField_options
         load_data_into_database
         query_database
@@ -452,6 +453,7 @@ digraph function_call_chains {
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
     "create_app.create_db" -> create_app
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
 
 
     subgraph cluster_statements {
@@ -732,10 +734,19 @@ digraph function_call_chains {
         COUNTERData_relation
         download_destination
         path_to_sample_file
-        remove_file_from_S3
-        non_COUNTER_AUCT_object_before_upload
+        remove_file_from_S3 [
+            shape="folder"
+            style="dotted"
+        ]
+        non_COUNTER_AUCT_object_before_upload [
+            shape="folder"
+            style="dotted"
+        ]
         non_COUNTER_AUCT_object_after_upload
-        non_COUNTER_file_to_download_from_S3
+        non_COUNTER_file_to_download_from_S3 [
+            shape="folder"
+            style="dotted"
+        ]
         header_value
         most_recent_month_with_usage
         match_direct_SUSHI_harvest_result
@@ -744,6 +755,7 @@ digraph function_call_chains {
     }
     app -> create_app
     app -> configure_logging
+    non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
 
@@ -767,17 +779,24 @@ digraph function_call_chains {
         AUCT_fixture_for_SUSHI
         harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
             label="harvest_R5_SUSHI_result"
-            /*shape=""*/
+            style="dotted"
+            shape="folder"
         ]
         test_collect_annual_usage_statistics
         sample_FileStorage_object
-        test_upload_nonstandard_usage_file
+        test_upload_nonstandard_usage_file [
+            style="dashed"
+            shape="folder"
+        ]
         test_download_nonstandard_usage_file
     }
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
+    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
     test_download_nonstandard_usage_file -> download_nonstandard_usage_file
+    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
 
 
     subgraph cluster_test_app {
@@ -798,7 +817,10 @@ digraph function_call_chains {
         test_first_new_PK_value
         test_change_single_field_dataframe_into_series
         test_restore_boolean_values_to_boolean_field
-        test_upload_file_to_S3_bucket
+        test_upload_file_to_S3_bucket [
+            style="dashed"
+            shape="folder"
+        ]
         test_create_AUCT_SelectField_options
         test_truncate_longer_lines
         vendors_relation_after_test_update_database
@@ -806,8 +828,14 @@ digraph function_call_chains {
         vendors_relation_after_test_update_database_with_insert_statement
         test_update_database_with_insert_statement
         test_prepare_HTML_page_for_comparison
-        file_name_stem_and_data
-        test_save_unconverted_data_via_upload
+        file_name_stem_and_data [
+            style="dotted"
+            shape="folder"
+        ]
+        test_save_unconverted_data_via_upload [
+            style="dashed"
+            shape="folder"
+        ]
         test_ISSN_regex
         test_ISBN_regex
         test_last_day_of_month
@@ -821,10 +849,12 @@ digraph function_call_chains {
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     test_download_file -> "create_app.download_file"
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
 
 
     subgraph cluster_test_bp_annual_stats {
@@ -855,7 +885,10 @@ digraph function_call_chains {
         test_GET_request_for_harvest_SUSHI_statistics
         test_harvest_SUSHI_statistics
         test_GET_request_for_upload_non_COUNTER_reports
-        test_upload_non_COUNTER_reports
+        test_upload_non_COUNTER_reports [
+            style="dashed"
+            shape="folder"
+        ]
     }
     test_ingest_usage_homepage -> ingest_usage_homepage
     test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
@@ -867,6 +900,7 @@ digraph function_call_chains {
     test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
 
 
     subgraph cluster_test_bp_initialization {
@@ -893,9 +927,15 @@ digraph function_call_chains {
         test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
         test_collect_AUCT_and_historical_COUNTER_data
         test_GET_request_for_upload_historical_non_COUNTER_usage
-        files_for_test_upload_historical_non_COUNTER_usage
+        files_for_test_upload_historical_non_COUNTER_usage [
+            style="dotted"
+            shape="folder"
+        ]
         "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage"
-        test_upload_historical_non_COUNTER_usage
+        test_upload_historical_non_COUNTER_usage [
+            style="dashed"
+            shape="folder"
+        ]
     }
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
@@ -918,6 +958,7 @@ digraph function_call_chains {
     test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
 
 
     subgraph cluster_test_bp_login {
@@ -997,6 +1038,7 @@ digraph function_call_chains {
     test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
     test_download_non_COUNTER_usage -> create_downloads_folder
     test_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
 
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
@@ -1202,7 +1244,6 @@ digraph function_call_chains {
     }
 
 
-    // Add connections for upload_file_to_S3_bucket https://github.com/ereiskind/nolcat/pull/191/commits/cdfa2e1ce058bf1e2129876b58ebe3c51be3b786
     // Add connections to query_database(first noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/5d2927afd632902a5a6ce3077cca1eb0b2a6cd5a
     // Add connections for remaining MySQL functions(remaining noted shape becomes valid here) https://github.com/ereiskind/nolcat/pull/191/commits/e8e88a63b5909230b85b1d8b2f07f5be253beb6f
     // Add connections for remaining valid helper functions https://github.com/ereiskind/nolcat/pull/191/commits/209cd5e119e363e864d8f714d5ed3a27206d7a6a
