@@ -793,59 +793,59 @@ digraph function_call_chains {
         ]
         workbook_0_2017_relation_in_relations [
             label="workbook_0_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2017_relation_in_relations [
             label="workbook_1_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2017_relation_in_relations [
             label="workbook_2_2017_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2018_relation_in_relations [
             label="workbook_0_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2018_relation_in_relations [
             label="workbook_1_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2018_relation_in_relations [
             label="workbook_2_2018_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2019_relation_in_relations [
             label="workbook_0_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2019_relation_in_relations [
             label="workbook_1_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2019_relation_in_relations [
             label="workbook_2_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_3_2019_relation_in_relations [
             label="workbook_3_2019_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2020_relation_in_relations [
             label="workbook_0_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_1_2020_relation_in_relations [
             label="workbook_1_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_2_2020_relation_in_relations [
             label="workbook_2_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_3_2020_relation_in_relations [
             label="workbook_3_2020_relation"
-            /*shape=""*/
+            shape="box"
         ]
     }
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
@@ -940,59 +940,73 @@ digraph function_call_chains {
         ]
         workbook_0_2017_relation_in_conftest [
             label="workbook_0_2017_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_1_2017_relation_in_conftest [
             label="workbook_1_2017_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_2_2017_relation_in_conftest [
             label="workbook_2_2017_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_0_2018_relation_in_conftest [
             label="workbook_0_2018_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_1_2018_relation_in_conftest [
             label="workbook_1_2018_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_2_2018_relation_in_conftest [
             label="workbook_2_2018_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_0_2019_relation_in_conftest [
             label="workbook_0_2019_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_1_2019_relation_in_conftest [
             label="workbook_1_2019_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_2_2019_relation_in_conftest [
             label="workbook_2_2019_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_3_2019_relation_in_conftest [
             label="workbook_3_2019_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_0_2020_relation_in_conftest [
             label="workbook_0_2020_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_1_2020_relation_in_conftest [
             label="workbook_1_2020_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_2_2020_relation_in_conftest [
             label="workbook_2_2020_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_3_2020_relation_in_conftest [
             label="workbook_3_2020_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbooks_and_relations
         create_COUNTERData_workbook_iterdir_list
@@ -1030,6 +1044,34 @@ digraph function_call_chains {
     resourceSourceNotes_relation_in_conftest -> resourceSourceNotes_relation_in_relations
     statisticsResourceSources_relation_in_conftest -> statisticsResourceSources_relation_in_relations
     annualUsageCollectionTracking_relation_in_conftest -> annualUsageCollectionTracking_relation_in_relations
+    workbook_0_2017_relation_in_conftest -> workbook_0_2017_relation_in_relations
+    workbook_1_2017_relation_in_conftest -> workbook_1_2017_relation_in_relations
+    workbook_2_2017_relation_in_conftest -> workbook_2_2017_relation_in_relations
+    workbook_0_2018_relation_in_conftest -> workbook_0_2018_relation_in_relations
+    workbook_1_2018_relation_in_conftest -> workbook_1_2018_relation_in_relations
+    workbook_2_2018_relation_in_conftest -> workbook_2_2018_relation_in_relations
+    workbook_0_2019_relation_in_conftest -> workbook_0_2019_relation_in_relations
+    workbook_1_2019_relation_in_conftest -> workbook_1_2019_relation_in_relations
+    workbook_2_2019_relation_in_conftest -> workbook_2_2019_relation_in_relations
+    workbook_3_2019_relation_in_conftest -> workbook_3_2019_relation_in_relations
+    workbook_0_2020_relation_in_conftest -> workbook_0_2020_relation_in_relations
+    workbook_1_2020_relation_in_conftest -> workbook_1_2020_relation_in_relations
+    workbook_2_2020_relation_in_conftest -> workbook_2_2020_relation_in_relations
+    workbook_3_2020_relation_in_conftest -> workbook_3_2020_relation_in_relations
+    workbooks_and_relations -> workbook_0_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2020_relation_in_conftest
     remove_file_from_S3 -> fixture_variable_value_declaration_statement
     remove_file_from_S3 -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_AUCT_object_before_upload -> query_database
@@ -1740,7 +1782,6 @@ digraph function_call_chains {
     }
 
 
-    // Add function calls for workbook functions https://github.com/ereiskind/nolcat/pull/191/commits/9d809f04b20a758147db5df0db99868de326e672
     // Add connections to app fixture https://github.com/ereiskind/nolcat/pull/191/commits/3f3240e7fb2de451bf35d4a1aaf0d74d5219863c
     // Add connections to remaining Flask fixtures https://github.com/ereiskind/nolcat/pull/191/commits/5e7d03a017a8e7f6e1d780ab107b8e0458c82a3b
     // Add connections to remaining conftest fixtures (note shape for S3 fixtures incorrect) https://github.com/ereiskind/nolcat/pull/191/commits/c9219caad163aed07ea762de6eaf963d0ff3a12a
