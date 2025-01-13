@@ -753,43 +753,43 @@ digraph function_call_chains {
 
         fiscalYears_relation_in_relations [
             label="fiscalYears_relation"
-            /*shape=""*/
+            shape="box"
         ]
         annualStatistics_relation_in_relations [
             label="annualStatistics_relation"
-            /*shape=""*/
+            shape="box"
         ]
         vendors_relation_in_relations [
             label="vendors_relation"
-            /*shape=""*/
+            shape="box"
         ]
         vendorNotes_relation_in_relations [
             label="vendorNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsSources_relation_in_relations [
             label="statisticsSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsSourceNotes_relation_in_relations [
             label="statisticsSourceNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         resourceSources_relation_in_relations [
             label="resourceSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         resourceSourceNotes_relation_in_relations [
             label="resourceSourceNotes_relation"
-            /*shape=""*/
+            shape="box"
         ]
         statisticsResourceSources_relation_in_relations [
             label="statisticsResourceSources_relation"
-            /*shape=""*/
+            shape="box"
         ]
         annualUsageCollectionTracking_relation_in_relations [
             label="annualUsageCollectionTracking_relation"
-            /*shape=""*/
+            shape="box"
         ]
         workbook_0_2017_relation_in_relations [
             label="workbook_0_2017_relation"
@@ -890,43 +890,53 @@ digraph function_call_chains {
         session
         fiscalYears_relation_in_conftest [
             label="fiscalYears_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         annualStatistics_relation_in_conftest [
             label="annualStatistics_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         vendors_relation_in_conftest [
             label="vendors_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         vendorNotes_relation_in_conftest [
             label="vendorNotes_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         statisticsSources_relation_in_conftest [
             label="statisticsSources_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         statisticsSourceNotes_relation_in_conftest [
             label="statisticsSourceNotes_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         resourceSources_relation_in_conftest [
             label="resourceSources_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         resourceSourceNotes_relation_in_conftest [
             label="resourceSourceNotes_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         statisticsResourceSources_relation_in_conftest [
             label="statisticsResourceSources_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         annualUsageCollectionTracking_relation_in_conftest [
             label="annualUsageCollectionTracking_relation"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
         workbook_0_2017_relation_in_conftest [
             label="workbook_0_2017_relation"
@@ -1010,6 +1020,16 @@ digraph function_call_chains {
     }
     app -> create_app
     app -> configure_logging
+    fiscalYears_relation_in_conftest -> fiscalYears_relation_in_relations
+    annualStatistics_relation_in_conftest -> annualStatistics_relation_in_relations
+    vendors_relation_in_conftest -> vendors_relation_in_relations
+    vendorNotes_relation_in_conftest -> vendorNotes_relation_in_relations
+    statisticsSources_relation_in_conftest -> statisticsSources_relation_in_relations
+    statisticsSourceNotes_relation_in_conftest -> statisticsSourceNotes_relation_in_relations
+    resourceSources_relation_in_conftest -> resourceSources_relation_in_relations
+    resourceSourceNotes_relation_in_conftest -> resourceSourceNotes_relation_in_relations
+    statisticsResourceSources_relation_in_conftest -> statisticsResourceSources_relation_in_relations
+    annualUsageCollectionTracking_relation_in_conftest -> annualUsageCollectionTracking_relation_in_relations
     remove_file_from_S3 -> fixture_variable_value_declaration_statement
     remove_file_from_S3 -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_AUCT_object_before_upload -> query_database
@@ -1142,14 +1162,17 @@ digraph function_call_chains {
     test_404_page -> page_not_found
     test_load_data_into_database -> load_data_into_database
     test_load_data_into_database -> load_data_into_database_success_regex
+    test_load_data_into_database -> vendors_relation_in_conftest
     test_query_database -> state_data_types_in_vendors
     test_query_database -> query_database
+    test_query_database -> vendors_relation_in_conftest
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     test_loading_connected_data_into_other_relation -> load_data_into_database
     test_loading_connected_data_into_other_relation -> query_database
     test_loading_connected_data_into_other_relation -> database_function_skip_statements
     test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
     test_download_file -> "create_app.download_file"
     test_download_file -> file_extensions_and_mimetypes
     test_first_new_PK_value -> first_new_PK_value
@@ -1286,6 +1309,17 @@ digraph function_call_chains {
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
+    create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
+    create_annualStatistics_CSV_file -> annualStatistics_relation_in_conftest
+    create_vendors_CSV_file -> vendors_relation_in_conftest
+    create_vendorNotes_CSV_file -> vendorNotes_relation_in_conftest
+    create_statisticsSources_CSV_file -> statisticsSources_relation_in_conftest
+    create_statisticsSourceNotes_CSV_file -> statisticsSourceNotes_relation_in_conftest
+    create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
+    create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
+    create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
+    create_blank_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
+    create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
     test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
@@ -1295,6 +1329,10 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> query_database
     test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
     test_collect_FY_and_vendor_data -> database_function_skip_statements
+    test_collect_FY_and_vendor_data -> fiscalYears_relation_in_conftest
+    test_collect_FY_and_vendor_data -> annualStatistics_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
@@ -1304,12 +1342,18 @@ digraph function_call_chains {
     test_collect_sources_data -> query_database
     test_collect_sources_data -> change_single_field_dataframe_into_series
     test_collect_sources_data -> database_function_skip_statements
+    test_collect_sources_data -> statisticsSources_relation_in_conftest
+    test_collect_sources_data -> statisticsSourceNotes_relation_in_conftest
+    test_collect_sources_data -> resourceSources_relation_in_conftest
+    test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
+    test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
     test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_collect_AUCT_and_historical_COUNTER_data -> query_database
     test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
+    test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
     test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
     test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
@@ -1696,7 +1740,6 @@ digraph function_call_chains {
     }
 
 
-    // Add function calls for relation functions https://github.com/ereiskind/nolcat/pull/191/commits/88494ba9e6207ddcca37c9eb00e9ea54578c01bc
     // Add function calls for workbook functions https://github.com/ereiskind/nolcat/pull/191/commits/9d809f04b20a758147db5df0db99868de326e672
     // Add connections to app fixture https://github.com/ereiskind/nolcat/pull/191/commits/3f3240e7fb2de451bf35d4a1aaf0d74d5219863c
     // Add connections to remaining Flask fixtures https://github.com/ereiskind/nolcat/pull/191/commits/5e7d03a017a8e7f6e1d780ab107b8e0458c82a3b
