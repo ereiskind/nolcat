@@ -1455,13 +1455,34 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        test_ingest_usage_homepage
-        test_upload_COUNTER_data_via_Excel
-        test_upload_COUNTER_data_via_SQL_insert
-        test_match_direct_SUSHI_harvest_result
-        test_GET_request_for_harvest_SUSHI_statistics
-        test_harvest_SUSHI_statistics
-        test_GET_request_for_upload_non_COUNTER_reports
+        test_ingest_usage_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_COUNTER_data_via_Excel [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_COUNTER_data_via_SQL_insert [
+            style="dashed"
+            shape="box"
+        ]
+        test_match_direct_SUSHI_harvest_result [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_harvest_SUSHI_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_SUSHI_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_upload_non_COUNTER_reports [
+            style="dashed"
+            shape="box"
+        ]
         test_upload_non_COUNTER_reports [
             style="dashed"
             shape="folder"
