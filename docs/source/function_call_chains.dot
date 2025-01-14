@@ -1779,26 +1779,86 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        COUNTER_download_CSV
-        test_create_COUNTER_fixed_vocab_list
-        test_set_encoding
-        test_view_usage_homepage
-        test_run_custom_SQL_query
-        test_use_predefined_SQL_query
-        start_query_wizard_form_data
-        test_start_query_wizard
-        test_GET_query_wizard_sort_redirect
-        PR_parameters
-        test_construct_PR_query_with_wizard
-        DR_parameters
-        test_construct_DR_query_with_wizard
-        TR_parameters
-        test_construct_TR_query_with_wizard
-        IR_parameters
-        test_construct_IR_query_with_wizard
-        construct_PR_query_with_wizard_without_string_match
-        test_GET_request_for_download_non_COUNTER_usage
-        test_download_non_COUNTER_usage
+        COUNTER_download_CSV [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_COUNTER_fixed_vocab_list [
+            style="dashed"
+            shape="box"
+        ]
+        test_set_encoding [
+            style="dashed"
+            shape="box"
+        ]
+        test_view_usage_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_run_custom_SQL_query [
+            style="dashed"
+            shape="box"
+        ]
+        test_use_predefined_SQL_query [
+            style="dashed"
+            shape="box"
+        ]
+        start_query_wizard_form_data [
+            style="dotted"
+            shape="box"
+        ]
+        test_start_query_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_query_wizard_sort_redirect [
+            style="dashed"
+            shape="box"
+        ]
+        PR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_PR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        DR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_DR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        TR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_TR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        IR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_IR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        construct_PR_query_with_wizard_without_string_match [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_download_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
+        test_download_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
     }
     COUNTER_download_CSV -> create_downloads_folder
     COUNTER_download_CSV -> unable_to_delete_test_file_in_S3_statement
@@ -1809,21 +1869,25 @@ digraph function_call_chains {
     test_run_custom_SQL_query -> run_custom_SQL_query
     test_run_custom_SQL_query -> client
     test_run_custom_SQL_query -> header_value
+    test_run_custom_SQL_query -> COUNTER_download_CSV
     test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
     test_use_predefined_SQL_query -> use_predefined_SQL_query
     test_use_predefined_SQL_query -> query_database
     test_use_predefined_SQL_query -> database_function_skip_statements
     test_use_predefined_SQL_query -> client
     test_use_predefined_SQL_query -> header_value
+    test_use_predefined_SQL_query -> COUNTER_download_CSV
     start_query_wizard_form_data -> query_database
     start_query_wizard_form_data -> last_day_of_month
     start_query_wizard_form_data -> database_function_skip_statements
     test_start_query_wizard -> start_query_wizard
     test_start_query_wizard -> client
     test_start_query_wizard -> header_value
+    test_start_query_wizard -> start_query_wizard_form_data
     test_GET_query_wizard_sort_redirect -> start_query_wizard
     test_GET_query_wizard_sort_redirect -> client
     test_GET_query_wizard_sort_redirect -> header_value
+    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data
     test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
     test_construct_PR_query_with_wizard -> query_database
@@ -1832,6 +1896,8 @@ digraph function_call_chains {
     test_construct_PR_query_with_wizard -> database_function_skip_statements
     test_construct_PR_query_with_wizard -> client
     test_construct_PR_query_with_wizard -> header_value
+    test_construct_PR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_PR_query_with_wizard -> PR_parameters
     test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
     test_construct_DR_query_with_wizard -> query_database
@@ -1840,6 +1906,8 @@ digraph function_call_chains {
     test_construct_DR_query_with_wizard -> database_function_skip_statements
     test_construct_DR_query_with_wizard -> client
     test_construct_DR_query_with_wizard -> header_value
+    test_construct_DR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_DR_query_with_wizard -> DR_parameters
     test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
     test_construct_TR_query_with_wizard -> query_database
@@ -1848,6 +1916,8 @@ digraph function_call_chains {
     test_construct_TR_query_with_wizard -> database_function_skip_statements
     test_construct_TR_query_with_wizard -> client
     test_construct_TR_query_with_wizard -> header_value
+    test_construct_TR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_TR_query_with_wizard -> TR_parameters
     test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
     test_construct_IR_query_with_wizard -> query_database
@@ -1856,6 +1926,8 @@ digraph function_call_chains {
     test_construct_IR_query_with_wizard -> database_function_skip_statements
     test_construct_IR_query_with_wizard -> client
     test_construct_IR_query_with_wizard -> header_value
+    test_construct_IR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_IR_query_with_wizard -> IR_parameters
     construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
     construct_PR_query_with_wizard_without_string_match -> client
     construct_PR_query_with_wizard_without_string_match -> header_value
