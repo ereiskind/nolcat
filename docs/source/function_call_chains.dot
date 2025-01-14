@@ -16,13 +16,15 @@ digraph function_call_chains {
         fillcolor="white"
     ]
     /* Node Types
+        When multiple adjustments are present, order is label, style, shape
+
+        Test function: `style="dashed"`
+        Fixture function: `style="dotted"`
+
         Route functions: `shape="cds"`
         Function connecting to S3: `shape="folder"`
         Function connecting to MySQL: `shape="cylinder"`
         Other functions: `shape="box"`
-
-        Test function: `style="dashed"`
-        Fixture function: `style="dotted"`
     */
 
     /*
@@ -1041,20 +1043,20 @@ digraph function_call_chains {
             shape="box"
         ]
         remove_file_from_S3 [
-            shape="folder"
             style="dotted"
+            shape="folder"
         ]
         non_COUNTER_AUCT_object_before_upload [
-            shape="folder"
             style="dotted"
+            shape="folder"
         ]
         non_COUNTER_AUCT_object_after_upload [
             style="dotted"
             shape="box"
         ]
         non_COUNTER_file_to_download_from_S3 [
-            shape="folder"
             style="dotted"
+            shape="folder"
         ]
         header_value [
             style="dotted"
