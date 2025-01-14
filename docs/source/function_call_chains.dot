@@ -1542,29 +1542,86 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        blank_annualUsageCollectionTracking_data_types
-        create_fiscalYears_CSV_file
-        create_annualStatistics_CSV_file
-        create_vendors_CSV_file
-        create_vendorNotes_CSV_file
-        create_statisticsSources_CSV_file
-        create_statisticsSourceNotes_CSV_file
-        create_resourceSources_CSV_file
-        create_resourceSourceNotes_CSV_file
-        create_statisticsResourceSources_CSV_file
-        create_blank_annualUsageCollectionTracking_CSV_file
-        create_annualUsageCollectionTracking_CSV_file
-        test_GET_request_for_collect_FY_and_vendor_data
-        test_collect_FY_and_vendor_data
-        test_collect_sources_data
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
-        test_collect_AUCT_and_historical_COUNTER_data
-        test_GET_request_for_upload_historical_non_COUNTER_usage
+        blank_annualUsageCollectionTracking_data_types [
+            style="dotted"
+            shape="box"
+        ]
+        create_fiscalYears_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_annualStatistics_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_vendors_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_vendorNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsSourceNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_resourceSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_resourceSourceNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsResourceSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_blank_annualUsageCollectionTracking_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_annualUsageCollectionTracking_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        test_GET_request_for_collect_FY_and_vendor_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_FY_and_vendor_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_sources_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_AUCT_and_historical_COUNTER_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_upload_historical_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
         files_for_test_upload_historical_non_COUNTER_usage [
             style="dotted"
             shape="folder"
         ]
-        "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage"
+        "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage" [
+            style="dotted"
+            shape="box"
+        ]
         test_upload_historical_non_COUNTER_usage [
             style="dashed"
             shape="folder"
@@ -1582,7 +1639,7 @@ digraph function_call_chains {
     create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
     create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
     create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
-    create_blank_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
+    create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
     create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
     test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_GET_request_for_collect_FY_and_vendor_data -> client
@@ -1600,6 +1657,10 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
     test_collect_FY_and_vendor_data -> client
     test_collect_FY_and_vendor_data -> header_value
+    test_collect_FY_and_vendor_data -> create_fiscalYears_CSV_file
+    test_collect_FY_and_vendor_data -> create_annualStatistics_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendors_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendorNotes_CSV_file
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
@@ -1616,8 +1677,14 @@ digraph function_call_chains {
     test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
     test_collect_sources_data -> client
     test_collect_sources_data -> header_value
+    test_collect_sources_data -> create_statisticsSources_CSV_file
+    test_collect_sources_data -> create_resourceSources_CSV_file
+    test_collect_sources_data -> create_resourceSourceNotes_CSV_file
+    test_collect_sources_data -> create_statisticsResourceSources_CSV_file
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> client
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> blank_annualUsageCollectionTracking_data_types
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
     test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
@@ -1629,6 +1696,7 @@ digraph function_call_chains {
     test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
     test_collect_AUCT_and_historical_COUNTER_data -> client
     test_collect_AUCT_and_historical_COUNTER_data -> header_value
+    test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
     test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
     test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
