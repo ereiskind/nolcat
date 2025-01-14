@@ -1719,10 +1719,22 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        test_login_homepage
-        test_logging_in
-        test_logging_in_as_admin
-        test_creating_an_account
+        test_login_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_logging_in [
+            style="dashed"
+            shape="box"
+        ]
+        test_logging_in_as_admin [
+            style="dashed"
+            shape="box"
+        ]
+        test_creating_an_account [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_login_homepage -> login_homepage
     test_login_homepage -> client
