@@ -1020,11 +1020,26 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
-        workbooks_and_relations
-        create_COUNTERData_workbook_iterdir_list
-        COUNTERData_relation
-        download_destination
-        path_to_sample_file
+        workbooks_and_relations [
+            style="dotted"
+            shape="box"
+        ]
+        create_COUNTERData_workbook_iterdir_list [
+            style="dotted"
+            shape="box"
+        ]
+        COUNTERData_relation [
+            style="dotted"
+            shape="box"
+        ]
+        download_destination [
+            style="dotted"
+            shape="box"
+        ]
+        path_to_sample_file [
+            style="dotted"
+            shape="box"
+        ]
         remove_file_from_S3 [
             shape="folder"
             style="dotted"
@@ -1033,16 +1048,34 @@ digraph function_call_chains {
             shape="folder"
             style="dotted"
         ]
-        non_COUNTER_AUCT_object_after_upload
+        non_COUNTER_AUCT_object_after_upload [
+            style="dotted"
+            shape="box"
+        ]
         non_COUNTER_file_to_download_from_S3 [
             shape="folder"
             style="dotted"
         ]
-        header_value
-        most_recent_month_with_usage
-        match_direct_SUSHI_harvest_result
-        COUNTER_reports_offered_by_statistics_source
-        prepare_HTML_page_for_comparison
+        header_value [
+            style="dotted"
+            shape="box"
+        ]
+        most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
+        match_direct_SUSHI_harvest_result [
+            style="dotted"
+            shape="box"
+        ]
+        COUNTER_reports_offered_by_statistics_source [
+            style="dotted"
+            shape="box"
+        ]
+        prepare_HTML_page_for_comparison [
+            style="dotted"
+            shape="box"
+        ]
     }
     app -> create_app
     app -> configure_logging
@@ -1086,12 +1119,16 @@ digraph function_call_chains {
     workbooks_and_relations -> workbook_1_2020_relation_in_conftest
     workbooks_and_relations -> workbook_2_2020_relation_in_conftest
     workbooks_and_relations -> workbook_3_2020_relation_in_conftest
+    COUNTERData_relation -> workbooks_and_relations
+    COUNTERData_relation -> create_COUNTERData_workbook_iterdir_list
     remove_file_from_S3 -> fixture_variable_value_declaration_statement
     remove_file_from_S3 -> unable_to_delete_test_file_in_S3_statement
+    remove_file_from_S3 -> path_to_sample_file
     non_COUNTER_AUCT_object_before_upload -> query_database
     non_COUNTER_AUCT_object_before_upload -> initialize_relation_class_object_statement
     non_COUNTER_AUCT_object_before_upload -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_AUCT_object_before_upload -> database_function_skip_statements
+    non_COUNTER_AUCT_object_before_upload -> path_to_sample_file
     non_COUNTER_AUCT_object_after_upload -> query_database
     non_COUNTER_AUCT_object_after_upload -> initialize_relation_class_object_statement
     non_COUNTER_AUCT_object_after_upload -> database_function_skip_statements
@@ -1101,6 +1138,9 @@ digraph function_call_chains {
     non_COUNTER_file_to_download_from_S3 -> failed_upload_to_S3_statement
     non_COUNTER_file_to_download_from_S3 -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
+    non_COUNTER_file_to_download_from_S3 -> download_destination
+    non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
+    non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
     most_recent_month_with_usage -> last_day_of_month
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     match_direct_SUSHI_harvest_result -> query_database
@@ -1157,6 +1197,8 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> load_data_into_database_success_regex
     test_collect_annual_usage_statistics -> update_database_success_regex
     test_collect_annual_usage_statistics -> client
+    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
+    sample_FileStorage_object -> path_to_sample_file
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
     test_upload_nonstandard_usage_file -> query_database
@@ -1166,9 +1208,12 @@ digraph function_call_chains {
     test_upload_nonstandard_usage_file -> return_value_from_query_statement
     test_upload_nonstandard_usage_file -> database_function_skip_statements
     test_upload_nonstandard_usage_file -> client
+    test_upload_nonstandard_usage_file -> path_to_sample_file
     test_download_nonstandard_usage_file -> download_nonstandard_usage_file
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
     test_download_nonstandard_usage_file -> list_folder_contents_statement
+    test_download_nonstandard_usage_file -> download_destination
+    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
 
 
     subgraph cluster_test_app {
@@ -1238,12 +1283,14 @@ digraph function_call_chains {
     test_download_file -> "create_app.download_file"
     test_download_file -> file_extensions_and_mimetypes
     test_download_file -> client
+    test_download_file -> path_to_sample_file
     test_first_new_PK_value -> first_new_PK_value
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
+    test_upload_file_to_S3_bucket -> path_to_sample_file
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
     test_truncate_longer_lines -> truncate_longer_lines
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
@@ -1258,7 +1305,9 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> update_database
     test_update_database_with_insert_statement -> database_function_skip_statements
     test_update_database_with_insert_statement -> update_database_success_regex
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     file_name_stem_and_data -> S3_file_name_timestamp
+    file_name_stem_and_data -> most_recent_month_with_usage
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
@@ -1315,13 +1364,19 @@ digraph function_call_chains {
     test_upload_COUNTER_data_via_Excel -> database_function_skip_statements
     test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
     test_upload_COUNTER_data_via_Excel -> client
+    test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
+    test_upload_COUNTER_data_via_Excel -> COUNTERData_relation
+    test_upload_COUNTER_data_via_Excel -> header_value
+    test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
     test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
     test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
     test_upload_COUNTER_data_via_SQL_insert -> query_database
     test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
     test_upload_COUNTER_data_via_SQL_insert -> database_function_skip_statements
     test_upload_COUNTER_data_via_SQL_insert -> client
+    test_upload_COUNTER_data_via_SQL_insert -> header_value
     test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result
     test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_GET_request_for_harvest_SUSHI_statistics -> query_database
     test_GET_request_for_harvest_SUSHI_statistics -> database_function_skip_statements
@@ -1331,6 +1386,8 @@ digraph function_call_chains {
     test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
     test_harvest_SUSHI_statistics -> database_function_skip_statements
     test_harvest_SUSHI_statistics -> client
+    test_harvest_SUSHI_statistics -> header_value
+    test_harvest_SUSHI_statistics -> most_recent_month_with_usage
     test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_GET_request_for_upload_non_COUNTER_reports -> query_database
     test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
@@ -1341,6 +1398,9 @@ digraph function_call_chains {
     test_upload_non_COUNTER_reports -> query_database
     test_upload_non_COUNTER_reports -> format_list_for_stdout
     test_upload_non_COUNTER_reports -> client
+    test_upload_non_COUNTER_reports -> path_to_sample_file
+    test_upload_non_COUNTER_reports -> header_value
+    test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
 
 
     subgraph cluster_test_bp_initialization {
@@ -1406,6 +1466,7 @@ digraph function_call_chains {
     test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
     test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
     test_collect_FY_and_vendor_data -> client
+    test_collect_FY_and_vendor_data -> header_value
     test_collect_sources_data -> state_data_types_in_statisticsSources
     test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
     test_collect_sources_data -> state_data_types_in_resourceSources
@@ -1421,6 +1482,7 @@ digraph function_call_chains {
     test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
     test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
     test_collect_sources_data -> client
+    test_collect_sources_data -> header_value
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
     test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> client
     test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
@@ -1430,6 +1492,10 @@ digraph function_call_chains {
     test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
     test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
     test_collect_AUCT_and_historical_COUNTER_data -> client
+    test_collect_AUCT_and_historical_COUNTER_data -> create_COUNTERData_workbook_iterdir_list
+    test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
+    test_collect_AUCT_and_historical_COUNTER_data -> client
+    test_collect_AUCT_and_historical_COUNTER_data -> header_value
     test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
     test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
     test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
@@ -1443,6 +1509,7 @@ digraph function_call_chains {
     test_upload_historical_non_COUNTER_usage -> format_list_for_stdout
     test_upload_historical_non_COUNTER_usage -> database_function_skip_statements
     test_upload_historical_non_COUNTER_usage -> client
+    test_upload_historical_non_COUNTER_usage -> header_value
 
 
     subgraph cluster_test_bp_login {
@@ -1510,18 +1577,22 @@ digraph function_call_chains {
     test_view_usage_homepage -> client
     test_run_custom_SQL_query -> run_custom_SQL_query
     test_run_custom_SQL_query -> client
+    test_run_custom_SQL_query -> header_value
     test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
     test_use_predefined_SQL_query -> use_predefined_SQL_query
     test_use_predefined_SQL_query -> query_database
     test_use_predefined_SQL_query -> database_function_skip_statements
     test_use_predefined_SQL_query -> client
+    test_use_predefined_SQL_query -> header_value
     start_query_wizard_form_data -> query_database
     start_query_wizard_form_data -> last_day_of_month
     start_query_wizard_form_data -> database_function_skip_statements
     test_start_query_wizard -> start_query_wizard
     test_start_query_wizard -> client
+    test_start_query_wizard -> header_value
     test_GET_query_wizard_sort_redirect -> start_query_wizard
     test_GET_query_wizard_sort_redirect -> client
+    test_GET_query_wizard_sort_redirect -> header_value
     test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
     test_construct_PR_query_with_wizard -> query_database
@@ -1529,6 +1600,7 @@ digraph function_call_chains {
     test_construct_PR_query_with_wizard -> check_if_file_exists_statement
     test_construct_PR_query_with_wizard -> database_function_skip_statements
     test_construct_PR_query_with_wizard -> client
+    test_construct_PR_query_with_wizard -> header_value
     test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
     test_construct_DR_query_with_wizard -> query_database
@@ -1536,6 +1608,7 @@ digraph function_call_chains {
     test_construct_DR_query_with_wizard -> check_if_file_exists_statement
     test_construct_DR_query_with_wizard -> database_function_skip_statements
     test_construct_DR_query_with_wizard -> client
+    test_construct_DR_query_with_wizard -> header_value
     test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
     test_construct_TR_query_with_wizard -> query_database
@@ -1543,6 +1616,7 @@ digraph function_call_chains {
     test_construct_TR_query_with_wizard -> check_if_file_exists_statement
     test_construct_TR_query_with_wizard -> database_function_skip_statements
     test_construct_TR_query_with_wizard -> client
+    test_construct_TR_query_with_wizard -> header_value
     test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
     test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
     test_construct_IR_query_with_wizard -> query_database
@@ -1550,8 +1624,11 @@ digraph function_call_chains {
     test_construct_IR_query_with_wizard -> check_if_file_exists_statement
     test_construct_IR_query_with_wizard -> database_function_skip_statements
     test_construct_IR_query_with_wizard -> client
+    test_construct_IR_query_with_wizard -> header_value
     construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
     construct_PR_query_with_wizard_without_string_match -> client
+    construct_PR_query_with_wizard_without_string_match -> header_value
+    construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
     test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
     test_GET_request_for_download_non_COUNTER_usage -> query_database
     test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
@@ -1559,8 +1636,10 @@ digraph function_call_chains {
     test_GET_request_for_download_non_COUNTER_usage -> client
     test_download_non_COUNTER_usage -> create_downloads_folder
     test_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
     test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
     test_download_non_COUNTER_usage -> client
+    test_download_non_COUNTER_usage -> header_value
 
 
     subgraph cluster_test_ConvertJSONDictToDataframe {
@@ -1679,6 +1758,7 @@ digraph function_call_chains {
     }
     test_format_list_for_stdout_with_list -> format_list_for_stdout
     test_format_list_for_stdout_with_generator -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
 
 
@@ -1725,8 +1805,10 @@ digraph function_call_chains {
     StatisticsSources_fixture -> extract_value_from_single_value_df
     StatisticsSources_fixture -> fixture_variable_value_declaration_statement
     StatisticsSources_fixture -> database_function_skip_statements
+    StatisticsSources_fixture -> most_recent_month_with_usage
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
+    reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
     test_check_if_data_in_database_no -> _check_if_data_in_database
     test_check_if_data_in_database_no -> client
     test_check_if_data_in_database_yes -> _check_if_data_in_database
@@ -1737,6 +1819,7 @@ digraph function_call_chains {
     test_harvest_single_report -> reports_with_no_usage_regex
     test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
     test_harvest_single_report -> client
+    test_harvest_single_report -> most_recent_month_with_usage
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
@@ -1744,15 +1827,20 @@ digraph function_call_chains {
     test_harvest_single_report_with_partial_date_range -> client
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI -> client
+    test_harvest_R5_SUSHI -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
+    test_harvest_R5_SUSHI_with_report_to_harvest -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
     test_harvest_R5_SUSHI_with_invalid_dates -> attempted_SUSHI_call_with_invalid_dates_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
     month_before_month_like_most_recent_month_with_usage -> last_day_of_month
+    month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     test_collect_usage_statistics -> collect_usage_statistics
     test_collect_usage_statistics -> load_data_into_database_success_regex
+    test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database
@@ -1800,6 +1888,7 @@ digraph function_call_chains {
     test_reports_call -> client
     test_reports_call_validity -> make_SUSHI_call
     test_reports_call_validity -> client
+    list_of_reports -> COUNTER_reports_offered_by_statistics_source
     test_PR_call_validity -> make_SUSHI_call
     test_PR_call_validity -> database_function_skip_statements
     test_PR_call_validity -> reports_with_no_usage_regex
@@ -1834,8 +1923,12 @@ digraph function_call_chains {
         sample_COUNTER_report_workbooks
         test_create_dataframe
     }
+    sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
     test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe_from_single_workbook -> workbooks_and_relations
+    sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
     test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe -> COUNTERData_relation
 
 
     subgraph cluster_test_Vendors {
@@ -1853,6 +1946,5 @@ digraph function_call_chains {
     }
 
 
-    // Add connections to remaining conftest fixtures (note shape for S3 fixtures incorrect) https://github.com/ereiskind/nolcat/pull/191/commits/c9219caad163aed07ea762de6eaf963d0ff3a12a
     // Add calls to functions in test modules(`test_check_if_data_already_in_COUNTERData` didn't have shape; `SUSHI_credentials_fixture` in connections left unspecified) https://github.com/ereiskind/nolcat/pull/191/commits/089c07f3d213c69ffeb373abb768fb10524a2551
 }
