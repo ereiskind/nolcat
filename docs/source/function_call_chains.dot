@@ -1242,29 +1242,86 @@ digraph function_call_chains {
         style="dashed"
         color="#5cb8b2"
 
-        test_flask_app_creation
-        test_flask_client_creation
-        test_SQLAlchemy_engine_creation
-        test_homepage
-        test_404_page
-        test_load_data_into_database
-        test_query_database
-        test_loading_connected_data_into_other_relation
-        test_download_file
-        test_first_new_PK_value
-        test_change_single_field_dataframe_into_series
-        test_restore_boolean_values_to_boolean_field
+        test_flask_app_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_flask_client_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_SQLAlchemy_engine_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_404_page [
+            style="dashed"
+            shape="box"
+        ]
+        test_load_data_into_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_query_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_loading_connected_data_into_other_relation [
+            style="dashed"
+            shape="box"
+        ]
+        test_download_file [
+            style="dashed"
+            shape="box"
+        ]
+        test_first_new_PK_value [
+            style="dashed"
+            shape="box"
+        ]
+        test_change_single_field_dataframe_into_series [
+            style="dashed"
+            shape="box"
+        ]
+        test_restore_boolean_values_to_boolean_field [
+            style="dashed"
+            shape="box"
+        ]
         test_upload_file_to_S3_bucket [
             style="dashed"
             shape="folder"
         ]
-        test_create_AUCT_SelectField_options
-        test_truncate_longer_lines
-        vendors_relation_after_test_update_database
-        test_update_database
-        vendors_relation_after_test_update_database_with_insert_statement
-        test_update_database_with_insert_statement
-        test_prepare_HTML_page_for_comparison
+        test_create_AUCT_SelectField_options [
+            style="dashed"
+            shape="box"
+        ]
+        test_truncate_longer_lines [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database_with_insert_statement [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database_with_insert_statement [
+            style="dashed"
+            shape="box"
+        ]
+        test_prepare_HTML_page_for_comparison [
+            style="dashed"
+            shape="box"
+        ]
         file_name_stem_and_data [
             style="dotted"
             shape="folder"
@@ -1273,12 +1330,30 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
-        test_ISSN_regex
-        test_ISBN_regex
-        test_last_day_of_month
-        test_extract_value_from_single_value_df
-        test_S3_file_name_timestamp
-        test_non_COUNTER_file_name_regex
+        test_ISSN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_ISBN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_last_day_of_month [
+            style="dashed"
+            shape="box"
+        ]
+        test_extract_value_from_single_value_df [
+            style="dashed"
+            shape="box"
+        ]
+        test_S3_file_name_timestamp [
+            style="dashed"
+            shape="box"
+        ]
+        test_non_COUNTER_file_name_regex [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_flask_app_creation -> app
     test_flask_client_creation -> client
@@ -1319,12 +1394,14 @@ digraph function_call_chains {
     test_update_database -> update_database
     test_update_database -> database_function_skip_statements
     test_update_database -> update_database_success_regex
+    test_update_database -> vendors_relation_after_test_update_database
     vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> query_database
     test_update_database_with_insert_statement -> update_database
     test_update_database_with_insert_statement -> database_function_skip_statements
     test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     file_name_stem_and_data -> S3_file_name_timestamp
     file_name_stem_and_data -> most_recent_month_with_usage
