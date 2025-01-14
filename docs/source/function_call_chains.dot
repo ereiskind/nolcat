@@ -1157,7 +1157,10 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        test_add_annual_statistic_value
+        test_add_annual_statistic_value [
+            style="dashed"
+            shape="box"
+        ]
     }
 
 
@@ -1946,7 +1949,4 @@ digraph function_call_chains {
             /*shape=""*/
         ]
     }
-
-
-    // Add calls to functions in test modules(`test_check_if_data_already_in_COUNTERData` didn't have shape; `SUSHI_credentials_fixture` in connections left unspecified) https://github.com/ereiskind/nolcat/pull/191/commits/089c07f3d213c69ffeb373abb768fb10524a2551
 }
