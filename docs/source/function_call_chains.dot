@@ -1746,12 +1746,30 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        test_view_lists_homepage
-        test_GET_request_for_view_list_record
-        test_view_list_record
-        test_GET_request_for_edit_list_record_for_existing_record
-        test_GET_request_for_edit_list_record_for_new_record
-        test_edit_list_record
+        test_view_lists_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_view_list_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_view_list_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_edit_list_record_for_existing_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_edit_list_record_for_new_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_edit_list_record [
+            style="dashed"
+            shape="box"
+        ]
     }
 
 
