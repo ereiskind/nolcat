@@ -1422,11 +1422,26 @@ digraph function_call_chains {
         style="dashed"
         color="#782f40"
 
-        test_GET_request_for_annual_stats_homepage
-        test_GET_request_for_show_fiscal_year_details
-        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm
-        test_show_fiscal_year_details_submitting_EditFiscalYearForm
-        test_show_fiscal_year_details_submitting_EditAUCTForm
+        test_GET_request_for_annual_stats_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_show_fiscal_year_details [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_EditFiscalYearForm [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_EditAUCTForm [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
     test_GET_request_for_annual_stats_homepage -> query_database
