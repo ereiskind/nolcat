@@ -1170,19 +1170,31 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        AUCT_fixture_for_SUSHI
+        AUCT_fixture_for_SUSHI [
+            style="dotted"
+            shape="box"
+        ]
         harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
             label="harvest_R5_SUSHI_result"
             style="dotted"
             shape="folder"
         ]
-        test_collect_annual_usage_statistics
-        sample_FileStorage_object
+        test_collect_annual_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        sample_FileStorage_object [
+            style="dotted"
+            shape="box"
+        ]
         test_upload_nonstandard_usage_file [
             style="dashed"
             shape="folder"
         ]
-        test_download_nonstandard_usage_file
+        test_download_nonstandard_usage_file [
+            style="dashed"
+            shape="box"
+        ]
     }
     AUCT_fixture_for_SUSHI -> query_database
     AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
@@ -1193,6 +1205,7 @@ digraph function_call_chains {
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> return_value_from_query_statement
     harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> database_function_skip_statements
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
     test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
     test_collect_annual_usage_statistics -> query_database
@@ -1203,6 +1216,7 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> update_database_success_regex
     test_collect_annual_usage_statistics -> client
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
+    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
     sample_FileStorage_object -> path_to_sample_file
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
@@ -1214,6 +1228,7 @@ digraph function_call_chains {
     test_upload_nonstandard_usage_file -> database_function_skip_statements
     test_upload_nonstandard_usage_file -> client
     test_upload_nonstandard_usage_file -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> sample_FileStorage_object
     test_download_nonstandard_usage_file -> download_nonstandard_usage_file
     test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
     test_download_nonstandard_usage_file -> list_folder_contents_statement
