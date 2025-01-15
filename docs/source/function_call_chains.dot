@@ -2159,9 +2159,18 @@ digraph function_call_chains {
         style="dashed"
         color="#5cb8b2"
 
-        test_format_list_for_stdout_with_list
-        test_format_list_for_stdout_with_generator
-        test_remove_IDE_spacing_from_statement
+        test_format_list_for_stdout_with_list [
+            style="dashed"
+            shape="box"
+        ]
+        test_format_list_for_stdout_with_generator [
+            style="dashed"
+            shape="box"
+        ]
+        test_remove_IDE_spacing_from_statement [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_format_list_for_stdout_with_list -> format_list_for_stdout
     test_format_list_for_stdout_with_generator -> format_list_for_stdout
