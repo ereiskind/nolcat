@@ -2133,12 +2133,22 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        test_add_access_stop_date
-        test_remove_access_stop_date
-        test_change_StatisticsSource
+        test_add_access_stop_date [
+            style="dashed"
+            shape="box"
+        ]
+        test_remove_access_stop_date [
+            style="dashed"
+            shape="box"
+        ]
+        test_change_StatisticsSource [
+            style="dashed"
+            shape="box"
+        ]
         test_add_note_in_test_ResourceSources [
             label="test_add_note"
-            /*shape=""*/
+            style="dashed"
+            shape="box"
         ]
     }
 
