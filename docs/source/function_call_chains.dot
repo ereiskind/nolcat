@@ -2511,11 +2511,18 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        test_get_statisticsSources_records
-        test_get_resourceSources_records
+        test_get_statisticsSources_records [
+            style="dashed"
+            shape="box"
+        ]
+        test_get_resourceSources_records [
+            style="dashed"
+            shape="box"
+        ]
         test_add_note_in_test_Vendors [
             label="test_add_note"
-            /*shape=""*/
+            style="dashed"
+            shape="box"
         ]
     }
 }
