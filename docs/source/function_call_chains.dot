@@ -2184,36 +2184,93 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        current_month_like_most_recent_month_with_usage
-        StatisticsSources_fixture
-        test_fetch_SUSHI_information_for_API
-        test_fetch_SUSHI_information_for_display
+        current_month_like_most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
+        StatisticsSources_fixture [
+            style="dotted"
+            shape="box"
+        ]
+        test_fetch_SUSHI_information_for_API [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_SUSHI_information_for_display [
+            style="dashed"
+            shape="box"
+        ]
         SUSHI_credentials_fixture_in_test_StatisticsSources [
             label="SUSHI_credentials_fixture"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
-        reports_offered_by_StatisticsSource_fixture
-        test_COUNTER_reports_offered_by_statistics_source
-        test_check_if_data_in_database_no
-        test_check_if_data_in_database_yes
-        test_harvest_single_report
-        test_harvest_single_report_with_partial_date_range
-        test_harvest_R5_SUSHI
-        test_harvest_R5_SUSHI_with_report_to_harvest
-        test_harvest_R5_SUSHI_with_invalid_dates
-        month_before_month_like_most_recent_month_with_usage
+        reports_offered_by_StatisticsSource_fixture [
+            style="dotted"
+            shape="box"
+        ]
+        test_COUNTER_reports_offered_by_statistics_source [
+            style="dashed"
+            shape="box"
+        ]
+        test_check_if_data_in_database_no [
+            style="dashed"
+            shape="box"
+        ]
+        test_check_if_data_in_database_yes [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_single_report [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_single_report_with_partial_date_range [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI_with_report_to_harvest [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI_with_invalid_dates [
+            style="dashed"
+            shape="box"
+        ]
+        month_before_month_like_most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
         harvest_R5_SUSHI_result_in_test_StatisticsSources [
             label="harvest_R5_SUSHI_result"
-            /*shape=""*/
+            style="dotted"
+            shape="box"
         ]
-        test_collect_usage_statistics
+        test_collect_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
         test_add_note_in_test_StatisticsSources [
             label="test_add_note"
-            /*shape=""*/
+            style="dashed"
+            shape="box"
         ]
-        partially_duplicate_COUNTER_data
-        non_duplicate_COUNTER_data
-        test_check_if_data_already_in_COUNTERData
+        partially_duplicate_COUNTER_data [
+            style="dotted"
+            shape="box"
+        ]
+        non_duplicate_COUNTER_data [
+            style="dotted"
+            shape="box"
+        ]
+        test_check_if_data_already_in_COUNTERData [
+            style="dashed"
+            shape="box"
+        ]
     }
     current_month_like_most_recent_month_with_usage -> last_day_of_month
     StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
@@ -2223,12 +2280,24 @@ digraph function_call_chains {
     StatisticsSources_fixture -> database_function_skip_statements
     StatisticsSources_fixture -> most_recent_month_with_usage
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
+    test_fetch_SUSHI_information_for_display -> StatisticsSources_fixture
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture
     reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
+    reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture
+    reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture
     test_check_if_data_in_database_no -> _check_if_data_in_database
     test_check_if_data_in_database_no -> client
+    test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
+    test_check_if_data_in_database_no -> StatisticsSources_fixture
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture
     test_check_if_data_in_database_yes -> _check_if_data_in_database
     test_check_if_data_in_database_yes -> client
+    test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
+    test_check_if_data_in_database_yes -> StatisticsSources_fixture
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture
     test_harvest_single_report -> _harvest_single_report
     test_harvest_single_report -> last_day_of_month
     test_harvest_single_report -> database_function_skip_statements
@@ -2236,33 +2305,51 @@ digraph function_call_chains {
     test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
     test_harvest_single_report -> client
     test_harvest_single_report -> most_recent_month_with_usage
+    test_harvest_single_report -> StatisticsSources_fixture
+    test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
     test_harvest_single_report_with_partial_date_range -> skip_test_due_to_SUSHI_error_regex
     test_harvest_single_report_with_partial_date_range -> client
+    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture
+    test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI -> client
     test_harvest_R5_SUSHI -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
     test_harvest_R5_SUSHI_with_report_to_harvest -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
     test_harvest_R5_SUSHI_with_invalid_dates -> attempted_SUSHI_call_with_invalid_dates_statement
     test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
     month_before_month_like_most_recent_month_with_usage -> last_day_of_month
     month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
     test_collect_usage_statistics -> collect_usage_statistics
     test_collect_usage_statistics -> load_data_into_database_success_regex
     test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
+    test_collect_usage_statistics -> StatisticsSources_fixture
+    test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database
     test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
     test_check_if_data_already_in_COUNTERData -> database_function_skip_statements
+    test_check_if_data_already_in_COUNTERData -> partially_duplicate_COUNTER_data
+    test_check_if_data_already_in_COUNTERData -> non_duplicate_COUNTER_data
 
 
     subgraph cluster_test_SUSHICallAndResponse {
