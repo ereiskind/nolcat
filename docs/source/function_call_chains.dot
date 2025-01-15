@@ -2478,17 +2478,31 @@ digraph function_call_chains {
         penwidth=5
         style="dashed"
 
-        sample_COUNTER_report_workbook
-        test_create_dataframe_from_single_workbook
-        sample_COUNTER_report_workbooks
-        test_create_dataframe
+        sample_COUNTER_report_workbook [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_single_workbook [
+            style="dashed"
+            shape="box"
+        ]
+        sample_COUNTER_report_workbooks [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe [
+            style="dashed"
+            shape="box"
+        ]
     }
     sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
     test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
     test_create_dataframe_from_single_workbook -> workbooks_and_relations
+    test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
     sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
     test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
     test_create_dataframe -> COUNTERData_relation
+    test_create_dataframe -> sample_COUNTER_report_workbooks
 
 
     subgraph cluster_test_Vendors {
