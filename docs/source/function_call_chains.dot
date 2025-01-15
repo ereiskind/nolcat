@@ -2023,40 +2023,87 @@ digraph function_call_chains {
         style="dashed"
         color="#ceb888"
 
-        FY2020_FiscalYears_object
-        test_calculate_depreciated_ACRL_60b
-        test_calculate_depreciated_ACRL_63
-        test_calculate_ACRL_61a
-        test_calculate_ACRL_61b
-        test_calculate_ARL_18
-        test_calculate_ARL_19
-        test_calculate_ARL_20
-        FY2023_FiscalYears_object_and_record
-        load_new_record_into_fiscalYears
-        test_create_usage_tracking_records_for_fiscal_year
-        FY2022_FiscalYears_object
-        test_collect_fiscal_year_usage_statistics
+        FY2020_FiscalYears_object [
+            style="dotted"
+            shape="box"
+        ]
+        test_calculate_depreciated_ACRL_60b [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_depreciated_ACRL_63 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ACRL_61a [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ACRL_61b [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_18 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_19 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_20 [
+            style="dashed"
+            shape="box"
+        ]
+        FY2023_FiscalYears_object_and_record [
+            style="dotted"
+            shape="box"
+        ]
+        load_new_record_into_fiscalYears [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_usage_tracking_records_for_fiscal_year [
+            style="dashed"
+            shape="box"
+        ]
+        FY2022_FiscalYears_object [
+            style="dotted"
+            shape="box"
+        ]
+        test_collect_fiscal_year_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
     }
     FY2020_FiscalYears_object -> query_database
     FY2020_FiscalYears_object -> initialize_relation_class_object_statement
     FY2020_FiscalYears_object -> database_function_skip_statements
     test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b
     test_calculate_depreciated_ACRL_60b -> client
+    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
     test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63
     test_calculate_depreciated_ACRL_63 -> client
+    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object
     test_calculate_ACRL_61a -> calculate_ACRL_61a
     test_calculate_ACRL_61a -> client
+    test_calculate_ACRL_61a -> FY2020_FiscalYears_object
     test_calculate_ACRL_61b -> calculate_ACRL_61b
     test_calculate_ACRL_61b -> client
+    test_calculate_ACRL_61b -> FY2020_FiscalYears_object
     test_calculate_ARL_18 -> calculate_ARL_18
     test_calculate_ARL_18 -> client
+    test_calculate_ARL_18 -> FY2020_FiscalYears_object
     test_calculate_ARL_19 -> calculate_ARL_19
     test_calculate_ARL_19 -> client
+    test_calculate_ARL_19 -> FY2020_FiscalYears_object
     test_calculate_ARL_20 -> calculate_ARL_20
     test_calculate_ARL_20 -> client
+    test_calculate_ARL_20 -> FY2020_FiscalYears_object
     load_new_record_into_fiscalYears -> load_data_into_database
     load_new_record_into_fiscalYears -> database_function_skip_statements
     load_new_record_into_fiscalYears -> load_data_into_database_success_regex
+    load_new_record_into_fiscalYears -> FY2023_FiscalYears_object_and_record
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_create_usage_tracking_records_for_fiscal_year -> query_database
@@ -2064,6 +2111,8 @@ digraph function_call_chains {
     test_create_usage_tracking_records_for_fiscal_year -> database_function_skip_statements
     test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
     test_create_usage_tracking_records_for_fiscal_year -> client
+    test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> load_new_record_into_fiscalYears
     FY2022_FiscalYears_object -> query_database
     FY2022_FiscalYears_object -> initialize_relation_class_object_statement
     FY2022_FiscalYears_object -> database_function_skip_statements
@@ -2075,6 +2124,7 @@ digraph function_call_chains {
     test_collect_fiscal_year_usage_statistics -> database_function_skip_statements
     test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     test_collect_fiscal_year_usage_statistics -> update_database_success_regex
+    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
 
 
     subgraph cluster_test_ResourceSources {
