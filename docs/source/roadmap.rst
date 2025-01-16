@@ -20,27 +20,47 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
+Prepare for COUNTER R5.1
+========================
 * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-* Create new test data JSONs (will occur alongside above)
-* Update ``ConvertJSONDictToDataframe`` to handle R5.1 reports
-* Recreate function call chain diagram based on most recent code on its own branch
-* Determine if following from old Parquet branch need repeating (commits have links)
+* Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
+* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
+* Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
+* Write ``tests.test_ConvertJSONDictToDataframe.test_create_dataframe_from_R5b1_JSON()``
 
-  * Temp logging for ``last_day_of_month()``: https://github.com/ereiskind/nolcat/pull/191/commits/381fc7216c613623ccb2f749d56e94ce7d4856cb
-  * Removal of above and update test status dates: https://github.com/ereiskind/nolcat/pull/191/commits/750601487bf11a2e5355bbeec3fcffe4efa28c60
-  * Pair all ``flash()`` with logging statements: https://github.com/ereiskind/nolcat/pull/191/commits/52dbb96081094d7d96533c40674c0a59baf7f98c
-  * Create constant for use in determining location of parquet files
-  * Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
-  * Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
-  * Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
+Move COUNTER Data to Parquet Files in S3
+========================================
+* Create constant for use in determining location of parquet files
+* Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
+* Create function to save COUNTER dataframe into a parquet file
+* Adjust functions below to use parquet instead of MySQL
 
-* Consolidate ``nolcat.models.StatisticsSources._check_if_data_in_database()`` and ``nolcat.app.check_if_data_already_in_COUNTERData()``
+  * ``nolcat.ingest_usage.upload_COUNTER_data()``
+  * ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
+  * ``nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()``
+  * ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
+  * ``nolcat.models.fiscalYears.collect_fiscal_year_usage_statistics()``
+  * ``tests.test_FiscalYears.FY2022_FiscalYears_object()``
+  * ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
+  * ``nolcat.models.statisticsSources.collect_usage_statistics()``
+  * ``tests.test_StatisticsSources.test_collect_usage_statistics()``
+  * ``nolcat.models.annualUsageCollectionTracking.collect_annual_usage_statistics()``
+  * ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
+
+* Modify or create alternate versions of functions below and modify calls to them to adjust for parquet
+
+  * ``nolcat.statements.add_data_success_and_update_database_fail_statement()``
+  * ``nolcat.statements.database_function_skip_statements()``
+  * ``nolcat.statements.load_data_into_database_success_regex()``
+  * ``nolcat.statements.reports_with_no_usage_regex()``
+
+* Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
+* Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
 
 Iteration 3: Minimum Viable Product
 ===================================
 * Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
 
 Iteration 4: Minimum Viable Product with Tests and Test Database
 ================================================================
@@ -49,14 +69,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 Basic Enhancement Iterations
 ****************************
 These iterations make NoLCAT more robust and easier to use through relatively small adjustments. Many of these iterations move functionality from the SQL command line to the GUI.
-
-Iteration 0: Prepare for COUNTER R5.1
-=====================================
-* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-* Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
-* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
-* Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
-* Write ``tests.test_ConvertJSONDictToDataframe.test_create_dataframe_from_R5b1_JSON()``
 
 Iteration 1: View Lists
 =======================
@@ -114,10 +126,12 @@ Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 
-Iteration 6: Create UI Design and Jinja Templates
+Iteration 6: Miscellaneous
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
+* Add FSU Libraries wordmark as link to library homepage in footer
+* Consolidate ``nolcat.models.StatisticsSources._check_if_data_in_database()`` and ``nolcat.app.check_if_data_already_in_COUNTERData()``
 
 Iteration 7: Interact with Host File System
 ============================================
