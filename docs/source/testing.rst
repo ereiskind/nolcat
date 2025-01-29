@@ -74,7 +74,13 @@ This module contains the functions:
 
 Creating the Test Data
 ======================
-All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for. Creating this test data also includes creating the JSON format for the data, both for ease in applying the changes made to the tabular data to the JSON data and because COUNTER R5 data providers have been known to provide different data in tabular and JSON COUNTER reports pulled at nearly the same time with the same date range and parameters.
+All test data provided in this repository is based on actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+* R4 data is based off tabular data in the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports"
+* R5 data is based off tabular data in the workbooks in "\\tests\\bin\\sample_COUNTER_R5_reports"
+* R5.1 data is based off JSON responses from SUSHI calls made in browser in "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests"
+
+The modifications to turn the above data sources into the various forms needed for all testing purposes are described below. COUNTER data eligible for SUSHI and manual harvest is sourced in a single format and transformed to the other format because COUNTER R5 data providers have been known to provide different data in tabular and JSON COUNTER reports pulled at nearly the same time with the same date range and parameters.
 
 In the test data, the ``statistics_source_ID`` values are as follows
 
@@ -83,41 +89,53 @@ In the test data, the ``statistics_source_ID`` values are as follows
 * Gale = 2
 * Duke UP = 3
 
+Create R4 and R5 Test Data
+--------------------------
+
 Create Tabular COUNTER Reports
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_data.py".
 
 Create `COUNTERData` Relations Fixture Data
--------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. For each workbook in "\\tests\\bin\\COUNTER_workbooks_for_tests\\", load its worksheets into OpenRefine to create projects.
-2. Use the notebook at "\\tests\\data\\create_transformed_test_data.ipynb" to create a "\\tests\\data\\transform_test_data_<report_type>.json" for each project, then apply that JSON to the project for the specified report type.
+2. Use the notebook at "\\tests\\create_test_data\\COUNTER_tabular_to_dataframe.ipynb" to create a "\\tests\\data\\transform_test_data_<report_type>.json" for each project, then apply that JSON to the project for the specified report type.
 3. Download the projects in Excel, then use the ``df`` fields from all the projects and the other field headings to create the relation named for the workbook in "\\tests\\data\\relations.py".
 4. Escape the quotation marks (") within certain resource name values (replace ``"`` with ``/"``).
 
 Create R5 SUSHI Response JSON Reports
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. For each worksheet in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" with an R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
-2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
+2. Apply "tests\\create_test_data\\prepare_dataframe_for_JSON_creation.json" to each of the projects created above.
 3. Download each of the above projects in Excel and save to "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" and adjust any pre-1900 publication dates if necessary (in creating test data, the date "1753-01-01" in OpenRefine became "-1" when exported to Excel, which in turn became Timestamp object with the value "1899-12-29" when the worksheet was uploaded).
 4. For each type of report and vendor combination with a file in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\", make a SUSHI API call in the browser, copy the result into a JSON file named with the statistics source ID, an underscore, and the report name abbreviation (the test data contains only one year of R5 reports, preventing repetitions with this naming convention) in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder.
 5. In each newly created JSON file, anonymize the data in ``Report_Header``, change the ``Created`` value in ``Report_Header`` to ``2019-07-01T00:00:00Z``, and delete the data in ``Report_Items``.
-6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\R5_COUNTER_JSONs_for_tests".
+6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_test_data\\create_R5_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\R5_COUNTER_JSONs_for_tests".
 7. Unescape the slashes (/) in each JSON file via find and replace (replace ``\/`` with ``/``).
 
-Create R5.1 SUSHI Response JSON Reports
----------------------------------------
+Create ``ConvertJSONDictToDataframe`` Test Fixtures
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\create_test_data\\prepare_dataframe_for_JSON_creation.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
+2. Apply "tests\\create_test_data\\tabular_R5_to_dataframe.jsonc" to each project, remembering there's a manual step added via comment in the file.
+3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
+
+Create R5.1 Test Data
+---------------------
 Code of Practice 5.1 was released on 2023-05-05, featuring minor changes in the way the data is captured and a change to the JSON schema. The latter change required the creation of a second set of test data JSONs matching this new schema.
 
+Create R5.1 SUSHI Response JSON Reports
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. For each file in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder, create a copy in the "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests" folder.
-2. Using the example schemas from the R5.1 Code of Practice, create the report header based on the data from the R5 JSON report header and leave a sample of the formatted data for all of the files created above.
-3. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_R5.1_SUSHI_JSON_from_tabular_R5.py"
+2. For each file in "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests", make a SUSHI API call in the browser and copy the result into a JSON file with the relevant statistics source ID and report name abbreviation in the file name.
+3. In each newly created JSON file, anonymize the data in ``Report_Header`` and change the ``Created`` value in ``Report_Header`` to ``2025-01-15T00:00:00Z``.
+4. Remove data from the JSON files so only the resources matching the contents of the R5 JSONs remain, then change the usage numbers to anonymize the data.
 
 Create ``ConvertJSONDictToDataframe`` Test Fixtures
----------------------------------------------------
-1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
-2. Apply "tests\\data\\create_dataframe_from_JSON.jsonc" to each project, remembering there's a manual step added via comment in the file.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, load the JSON into OpenRefine.
+2. Use "tests\\create_test_data\\R5.1_JSON_to_dataframe.ipynb" to create the OpenRefine instructions JSON, then apply it to the OpenRefine project.
 3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
 
 Transaction Rollbacks
