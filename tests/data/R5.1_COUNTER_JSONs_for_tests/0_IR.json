@@ -1,6 +1,6 @@
 {
     "Report_Header": {
-        "Created": "2024-11-25T16:10:29Z",
+        "Created": "2025-01-15T00:00:00Z",
         "Created_By": "ProQuest",
         "Report_ID": "IR",
         "Release": "5.1",
@@ -14,7 +14,7 @@
         },
         "Report_Filters": {
             "Begin_Date": "2024-11-01",
-            "End_Date": "2024-11-30"
+            "End_Date": "2024-12-31"
         },
         "Report_Attributes": {
             "Attributes_To_Show": [
@@ -32,52 +32,57 @@
         {
             "Items": [
                 {
-                    "Item": "Thinspo The Effects of Social Media on Disordered Eating and Body Image among Adolescent Middle",
+                    "Item": "Unbroken Brain Offers New Insights On Addiction",
                     "Item_ID": {
-                        "Proprietary": "ProQuest:2688031495"
+                        "Print_ISSN": "2577-4530",
+                        "Proprietary": "ProQuest:1806101709"
                     },
                     "Authors": [
                         {
-                            "Name": "Byrne Erin"
+                            "Name": "Alva No"
                         }
                     ],
-                    "Publication_Date": "2022-01-01",
+                    "Publication_Date": "2016-04-29",
                     "Platform": "ProQuest",
-                    "Publisher": "ProQuest",
+                    "Publisher": "National Public Radio  Inc",
                     "Attribute_Performance": [
                         {
-                            "Data_Type": "Thesis_or_Dissertation",
+                            "Data_Type": "Other",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2022",
+                            "YOP": "2016",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 3
+                                    "2024-11": 2,
+                                    "2024-12": 5
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 3
+                                    "2024-11": 2,
+                                    "2024-12": 4
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-11": 2,
+                                    "2024-12": 1
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-11": 2,
+                                    "2024-12": 1
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "Creepy and cute Phantom Exhibition explores quirkier aspects of Japanese culture",
+                    "Item": "Were making friends for life Tintamarre parade draws thousands to Madawaska",
                     "Item_ID": {
-                        "Proprietary": "ProQuest:3084590345"
+                        "Proprietary": "ProQuest:1553544741"
                     },
                     "Authors": [
                         {
-                            "Name": "Kelly Agee"
+                            "Name": "Emily Burnham"
                         }
                     ],
-                    "Publication_Date": "2024-07-25",
+                    "Publication_Date": "2014-08-16",
                     "Platform": "ProQuest",
                     "Publisher": "Tribune Content Agency LLC",
                     "Attribute_Performance": [
@@ -85,80 +90,23 @@
                             "Data_Type": "Other",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Detoure on Tour A fresh take on thrifting - The Daily Aztec",
-                    "Item_ID": {
-                        "Proprietary": "ProQuest:2922602443"
-                    },
-                    "Publication_Date": "2024-02-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "Uloop  Inc",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Other",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "at large womens lives and offending in victorian liverpool and london",
-                    "Item_ID": {
-                        "Proprietary": "ProQuest:1827867627"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Williams Lucy"
-                        }
-                    ],
-                    "Publication_Date": "2014-01-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "ProQuest",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Thesis_or_Dissertation",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
                             "YOP": "2014",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 1,
+                                    "2024-12": 3
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-11": 2,
+                                    "2024-12": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2,
+                                    "2024-12": 3
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-11": 2,
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -180,93 +128,81 @@
                             "YOP": "2022",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "A Modders Guidelines for Moddable Game Development",
+                    "Item": "--Twelfth NewsWatch--",
                     "Item_ID": {
-                        "Proprietary": "ProQuest:3064718144"
+                        "Proprietary": "ProQuest:2313178602"
                     },
-                    "Authors": [
-                        {
-                            "Name": "Crmer Loc"
-                        }
-                    ],
-                    "Publication_Date": "2024-01-01",
+                    "Publication_Date": "2019-11-08",
                     "Platform": "ProQuest",
-                    "Publisher": "ProQuest",
+                    "Publisher": "Canadian Press Enterprises Inc",
                     "Attribute_Performance": [
                         {
-                            "Data_Type": "Thesis_or_Dissertation",
+                            "Data_Type": "Other",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2024",
+                            "YOP": "2019",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 4
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "",
+                    "Item": "500-year anniversary of Martin Luthers 95 Theses",
                     "Item_ID": {
-                        "Proprietary": "ProQuest:2525630476"
+                        "Proprietary": "ProQuest:1953258624"
                     },
-                    "Authors": [
-                        {
-                            "Name": "MaldonadoResto Joan Katherine"
-                        }
-                    ],
-                    "Publication_Date": "2021-01-01",
+                    "Publication_Date": "2017-10-20",
                     "Platform": "ProQuest",
-                    "Publisher": "ProQuest",
+                    "Publisher": "Tribune Content Agency LLC",
                     "Attribute_Performance": [
                         {
-                            "Data_Type": "Thesis_or_Dissertation",
+                            "Data_Type": "Other",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2021",
+                            "YOP": "2017",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 4,
+                                    "2024-12": 6
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 1,
+                                    "2024-12": 1
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2,
+                                    "2024-12": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 1,
+                                    "2024-12": 3
                                 }
                             }
                         }
                     ]
-                }
+                },
             ]
         },
         {
@@ -278,17 +214,17 @@
             },
             "Items": [
                 {
-                    "Item": "Fiction",
+                    "Item": "A DIY COLLECTION",
                     "Item_ID": {
                         "Print_ISSN": "0363-0277",
-                        "Proprietary": "ProQuest:881483559"
+                        "Proprietary": "ProQuest:196855384"
                     },
                     "Authors": [
                         {
-                            "Name": "Anonymous"
+                            "Name": "Jenna Freedman"
                         }
                     ],
-                    "Publication_Date": "2011-08-01",
+                    "Publication_Date": "2006-06-15",
                     "Platform": "ProQuest",
                     "Publisher": "MSI Information Services",
                     "Attribute_Performance": [
@@ -296,19 +232,88 @@
                             "Data_Type": "Article",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2011",
+                            "YOP": "2006",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-12": 3
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-12": 3
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-12": 4
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-12": 4
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Item": "Arts  Humanities",
+                    "Item_ID": {
+                        "Print_ISSN": "0363-0277",
+                        "Proprietary": "ProQuest:2907253926"
+                    },
+                    "Publication_Date": "2023-12-01",
+                    "Platform": "ProQuest",
+                    "Publisher": "MSI Information Services",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Article",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "2023",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-11": 1
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-11": 1
                                 },
                                 "Unique_Item_Investigations": {
                                     "2024-11": 2
                                 },
                                 "Unique_Item_Requests": {
                                     "2024-11": 2
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Item": "Elisabeth Kubler-Ross Facing Death",
+                    "Item_ID": {
+                        "Print_ISSN": "0363-0277",
+                        "Proprietary": "ProQuest:196786463"
+                    },
+                    "Authors": [
+                        {
+                            "Name": "Laurie Selwyn"
+                        }
+                    ],
+                    "Publication_Date": "2004-03-15",
+                    "Platform": "ProQuest",
+                    "Publisher": "MSI Information Services",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Article",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "2004",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-12": 2
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -336,48 +341,16 @@
                             "YOP": "1999",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Ladies in Love",
-                    "Item_ID": {
-                        "Print_ISSN": "0363-0277",
-                        "Proprietary": "ProQuest:1937840984"
-                    },
-                    "Publication_Date": "2017-09-15",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2017",
-                            "Performance": {
-                                "Total_Item_Investigations": {
                                     "2024-11": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-11": 4
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
@@ -405,16 +378,16 @@
                             "YOP": "2014",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-11": 1
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-11": 1
                                 }
                             }
                         }
@@ -442,33 +415,33 @@
                             "YOP": "1996",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "The Birth of Venus",
+                    "Item": "The World We Used To Live In Remembering the Powers of the Medicine Men",
                     "Item_ID": {
                         "Print_ISSN": "0363-0277",
-                        "Proprietary": "ProQuest:196862191"
+                        "Proprietary": "ProQuest:196847330"
                     },
                     "Authors": [
                         {
-                            "Name": "Carol Stern"
+                            "Name": "Elizabeth Salt"
                         }
                     ],
-                    "Publication_Date": "2006-05-15",
+                    "Publication_Date": "2006-03-15",
                     "Platform": "ProQuest",
                     "Publisher": "MSI Information Services",
                     "Attribute_Performance": [
@@ -479,53 +452,16 @@
                             "YOP": "2006",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-12": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-12": 3
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-12": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Diving Bell and the Butterfly",
-                    "Item_ID": {
-                        "Print_ISSN": "0363-0277",
-                        "Proprietary": "ProQuest:196825373"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Wilda Williams"
-                        }
-                    ],
-                    "Publication_Date": "1997-05-15",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1997",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -553,16 +489,16 @@
                             "YOP": "2014",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
@@ -571,184 +507,47 @@
             ]
         },
         {
-            "Title": "School Library Journal",
-            "Data_Type": "Journal",
+            "Title": "New Scientist",
+            "Data_Type": "Newspaper_or_Newsletter",
             "Item_ID": {
-                "Print_ISSN": "0362-8930",
-                "Proprietary": "ProQuest:37051"
+                "Print_ISSN": "0262-4079",
+                "Online_ISSN": "2059-5387",
+                "Proprietary": "ProQuest:40711"
             },
             "Items": [
                 {
-                    "Item": "Reaching for the Sun Kids in Cuba",
+                    "Item": "Is young peoples mental health really worse today than it was decades ago",
                     "Item_ID": {
-                        "Print_ISSN": "0362-8930",
-                        "Proprietary": "ProQuest:211747419"
+                        "Print_ISSN": "0262-4079",
+                        "Online_ISSN": "2059-5387",
+                        "Proprietary": "ProQuest:3097527776"
                     },
                     "Authors": [
                         {
-                            "Name": "Margaret R Tassia"
+                            "Name": "Carissa Wong"
                         }
                     ],
-                    "Publication_Date": "2003-07-01",
+                    "Publication_Date": "2024-08-24",
                     "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
+                    "Publisher": "New Scientist",
                     "Attribute_Performance": [
                         {
-                            "Data_Type": "Article",
+                            "Data_Type": "News_Item",
                             "Access_Method": "Regular",
                             "Access_Type": "Controlled",
-                            "YOP": "2003",
+                            "YOP": "2024",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-12": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-12": 3
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-12": 4
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Freshman Fix",
-                    "Item_ID": {
-                        "Print_ISSN": "0362-8930",
-                        "Proprietary": "ProQuest:2278150262"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Wayne Dorio"
-                        }
-                    ],
-                    "Publication_Date": "2019-09-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2019",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Gallup Poll Public Opinion",
-                    "Item_ID": {
-                        "Print_ISSN": "0362-8930",
-                        "Proprietary": "ProQuest:211726026"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Kirsten Martindale"
-                        }
-                    ],
-                    "Publication_Date": "2000-11-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2000",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Mystery of Hieroglyphs The Story of the Rosetta Stone and the Race to Decipher Egyptian",
-                    "Item_ID": {
-                        "Print_ISSN": "0362-8930",
-                        "Proprietary": "ProQuest:211691481"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Cathryn A Camper"
-                        }
-                    ],
-                    "Publication_Date": "1999-10-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1999",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Zeus",
-                    "Item_ID": {
-                        "Print_ISSN": "0362-8930",
-                        "Proprietary": "ProQuest:2001764392"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Russell Roberts"
-                        }
-                    ],
-                    "Publication_Date": "2007-11-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "MSI Information Services",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "Article",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2007",
-                            "Performance": {
-                                "No_License": {
-                                    "2024-11": 1
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -764,89 +563,6 @@
                 "Proprietary": "ProQuest:10327"
             },
             "Items": [
-                {
-                    "Item": "41 months for Jan 6 rioter who hit officer",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2595797239"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Tom Jackman"
-                        }
-                    ],
-                    "Publication_Date": "2021-11-11",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2021",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "A monstrous act of lawlessness",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2442461086"
-                    },
-                    "Publication_Date": "2020-09-15",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2020",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Alexandria and Arlington crime report",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:901558209"
-                    },
-                    "Publication_Date": "2011-11-03",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2011",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
                 {
                     "Item": "Arrests show growing far-right boogaloo threat",
                     "Item_ID": {
@@ -869,27 +585,27 @@
                             "YOP": "2020",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "At the heart of Stonehenge  an astounding discovery raises more questions",
+                    "Item": "Whats the best way to put on a duvet cover",
                     "Item_ID": {
                         "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3092969038"
+                        "Proprietary": "ProQuest:3031447878"
                     },
                     "Authors": [
                         {
-                            "Name": "William Booth"
+                            "Name": "MariJane Williams"
                         }
                     ],
-                    "Publication_Date": "2024-08-15",
+                    "Publication_Date": "2024-04-04",
                     "Platform": "ProQuest",
                     "Publisher": "WP Company LLC dba The Washington Post",
                     "Attribute_Performance": [
@@ -900,33 +616,33 @@
                             "YOP": "2024",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-12": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-12": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-12": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 2
+                                    "2024-12": 2
                                 }
                             }
                         }
                     ]
                 },
                 {
-                    "Item": "Attack on gay model is investigated as hate crime",
+                    "Item": "meet the athletes",
                     "Item_ID": {
                         "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3123596729"
+                        "Proprietary": "ProQuest:3099206007"
                     },
                     "Authors": [
                         {
-                            "Name": "Peter Hermann"
+                            "Name": "Clarence Williams"
                         }
                     ],
-                    "Publication_Date": "2024-11-04",
+                    "Publication_Date": "2024-09-01",
                     "Platform": "ProQuest",
                     "Publisher": "WP Company LLC dba The Washington Post",
                     "Attribute_Performance": [
@@ -937,1676 +653,16 @@
                             "YOP": "2024",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-12": 3
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-12": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-12": 2
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Battleground wins in NC  Georgia put him on brink",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3124249327"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Tyler Pager"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Clint Eastwood turns in another intentionally muddy moral tale",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3122821212"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Ty Burr"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "DC Homicide Unit Senses Turnaround New Head of Much-Criticized Operation Cites Improving Morale",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:408362961"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Maria Elena Fernandez"
-                        }
-                    ],
-                    "Publication_Date": "1998-05-20",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1998",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "District Police Lead Nation in Shootings Lack of Training  Supervision Implicated as Key Factors",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:408408781"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Jeff Leen"
-                        }
-                    ],
-                    "Publication_Date": "1998-11-15",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1998",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Four people left dead  several injured over violent 24-hour period in city",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2580382646"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Fredrick Kunkle"
-                        }
-                    ],
-                    "Publication_Date": "2021-10-10",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2021",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Hank Willis Thomas The artist as public intellectual  agitator  optimist",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3093956879"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Robin Givhan"
-                        }
-                    ],
-                    "Publication_Date": "2024-08-18",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Harris returns to alma mater Howard  where excitement mixes with worry",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3124281572"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Maeve Reston"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Johnson  who shares secret with Trump  fights to keep House majority",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3123596726"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Marianna Sotomayor"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-04",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Jury Convicts Man of Murder In Shooting of Veteran Officer",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:409996011"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Ruben Castaneda"
-                        }
-                    ],
-                    "Publication_Date": "2006-04-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Md Man Convicted In Murder Of Officer",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:409995951"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Ruben Castaneda"
-                        }
-                    ],
-                    "Publication_Date": "2006-04-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Musk  Ramaswamy to attempt drastic change",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3127172417"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Jeff Stein"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-13",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Neo-Nazi rally in Sweden leads to injuries  arrests",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:1944756797"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Heba Habib"
-                        }
-                    ],
-                    "Publication_Date": "2017-10-01",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2017",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "President Trump The real hate is the hate from the other side",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2421655392"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Marc A Thiessen"
-                        }
-                    ],
-                    "Publication_Date": "2020-07-10",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2020",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "RFK Jrs views on fluoride arent crazy Really",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3127172470"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Leana S Wen"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-13",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Six decades later  fighting a racist legacy of pollution",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2812263455"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Darryl Fears"
-                        }
-                    ],
-                    "Publication_Date": "2023-05-12",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2023",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 6
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 5
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "TGI Fridays decades-long party may soon be over",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3123596667"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Emily Heil"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-04",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Cures new album is bands best in decades",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3123165879"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Chris Kelly"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-02",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The Director  On a Mission We Were Soldiers Is Personal Randall Wallace Fought to Keep It So",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:409260100"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Stephen Hunter"
-                        }
-                    ],
-                    "Publication_Date": "2002-03-03",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2002",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "The road to no rules ends here",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:1542266427"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Ben Terris"
-                        }
-                    ],
-                    "Publication_Date": "2014-07-03",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2014",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Theres a prowler on my security cam Whats the best way to protect myself",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2691606636"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Courtland Milloy"
-                        }
-                    ],
-                    "Publication_Date": "2022-07-20",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2022",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Uncle denies making racist comments about my partner",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3124275905"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Judith Martin"
-                        }
-                    ],
-                    "Publication_Date": "2024-11-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2024",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "WEEK IN REVIEW April 2-8",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:410015456"
-                    },
-                    "Publication_Date": "2006-04-09",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Whats Worth A Protest In Pr Georges",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:408602045"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Marc Fisher"
-                        }
-                    ],
-                    "Publication_Date": "2000-04-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2000",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "Title": "The Washington Post  1974",
-            "Data_Type": "Newspaper_or_Newsletter",
-            "Item_ID": {
-                "Print_ISSN": "0190-8286",
-                "Proprietary": "ProQuest:47130"
-            },
-            "Items": [
-                {
-                    "Item": "Americas Watch Attributes Half of Jamaican Killings to Police",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:138827849"
-                    },
-                    "Publication_Date": "1986-09-23",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1986",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "CRIME REPORT",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3064281469"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RIA MANGLAPUS"
-                        }
-                    ],
-                    "Publication_Date": "2008-07-03",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2008",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "CRIME REPORT",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3058929487"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RIA MANGLAPUS"
-                        }
-                    ],
-                    "Publication_Date": "2008-09-04",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2008",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "CRIME REPORT",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:3051660964"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RIA MANGLAPUS"
-                        }
-                    ],
-                    "Publication_Date": "2008-12-11",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2008",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Concentrated Violence Strains Police in DC",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140148661"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Gabriel Escobar Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "1990-08-23",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1990",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Credit Law Seen Aiding US Women",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:146684286"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "By Bradley GrahamWashington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "1977-07-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1977",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 4
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "District Police Lead Nation in Shootings",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:1620446998"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "JEFF LEEN"
-                        }
-                    ],
-                    "Publication_Date": "1998-11-15",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1998",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Goodfellas",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2463436204"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "ROBERT SHERRILL"
-                        }
-                    ],
-                    "Publication_Date": "2004-01-18",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2004",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "JFK Secretly Taped White House Talks",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:147536479"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "By Bob Woodward and Patrick E Tyler Washington Post Staff Writers"
-                        }
-                    ],
-                    "Publication_Date": "1982-02-04",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1982",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Jury Convicts Man of Murder In Shooting of Veteran Officer",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2688831272"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RUBEN CASTANEDA Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "2006-04-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Larry Clark You Should See These Kids",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2688672790"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "ELLEN McCARTHY Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "2006-07-07",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Md Man Convicted In Murder Of Officer",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2688830359"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RUBEN CASTANEDA Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "2006-04-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Mother Killed by Stray Bullet Was Swept Up in DC Feud",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140717839"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Linda Wheeler"
-                        }
-                    ],
-                    "Publication_Date": "1992-06-09",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1992",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "New Orleans Paper Plays Central Role in Contest",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140595259"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Howard Kurtz Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "1991-11-16",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1991",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "No Run of DeMille Thriller",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:757194450"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "David Morrell"
-                        }
-                    ],
-                    "Publication_Date": "1994-12-13",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1994",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Other 40 -- No Title",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140604664"
-                    },
-                    "Publication_Date": "1992-03-05",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1992",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Other 41 -- No Title",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140676261"
-                    },
-                    "Publication_Date": "1992-06-11",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1992",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Other 51 -- No Title",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:140598570"
-                    },
-                    "Publication_Date": "1992-05-21",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1992",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Other 72 -- No Title",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:139935071"
-                    },
-                    "Publication_Date": "1989-11-23",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1989",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 3
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 3
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Tom Paxton Washingtons Okie Folky",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2075249937"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "RICHARD HARRINGTON Washington Post Staff Writer"
-                        }
-                    ],
-                    "Publication_Date": "2002-09-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2002",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "WEEK IN REVIEW",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:2690415928"
-                    },
-                    "Publication_Date": "2006-04-09",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2006",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Whats Worth A Protest In Pr Georges",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:1831866402"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "MARC FISHER"
-                        }
-                    ],
-                    "Publication_Date": "2000-04-06",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2000",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "Title": "The Washington Post Online",
-            "Data_Type": "Newspaper_or_Newsletter",
-            "Item_ID": {
-                "Print_ISSN": "2641-9599",
-                "Proprietary": "ProQuest:2042186"
-            },
-            "Items": [
-                {
-                    "Item": "Alexandria and Arlington crime report",
-                    "Item_ID": {
-                        "Print_ISSN": "2641-9599",
-                        "Proprietary": "ProQuest:1418777683"
-                    },
-                    "Publication_Date": "2013-08-08",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "2013",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "Title": "The Washington Post pre1997 Fulltext",
-            "Data_Type": "Newspaper_or_Newsletter",
-            "Item_ID": {
-                "Print_ISSN": "0190-8286",
-                "Proprietary": "ProQuest:47014"
-            },
-            "Items": [
-                {
-                    "Item": "Book World No Run of DeMille Thriller",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:307818243"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "David Morrell"
-                        }
-                    ],
-                    "Publication_Date": "1994-12-13",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1994",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Gee  Honey - Meat Loaf  Again",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:307756878"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Mike Joyce"
-                        }
-                    ],
-                    "Publication_Date": "1994-02-18",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1994",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "New Orleans Paper Plays Central Role in Contest",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:307476748"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Howard Kurtz"
-                        }
-                    ],
-                    "Publication_Date": "1991-11-16",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1991",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 2
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 2
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "Item": "Tokyos Disneyland Draw 70 Million Japanese Meet Mickey Mouse",
-                    "Item_ID": {
-                        "Print_ISSN": "0190-8286",
-                        "Proprietary": "ProQuest:307160822"
-                    },
-                    "Authors": [
-                        {
-                            "Name": "Margaret Shapiro"
-                        }
-                    ],
-                    "Publication_Date": "1989-08-23",
-                    "Platform": "ProQuest",
-                    "Publisher": "WP Company LLC dba The Washington Post",
-                    "Attribute_Performance": [
-                        {
-                            "Data_Type": "News_Item",
-                            "Access_Method": "Regular",
-                            "Access_Type": "Controlled",
-                            "YOP": "1989",
-                            "Performance": {
-                                "Total_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Total_Item_Requests": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Investigations": {
-                                    "2024-11": 1
-                                },
-                                "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -2644,16 +700,53 @@
                             "YOP": "2000",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 2
+                                    "2024-11": 1
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Item": "Living on the Borderland The Poetic Prose of Gloria Anzaldua and Susan Griffin",
+                    "Item_ID": {
+                        "Print_ISSN": "8755-4550",
+                        "Proprietary": "ProQuest:198810340"
+                    },
+                    "Authors": [
+                        {
+                            "Name": "Freedman Diane P"
+                        }
+                    ],
+                    "Publication_Date": "1989-03-31",
+                    "Platform": "ProQuest",
+                    "Publisher": "Organization for the Study of Communication Language and Gender",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Article",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "1989",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-12": 2
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-12": 2
                                 }
                             }
                         }
@@ -2681,22 +774,119 @@
                             "YOP": "1999",
                             "Performance": {
                                 "Total_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 },
                                 "Total_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Investigations": {
-                                    "2024-11": 1
+                                    "2024-11": 3
                                 },
                                 "Unique_Item_Requests": {
-                                    "2024-11": 1
+                                    "2024-11": 2
                                 }
                             }
                         }
                     ]
                 }
             ]
-        }
+        },
+        {
+            "Title": "Black Camera",
+            "Data_Type": "Journal",
+            "Item_ID": {
+                "Print_ISSN": "1536-3155",
+                "Online_ISSN": "1947-4237",
+                "Proprietary": "ProQuest:2048660"
+            },
+            "Items": [
+                {
+                    "Item": "Close-Up Sports  Race  and the Power of Narrative Introduction",
+                    "Item_ID": {
+                        "Print_ISSN": "1536-3155",
+                        "Online_ISSN": "1947-4237",
+                        "Proprietary": "ProQuest:2444992029",
+                        "DOI": "10.2979/blackcamera.10.1.09"
+                    },
+                    "Authors": [
+                        {
+                            "Name": "Samantha N Sheppard"
+                        }
+                    ],
+                    "Publication_Date": "2018-10-01",
+                    "Platform": "ProQuest",
+                    "Publisher": "Indiana University Press",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Article",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "2018",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-11": 2,
+                                    "2024-12": 3
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-11": 3,
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-11": 2,
+                                    "2024-12": 2
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-11": 3,
+                                    "2024-12": 3
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Title": "Central European Conference on Information and Intelligent Systems",
+            "Data_Type": "Conference",
+            "Item_ID": {
+                "Print_ISSN": "1847-2001",
+                "Online_ISSN": "1848-2295",
+                "Proprietary": "ProQuest:1986354"
+            },
+            "Items": [
+                {
+                    "Item": "Enhancing Self-regulation Strategies through Peer Feedback in Online Higher Education",
+                    "Item_ID": {
+                        "Print_ISSN": "1847-2001",
+                        "Online_ISSN": "1848-2295",
+                        "Proprietary": "ProQuest:2720979338"
+                    },
+                    "Authors": [
+                        {
+                            "Name": "Lourdes Gurdia"
+                        }
+                    ],
+                    "Publication_Date": "2022-01-01",
+                    "Platform": "ProQuest",
+                    "Publisher": "Faculty of Organization and Informatics Varazdin",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Conference_Item",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Open",
+                            "YOP": "2022",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-11": 2
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-11": 2
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
     ]
 }

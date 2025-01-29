@@ -1,6 +1,6 @@
 {
     "Report_Header": {
-        "Created": "2024-11-25T15:18:54Z",
+        "Created": "2025-01-15T00:00:00Z",
         "Created_By": "ProQuest",
         "Report_ID": "PR",
         "Release": "5.1",
@@ -14,7 +14,7 @@
         },
         "Report_Filters": {
             "Begin_Date": "2024-11-01",
-            "End_Date": "2024-11-30"
+            "End_Date": "2024-12-31"
         },
         "Report_Attributes": {
             "Attributes_To_Show": [
@@ -31,16 +31,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 111
+                            "2024-11": 136,
+                            "2024-12": 152
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 68
+                            "2024-11": 87,
+                            "2024-12": 78
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 67
+                            "2024-11": 89,
+                            "2024-12": 80
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 62
+                            "2024-11": 74,
+                            "2024-12": 56
                         }
                     }
                 },
@@ -49,7 +53,8 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Searches_Platform": {
-                            "2024-11": 19
+                            "2024-11": 70,
+                            "2024-12": 52
                         }
                     }
                 },
@@ -58,16 +63,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 23
+                            "2024-11": 33,
+                            "2024-12": 32
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 9
+                            "2024-11": 12,
+                            "2024-12": 19
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 15
+                            "2024-11": 28,
+                            "2024-12": 15
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 11
+                            "2024-11": 16,
+                            "2024-12": 18
                         }
                     }
                 }
@@ -81,22 +90,28 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 478
+                            "2024-11": 536,
+                            "2024-12": 123
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 199
+                            "2024-11": 232,
+                            "2024-12": 38
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 287
+                            "2024-11": 312,
+                            "2024-12": 69
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 101
+                            "2024-11": 98,
+                            "2024-12": 21
                         },
                         "Unique_Title_Investigations": {
-                            "2024-11": 203
+                            "2024-11": 241,
+                            "2024-12": 59
                         },
                         "Unique_Title_Requests": {
-                            "2024-11": 97
+                            "2024-11": 101,
+                            "2024-12": 12
                         }
                     }
                 },
@@ -105,16 +120,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 93
+                            "2024-11": 103,
+                            "2024-12": 51
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 52
+                            "2024-11": 76,
+                            "2024-12": 28
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 78
+                            "2024-11": 87,
+                            "2024-12": 42
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 54
+                            "2024-11": 41,
+                            "2024-12": 14
                         }
                     }
                 },
@@ -123,16 +142,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 17756
+                            "2024-11": 20259,
+                            "2024-12": 8045
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 8159
+                            "2024-11": 9449,
+                            "2024-12": 4669
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 11221
+                            "2024-11": 13312,
+                            "2024-12": 5123
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 5861
+                            "2024-11": 6788,
+                            "2024-12": 3415
                         }
                     }
                 },
@@ -141,16 +164,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 2
+                            "2024-11": 2,
+                            "2024-12": 4
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 4
+                            "2024-11": 4,
+                            "2024-12": 6
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 3
+                            "2024-11": 3,
+                            "2024-12": 1
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 1
+                            "2024-11": 5,
+                            "2024-12": 3
                         }
                     }
                 },
@@ -159,16 +186,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 3039
+                            "2024-11": 3355,
+                            "2024-12": 2388
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 1887
+                            "2024-11": 2169,
+                            "2024-12": 2329
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 2723
+                            "2024-11": 2966,
+                            "2024-12": 2074
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 1621
+                            "2024-11": 1859,
+                            "2024-12": 2045
                         }
                     }
                 },
@@ -177,16 +208,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 3739
+                            "2024-11": 3946,
+                            "2024-12": 789
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 1499
+                            "2024-11": 1658,
+                            "2024-12": 745
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 3465
+                            "2024-11": 3626,
+                            "2024-12": 648
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 1246
+                            "2024-11": 1435,
+                            "2024-12": 633
                         }
                     }
                 },
@@ -195,7 +230,8 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Searches_Platform": {
-                            "2024-11": 7268
+                            "2024-11": 8121,
+                            "2024-12": 3554
                         }
                     }
                 },
@@ -204,13 +240,25 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 79
+                            "2024-11": 82,
+                            "2024-12": 17
+                        },
+                        "Total_Item_Requests": {
+                            "2024-12": 12
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 79
+                            "2024-11": 72,
+                            "2024-12": 11
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-12": 6
                         },
                         "Unique_Title_Investigations": {
-                            "2024-11": 32
+                            "2024-11": 22,
+                            "2024-12": 4
+                        },
+                        "Unique_Title_Requests": {
+                            "2024-12": 3
                         }
                     }
                 },
@@ -219,16 +267,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 569
+                            "2024-11": 575,
+                            "2024-12": 163
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 39
+                            "2024-11": 55,
+                            "2024-12": 59
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 489
+                            "2024-11": 512,
+                            "2024-12": 87
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 45
+                            "2024-11": 45,
+                            "2024-12": 56
                         }
                     }
                 },
@@ -237,16 +289,20 @@
                     "Access_Method": "Regular",
                     "Performance": {
                         "Total_Item_Investigations": {
-                            "2024-11": 7829
+                            "2024-11": 8626,
+                            "2024-12": 3033
                         },
                         "Total_Item_Requests": {
-                            "2024-11": 3962
+                            "2024-11": 4628,
+                            "2024-12": 2625
                         },
                         "Unique_Item_Investigations": {
-                            "2024-11": 6549
+                            "2024-11": 7165,
+                            "2024-12": 2533
                         },
                         "Unique_Item_Requests": {
-                            "2024-11": 3411
+                            "2024-11": 3975,
+                            "2024-12": 2336
                         }
                     }
                 }

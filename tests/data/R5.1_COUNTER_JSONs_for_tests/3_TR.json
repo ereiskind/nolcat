@@ -1,372 +1,1297 @@
 {
     "Report_Header": {
-        "Release": "5.1",
-        "Report_ID": "TR",
-        "Report_Name": "Title Report",
-        "Created": "2019-07-01T00:00:00Z",
-        "Created_By": "Silverchair",
+        "Registry_Record": "https://registry.projectcounter.org/platform/dd585e77-6351-4548-b679-f2d337d15cdb",
         "Institution_ID": {
             "Proprietary": [
                 "Silverchair:000"
             ]
         },
-        "Institution_Name": "FLORIDA STATE UNIV",
-        "Registry_Record": "https://registry.projectcounter.org/platform/99999999-9999-9999-9999-999999999999",
+        "Report_Filters": {
+            "Begin_Date": "2024-09-01",
+            "End_Date": "2024-10-31"
+        },
         "Report_Attributes": {
             "Attributes_To_Show": [
-                "YOP",
-                "Access_Type",
                 "Access_Method",
-                "Data_Type"
+                "YOP",
+                "Access_Type"
             ]
         },
-        "Report_Filters": {
-            "Begin_Date": "2019-07-01",
-            "End_Date": "2020-06-30"
+        "Created": "2025-01-15T00:00:00Z",
+        "Created_By": "Silverchair",
+        "Report_ID": "TR",
+        "Release": "5.1",
+        "Report_Name": "Title Report",
+        "Institution_Name": "FLORIDA STATE UNIV"
+    },
+    "Report_Items": [
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000004",
+                "Online_ISSN": "1527-2117",
+                "Print_ISSN": "0002-9831"
+            },
+            "Platform": "Duke University Press",
+            "Title": "American Literature",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2024-09": 1,
+                            "2024-10": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2,
+                            "2024-10": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 3,
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "2016",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 3,
+                            "2024-10": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 3,
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 4,
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "2017",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 3,
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 4,
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Free_To_Read"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "2020",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "2024",
+                    "Access_Type": "Free_To_Read"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 6
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 1
+                        }
+                    },
+                    "YOP": "2010",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 8
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 6
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        }
+                    },
+                    "YOP": "2021",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "2015",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "2024",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000015",
+                "Online_ISSN": "2201-1919",
+                "Print_ISSN": "2201-1919"
+            },
+            "Platform": "Duke University Press",
+            "Title": "Environmental Humanities",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "2020",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 2,
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 6,
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 3,
+                            "2024-10": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 12
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 14
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 7
+                        }
+                    },
+                    "YOP": "2022",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 1
+                        }
+                    },
+                    "YOP": "2016",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 5
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "2015",
+                    "Access_Type": "Open"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000020",
+                "Online_ISSN": "1527-1900",
+                "Print_ISSN": "0018-2168"
+            },
+            "Platform": "Duke University Press",
+            "Title": "Hispanic American Historical Review",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 5
+                        }
+                    },
+                    "YOP": "2000",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 4
+                        }
+                    },
+                    "YOP": "1998",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 1,
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 1,
+                            "2024-10": 8
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 1,
+                            "2024-10": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 3,
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2024",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "1969",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2,
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 5,
+                            "2024-10": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 3,
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2,
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "1983",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 3
+                        }
+                    },
+                    "YOP": "2020",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 5
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "1950",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        }
+                    },
+                    "YOP": "2001",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1959",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 6
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "1994",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1988",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        }
+                    },
+                    "YOP": "1989",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 6
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1981",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1999",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 1
+                        }
+                    },
+                    "YOP": "1980",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1991",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1967",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "2008",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1987",
+                    "Access_Type": "Open"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1940",
+                    "Access_Type": "Open"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000052",
+                "Online_ISSN": "1527-1919",
+                "Print_ISSN": "0018-2702"
+            },
+            "Platform": "Duke University Press",
+            "Title": "History of Political Economy",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-09": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-09": 1
+                        }
+                    },
+                    "YOP": "2012",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "2017",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 6
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 8
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 6
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "1972",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000027",
+                "Online_ISSN": "1527-1943",
+                "Print_ISSN": "0026-7929"
+            },
+            "Platform": "Duke University Press",
+            "Title": "Modern Language Quarterly",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        }
+                    },
+                    "YOP": "2024",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 1
+                        }
+                    },
+                    "YOP": "1980",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2018",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 5
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2020",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1990",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1985",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1957",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:2252",
+                "DOI": "10.1215/9780822391272",
+                "ISBN": "978-0-8223-4555-8"
+            },
+            "Platform": "Duke University Press",
+            "Title": "The Gloria Anzaldúa Reader",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 3
+                        },
+                        "Unique_Title_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Unique_Title_Investigations": {
+                            "2024-10": 5
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 5
+                        }
+                    },
+                    "YOP": "2009",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1000042",
+                "Online_ISSN": "1527-196X",
+                "Print_ISSN": "0161-0775"
+            },
+            "Platform": "Duke University Press",
+            "Title": "Theater",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-09": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-09": 5
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-09": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-09": 3
+                        }
+                    },
+                    "YOP": "1968",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 1
+                        }
+                    },
+                    "YOP": "2017",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "2024",
+                    "Access_Type": "Free_To_Read"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 24
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 17
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 17
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 12
+                        }
+                    },
+                    "YOP": "2012",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 4
+                        }
+                    },
+                    "YOP": "2012",
+                    "Access_Type": "Free_To_Read"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 1
+                        }
+                    },
+                    "YOP": "2022",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1997",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 3
+                        }
+                    },
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2024-10": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2024-10": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2024-10": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1999",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Item_ID": {
+                "Proprietary": "Silverchair:1923",
+                "DOI": "10.1215/9780822399889",
+                "ISBN": "978-0-8223-1536-0"
+            },
+            "Platform": "Duke University Press",
+            "Title": "Within the CircleAn Anthology of African American Literary Criticism from the Harlem Renaissance to the Present",
+            "Publisher": "Duke University Press",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Method": "Regular",
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2024-10": 2
+                        },
+                        "No_License": {
+                            "2024-10": 2
+                        },
+                        "Unique_Title_Investigations": {
+                            "2024-10": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2024-10": 2
+                        }
+                    },
+                    "YOP": "1994",
+                    "Access_Type": "Controlled"
+                }
+            ]
         }
-    },
-    "Report_Items": []
+    ]
 }
-
-    
-
-"Report_Items": [
-    {
-        "Title": "Title 1",
-        "Publisher": "Sample Publisher",
-        "Publisher_ID": {
-            "ISNI": [
-                "4321432143214321"
-            ]
-        },
-        "Platform": "Platform 1",
-        "Item_ID": {
-            "DOI": "10.9999/xxxxt01",
-            "Proprietary": "P1:T01",
-            "ISBN": "979-8-88888-888-8",
-            "URI": "https://doi.org/10.9999/xxxxt01"
-        },
-        "Attribute_Performance": [
-            {
-                "Data_Type": "Book",
-                "YOP": "2022",
-                "Access_Type": "Controlled",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Limit_Exceeded": {
-                        "2022-01": 49,
-                        "2022-02": 90,
-                        "2022-03": 40
-                    },
-                    "No_License": {
-                        "2022-01": 50,
-                        "2022-02": 84,
-                        "2022-03": 47
-                    },
-                    "Total_Item_Investigations": {
-                        "2022-01": 1104,
-                        "2022-02": 1246,
-                        "2022-03": 1329
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 662,
-                        "2022-02": 748,
-                        "2022-03": 797
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 828,
-                        "2022-02": 935,
-                        "2022-03": 997
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 497,
-                        "2022-02": 561,
-                        "2022-03": 598
-                    },
-                    "Unique_Title_Investigations": {
-                        "2022-01": 552,
-                        "2022-02": 623,
-                        "2022-03": 665
-                    },
-                    "Unique_Title_Requests": {
-                        "2022-01": 414,
-                        "2022-02": 467,
-                        "2022-03": 499
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "Title": "Title 2",
-        "Publisher": "Sample Publisher",
-        "Publisher_ID": {
-            "ISNI": [
-                "4321432143214321"
-            ]
-        },
-        "Platform": "Platform 1",
-        "Item_ID": {
-            "DOI": "10.9999/xxxxt02",
-            "Proprietary": "P1:T02",
-            "Online_ISSN": "1234-1234",
-            "URI": "https://doi.org/10.9999/xxxxt02"
-        },
-        "Attribute_Performance": [
-            {
-                "Data_Type": "Conference",
-                "YOP": "2021",
-                "Access_Type": "Controlled",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Limit_Exceeded": {
-                        "2022-01": 43,
-                        "2022-02": 87,
-                        "2022-03": 35
-                    },
-                    "No_License": {
-                        "2022-01": 66,
-                        "2022-02": 73,
-                        "2022-03": 41
-                    },
-                    "Total_Item_Investigations": {
-                        "2022-01": 1253,
-                        "2022-02": 1070,
-                        "2022-03": 1319
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 752,
-                        "2022-02": 642,
-                        "2022-03": 791
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 940,
-                        "2022-02": 803,
-                        "2022-03": 989
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 564,
-                        "2022-02": 482,
-                        "2022-03": 593
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "Title": "Title 3",
-        "Publisher": "Sample Publisher",
-        "Publisher_ID": {
-            "ISNI": [
-                "4321432143214321"
-            ]
-        },
-        "Platform": "Platform 1",
-        "Item_ID": {
-            "DOI": "10.9999/xxxxt03",
-            "Proprietary": "P1:T03",
-            "Online_ISSN": "1234-4321",
-            "URI": "https://doi.org/10.9999/xxxxt03"
-        },
-        "Attribute_Performance": [
-            {
-                "Data_Type": "Journal",
-                "YOP": "2022",
-                "Access_Type": "Controlled",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Limit_Exceeded": {
-                        "2022-01": 87,
-                        "2022-02": 88,
-                        "2022-03": 45
-                    },
-                    "No_License": {
-                        "2022-01": 48,
-                        "2022-02": 80,
-                        "2022-03": 37
-                    },
-                    "Total_Item_Investigations": {
-                        "2022-01": 250,
-                        "2022-02": 412,
-                        "2022-03": 406
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 150,
-                        "2022-02": 247,
-                        "2022-03": 243
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 188,
-                        "2022-02": 309,
-                        "2022-03": 304
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 113,
-                        "2022-02": 186,
-                        "2022-03": 183
-                    }
-                }
-            },
-            {
-                "Data_Type": "Journal",
-                "YOP": "2022",
-                "Access_Type": "Open",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Total_Item_Investigations": {
-                        "2022-01": 752,
-                        "2022-02": 1238,
-                        "2022-03": 1217
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 451,
-                        "2022-02": 743,
-                        "2022-03": 731
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 564,
-                        "2022-02": 929,
-                        "2022-03": 913
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 338,
-                        "2022-02": 557,
-                        "2022-03": 548
-                    }
-                }
-            },
-            {
-                "Data_Type": "Journal",
-                "YOP": "2021",
-                "Access_Type": "Controlled",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Limit_Exceeded": {
-                        "2022-01": 87,
-                        "2022-02": 88,
-                        "2022-03": 45
-                    },
-                    "No_License": {
-                        "2022-01": 48,
-                        "2022-02": 80,
-                        "2022-03": 37
-                    },
-                    "Total_Item_Investigations": {
-                        "2022-01": 250,
-                        "2022-02": 412,
-                        "2022-03": 406
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 150,
-                        "2022-02": 247,
-                        "2022-03": 243
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 188,
-                        "2022-02": 309,
-                        "2022-03": 304
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 113,
-                        "2022-02": 186,
-                        "2022-03": 183
-                    }
-                }
-            },
-            {
-                "Data_Type": "Journal",
-                "YOP": "2021",
-                "Access_Type": "Open",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Total_Item_Investigations": {
-                        "2022-01": 752,
-                        "2022-02": 1238,
-                        "2022-03": 1217
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 451,
-                        "2022-02": 743,
-                        "2022-03": 731
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 564,
-                        "2022-02": 929,
-                        "2022-03": 913
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 338,
-                        "2022-02": 557,
-                        "2022-03": 548
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "Title": "Title 7",
-        "Publisher": "Sample Publisher",
-        "Publisher_ID": {
-            "ISNI": [
-                "4321432143214321"
-            ]
-        },
-        "Platform": "Platform 1",
-        "Item_ID": {
-            "DOI": "10.9999/xxxxt07",
-            "Proprietary": "P1:T07",
-            "ISBN": "979-8-88888-888-9",
-            "URI": "https://doi.org/10.9999/xxxxt07"
-        },
-        "Attribute_Performance": [
-            {
-                "Data_Type": "Reference_Work",
-                "YOP": "2019",
-                "Access_Type": "Controlled",
-                "Access_Method": "Regular",
-                "Performance": {
-                    "Limit_Exceeded": {
-                        "2022-01": 84,
-                        "2022-02": 84,
-                        "2022-03": 49
-                    },
-                    "No_License": {
-                        "2022-01": 70,
-                        "2022-02": 74,
-                        "2022-03": 54
-                    },
-                    "Total_Item_Investigations": {
-                        "2022-01": 1645,
-                        "2022-02": 1022,
-                        "2022-03": 1106
-                    },
-                    "Total_Item_Requests": {
-                        "2022-01": 987,
-                        "2022-02": 613,
-                        "2022-03": 664
-                    },
-                    "Unique_Item_Investigations": {
-                        "2022-01": 1234,
-                        "2022-02": 767,
-                        "2022-03": 830
-                    },
-                    "Unique_Item_Requests": {
-                        "2022-01": 740,
-                        "2022-02": 460,
-                        "2022-03": 498
-                    },
-                    "Unique_Title_Investigations": {
-                        "2022-01": 301,
-                        "2022-02": 283,
-                        "2022-03": 217
-                    },
-                    "Unique_Title_Requests": {
-                        "2022-01": 226,
-                        "2022-02": 212,
-                        "2022-03": 163
-                    }
-                }
-            }
-        ]
-    }
-]
