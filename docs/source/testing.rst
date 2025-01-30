@@ -136,7 +136,7 @@ Create ``ConvertJSONDictToDataframe`` Test Fixtures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, load the JSON into OpenRefine.
 2. Use "tests\\create_test_data\\R5.1_JSON_to_dataframe.ipynb" to create the OpenRefine instructions JSON, then apply it to the OpenRefine project.
-3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
+3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py"; remember to remove the statistics source ID and report type fields from the beginning and add the report creation date at the end.
 
 Transaction Rollbacks
 =====================
