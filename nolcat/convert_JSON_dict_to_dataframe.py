@@ -822,8 +822,7 @@ class ConvertJSONDictToDataframe:
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", report_items_dict[field]))
 
                 #Subsection: Capture `YOP` Value
-                elif key == "YOP":
-                    log.warning("`YOP` in initial loop")  #TEST: temp
+                elif key == "YOP":  # Based on sample data, `YOP` shouldn't be captured here; capture left in to handle possible edge cases
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     try:
                         report_items_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
