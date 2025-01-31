@@ -833,7 +833,9 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
-                    pass
+                    report_items_dict['access_type'] = value
+                    include_in_df_dtypes['access_type'] = 'string'
+                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", report_items_dict['access_type']))
 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
