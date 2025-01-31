@@ -837,11 +837,6 @@ class ConvertJSONDictToDataframe:
                     include_in_df_dtypes['access_type'] = 'string'
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", report_items_dict['access_type']))
 
-                #Subsection: Capture `access_method` Value
-                elif key == "Access_Method":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.access_method`"))
-                    pass
-
                 else:
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
                     report_items_dict[key] = value
