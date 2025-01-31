@@ -144,6 +144,7 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     )
 
 
+@pytest.mark.dependency()
 def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_StatisticsSource_fixture):
     """Tests creating list of available reports from a `/reports` SUSHI call.
     
@@ -157,6 +158,7 @@ def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_Statist
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if a given date and statistics source combination has any usage in the database when there aren't any matches.
     
@@ -171,6 +173,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
@@ -191,7 +194,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
-@pytest.mark.dependency()
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source']))
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
