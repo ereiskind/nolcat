@@ -150,8 +150,9 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
+        log.warning("starting iteration")  #TEST: temp
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.debug(f"Starting iteration for new JSON record {record}.")
+            log.warning(f"Starting iteration for new JSON record {record}.")  #TEST: temp level, should be `debug`
             record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
@@ -1095,7 +1096,9 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
             elif report_type == "PR" or report_type == "DR" or report_type == "TR":
+                log.warning(f"`report_items_dict` before loop: {report_items_dict}")  #TEST: temp
                 for ap_item in report_items_dict['Attribute_Performance']:
+                    log.warning(f"`report_items_dict` in loop: {report_items_dict}")  #TEST: temp
                     attribute_performance_dict = {k: v for (k, v) in report_items_dict.items() if k != "Attribute_Performance"}
                     log.warning(f"`attribute_performance_dict`: {attribute_performance_dict}")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
