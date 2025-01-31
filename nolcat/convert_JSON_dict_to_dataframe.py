@@ -903,13 +903,11 @@ class ConvertJSONDictToDataframe:
                         elif i_key == "Authors":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
                             for type_and_value in i_value:
-                                log.warning(f"Working with {type_and_value} (type {type(type_and_value)})")  #TEST: temp
                                 if type_and_value['Name'] is None or empty_string_regex().fullmatch(type_and_value['Name']):  # This value handled first because `len()` of null value raises an error
                                     items_dict['authors'] = None
                                 else:
                                     items_dict['authors'] = ""  # This initializes the key for below but will always be overwritten
                                     for name in type_and_value.values():
-                                        log.warning(f"Working with individual author name {name}")  #TEST: temp
                                         if items_dict['authors'] == "":
                                             if len(name) > self.AUTHORS_LENGTH:
                                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
@@ -924,7 +922,7 @@ class ConvertJSONDictToDataframe:
                                             items_dict['authors'] = items_dict['authors'] + ", " + name.strip()
                                         else:
                                             items_dict['authors'] = items_dict['authors'] + " et al."
-                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
 
                         #Subsection: Capture `publication_date` Value
                         elif i_key == "Publication_Date":
