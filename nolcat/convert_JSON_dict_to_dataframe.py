@@ -73,6 +73,7 @@ class ConvertJSONDictToDataframe:
             str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
+        log.warning(f"`type(self)`: {type(self)}")  #TEST: temp
         try:
             report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
@@ -903,8 +904,10 @@ class ConvertJSONDictToDataframe:
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(i_value, i_key, "`COUNTERData.authors`"))
                             number_of_authors = len(i_value)
                             for type_and_value in i_value:
+                                log.warning(f"Working with {type_and_value} (type {type(type_and_value)})")  #TEST: temp
                                 if number_of_authors > 1:  # Multiple authors
                                     for name in type_and_value.values():
+                                        log.warning(f"Working with individual author name {name}")  #TEST: temp
                                         if items_dict['authors'].endswith(" et al."):
                                             break  # The loop of adding author names
                                         elif len(items_dict['authors']) + len(name) + 10 < self.AUTHORS_LENGTH:
@@ -913,6 +916,7 @@ class ConvertJSONDictToDataframe:
                                             items_dict['authors'] = items_dict['authors'] + " et al."
                                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))  #ALERT: Original update statement used "Updated" instead of "Added"; does that change need to be preserved?
                                 else:
+                                    log.warning(f"Working with one or no author name")  #TEST: temp
                                     if type_and_value['Name'] is None or empty_string_regex().fullmatch(type_and_value['Name']):  # This value handled first because `len()` of null value raises an error
                                         items_dict['authors'] = None
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
