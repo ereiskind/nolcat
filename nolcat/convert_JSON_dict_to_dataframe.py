@@ -73,7 +73,6 @@ class ConvertJSONDictToDataframe:
             str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
-        log.warning(f"`type(self)`: {type(self)}")  #TEST: temp
         try:
             report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
@@ -1095,12 +1094,13 @@ class ConvertJSONDictToDataframe:
                                             'usage_count': usage_count,
                                         }
                                         records_orient_list.append(final_dict)
-                                        log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                                        log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
             #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
             elif report_type == "PR" or report_type == "DR" or report_type == "TR":
                 for ap_item in report_items_dict['Attribute_Performance']:
                     attribute_performance_dict = {k: v for (k, v) in report_items_dict.items() if k != "Attribute_Performance"}
+                    log.warning(f"`attribute_performance_dict`: {attribute_performance_dict}")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
                     for ap_key, ap_value in ap_item.items():
 
@@ -1180,6 +1180,7 @@ class ConvertJSONDictToDataframe:
                         elif ap_key == "Performance":
                             for p_key, p_value in ap_value.items():
                                 performance_dict = deepcopy(attribute_performance_dict)
+                                log.warning(f"`performance_dict`: {performance_dict}")  #TEST: temp
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
                                 performance_dict['metric_type'] = p_key
                                 for usage_date, usage_count in p_value.items():
@@ -1190,7 +1191,7 @@ class ConvertJSONDictToDataframe:
                                         'usage_count': usage_count,
                                     }
                                     records_orient_list.append(final_dict)
-                                    log.debug(f"Added record {final_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                                    log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
             else:
                 message = "The IR expected `Items` key was missing; the JSON cannot be converted into a dataframe."
