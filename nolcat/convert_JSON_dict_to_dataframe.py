@@ -823,6 +823,7 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
+                    log.warning("`YOP` in initial loop")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     try:
                         report_items_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
@@ -1056,6 +1057,7 @@ class ConvertJSONDictToDataframe:
 
                             #Subsection: Capture `YOP` Value
                             elif ap_key == "YOP":
+                                log.warning("`YOP` in IR attribute performance loop")  #TEST: temp
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
                                 try:
                                     attribute_performance_dict['YOP'] = int(ap_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
@@ -1096,11 +1098,8 @@ class ConvertJSONDictToDataframe:
 
             #Section: Iterate Through `Attribute_Performance` Section of PR/DR/TR SUSHI JSON
             elif report_type == "PR" or report_type == "DR" or report_type == "TR":
-                log.warning(f"`report_items_dict` before loop: {report_items_dict}")  #TEST: temp
                 for ap_item in report_items_dict['Attribute_Performance']:
-                    log.warning(f"`report_items_dict` in loop: {report_items_dict}")  #TEST: temp
                     attribute_performance_dict = {k: v for (k, v) in report_items_dict.items() if k != "Attribute_Performance"}
-                    log.warning(f"`attribute_performance_dict`: {attribute_performance_dict}")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
                     for ap_key, ap_value in ap_item.items():
 
@@ -1154,6 +1153,7 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture `YOP` Value
                         elif ap_key == "YOP":
+                            log.warning("`YOP` in PR/DR/TR attribute performance loop")  #TEST: temp
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
                             try:
                                 attribute_performance_dict['YOP'] = int(ap_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
