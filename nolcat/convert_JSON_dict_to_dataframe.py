@@ -852,12 +852,12 @@ class ConvertJSONDictToDataframe:
             
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for group in report_items_dict[second_iteration_key_list[0]]:
-                log.warning(f"group (type {type(group)}): {group}")  #TEST: temp
+                for second_iteration_key, second_iteration_value in group.items():
+                    if second_iteration_key not in second_iteration_dict.keys():
+                        third_iteration_key_list = []
+                        log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
+                        log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
             '''
-            for second_iteration_key, second_iteration_value in report_items_dict[second_iteration_key_list[0]][0].items():  # Values of `Attribute_Performance` and `Items` are single-item lists; index operator needed to unpack from list
-                if second_iteration_key not in second_iteration_dict.keys():
-                    third_iteration_key_list = []
-
                     #Subsection: Capture IR `resource_name` Value
                     if second_iteration_key == "Item" and report_type == "IR":
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.resource_name`"))
