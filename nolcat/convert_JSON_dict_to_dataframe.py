@@ -851,6 +851,8 @@ class ConvertJSONDictToDataframe:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(report_items_dict[second_iteration_key_list[0]], second_iteration_key_list[0], "keys at the top level of the JSON"))
             
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
+            for group in report_items_dict[second_iteration_key_list[0]]:
+                log.warning(f"group (type {type(group)}): {group}")  #TEST: temp
             '''
             for second_iteration_key, second_iteration_value in report_items_dict[second_iteration_key_list[0]][0].items():  # Values of `Attribute_Performance` and `Items` are single-item lists; index operator needed to unpack from list
                 if second_iteration_key not in second_iteration_dict.keys():
