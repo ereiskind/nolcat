@@ -645,6 +645,9 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
+                log.error(f"key {key}")  #TEST: temp
+                log.error(f"value {value}\n")  #TEST: temp
+                '''
                 second_iteration_keys = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
@@ -1194,6 +1197,7 @@ class ConvertJSONDictToDataframe:
                 message = "The IR expected `Items` key was missing; the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
+                '''
 
         #Section: Create Dataframe
         log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
