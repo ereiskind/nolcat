@@ -856,7 +856,24 @@ class ConvertJSONDictToDataframe:
                     if second_iteration_key not in second_iteration_dict.keys():
                         third_iteration_key_list = []
                         log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
-                        log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
+                        log.warning(f"second_iteration_value: {second_iteration_value}")  #TEST: temp
+                
+                #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
+                if third_iteration_key_list == ["Attribute_Performance"] and report_type == "IR":
+                    final_iteration_dict = {k: v for (k, v) in second_iteration_dict.items() if k not in third_iteration_key_list}
+                    for third_iteration_key, third_iteration_value in second_iteration_dict['Attribute_Performance'][0].items():  # Value of `Attribute_Performance` is single-item list; index operator needed to unpack from list
+                        if third_iteration_key not in final_iteration_dict.keys():
+                            log.warning(f"third_iteration_key: {third_iteration_key}")  #TEST: temp
+                            log.warning(f"third_iteration_value: {third_iteration_value}\n")  #TEST: temp
+                            fourth_iteration_key_list = []
+
+                elif third_iteration_key_list == ["Performance"] and (report_type == "PR" or report_type == "DR" or report_type == "TR"):
+                    final_iteration_dict = second_iteration_dict
+                else:
+                    message = f"The {report_type} had third level key(s) {third_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
+                    log.critical(message)
+                    return message
+                log.warning(f"Sending to `Performance` iteration: {final_iteration_dict}")  #TEST: temp
             '''
                     #Subsection: Capture IR `resource_name` Value
                     if second_iteration_key == "Item" and report_type == "IR":
