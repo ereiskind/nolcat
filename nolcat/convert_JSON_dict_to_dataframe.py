@@ -942,9 +942,11 @@ class ConvertJSONDictToDataframe:
                             pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
 
                     #Subsection:  Capture `article_version` Value
-                    elif second_iteration_key == "Item_Attributes":
+                    elif second_iteration_key == "Article_Version":
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.article_version`"))
-                        pass
+                        second_iteration_dict['article_version'] = second_iteration_value
+                        include_in_df_dtypes['article_version'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("article_version", second_iteration_dict['article_version']))
 
                     #Subsection: Capture Standard Identifiers
                     elif second_iteration_key == "Item_ID":
