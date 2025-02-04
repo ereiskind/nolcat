@@ -994,6 +994,38 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
                                 pass
 
+                    #Subsection: Capture `data_type` Value
+                    elif second_iteration_key == "Data_Type":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.data_type`"))
+                        second_iteration_dict['data_type'] = second_iteration_value
+                        include_in_df_dtypes['data_type'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", second_iteration_dict['data_type']))
+
+                    #Subsection: Capture `YOP` Value
+                    elif second_iteration_key == "YOP":
+                        log.warning("`YOP` in PR/DR/TR attribute performance loop")  #TEST: temp
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.YOP`"))
+                        try:
+                            second_iteration_dict['YOP'] = int(second_iteration_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                            include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
+                        except:
+                            second_iteration_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", second_iteration_dict['YOP']))
+
+                    #Subsection: Capture `access_type` Value
+                    elif second_iteration_key == "Access_Type":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.access_type`"))
+                        second_iteration_dict['access_type'] = second_iteration_value
+                        include_in_df_dtypes['access_type'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", second_iteration_dict['access_type']))
+
+                    #Subsection: Capture `access_method` Value
+                    elif second_iteration_key == "Access_Method":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.access_method`"))
+                        second_iteration_dict['access_method'] = second_iteration_value
+                        include_in_df_dtypes['access_method'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", second_iteration_dict['access_method']))
+
                     else:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
                         second_iteration_dict[second_iteration_key] = second_iteration_value
@@ -1105,79 +1137,6 @@ class ConvertJSONDictToDataframe:
                     attribute_performance_dict = {k: v for (k, v) in report_items_dict.items() if k != "Attribute_Performance"}
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
                     for ap_key, ap_value in ap_item.items():
-
-                        #Subsection: Capture `authors` Value
-                        if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
-                            pass
-
-                        #Subsection: Capture Standard Identifiers
-                        # Null value handling isn't needed because all null values are removed
-                        elif ap_key == "Item_ID":  #ToDo: Are standard identifiers in the `Attribute_Performance` section?
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
-                            for ID_type, ID_value in ap_value.items():
-
-                                #Subsection: Capture `DOI` Value
-                                if ID_type == "DOI":
-                                    log.warning("DOI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                                #Subsection: Capture `proprietary_ID` Value
-                                elif self.proprietary_ID_regex.search(ID_type):
-                                    log.warning("Proprietary ID in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                                #Subsection: Capture `ISBN` Value
-                                elif ID_type == "ISBN":
-                                    log.warning("ISBN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                                #Subsection: Capture `print_ISSN` Value
-                                elif ID_type == "Print_ISSN":
-                                    log.warning("Print ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                                #Subsection: Capture `online_ISSN` Value
-                                elif ID_type == "Online_ISSN":
-                                    log.warning("Online ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                                #Subsection: Capture `URI` Value
-                                elif ID_type == "URI":
-                                    log.warning("URI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                    pass
-
-                        #Subsection: Capture `data_type` Value
-                        elif ap_key == "Data_Type":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.data_type`"))
-                            attribute_performance_dict['data_type'] = ap_value
-                            include_in_df_dtypes['data_type'] = 'string'
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
-
-                        #Subsection: Capture `YOP` Value
-                        elif ap_key == "YOP":
-                            log.warning("`YOP` in PR/DR/TR attribute performance loop")  #TEST: temp
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.YOP`"))
-                            try:
-                                attribute_performance_dict['YOP'] = int(ap_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
-                                include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
-                            except:
-                                attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
-
-                        #Subsection: Capture `access_type` Value
-                        elif ap_key == "Access_Type":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_type`"))
-                            attribute_performance_dict['access_type'] = ap_value
-                            include_in_df_dtypes['access_type'] = 'string'
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
-
-                        #Subsection: Capture `access_method` Value
-                        elif ap_key == "Access_Method":
-                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.access_method`"))
-                            attribute_performance_dict['access_method'] = ap_value
-                            include_in_df_dtypes['access_method'] = 'string'
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
 
                         #Section: Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
                         elif ap_key == "Performance":
