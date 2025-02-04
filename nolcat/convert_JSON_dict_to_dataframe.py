@@ -844,8 +844,8 @@ class ConvertJSONDictToDataframe:
                     second_iteration_key_list.append(key)
 
             #Section: Iterate Through Second Level of SUSHI JSON
-            if len(second_iteration_key_list) != 1:  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
-                message = f"The {report_type} had second level keys {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
+            if second_iteration_key_list == ["Attribute_Performance"] or second_iteration_key_list == ["Items"]:  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
+                message = f"The {report_type} had second level key(s) {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(report_items_dict[second_iteration_key_list[0]], second_iteration_key_list[0], "keys at the top level of the JSON"))
