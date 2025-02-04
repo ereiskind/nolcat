@@ -853,8 +853,6 @@ class ConvertJSONDictToDataframe:
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for second_iteration_key, second_iteration_value in report_items_dict[second_iteration_key_list[0]][0].items():  # Values of `Attribute_Performance` and `Items` are single-item lists; index operator needed to unpack from list
                 if second_iteration_key not in second_iteration_dict.keys():
-                    log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
-                    log.warning(f"second_iteration_value: {second_iteration_value}")  #TEST: temp
                     third_iteration_key_list = []
 
                     #Subsection: Capture IR `resource_name` Value
@@ -1005,7 +1003,6 @@ class ConvertJSONDictToDataframe:
 
                     #Subsection: Capture `YOP` Value
                     elif second_iteration_key == "YOP":
-                        log.warning("`YOP` in PR/DR/TR attribute performance loop")  #TEST: temp
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "`COUNTERData.YOP`"))
                         try:
                             second_iteration_dict['YOP'] = int(second_iteration_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
@@ -1029,9 +1026,7 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", second_iteration_dict['access_method']))
 
                     else:
-                        #TEST: temp--log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
-                        log.warning(f"third iteration key: {second_iteration_key}")  #TEST: temp
-                        log.warning(f"third iteration value: {second_iteration_value}\n")  #TEST: temp
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
                         second_iteration_dict[second_iteration_key] = second_iteration_value
                         third_iteration_key_list.append(second_iteration_key)
             '''
