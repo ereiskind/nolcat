@@ -1029,6 +1029,23 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
                         second_iteration_dict[second_iteration_key] = second_iteration_value
                         third_iteration_key_list.append(second_iteration_key)
+
+            #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
+            if third_iteration_key_list == ["Attribute_Performance"] and report_type == "IR":
+                final_iteration_dict = {k: v for (k, v) in second_iteration_dict.items() if k not in third_iteration_key_list}
+                for third_iteration_key, third_iteration_value in second_iteration_dict['Attribute_Performance'][0].items():  # Value of `Attribute_Performance` is single-item list; index operator needed to unpack from list
+                    if third_iteration_key not in final_iteration_dict.keys():
+                        log.warning(f"third_iteration_key: {third_iteration_key}")  #TEST: temp
+                        log.warning(f"third_iteration_value: {third_iteration_value}\n")  #TEST: temp
+                        fourth_iteration_key_list = []
+
+            elif third_iteration_key_list == ["Performance"] and (report_type == "PR" or report_type == "DR" or report_type == "TR"):
+                final_iteration_dict = second_iteration_dict
+            else:
+                message = f"The {report_type} had third level key(s) {third_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
+                log.critical(message)
+                return message
+            log.warning(f"Sending to `Performance` iteration: {final_iteration_dict}")  #TEST: temp
             '''
                     #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
                     for ap_item in items_dict['Attribute_Performance']:
