@@ -645,7 +645,7 @@ class ConvertJSONDictToDataframe:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
-                second_iteration_keys = []
+                second_iteration_key_list = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
                 if key == "Database" or key == "Title":
@@ -841,18 +841,18 @@ class ConvertJSONDictToDataframe:
                 else:
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
                     report_items_dict[key] = value
-                    second_iteration_keys.append(key)
+                    second_iteration_key_list.append(key)
 
             #Section: Iterate Through Second Level of SUSHI JSON
-            if len(second_iteration_keys) != 1:  # `second_iteration_keys` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
-                message = f"The {report_type} had second level keys {second_iteration_keys}; this deviation from the standard means the JSON cannot be converted into a dataframe."
+            if len(second_iteration_key_list) != 1:  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
+                message = f"The {report_type} had second level keys {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
                 log.critical(message)
                 return message
-            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(report_items_dict[second_iteration_keys[0]], second_iteration_keys[0], "keys at the top level of the JSON"))
+            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(report_items_dict[second_iteration_key_list[0]], second_iteration_key_list[0], "keys at the top level of the JSON"))
             
-            second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_keys}
+            second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for second_iteration_key, second_iteration_value in report_items_dict.items():
-                if second_iteration_key in second_iteration_keys:
+                if second_iteration_key in second_iteration_key_list:
                     third_iteration_key_list = []
 
                     #Subsection: Capture IR `resource_name` Value
