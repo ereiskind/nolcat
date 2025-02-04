@@ -1027,7 +1027,9 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", second_iteration_dict['access_method']))
 
                     else:
-                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
+                        #TEST: temp--log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(second_iteration_value, second_iteration_key, "a placeholder for later unpacking"))
+                        log.warning(f"third iteration key: {second_iteration_key}")  #TEST: temp
+                        log.warning(f"third iteration value: {second_iteration_value}\n")  #TEST: temp
                         second_iteration_dict[second_iteration_key] = second_iteration_value
                         third_iteration_key_list.append(second_iteration_key)
             '''
