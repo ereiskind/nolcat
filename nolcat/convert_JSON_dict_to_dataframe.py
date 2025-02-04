@@ -844,6 +844,7 @@ class ConvertJSONDictToDataframe:
                     second_iteration_keys.append(key)
 
             #Section: Iterate Through `Items` Sections of IR SUSHI JSON
+            log.error(f"`report_items_dict`:\n{report_items_dict}")  #TEST: temp
             for k, v in report_items_dict.items():  #TEST: temp
                 if k in second_iteration_keys:  #TEST: temp
                     log.error(f"key {k}")  #TEST: temp
