@@ -852,6 +852,8 @@ class ConvertJSONDictToDataframe:
             
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for second_iteration_key, second_iteration_value in report_items_dict.items():
+                log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
+                log.warning(f"second_iteration_value: {second_iteration_value}")  #TEST: temp
                 if second_iteration_key in second_iteration_key_list:
                     third_iteration_key_list = []
 
