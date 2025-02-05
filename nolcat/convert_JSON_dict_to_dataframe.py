@@ -844,8 +844,7 @@ class ConvertJSONDictToDataframe:
                     report_items_dict[key] = value
                     second_iteration_key_list.append(key)
 
-                temp.append(report_items_dict)
-            log.warning(f"`temp` at same level as `for key, value in record.items()`: {temp}")  #TEST: temp
+            temp.append(report_items_dict)
         log.warning(f"`temp` at same level as `for record in self.SUSHI_JSON_dictionary['Report_Items']`: {temp}")  #TEST: temp
 
         '''    #Section: Iterate Through Second Level of SUSHI JSON
