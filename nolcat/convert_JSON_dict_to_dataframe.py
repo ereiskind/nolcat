@@ -641,6 +641,7 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through `Report_Items` of SUSHI JSON to Create Single-Level Dictionaries
+        temp = []
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             log.debug(f"Starting iteration for new JSON record {record}.")
             report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
@@ -843,7 +844,11 @@ class ConvertJSONDictToDataframe:
                     report_items_dict[key] = value
                     second_iteration_key_list.append(key)
 
-            #Section: Iterate Through Second Level of SUSHI JSON
+                temp.append(report_items_dict)
+            log.warning(f"`temp` at same level as `for key, value in record.items()`: {temp}")  #TEST: temp
+        log.warning(f"`temp` at same level as `for record in self.SUSHI_JSON_dictionary['Report_Items']`: {temp}")  #TEST: temp
+
+        '''    #Section: Iterate Through Second Level of SUSHI JSON
             if not (second_iteration_key_list == ["Attribute_Performance"] or second_iteration_key_list == ["Items"]):  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
                 message = f"The {report_type} had second level key(s) {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
                 log.critical(message)
@@ -1054,7 +1059,8 @@ class ConvertJSONDictToDataframe:
                     message = f"The {report_type} had third level key(s) {third_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
                     log.critical(message)
                     return message
-            '''
+        '''
+        '''
                     #Section: Iterate Through `Attribute_Performance` Section of IR SUSHI JSON
                     for ap_item in items_dict['Attribute_Performance']:
                         attribute_performance_dict = {k: v for (k, v) in items_dict.items() if k != "Attribute_Performance"}
