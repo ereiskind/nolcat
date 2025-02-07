@@ -622,7 +622,6 @@ class ConvertJSONDictToDataframe:
             'print_ISSN': False,
             'online_ISSN': False,
             'URI': False,
-            'data_type': False,
             'section_type': False,
             'YOP': False,
             'access_type': False,
