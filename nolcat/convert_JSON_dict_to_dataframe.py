@@ -888,6 +888,13 @@ class ConvertJSONDictToDataframe:
                     #else
 
                 #items_list.append(items_dict)
+
+        #Section: Iterate Through `Attribute_Performance` of SUSHI JSON
+        #TEST: temp
+        if second_iteration_key_list == ["Attribute_Performance"]:
+            for record in report_items_list:
+                log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")
+        #TEST: end temp
         '''
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for group in report_items_dict[second_iteration_key_list[0]]:
