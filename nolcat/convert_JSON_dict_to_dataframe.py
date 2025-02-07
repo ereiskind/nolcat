@@ -853,41 +853,87 @@ class ConvertJSONDictToDataframe:
             for record in report_items_list:
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
                 items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
-                log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")  #TEST: temp
-                #ToDo: Start loop through `record['Items']` here
-                    #third_iteration_key_list = []
+                for items in record['Items']:
+                    for items_key, items_value in items.items():
+                        third_iteration_key_list = []
 
-                    #Subsection: Capture `resource_name` Value
+                        #Subsection: Capture `resource_name` Value
+                        if items_key == "Item":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.resource_name`"))
+                            pass
 
-                    #Subsection: Capture `publisher` Value
+                        #Subsection: Capture `publisher` Value
+                        elif items_key == "Publisher":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher`"))
+                            pass
 
-                    #Subsection: Capture `publisher_ID` Value
+                        #Subsection: Capture `publisher_ID` Value
+                        elif items_key == "Publisher_ID":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher_ID`"))
+                            pass
 
-                    #Subsection: Capture `platform` Value
+                        #Subsection: Capture `platform` Value
+                        elif items_key == "Platform":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.platform`"))
+                            pass
 
-                    #Subsection: Capture `authors` Value
+                        #Subsection: Capture `authors` Value
+                        elif items_key == "Authors":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.authors`"))
+                            pass
 
-                    #Subsection: Capture `publication_date` Value
+                        #Subsection: Capture `publication_date` Value
+                        elif items_key == "Publication_Date":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publication_date`"))
+                            pass
 
-                    #Subsection:  Capture `article_version` Value
+                        #Subsection:  Capture `article_version` Value
+                        elif items_key == "Article_Version":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.article_version`"))
+                            pass
 
-                    #Subsection: Capture Standard Identifiers
+                        #Subsection: Capture Standard Identifiers
+                        elif items_key == "Item_ID":
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "the standard ID fields"))
+                            for ID_type, ID_value in items_value.items():
 
-                            #Subsection: Capture `DOI` Value
+                                #Subsection: Capture `DOI` Value
+                                if ID_type == "DOI":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
+                                    pass
 
-                            #Subsection: Capture `proprietary_ID` Value
+                                #Subsection: Capture `proprietary_ID` Value
+                                elif self.proprietary_ID_regex.search(ID_type):
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
+                                    pass
 
-                            #Subsection: Capture `ISBN` Value
+                                #Subsection: Capture `ISBN` Value
+                                elif ID_type == "ISBN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
+                                    pass
 
-                            #Subsection: Capture `print_ISSN` Value
+                                #Subsection: Capture `print_ISSN` Value
+                                elif ID_type == "Print_ISSN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
+                                    pass
 
-                            #Subsection: Capture `online_ISSN` Value
+                                #Subsection: Capture `online_ISSN` Value
+                                elif ID_type == "Online_ISSN":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
+                                    pass
 
-                            #Subsection: Capture `URI` Value
+                                #Subsection: Capture `URI` Value
+                                elif ID_type == "URI":
+                                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
+                                    pass
 
-                    #else
+                        else:
+                            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "a placeholder for later unpacking"))
+                            items_dict[items_key] = items_value
+                            third_iteration_key_list.append(items_key)
 
-                #items_list.append(items_dict)
+                items_list.append(items_dict)
+                log.debug(f"Record added to `report_items`: {report_items_list[-1]}")
 
         #Section: Iterate Through `Attribute_Performance` of SUSHI JSON
         #TEST: temp
@@ -1107,52 +1153,6 @@ class ConvertJSONDictToDataframe:
                         attribute_performance_dict = {k: v for (k, v) in items_dict.items() if k != "Attribute_Performance"}
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_item, "Attribute_Performance", "keys at the top level of the JSON"))
                         for ap_key, ap_value in ap_item.items():
-
-                            #Subsection: Capture `authors` Value
-                            if ap_key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.authors`"))
-                                pass
-
-                            #Subsection: Capture `article_version` Value
-                            elif ap_key == "Item_Attributes":
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "`COUNTERData.article_version`"))
-                                pass
-
-                            #Subsection: Capture Standard Identifiers
-                            # Null value handling isn't needed because all null values are removed
-                            elif ap_key == "Item_ID":  #ToDo: Are standard identifiers in the `Attribute_Performance` section?
-                                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ap_value, ap_key, "the standard ID fields"))
-                                for ID_type, ID_value in ap_value.items():
-
-                                    #Subsection: Capture `DOI` Value
-                                    if ID_type == "DOI":
-                                        log.warning("DOI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
-
-                                    #Subsection: Capture `proprietary_ID` Value
-                                    elif self.proprietary_ID_regex.search(ID_type):
-                                        log.warning("Proprietary ID in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
-
-                                    #Subsection: Capture `ISBN` Value
-                                    elif ID_type == "ISBN":
-                                        log.warning("ISBN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
-
-                                    #Subsection: Capture `print_ISSN` Value
-                                    elif ID_type == "Print_ISSN":
-                                        log.warning("Print ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
-
-                                    #Subsection: Capture `online_ISSN` Value
-                                    elif ID_type == "Online_ISSN":
-                                        log.warning("Online ISSN in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
-
-                                    #Subsection: Capture `URI` Value
-                                    elif ID_type == "URI":
-                                        log.warning("URI in the `Attribute_Performance` section")  # Replace with capture if ever output to logging
-                                        pass
 
                             #Subsection: Capture `data_type` Value
                             elif ap_key == "Data_Type":
