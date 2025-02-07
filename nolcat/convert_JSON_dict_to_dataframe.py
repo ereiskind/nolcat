@@ -875,7 +875,16 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `platform` Value
                         elif items_key == "Platform":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.platform`"))
-                            pass
+                            if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
+                                items_dict['platform'] = None
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
+                            elif len(items_value) > self.PLATFORM_LENGTH:
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(items_value))
+                                log.critical(message)
+                                return message
+                            else:
+                                items_dict['platform'] = items_value
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
 
                         #Subsection: Capture `authors` Value
                         elif items_key == "Authors":
