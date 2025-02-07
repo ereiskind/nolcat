@@ -937,6 +937,7 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through `Attribute_Performance` of SUSHI JSON
         #TEST: temp
+        log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")
         if second_iteration_key_list == ["Attribute_Performance"]:
             for record in report_items_list:
                 log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")
