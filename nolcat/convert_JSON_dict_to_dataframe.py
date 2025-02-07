@@ -845,7 +845,7 @@ class ConvertJSONDictToDataframe:
                     second_iteration_key_list.append(key)
 
             report_items_list.append(report_items_dict)
-            log.debug(f"Record added to `report_items`: {report_items_list[-1]}")
+            log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
 
         #Section: Iterate Through `Items` Level of IR SUSHI JSON
         items_list = []
