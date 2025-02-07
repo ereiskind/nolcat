@@ -929,7 +929,14 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `DOI` Value
                                 if ID_type == "DOI":
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
-                                    pass
+                                    if len(ID_value) > self.DOI_LENGTH:
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", len(ID_value))
+                                        log.critical(message)
+                                        return message
+                                    else:
+                                        items_dict['DOI'] = ID_value
+                                        include_in_df_dtypes['DOI'] = 'string'
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("DOI", items_dict['DOI']))
 
                                 #Subsection: Capture `proprietary_ID` Value
                                 elif self.proprietary_ID_regex.search(ID_type):
