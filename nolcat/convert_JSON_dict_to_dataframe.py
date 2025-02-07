@@ -926,7 +926,9 @@ class ConvertJSONDictToDataframe:
                         #Subsection:  Capture `article_version` Value
                         elif items_key == "Article_Version":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.article_version`"))
-                            pass
+                            items_dict['article_version'] = items_value
+                            include_in_df_dtypes['article_version'] = 'string'
+                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("article_version", items_dict['article_version']))
 
                         #Subsection: Capture Standard Identifiers
                         elif items_key == "Item_ID":
