@@ -1028,7 +1028,7 @@ class ConvertJSONDictToDataframe:
                             third_iteration_key_list.append(items_key)
 
                 items_list.append(items_dict)
-                log.debug(f"Record added to `report_items`: {report_items_list[-1]}")
+                log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
 
         #Section: Iterate Through `Attribute_Performance` of SUSHI JSON
         #TEST: temp
