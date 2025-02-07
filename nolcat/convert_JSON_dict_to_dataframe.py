@@ -641,7 +641,7 @@ class ConvertJSONDictToDataframe:
         }
 
         #Section: Iterate Through `Report_Items` of SUSHI JSON to Create Single-Level Dictionaries
-        temp = []
+        report_items = []
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             log.debug(f"Starting iteration for new JSON record {record}.")
             first_iteration_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `first_iteration_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
@@ -844,8 +844,8 @@ class ConvertJSONDictToDataframe:
                     first_iteration_dict[key] = value
                     second_iteration_key_list.append(key)
 
-            temp.append(report_items_dict)
-        log.warning(f"`temp` at same level as `for record in self.SUSHI_JSON_dictionary['Report_Items']`: {temp}")  #TEST: temp
+            report_items.append(first_iteration_dict)
+            log.debug(f"Record added to `report_items`: {report_items[-1]}")
 
         '''    #Section: Iterate Through Second Level of SUSHI JSON
             if not (second_iteration_key_list == ["Attribute_Performance"] or second_iteration_key_list == ["Items"]):  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
