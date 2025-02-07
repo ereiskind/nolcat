@@ -847,15 +847,48 @@ class ConvertJSONDictToDataframe:
             report_items_list.append(report_items_dict)
             log.debug(f"Record added to `report_items`: {report_items_list[-1]}")
 
-        #Section: Iterate Through Second Level of SUSHI JSON
-        log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")  #TEST: temp
+        #Section: Iterate Through `Items` Level of IR SUSHI JSON
+        items_list = []
+        if second_iteration_key_list == ["Items"] and report_type == "IR":
+            for record in report_items_list:
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
+                items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
+                log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")  #TEST: temp
+                #ToDo: Start loop through `record['Items']` here
+                    #third_iteration_key_list = []
+
+                    #Subsection: Capture `resource_name` Value
+
+                    #Subsection: Capture `publisher` Value
+
+                    #Subsection: Capture `publisher_ID` Value
+
+                    #Subsection: Capture `platform` Value
+
+                    #Subsection: Capture `authors` Value
+
+                    #Subsection: Capture `publication_date` Value
+
+                    #Subsection:  Capture `article_version` Value
+
+                    #Subsection: Capture Standard Identifiers
+
+                            #Subsection: Capture `DOI` Value
+
+                            #Subsection: Capture `proprietary_ID` Value
+
+                            #Subsection: Capture `ISBN` Value
+
+                            #Subsection: Capture `print_ISSN` Value
+
+                            #Subsection: Capture `online_ISSN` Value
+
+                            #Subsection: Capture `URI` Value
+
+                    #else
+
+                #items_list.append(items_dict)
         '''
-            if not (second_iteration_key_list == ["Attribute_Performance"] or second_iteration_key_list == ["Items"]):  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
-                message = f"The {report_type} had second level key(s) {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
-                log.critical(message)
-                return message
-            log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(report_items_dict[second_iteration_key_list[0]], second_iteration_key_list[0], "keys at the top level of the JSON"))
-            
             second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
             for group in report_items_dict[second_iteration_key_list[0]]:
                 for second_iteration_key, second_iteration_value in group.items():
