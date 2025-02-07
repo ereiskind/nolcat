@@ -847,7 +847,9 @@ class ConvertJSONDictToDataframe:
             report_items.append(first_iteration_dict)
             log.debug(f"Record added to `report_items`: {report_items[-1]}")
 
-        '''    #Section: Iterate Through Second Level of SUSHI JSON
+        #Section: Iterate Through Second Level of SUSHI JSON
+        log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")  #TEST: temp
+        '''
             if not (second_iteration_key_list == ["Attribute_Performance"] or second_iteration_key_list == ["Items"]):  # `second_iteration_key_list` is `Attribute_Performance` in PR, DR, TR; `Items` in IR
                 message = f"The {report_type} had second level key(s) {second_iteration_key_list}; this deviation from the standard means the JSON cannot be converted into a dataframe."
                 log.critical(message)
