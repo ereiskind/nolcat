@@ -163,7 +163,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['resource_name'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", record_dict['resource_name']))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("resource_name", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("resource_name", value)
                         log.critical(message)
                         return message
                     else:
@@ -178,7 +178,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['publisher'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", record_dict['publisher']))
                     elif len(value) > self.PUBLISHER_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", value)
                         log.critical(message)
                         return message
                     else:
@@ -194,7 +194,7 @@ class ConvertJSONDictToDataframe:
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
                     elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
-                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", len(value[0]['Value']))
+                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
                             log.critical(message)
                             return message
                         else:
@@ -205,7 +205,7 @@ class ConvertJSONDictToDataframe:
                         for type_and_value in value:
                             if self.proprietary_ID_regex.search(type_and_value['Type']):
                                 if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
-                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", len(type_and_value['Value']))
+                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
                                     log.critical(message)
                                     return message
                                 else:
@@ -222,7 +222,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['platform'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", record_dict['platform']))
                     elif len(value) > self.PLATFORM_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", value)
                         log.critical(message)
                         return message
                     else:
@@ -249,7 +249,7 @@ class ConvertJSONDictToDataframe:
                                     record_dict['authors'] = None
                                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", record_dict['authors']))
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
+                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", type_and_value['Name'])
                                     log.critical(message)
                                     return message
                                 else:
@@ -289,7 +289,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `DOI` Value
                         if type_and_value['Type'] == "DOI":
                             if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", len(type_and_value['Value']))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", type_and_value['Value'])
                                 log.critical(message)
                                 return message
                             else:
@@ -300,7 +300,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `proprietary_ID` Value
                         elif self.proprietary_ID_regex.search(type_and_value['Type']):
                             if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(type_and_value['Value']))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", type_and_value['Value'])
                                 log.critical(message)
                                 return message
                             else:
@@ -339,7 +339,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `URI` Value
                         elif type_and_value['Type'] == "URI":
                             if len(type_and_value['Value']) > self.URI_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("URI", len(type_and_value['Value']))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("URI", type_and_value['Value'])
                                 log.critical(message)
                                 return message
                             else:
@@ -400,7 +400,7 @@ class ConvertJSONDictToDataframe:
                         if key_for_parent == "Item_Name":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value_for_parent, key_for_parent, "`COUNTERData.parent_title`"))
                             if len(value_for_parent) > self.RESOURCE_NAME_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_title", len(value_for_parent))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_title", value_for_parent)
                                 log.critical(message)
                                 return message
                             else:
@@ -424,7 +424,7 @@ class ConvertJSONDictToDataframe:
                                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_authors", record_dict['parent_authors']))
                                     else:
                                         if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", len(type_and_value['Name']))
+                                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", type_and_value['Name'])
                                             log.critical(message)
                                             return message
                                         else:
@@ -467,7 +467,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_DOI` Value
                                 if type_and_value['Type'] == "DOI":
                                     if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_DOI", len(type_and_value['Value']))
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_DOI", type_and_value['Value'])
                                         log.critical(message)
                                         return message
                                     else:
@@ -478,7 +478,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_proprietary_ID` Value
                                 elif self.proprietary_ID_regex.search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_proprietary_ID", len(type_and_value['Value']))
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_proprietary_ID", type_and_value['Value'])
                                         log.critical(message)
                                         return message
                                     else:
@@ -517,7 +517,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_URI` Value
                                 elif type_and_value['Type'] == "URI":
                                     if len(type_and_value['Value']) > self.URI_LENGTH:
-                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_URI", len(type_and_value['Value']))
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_URI", type_and_value['Value'])
                                         log.critical(message)
                                         return message
                                     else:
@@ -659,7 +659,7 @@ class ConvertJSONDictToDataframe:
                         report_items_dict[field] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, value)
                         log.critical(message)
                         return message
                     else:
@@ -674,7 +674,7 @@ class ConvertJSONDictToDataframe:
                         report_items_dict['publisher'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
                     elif len(value) > self.PUBLISHER_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", value)
                         log.critical(message)
                         return message
                     else:
@@ -694,7 +694,7 @@ class ConvertJSONDictToDataframe:
                         report_items_dict['platform'] = None
                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", report_items_dict['platform']))
                     elif len(value) > self.PLATFORM_LENGTH:
-                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(value))
+                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", value)
                         log.critical(message)
                         return message
                     else:
@@ -772,7 +772,7 @@ class ConvertJSONDictToDataframe:
                                 field = "DOI"
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if len(ID_value) > self.DOI_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", len(ID_value))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", ID_value)
                                 log.critical(message)
                                 return message
                             else:
@@ -788,7 +788,7 @@ class ConvertJSONDictToDataframe:
                                 field = "proprietary_ID"
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if len(ID_value) > self.PROPRIETARY_ID_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(ID_value))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", ID_value)
                                 log.critical(message)
                                 return message
                             else:
@@ -891,7 +891,7 @@ class ConvertJSONDictToDataframe:
                                 items_dict['resource_name'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
                             elif len(value) > self.RESOURCE_NAME_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(items_value))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, items_value)
                                 log.critical(message)
                                 return message
                             else:
@@ -906,7 +906,7 @@ class ConvertJSONDictToDataframe:
                                 items_dict['publisher'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher", items_dict['publisher']))
                             elif len(items_value) > self.PUBLISHER_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", len(items_value))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher", items_value)
                                 log.critical(message)
                                 return message
                             else:
@@ -926,7 +926,7 @@ class ConvertJSONDictToDataframe:
                                 items_dict['platform'] = None
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("platform", items_dict['platform']))
                             elif len(items_value) > self.PLATFORM_LENGTH:
-                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", len(items_value))
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("platform", items_value)
                                 log.critical(message)
                                 return message
                             else:
@@ -983,7 +983,7 @@ class ConvertJSONDictToDataframe:
                                 if ID_type == "DOI":
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.DOI`"))
                                     if len(ID_value) > self.DOI_LENGTH:
-                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", len(ID_value))
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("DOI", ID_value)
                                         log.critical(message)
                                         return message
                                     else:
@@ -995,7 +995,7 @@ class ConvertJSONDictToDataframe:
                                 elif self.proprietary_ID_regex.search(ID_type):
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
                                     if len(ID_value) > self.PROPRIETARY_ID_LENGTH:
-                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", len(ID_value))
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", ID_value)
                                         log.critical(message)
                                         return message
                                     else:
