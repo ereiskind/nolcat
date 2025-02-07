@@ -860,7 +860,17 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `resource_name` Value
                         if items_key == "Item":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.resource_name`"))
-                            pass
+                            if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
+                                items_dict['resource_name'] = None
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                            elif len(value) > self.RESOURCE_NAME_LENGTH:
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, len(items_value))
+                                log.critical(message)
+                                return message
+                            else:
+                                items_dict['resource_name'] = items_value
+                                include_in_df_dtypes['resource_name'] = 'string'
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
 
                         #Subsection: Capture `publisher` Value
                         elif items_key == "Publisher":
