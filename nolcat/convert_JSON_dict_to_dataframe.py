@@ -707,33 +707,23 @@ class ConvertJSONDictToDataframe:
                     else:
                         field = "authors"
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
+                    if value is None or empty_string_regex().fullmatch(value) or value == []:  # This value handled first because `len()` of null value raises an error
                         pass  # Lack of key in given record will become null value when converted to a dataframe
-                    if len(value) == 1:
-                        if len(value['Name']) > self.AUTHORS_LENGTH:
-                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("authors", value['Name'])
-                            log.critical(message)
-                            return message
-                        else:
-                            report_items_dict[field] = value['Name'].strip()
-                            include_in_df_dtypes[field] = 'string'
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))              
-                    elif len(value) > 1:
-                        for label_and_author_name in value:
-                            if label_and_author_name.get('Name'):
-                                if field not in report_items_dict and len(label_and_author_name['Name']) > self.AUTHORS_LENGTH:
-                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, label_and_author_name['Name'])
-                                    log.critical(message)
-                                    return message
-                                elif field not in report_items_dict:
-                                    report_items_dict[field] = label_and_author_name['Name'].strip()
-                                    include_in_df_dtypes[field] = 'string'
-                                elif report_items_dict[field].endswith(" et al."):
-                                    break  # The loop of adding author names
-                                elif len(items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
-                                    report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
-                                else:
-                                    report_items_dict[field] = report_items_dict[field] + " et al."
+                    for label_and_author_name in value:
+                        if label_and_author_name.get('Name'):
+                            if field not in report_items_dict and len(label_and_author_name['Name']) > self.AUTHORS_LENGTH:
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, label_and_author_name['Name'])
+                                log.critical(message)
+                                return message
+                            elif field not in report_items_dict:
+                                report_items_dict[field] = label_and_author_name['Name'].strip()
+                                include_in_df_dtypes[field] = 'string'
+                            elif report_items_dict[field].endswith(" et al."):
+                                break  # The loop of adding author names
+                            elif len(items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
+                                report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
+                            else:
+                                report_items_dict[field] = report_items_dict[field] + " et al."        
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
