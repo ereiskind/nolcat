@@ -723,7 +723,7 @@ class ConvertJSONDictToDataframe:
                                 log.warning(f"First `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             elif report_items_dict[field].endswith(" et al."):
                                 break  # The loop of adding author names
-                            elif len(items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
+                            elif len(report_items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
                                 report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
                                 log.warning(f"Second `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             else:
