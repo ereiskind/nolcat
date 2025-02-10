@@ -1046,28 +1046,30 @@ class ConvertJSONDictToDataframe:
                 for attribute_performance_key, attribute_performance_value in attributes.items():
                     final_iteration_key_list = []
 
-                #Subsection: Capture `data_type` Value
-                if attribute_performance_key == "Data_Type":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.data_type`"))
-                    pass
+                    #Subsection: Capture `data_type` Value
+                    if attribute_performance_key == "Data_Type":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.data_type`"))
+                        pass
 
-                #Subsection: Capture `YOP` Value
-                elif attribute_performance_key == "YOP":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.YOP`"))
-                    pass
+                    #Subsection: Capture `YOP` Value
+                    elif attribute_performance_key == "YOP":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.YOP`"))
+                        pass
 
-                #Subsection: Capture `access_type` Value
-                elif attribute_performance_key == "Access_Type":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_type`"))
-                    pass
+                    #Subsection: Capture `access_type` Value
+                    elif attribute_performance_key == "Access_Type":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_type`"))
+                        pass
 
-                #Subsection: Capture `access_method` Value
-                elif attribute_performance_key == "Access_Method":
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_method`"))
-                    pass
+                    #Subsection: Capture `access_method` Value
+                    elif attribute_performance_key == "Access_Method":
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_method`"))
+                        pass
 
-                else:
-                    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
+                    else:
+                        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
+
+        log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
         performance_list = []
