@@ -707,7 +707,7 @@ class ConvertJSONDictToDataframe:
                     else:
                         field = "authors"
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    if value is None or empty_string_regex().fullmatch(value) or value == []:  # This value handled first because `len()` of null value raises an error
+                    if not isinstance(value, list) or len(value) == 0:  # R5 SUSHI often had null values and empty strings as values for the author; this error checking serves the same purpose for R5.1 SUSHI
                         pass  # Lack of key in given record will become null value when converted to a dataframe
                     for label_and_author_name in value:
                         log.warning(f"`label_and_author_name` (type {type(label_and_author_name)}): {label_and_author_name}")  #TEST: temp
@@ -933,7 +933,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `authors` Value
                         elif items_key == "Authors":
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.authors`"))
-                            if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
+                            if not isinstance(value, list) or len(value) == 0:  # R5 SUSHI often had null values and empty strings as values for the author; this error checking serves the same purpose for R5.1 SUSHI
                                 pass  # Lack of key in given record will become null value when converted to a dataframe
                             for label_and_author_name in items_value:
                                 if label_and_author_name.get('Name'):
