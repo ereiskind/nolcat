@@ -1058,7 +1058,12 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `YOP` Value
                     elif attribute_performance_key == "YOP":
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.YOP`"))
-                        pass
+                        try:
+                            attribute_performance_dict['YOP'] = int(attribute_performance_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                            include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
+                        except:
+                            attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
 
                     #Subsection: Capture `access_type` Value
                     elif attribute_performance_key == "Access_Type":
