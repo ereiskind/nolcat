@@ -710,9 +710,7 @@ class ConvertJSONDictToDataframe:
                     if not isinstance(value, list) or len(value) == 0:  # R5 SUSHI often had null values and empty strings as values for the author; this error checking serves the same purpose for R5.1 SUSHI
                         pass  # Lack of key in given record will become null value when converted to a dataframe
                     for label_and_author_name in value:
-                        log.warning(f"`label_and_author_name` (type {type(label_and_author_name)}): {label_and_author_name}")  #TEST: temp
                         if label_and_author_name.get('Name'):
-                            log.warning(f"`label_and_author_name['Name']`: {label_and_author_name['Name']}")  #TEST: temp
                             if field not in report_items_dict and len(label_and_author_name['Name']) > self.AUTHORS_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, label_and_author_name['Name'])
                                 log.critical(message)
@@ -720,15 +718,12 @@ class ConvertJSONDictToDataframe:
                             elif field not in report_items_dict:
                                 report_items_dict[field] = label_and_author_name['Name'].strip()
                                 include_in_df_dtypes[field] = 'string'
-                                log.warning(f"First `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             elif report_items_dict[field].endswith(" et al."):
                                 break  # The loop of adding author names
                             elif len(report_items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
                                 report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
-                                log.warning(f"Second `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             else:
                                 report_items_dict[field] = report_items_dict[field] + " et al."
-                                log.warning(f"Third `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
