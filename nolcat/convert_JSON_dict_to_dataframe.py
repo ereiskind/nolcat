@@ -1031,20 +1031,11 @@ class ConvertJSONDictToDataframe:
                 log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
 
         #Section: Iterate Through `Attribute_Performance` of SUSHI JSON
-        #TEST: temp
-        log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")
         if second_iteration_key_list == ["Attribute_Performance"]:
             for record in report_items_list:
-                log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")
-        #TEST: end temp
-        '''
-            second_iteration_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
-            for group in report_items_dict[second_iteration_key_list[0]]:
-                for second_iteration_key, second_iteration_value in group.items():
-                    if second_iteration_key not in second_iteration_dict.keys():
-                        third_iteration_key_list = []
-                        log.warning(f"second_iteration_key: {second_iteration_key}")  #TEST: temp
-                        log.warning(f"second_iteration_value: {second_iteration_value}")  #TEST: temp
+                log.warning(f"`record['Items']` (type {type(record['Items'])}): {record['Items']}")  #TEST: temp
+        else:  #TEST: temp
+            log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")  #TEST: temp
 
                         #Subsection: Capture IR `resource_name` Value
                         if second_iteration_key == "Item" and report_type == "IR":
