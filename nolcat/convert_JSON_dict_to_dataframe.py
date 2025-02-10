@@ -1075,7 +1075,9 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `access_method` Value
                     elif attribute_performance_key == "Access_Method":
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_method`"))
-                        pass
+                        attribute_performance_dict['access_method'] = attribute_performance_value
+                        include_in_df_dtypes['access_method'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
 
                     else:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
