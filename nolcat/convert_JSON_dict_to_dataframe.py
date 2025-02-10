@@ -874,9 +874,8 @@ class ConvertJSONDictToDataframe:
         if second_iteration_key_list == ["Items"] and report_type == "IR":
             for record in report_items_list:
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
-                log.warning(f"`report_items_dict` (type {type(report_items_dict)}):\n{report_items_dict}\n")  #TEST: temp
-                log.warning(f"`record` (type {type(record)}):\n{record}\n")  #TEST: temp
-                items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
+                items_dict = {k: v for (k, v) in record.items() if k not in second_iteration_key_list}
+                log.warning(f"`items_dict` (type {type(items_dict)}):\n{items_dict}\n")  #TEST: temp
                 for items in record['Items']:
                     for items_key, items_value in items.items():
                         third_iteration_key_list = []
@@ -1042,7 +1041,7 @@ class ConvertJSONDictToDataframe:
         #TEST: end temp
         for record in list_of_records:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
-            log.warning(f"`record` (type {type(record)}): {record}")  #TEST: temp
+            attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute Performance"}
             for attributes in record['Attribute_Performance']:
                 for attribute_performance_key, attribute_performance_value in attributes.items():
                     final_iteration_key_list = []
