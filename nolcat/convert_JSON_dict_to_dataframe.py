@@ -1037,7 +1037,7 @@ class ConvertJSONDictToDataframe:
 
         for record in list_of_records:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
-            attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute Performance"}
+            attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
             log.warning(f"`attribute_performance_dict`: {attribute_performance_dict}")  #TEST: temp
             for attributes in record['Attribute_Performance']:
                 for attribute_performance_key, attribute_performance_value in attributes.items():
