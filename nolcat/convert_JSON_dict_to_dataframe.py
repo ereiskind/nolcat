@@ -736,7 +736,7 @@ class ConvertJSONDictToDataframe:
                     pass
 
                 #Subsection: Capture `article_version` or `parent_article_version` Value
-                elif key == "Item_Attributes":
+                elif key == "Article_Version":
                     if report_type == "IR":
                         field = "parent_article_version"
                     else:
