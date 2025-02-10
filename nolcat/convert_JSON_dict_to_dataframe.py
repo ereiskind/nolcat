@@ -710,7 +710,9 @@ class ConvertJSONDictToDataframe:
                     if value is None or empty_string_regex().fullmatch(value) or value == []:  # This value handled first because `len()` of null value raises an error
                         pass  # Lack of key in given record will become null value when converted to a dataframe
                     for label_and_author_name in value:
+                        log.warning(f"`label_and_author_name` (type {type(label_and_author_name)}): {label_and_author_name}")  #TEST: temp
                         if label_and_author_name.get('Name'):
+                            log.warning(f"`label_and_author_name['Name']`: {label_and_author_name['Name']}")  #TEST: temp
                             if field not in report_items_dict and len(label_and_author_name['Name']) > self.AUTHORS_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement(field, label_and_author_name['Name'])
                                 log.critical(message)
@@ -718,12 +720,15 @@ class ConvertJSONDictToDataframe:
                             elif field not in report_items_dict:
                                 report_items_dict[field] = label_and_author_name['Name'].strip()
                                 include_in_df_dtypes[field] = 'string'
+                                log.warning(f"First `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             elif report_items_dict[field].endswith(" et al."):
                                 break  # The loop of adding author names
                             elif len(items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
                                 report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
+                                log.warning(f"Second `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                             else:
-                                report_items_dict[field] = report_items_dict[field] + " et al."        
+                                report_items_dict[field] = report_items_dict[field] + " et al."
+                                log.warning(f"Third `report_items_dict[field]`: {report_items_dict[field]}")  #TEST: temp
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
@@ -862,12 +867,15 @@ class ConvertJSONDictToDataframe:
 
             report_items_list.append(report_items_dict)
             log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
+        log.debug("`report_items_list` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
 
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
         items_list = []
         if second_iteration_key_list == ["Items"] and report_type == "IR":
             for record in report_items_list:
                 log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
+                log.warning(f"`report_items_dict` (type {type(report_items_dict)}):\n{report_items_dict}\n")  #TEST: temp
+                log.warning(f"`record` (type {type(record)}):\n{record}\n")  #TEST: temp
                 items_dict = {k: v for (k, v) in report_items_dict.items() if k not in second_iteration_key_list}
                 for items in record['Items']:
                     for items_key, items_value in items.items():
@@ -1019,6 +1027,7 @@ class ConvertJSONDictToDataframe:
 
                 items_list.append(items_dict)
                 log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
+        log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
