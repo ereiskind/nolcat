@@ -1027,7 +1027,7 @@ class ConvertJSONDictToDataframe:
 
                 items_list.append(items_dict)
                 log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
-        log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
+            log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
