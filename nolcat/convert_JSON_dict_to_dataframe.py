@@ -1030,6 +1030,8 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
+        temp1 = []  #TEST: temp
+        temp2 = []  #TEST: temp
         if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
             list_of_records = report_items_list
         elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
@@ -1069,7 +1071,12 @@ class ConvertJSONDictToDataframe:
                     else:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
 
+                temp1.append(attribute_performance_dict)  #TEST: Possibly replace with append for `attribute_performance_list`
+            temp2.append(attribute_performance_dict)  #TEST: Possibly replace with append for `attribute_performance_list`
+
         log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
+        log.warning(f"`temp1`: {temp1}")  #TEST: temp
+        log.warning(f"`temp2`: {temp2}")  #TEST: temp
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
         performance_list = []
