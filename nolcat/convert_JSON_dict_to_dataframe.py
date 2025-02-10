@@ -1034,11 +1034,11 @@ class ConvertJSONDictToDataframe:
             list_of_records = report_items_list
         elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
             list_of_records = items_list
-        #TEST: temp
         else:
-            log.warning(f"`second_iteration_key_list`: {second_iteration_key_list}")
-            log.warning(f"`third_iteration_key_list`: {third_iteration_key_list}")
-        #TEST: end temp
+            message = f"The JSON is malformed, lacking the `Attribute_Performance` key."
+            log.critical(message)
+            return message
+
         for record in list_of_records:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
             attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute Performance"}
