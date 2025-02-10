@@ -1081,6 +1081,8 @@ class ConvertJSONDictToDataframe:
 
                     else:
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
+                        attribute_performance_dict[attribute_performance_key] = attribute_performance_value
+                        final_iteration_key_list.append(attribute_performance_key)
 
                 temp1.append(attribute_performance_dict)  #TEST: Possibly replace with append for `attribute_performance_list`
             temp2.append(attribute_performance_dict)  #TEST: Possibly replace with append for `attribute_performance_list`
