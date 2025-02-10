@@ -1051,7 +1051,9 @@ class ConvertJSONDictToDataframe:
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
                         log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.data_type`"))
-                        pass
+                        attribute_performance_dict['data_type'] = attribute_performance_value
+                        include_in_df_dtypes['data_type'] = 'string'
+                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
 
                     #Subsection: Capture `YOP` Value
                     elif attribute_performance_key == "YOP":
