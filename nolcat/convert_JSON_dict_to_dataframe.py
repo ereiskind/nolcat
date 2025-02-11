@@ -720,7 +720,7 @@ class ConvertJSONDictToDataframe:
                             elif report_items_dict[field].endswith(" et al."):
                                 break  # The loop of adding author names
                             elif len(report_items_dict[field]) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
-                                report_items_dict[field] = report_items_dict[field] + ", " + label_and_author_name['Name'].strip()
+                                report_items_dict[field] = report_items_dict[field] + "; " + label_and_author_name['Name'].strip()
                             else:
                                 report_items_dict[field] = report_items_dict[field] + " et al."
                     log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
@@ -939,7 +939,7 @@ class ConvertJSONDictToDataframe:
                                     elif items_dict['authors'].endswith(" et al."):
                                         break  # The loop of adding author names
                                     elif len(items_dict['authors']) + len(label_and_author_name['Name']) + 8 < self.AUTHORS_LENGTH:
-                                        items_dict['authors'] = items_dict['authors'] + ", " + label_and_author_name['Name'].strip()
+                                        items_dict['authors'] = items_dict['authors'] + "; " + label_and_author_name['Name'].strip()
                                     else:
                                         items_dict['authors'] = items_dict['authors'] + " et al."
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("authors", items_dict['authors']))
