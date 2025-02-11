@@ -1076,8 +1076,10 @@ class ConvertJSONDictToDataframe:
                         attribute_performance_dict[attribute_performance_key] = attribute_performance_value
                         final_iteration_key_list.append(attribute_performance_key)
 
+                log.warning(f"`attribute_performance_list` before append:\n{format_list_for_stdout(attribute_performance_list)}")  #TEST: temp
                 attribute_performance_list.append(attribute_performance_dict)
                 log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
+                log.warning(f"`attribute_performance_list` after append:\n{format_list_for_stdout(attribute_performance_list)}")  #TEST: temp
         log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
