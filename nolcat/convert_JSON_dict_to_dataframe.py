@@ -1039,6 +1039,7 @@ class ConvertJSONDictToDataframe:
             for attributes in record['Attribute_Performance']:
                 for attribute_performance_key, attribute_performance_value in attributes.items():
                     final_iteration_key_list = []
+                    log.warning(f"Adding data to dict:\n{format_list_for_stdout(attribute_performance_dict)}")  #TEST: temp
 
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
