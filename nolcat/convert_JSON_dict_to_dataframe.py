@@ -1086,10 +1086,8 @@ class ConvertJSONDictToDataframe:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Performance'], "Performance", "keys at the top level of the JSON"))
             performance_dict = {k: v for (k, v) in record.items() if k != "Performance"}
             for performance_key, performance_value in record['Performance'].items():
-                log.warning(f"`performance_key`: {performance_key}")  #TEST: temp
-                log.warning(f"`performance_value`: {performance_value}")  #TEST: temp
-                #    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
-                #    performance_dict['metric_type'] = p_key
+                log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(performance_key, performance_key, "`COUNTERData.metric_type`"))
+                performance_dict['metric_type'] = performance_key
                 #    for usage_date, usage_count in p_value.items():
                 #        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
                 #        final_dict = {
