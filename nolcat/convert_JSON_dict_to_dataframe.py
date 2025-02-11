@@ -1039,7 +1039,6 @@ class ConvertJSONDictToDataframe:
                 attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
                 for attribute_performance_key, attribute_performance_value in attributes.items():
                     final_iteration_key_list = []
-                    log.warning(f"Adding data to dict:\n{format_list_for_stdout(attribute_performance_dict)}")  #TEST: temp
 
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
@@ -1077,15 +1076,12 @@ class ConvertJSONDictToDataframe:
                         attribute_performance_dict[attribute_performance_key] = attribute_performance_value
                         final_iteration_key_list.append(attribute_performance_key)
 
-                log.warning(f"`attribute_performance_list` before append:\n{format_list_for_stdout(attribute_performance_list)}")  #TEST: temp
                 attribute_performance_list.append(attribute_performance_dict)
                 log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
-                log.warning(f"`attribute_performance_list` after append:\n{format_list_for_stdout(attribute_performance_list)}")  #TEST: temp
         log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
         performance_list = []
-        log.warning(f"`attribute_performance_list`: {attribute_performance_list}")  #TEST: temp
         for record in attribute_performance_list:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Performance'], "Performance", "keys at the top level of the JSON"))
             #for p_key, p_value in ap_value.items():
