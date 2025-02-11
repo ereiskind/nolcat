@@ -606,7 +606,6 @@ class ConvertJSONDictToDataframe:
         """
         log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`.")
         report_type = self.SUSHI_JSON_dictionary['Report_Header']['Report_ID']
-        records_orient_list = []
         
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
         include_in_df_dtypes = {
@@ -1109,9 +1108,9 @@ class ConvertJSONDictToDataframe:
         df_dtypes['usage_count'] = 'int'
         log.info(f"`df_dtypes`: {df_dtypes}")
 
-        log.debug(f"`records_orient_list` before `json.dumps()`  is type {type(records_orient_list)}.")
+        log.debug(f"`performance_list` before `json.dumps()`  is type {type(performance_list)}.")
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
-            records_orient_list,
+            performance_list,
             default=ConvertJSONDictToDataframe._serialize_dates,
         )
         if len(records_orient_list) > 1500:
