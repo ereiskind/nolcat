@@ -1018,8 +1018,8 @@ class ConvertJSONDictToDataframe:
                             items_dict[items_key] = items_value
                             third_iteration_key_list.append(items_key)
 
-                items_list.append(items_dict)
-                log.debug(f"Record added to `items_list`: {items_list[-1]}")
+                    items_list.append(items_dict)
+                    log.debug(f"Record added to `items_list`: {items_list[-1]}")
             log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
@@ -1077,8 +1077,8 @@ class ConvertJSONDictToDataframe:
                         attribute_performance_dict[attribute_performance_key] = attribute_performance_value
                         final_iteration_key_list.append(attribute_performance_key)
 
-            attribute_performance_list.append(attribute_performance_dict)
-            log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
+                attribute_performance_list.append(attribute_performance_dict)
+                log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
         log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
