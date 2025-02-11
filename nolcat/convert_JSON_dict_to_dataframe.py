@@ -1084,19 +1084,25 @@ class ConvertJSONDictToDataframe:
         performance_list = []
         for record in attribute_performance_list:
             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(record['Performance'], "Performance", "keys at the top level of the JSON"))
-            #for p_key, p_value in ap_value.items():
-            #    performance_dict = deepcopy(attribute_performance_dict)
-            #    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
-            #    performance_dict['metric_type'] = p_key
-            #    for usage_date, usage_count in p_value.items():
-            #        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
-            #        final_dict = {
-            #            **deepcopy(performance_dict),
-            #            'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
-            #            'usage_count': usage_count,
-            #        }
-            #        performance_list.append(final_dict)
-            #        log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements           
+            for metrics in record['Performance']:
+                performance_dict = {k: v for (k, v) in record.items() if k != "Performance"}
+                for performance_key, performance_value in metrics:
+                    log.warning(f"`performance_key`: {performance_key}")  #TEST: temp
+                    log.warning(f"`performance_value`: {performance_value}")  #TEST: temp
+                    #    log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_key, p_key, "`COUNTERData.metric_type`"))
+                    #    performance_dict['metric_type'] = p_key
+                    #    for usage_date, usage_count in p_value.items():
+                    #        log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(p_value, p_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
+                    #        final_dict = {
+                    #            **deepcopy(performance_dict),
+                    #            'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
+                    #            'usage_count': usage_count,
+                    #        }
+                    #        performance_list.append(final_dict)
+                    #        log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                performance_list.append(performance_dict)
+                log.debug(f"Record added to `performance_list`: {performance_list[-1]}")
+        log.debug("`performance_list` created by iteration through `Performance` section of SUSHI JSON.\n\n")
 
         #Section: Create Dataframe
         log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
