@@ -151,11 +151,8 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.warning(f"Starting iteration for new JSON record {record}.")  #TEST: temp level, should be `debug`
             record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
-                log.warning(f"`key` (type {type(key)}): {key}")  #TEST: temp
-                log.warning(f"`value` (type {type(value)}): {value}")  #TEST: temp
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
