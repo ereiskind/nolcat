@@ -104,7 +104,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     Regex taken from https://stackoverflow.com/a/3809435. """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
