@@ -5488,6 +5488,4 @@ def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, 
 def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, sample_SUSHI_IR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI IR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5b1_JSON_dict).create_dataframe()
-    temp = df.compare(sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()], result_names=('from_fx', 'fixture'))  #TEST: temp
-    temp.to_csv(TOP_NOLCAT_DIRECTORY / "IR.csv", index_label="Index")  #TEST: temp
     assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])
