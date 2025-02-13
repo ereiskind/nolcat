@@ -190,31 +190,27 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
-                    if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        record_dict['publisher_ID'] = None
-                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
-                    elif len(value) == 1:
-                        if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
-                            message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
-                            log.critical(message)
-                            return message
-                        else:
-                            record_dict['publisher_ID'] = value[0]['Value']
-                            include_in_df_dtypes['publisher_ID'] = 'string'
-                            log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
-                    else:
-                        for type_and_value in value:
-                            if self.proprietary_ID_regex.search(type_and_value['Type']):
-                                if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
-                                    message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
-                                    log.critical(message)
-                                    return message
-                                else:
-                                    record_dict['publisher_ID'] = type_and_value['Value']
-                                    include_in_df_dtypes['publisher_ID'] = 'string'
-                                    log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
+                    if isinstance(value, list) and value != []:
+                        if len(value) == 1 and self.proprietary_ID_regex.search(value[0]['Type']):
+                            if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
+                                message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
+                                log.critical(message)
+                                return message
                             else:
-                                continue  # The `for type_and_value in value` loop
+                                record_dict['publisher_ID'] = value[0]['Value']
+                                include_in_df_dtypes['publisher_ID'] = 'string'
+                                log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
+                        else:
+                            for type_and_value in value:
+                                if self.proprietary_ID_regex.search(type_and_value['Type']):
+                                    if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
+                                        message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
+                                        log.critical(message)
+                                        return message
+                                    else:
+                                        record_dict['publisher_ID'] = type_and_value['Value']
+                                        include_in_df_dtypes['publisher_ID'] = 'string'
+                                        log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
                 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
