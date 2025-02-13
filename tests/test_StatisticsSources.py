@@ -194,7 +194,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
-@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source']))
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
