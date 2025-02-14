@@ -30,6 +30,76 @@
     },
     "Report_Items": [
         {
+            "Items": [
+                {
+                    "Item": "- FSU Sociology Professor Named Director of Claude Pepper Center",
+                    "Item_ID": {
+                        "Proprietary": "ProQuest:2661419826"
+                    },
+                    "Publication_Date": "2022-05-10",
+                    "Platform": "ProQuest",
+                    "Publisher": "Targeted News Service",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Other",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "2022",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-11": 2
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-11": 2
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-11": 2
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-11": 2
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Item": "500-year anniversary of Martin Luthers 95 Theses",
+                    "Item_ID": {
+                        "Proprietary": "ProQuest:1953258624"
+                    },
+                    "Publication_Date": "2017-10-20",
+                    "Platform": "ProQuest",
+                    "Publisher": "Tribune Content Agency LLC",
+                    "Attribute_Performance": [
+                        {
+                            "Data_Type": "Other",
+                            "Access_Method": "Regular",
+                            "Access_Type": "Controlled",
+                            "YOP": "2017",
+                            "Performance": {
+                                "Total_Item_Investigations": {
+                                    "2024-11": 4,
+                                    "2024-12": 6
+                                },
+                                "Total_Item_Requests": {
+                                    "2024-11": 1,
+                                    "2024-12": 1
+                                },
+                                "Unique_Item_Investigations": {
+                                    "2024-11": 2,
+                                    "2024-12": 3
+                                },
+                                "Unique_Item_Requests": {
+                                    "2024-11": 1,
+                                    "2024-12": 3
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "Title": "Journal of Middle East Women's Studies",
             "Item_ID": {
                 "Proprietary": "Silverchair:1000023",
