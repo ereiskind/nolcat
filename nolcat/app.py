@@ -71,7 +71,7 @@ def filter_empty_parentheses(log_statement):
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
-    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/. The logging level and format set in `logging.basicConfig` are used when directly running NoLCAT in the container; the `nolcat/pytest.ini` supplies that information when using pytest. The module `sqlalchemy.engine.base.Engine` is used for the SQLAlchemy logger instead of the more common `sqlalchemy.engine` because the latter includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another.
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ (site no longer available) with some additional information from https://engineeringfordatascience.com/posts/python_logging/. The logging level and format set in `logging.basicConfig` are used when directly running NoLCAT in the container; the `nolcat/pytest.ini` supplies that information when using pytest. The module `sqlalchemy.engine.base.Engine` is used for the SQLAlchemy logger instead of the more common `sqlalchemy.engine` because the latter includes log statements from modules `sqlalchemy.engine.base.Engine` and `sqlalchemy.engine.base.OptionEngine`, which are repeats of one another.
 
     Args:
         app (flask.Flask): the Flask object
