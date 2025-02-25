@@ -1,0 +1,16 @@
+digraph package_dependencies {
+    graph [rankdir=TB]
+
+    /* Node Types
+        When multiple adjustments are present, order is label, style, shape
+
+        Direct installation: `style="bold"`
+        
+        From 'requirements.txt`: `shape="component"`
+        From AWS Glue: `shape="cylinder"`
+        From Dockerfile: `shape="folder"`
+        Dependencies: `shape="box"`
+    */
+
+    //
+}
