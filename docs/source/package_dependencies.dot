@@ -79,6 +79,8 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "Flask-SQLAlchemy" -> Flask
+    "Flask-SQLAlchemy" -> SQLAlchemy
 
     "Flask-WTF" [
         label="\N==1.2.1"
