@@ -126,6 +126,11 @@ digraph package_dependencies {
         shape="folder"
     ]
 
+    iniconfig [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
     itsdangerous [
         label="\N==2.2.0"
         shape="box"
@@ -185,6 +190,11 @@ digraph package_dependencies {
     ]
     openpyxl -> "et-xmlfile"
 
+    packaging [
+        label="\N==24.2"
+        shape="box"
+    ]
+
     pandas [
         label="\N==2.2.2"
         style="bold"
@@ -208,6 +218,11 @@ digraph package_dependencies {
     "pandas[performance]" -> Bottleneck
     "pandas[performance]" -> numba
     "pandas[performance]" -> numexpr
+
+    pluggy [
+        label="\N==1.5.0"
+        shape="box"
+    ]
 
     pyarrow [
         label="\N==19.0.1"
@@ -245,6 +260,9 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    pytest -> iniconfig
+    pytest -> packaging
+    pytest -> pluggy
 
     "pytest-dependency" [
         label="\N==0.6.0"
