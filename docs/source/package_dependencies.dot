@@ -12,5 +12,249 @@ digraph package_dependencies {
         Dependencies: `shape="box"`
     */
 
-    //
+    awscli [
+        label="\N==1.23.5"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    beautifulsoup4 [
+        label="\N==4.12.3"
+        style="bold"
+        shape="component"
+    ]
+
+    boto3 [
+        label="\N==1.34.69"
+        style="bold"
+        shape="component"
+    ]
+
+    botocore [
+        label="\N==1.34.162"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    colorama [
+        label="\N==0.4.6"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    docutils [
+        label="\N==0.21.2"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    Flask [
+        label="\N==3.0.3"
+        style="bold"
+        shape="component"
+    ]
+
+    "Flask-SQLAlchemy" [
+        label="\N=="3.1.1"
+        style="bold"
+        shape="component"
+    ]
+
+    "Flask-WTF" [
+        label="\N==1.2.1"
+        style="bold"
+        shape="component"
+    ]
+
+    fsspec [
+        label="\N==2024.5.0"
+        style="bold"
+        shape="component"
+    ]
+
+    gevent [
+        label="\N==24.11.1"
+        style="bold"
+        shape="folder"
+    ]
+
+    graphviz [
+        label="\N==0.20.3"
+        style="bold"
+        shape="component"
+    ]
+
+    gunicorn [
+        label="\N==23.0.0"
+        style="bold"
+        shape="folder"
+    ]
+
+    jmespath [
+        label="\N==1.0.1"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    lxml [
+        label="\N==5.2.1"
+        style="bold"
+        shape="component"
+    ]
+
+    mysql [
+        label="\N==0.0.3"
+        style="bold"
+        shape="component"
+    ]
+
+    mysqlclient [
+        label="\N==2.2.4"
+        style="bold"
+        shape="component"
+    ]
+
+    openpyxl [
+        label="\N==3.1.2"
+        style="bold"
+        shape="component"
+    ]
+
+    pandas [
+        label="\N==2.2.2"
+        style="bold"
+        shape="component"
+    ]
+    pandas -> "pandas[parquet]"
+    pandas -> "pandas[performance]"
+
+    "pandas[parquet]" [
+        label="\N=="
+        shape="component"
+    ]
+
+    "pandas[performance]" [
+        label="\N=="
+        shape="component"
+    ]
+
+    pyasn1 [
+        label="\N==0.4.8"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    PyInputPlus [
+        label="\N==0.2.12"
+        style="bold"
+        shape="component"
+    ]
+
+    PyMySQL [
+        label="\N==1.0.2"
+        style="bold"
+        shape="component"
+    ]
+
+    pytest [
+        label="\N==8.2.0"
+        style="bold"
+        shape="component"
+    ]
+
+    "pytest-dependency" [
+        label="\N==0.6.0"
+        style="bold"
+        shape="component"
+    ]
+
+    "pytest-session2file" [
+        label="\N==0.1.11"
+        style="bold"
+        shape="component"
+    ]
+
+    "python-dateutil" [
+        label="\N==2.9.0.post0"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    PyYAML [
+        label="\N==5.4.1"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    requests [
+        label="\N==2.31.0"
+        style="bold"
+        shape="component"
+    ]
+
+    "requests-toolbelt" [
+        label="\N==1.0.0"
+        style="bold"
+        shape="component"
+    ]
+
+    rsa [
+        label="\N==4.7.2"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    s3fs [
+        label="\N==2024.5.0"
+        style="bold"
+        shape="component"
+    ]
+
+    s3transfer [
+        label="\N==0.10.4"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    six [
+        label="\N==1.17.0"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    Sphinx [
+        label="\N==7.3.7"
+        style="bold"
+        shape="component"
+    ]
+
+    "sphinx-autobuild" [
+        label="\N==2024.4.16"
+        style="bold"
+        shape="component"
+    ]
+
+    "sphinx-autodocgen" [
+        label="\N==1.3"
+        style="bold"
+        shape="component"
+    ]
+
+    SQLAlchemy [
+        label="\N==2.0.29"
+        style="bold"
+        shape="component"
+    ]
+
+    urllib3 [
+        label="\N==2.3.0"
+        style="bold"
+        shape="cylinder"
+    ]
+
+    WTForms [
+        label="\N==3.1.2"
+        style="bold"
+        shape="component"
+    ]
 }
