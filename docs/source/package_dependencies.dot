@@ -52,6 +52,16 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    certifi [
+        label="\N==2025.1.31"
+        shape="box"
+    ]
+
+    "charset-normalizer" [
+        label="\N==3.4.1"
+        shape="box"
+    ]
+
     click [
         label="\N==8.1.8"
         shape="box"
@@ -124,6 +134,11 @@ digraph package_dependencies {
         label="\N==23.0.0"
         style="bold"
         shape="folder"
+    ]
+
+    idna [
+        label="\N==3.10"
+        shape="box"
     ]
 
     iniconfig [
@@ -301,6 +316,10 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    requests -> "charset-normalizer"
+    requests -> certifi
+    requests -> idna
+    requests -> urllib3
 
     "requests-toolbelt" [
         label="\N==1.0.0"
