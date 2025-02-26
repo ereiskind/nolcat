@@ -46,6 +46,12 @@ digraph package_dependencies {
         shape="cylinder"
     ]
 
+    Bottleneck [
+        label="\N==1.4.2"
+        style="bold"
+        shape="box"
+    ]
+
     click [
         label="\N==8.1.8"
         shape="box"
@@ -155,6 +161,18 @@ digraph package_dependencies {
         shape="component"
     ]
 
+    numba [
+        label="\N==0.61.0"
+        style="bold"
+        shape="box"
+    ]
+
+    numexpr [
+        label="\N==2.10.2"
+        style="bold"
+        shape="box"
+    ]
+
     numpy [
         label="\N==2.1.3"
         shape="box"
@@ -185,9 +203,11 @@ digraph package_dependencies {
     "pandas[parquet]" -> pyarrow
 
     "pandas[performance]" [
-        label="\N=="
         shape="component"
     ]
+    "pandas[performance]" -> Bottleneck
+    "pandas[performance]" -> numba
+    "pandas[performance]" -> numexpr
 
     pyarrow [
         label="\N==19.0.1"
