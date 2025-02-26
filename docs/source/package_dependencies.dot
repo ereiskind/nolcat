@@ -87,6 +87,9 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "Flask-WTF" -> Flask
+    "Flask-WTF" -> itsdangerous
+    "Flask-WTF" -> WTForms
 
     fsspec [
         label="\N==2024.5.0"
