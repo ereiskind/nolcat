@@ -142,6 +142,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    mysql -> mysqlclient
 
     mysqlclient [
         label="\N==2.2.4"
