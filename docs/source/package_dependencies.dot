@@ -226,11 +226,18 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    PyInputPlus -> PySimpleValidate
+    PyInputPlus -> stdiomask
 
     PyMySQL [
         label="\N==1.0.2"
         style="bold"
         shape="component"
+    ]
+
+    PySimpleValidate [
+        label="\N==0.2.12"
+        shape="box"
     ]
 
     pytest [
@@ -326,6 +333,11 @@ digraph package_dependencies {
         label="\N==2.0.29"
         style="bold"
         shape="component"
+    ]
+
+    stdiomask [
+        label="\N==0.0.6"
+        shape="box"
     ]
 
     tzdata [
