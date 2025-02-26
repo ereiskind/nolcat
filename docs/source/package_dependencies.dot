@@ -269,6 +269,8 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "pytest-dependency" -> pytest
+    "pytest-dependency" -> setuptools
 
     "pytest-session2file" [
         label="\N==0.1.11"
@@ -321,6 +323,11 @@ digraph package_dependencies {
         label="\N==0.10.4"
         style="bold"
         shape="cylinder"
+    ]
+
+    setuptools [
+        label="\N==75.8.0"
+        shape="box"
     ]
 
     six [
