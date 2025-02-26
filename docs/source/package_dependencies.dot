@@ -326,6 +326,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "requests-toolbelt" -> requests
 
     rsa [
         label="\N==4.7.2"
