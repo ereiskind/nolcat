@@ -277,6 +277,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "pytest-session2file" -> pytest
 
     "python-dateutil" [
         label="\N==2.9.0.post0"
