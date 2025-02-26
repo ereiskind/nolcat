@@ -63,6 +63,11 @@ digraph package_dependencies {
         shape="cylinder"
     ]
 
+    "et-xmlfile" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
     Flask [
         label="\N==3.0.3"
         style="bold"
@@ -155,6 +160,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    openpyxl -> "et-xmlfile"
 
     pandas [
         label="\N==2.2.2"
