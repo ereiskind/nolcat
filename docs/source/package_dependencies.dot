@@ -11,6 +11,7 @@ digraph package_dependencies {
         From Dockerfile: `shape="folder"`
         Dependencies: `shape="box"`
     */
+    // Dependency relationships go from installed package to dependent package and are listed under the former
 
     awscli [
         label="\N==1.23.5"
@@ -23,6 +24,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    beautifulsoup4 -> soupsieve
 
     boto3 [
         label="\N==1.34.69"
