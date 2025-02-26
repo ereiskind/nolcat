@@ -180,13 +180,19 @@ digraph package_dependencies {
     pandas -> tzdata
 
     "pandas[parquet]" [
-        label="\N=="
         shape="component"
     ]
+    "pandas[parquet]" -> pyarrow
 
     "pandas[performance]" [
         label="\N=="
         shape="component"
+    ]
+
+    pyarrow [
+        label="\N==19.0.1"
+        style="bold"
+        shape="box"
     ]
 
     pyasn1 [
