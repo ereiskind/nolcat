@@ -31,6 +31,9 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    boto3 -> botocore
+    boto3 -> jmespath
+    boto3 -> s3transfer
 
     botocore [
         label="\N==1.34.162"
