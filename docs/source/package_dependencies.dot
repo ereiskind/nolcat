@@ -395,6 +395,11 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    soupsieve [
+        label="\N==2.6"
+        shape="box"
+    ]
+
     Sphinx [
         label="\N==7.3.7"
         style="bold"
