@@ -198,6 +198,11 @@ digraph package_dependencies {
         shape="component"
     ]
 
+    MarkupSafe [
+        label="\N==3.0.2"
+        shape="box"
+    ]
+
     mysql [
         label="\N==0.0.3"
         style="bold"
@@ -534,4 +539,5 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    WTForms -> MarkupSafe
 }
