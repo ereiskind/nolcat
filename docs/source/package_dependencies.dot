@@ -74,6 +74,7 @@ digraph package_dependencies {
         style="bold"
         shape="box"
     ]
+    Bottleneck -> numpy
 
     certifi [
         label="\N==2025.1.31"
@@ -196,6 +197,11 @@ digraph package_dependencies {
         shape="cylinder"
     ]
 
+    llvmlite [
+        label="\N==0.44.0"
+        shape="box"
+    ]
+
     lxml [
         label="\N==5.2.1"
         style="bold"
@@ -219,6 +225,8 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    numba -> llvmlite
+    numba -> numpy
 
     numba [
         label="\N==0.61.0"
@@ -231,6 +239,7 @@ digraph package_dependencies {
         style="bold"
         shape="box"
     ]
+    numexpr -> numpy
 
     numpy [
         label="\N==2.1.3"
@@ -283,6 +292,7 @@ digraph package_dependencies {
         style="bold"
         shape="box"
     ]
+    pyarrow -> numpy
 
     pyasn1 [
         label="\N==0.4.8"
@@ -343,6 +353,7 @@ digraph package_dependencies {
         style="bold"
         shape="cylinder"
     ]
+    "python-dateutil" -> six
 
     pytz [
         label="\N==2025.1"
