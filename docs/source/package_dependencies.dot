@@ -13,6 +13,16 @@ digraph package_dependencies {
     */
     // Dependency relationships go from installed package to dependent package and are listed under the former
 
+    aiobotocore [
+        label="\N==2.13.3"
+        shape="box"
+    ]
+
+    aiohttp [
+        label="\N==3.11.12"
+        shape="box"
+    ]
+
     awscli [
         label="\N==1.23.5"
         style="bold"
@@ -339,6 +349,9 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    s3fs -> aiobotocore
+    s3fs -> aiohttp
+    s3fs -> fsspec
 
     s3transfer [
         label="\N==0.10.4"
