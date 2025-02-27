@@ -426,6 +426,12 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "sphinx-autobuild" -> colorama
+    "sphinx-autobuild" -> Sphinx
+    "sphinx-autobuild" -> starlette
+    "sphinx-autobuild" -> uvicorn
+    "sphinx-autobuild" -> watchfiles
+    "sphinx-autobuild" -> websockets
 
     "sphinx-autodocgen" [
         label="\N==1.3"
@@ -469,6 +475,11 @@ digraph package_dependencies {
         shape="component"
     ]
 
+    starlette [
+        label="\N==0.45.3"
+        shape="box"
+    ]
+
     stdiomask [
         label="\N==0.0.6"
         shape="box"
@@ -483,6 +494,21 @@ digraph package_dependencies {
         label="\N==2.3.0"
         style="bold"
         shape="cylinder"
+    ]
+
+    uvicorn [
+        label="\N==0.34.0"
+        shape="box"
+    ]
+
+    watchfiles [
+        label="\N==1.0.4"
+        shape="box"
+    ]
+
+    websockets [
+        label="\N==15.0"
+        shape="box"
     ]
 
     Werkzeug [
