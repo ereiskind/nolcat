@@ -17,7 +17,7 @@ digraph package_dependencies {
         Dependencies of Dockerfile packages: `style="dashed"`
         Dependencies of AWS Glue packages: `style="dotted"`
     */
-    // Dependency relationships go from installed package to dependent package and are listed under the former
+    // Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
 
     aiobotocore [
         label="\N==2.13.3"
@@ -65,7 +65,7 @@ digraph package_dependencies {
         label="\N==4.8.0"
         shape="box"
     ]
-    anyio -> "typing-extensions"
+    anyio -> "typing_extensions"
     anyio -> idna
     anyio -> sniffio
 
@@ -169,7 +169,7 @@ digraph package_dependencies {
     Flask -> Werkzeug
 
     "Flask-SQLAlchemy" [
-        label="\N=="3.1.1"
+        label="\N==3.1.1"
         style="bold"
         shape="component"
     ]
@@ -256,8 +256,7 @@ digraph package_dependencies {
 
     jmespath [
         label="\N==1.0.1"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
 
     llvmlite [
@@ -293,14 +292,14 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
-    numba -> llvmlite
-    numba -> numpy
 
     numba [
         label="\N==0.61.0"
         style="bold"
         shape="box"
     ]
+    numba -> llvmlite
+    numba -> numpy
 
     numexpr [
         label="\N==2.10.2"
@@ -423,8 +422,7 @@ digraph package_dependencies {
 
     "python-dateutil" [
         label="\N==2.9.0.post0"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
     "python-dateutil" -> six
 
@@ -485,8 +483,7 @@ digraph package_dependencies {
 
     six [
         label="\N==1.17.0"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
 
     sniffio [
@@ -605,8 +602,7 @@ digraph package_dependencies {
 
     urllib3 [
         label="\N==2.3.0"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
 
     uvicorn [
