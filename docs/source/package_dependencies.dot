@@ -65,6 +65,9 @@ digraph package_dependencies {
         style="bold"
         shape="cylinder"
     ]
+    botocore -> jmespath
+    botocore -> "python-dateutil"
+    botocore -> urllib3
 
     Bottleneck [
         label="\N==1.4.2"
@@ -388,6 +391,7 @@ digraph package_dependencies {
         style="bold"
         shape="cylinder"
     ]
+    s3transfer -> botocore
 
     setuptools [
         label="\N==75.8.0"
