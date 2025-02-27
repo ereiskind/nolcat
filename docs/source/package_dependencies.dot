@@ -82,7 +82,7 @@ digraph package_dependencies {
     awscli -> botocore [style="dotted"]
     awscli -> colorama [style="dotted"]
     awscli -> docutils [style="dotted"]
-    awscli -> pyYAML [style="dotted"]
+    awscli -> PyYAML [style="dotted"]
     awscli -> rsa [style="dotted"]
     awscli -> s3transfer [style="dotted"]
 
