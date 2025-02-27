@@ -79,6 +79,12 @@ digraph package_dependencies {
         style="bold"
         shape="cylinder"
     ]
+    awscli -> botocore [style="dotted"]
+    awscli -> colorama [style="dotted"]
+    awscli -> docutils [style="dotted"]
+    awscli -> pyYAML [style="dotted"]
+    awscli -> rsa [style="dotted"]
+    awscli -> s3transfer [style="dotted"]
 
     Babel [
         label="\N==2.17.0"
@@ -108,8 +114,7 @@ digraph package_dependencies {
 
     botocore [
         label="\N==1.34.162"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
     botocore -> jmespath
     botocore -> "python-dateutil"
@@ -139,14 +144,12 @@ digraph package_dependencies {
 
     colorama [
         label="\N==0.4.6"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
 
     docutils [
         label="\N==0.21.2"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
 
     "et-xmlfile" [
@@ -366,7 +369,7 @@ digraph package_dependencies {
 
     pyasn1 [
         label="\N==0.4.8"
-        style="bold"
+        style="dotted"
         shape="cylinder"
     ]
 
@@ -432,7 +435,7 @@ digraph package_dependencies {
 
     PyYAML [
         label="\N==5.4.1"
-        style="bold"
+        style="dotted"
         shape="cylinder"
     ]
 
@@ -455,9 +458,10 @@ digraph package_dependencies {
 
     rsa [
         label="\N==4.7.2"
-        style="bold"
+        style="dotted"
         shape="cylinder"
     ]
+    rsa -> pyasn1 [style="dotted"]
 
     s3fs [
         label="\N==2024.5.0"
@@ -470,8 +474,7 @@ digraph package_dependencies {
 
     s3transfer [
         label="\N==0.10.4"
-        style="bold"
-        shape="cylinder"
+        shape="box"
     ]
     s3transfer -> botocore
 
