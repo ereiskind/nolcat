@@ -54,6 +54,11 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    anyio [
+        label="\N==4.8.0"
+        shape="box"
+    ]
+
     attrs [
         label="\N==25.1.0"
         shape="box"
@@ -199,6 +204,11 @@ digraph package_dependencies {
         label="\N==23.0.0"
         style="bold"
         shape="folder"
+    ]
+
+    h11 [
+        label="\N==0.14.0"
+        shape="box"
     ]
 
     idna [
@@ -554,6 +564,7 @@ digraph package_dependencies {
         label="\N==0.45.3"
         shape="box"
     ]
+    starlette -> anyio
 
     stdiomask [
         label="\N==0.0.6"
@@ -580,11 +591,14 @@ digraph package_dependencies {
         label="\N==0.34.0"
         shape="box"
     ]
+    uvicorn -> click
+    uvicorn -> h11
 
     watchfiles [
         label="\N==1.0.4"
         shape="box"
     ]
+    watchfiles -> anyio
 
     websockets [
         label="\N==15.0"
