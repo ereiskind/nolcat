@@ -438,6 +438,7 @@ digraph package_dependencies {
         style="bold"
         shape="component"
     ]
+    "sphinx-autodocgen" -> Sphinx
 
     "sphinxcontrib-applehelp" [
         label="\N==2.0.0"
