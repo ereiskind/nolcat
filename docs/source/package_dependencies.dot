@@ -23,10 +23,20 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    alabaster [
+        label="\N==0.7.16"
+        shape="box"
+    ]
+
     awscli [
         label="\N==1.23.5"
         style="bold"
         shape="cylinder"
+    ]
+
+    Babel [
+        label="\N==2.17.0"
+        shape="box"
     ]
 
     beautifulsoup4 [
@@ -151,6 +161,11 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    imagesize [
+        label="\N==1.4.1"
+        shape="box"
+    ]
+
     iniconfig [
         label="\N==2.0.0"
         shape="box"
@@ -259,6 +274,11 @@ digraph package_dependencies {
         label="\N==0.4.8"
         style="bold"
         shape="cylinder"
+    ]
+
+    Pygments [
+        label="\N==2.19.1"
+        shape="box"
     ]
 
     PyInputPlus [
@@ -370,11 +390,31 @@ digraph package_dependencies {
         shape="cylinder"
     ]
 
+    snowballstemmer [
+        label="\N==2.2.0"
+        shape="box"
+    ]
+
     Sphinx [
         label="\N==7.3.7"
         style="bold"
         shape="component"
     ]
+    Sphinx -> alabaster
+    Sphinx -> Babel
+    Sphinx -> docutils
+    Sphinx -> imagesize
+    Sphinx -> Jinja2
+    Sphinx -> packaging
+    Sphinx -> Pygments
+    Sphinx -> requests
+    Sphinx -> snowballstemmer
+    Sphinx -> "sphinxcontrib-applehelp"
+    Sphinx -> "sphinxcontrib-devhelp"
+    Sphinx -> "sphinxcontrib-htmlhelp"
+    Sphinx -> "sphinxcontrib-jsmath"
+    Sphinx -> "sphinxcontrib-qthelp"
+    Sphinx -> "sphinxcontrib-serializinghtml"
 
     "sphinx-autobuild" [
         label="\N==2024.4.16"
@@ -386,6 +426,36 @@ digraph package_dependencies {
         label="\N==1.3"
         style="bold"
         shape="component"
+    ]
+
+    "sphinxcontrib-applehelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-devhelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-htmlhelp" [
+        label="\N==2.1.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-jsmath" [
+        label="\N==1.0.1"
+        shape="box"
+    ]
+
+    "sphinxcontrib-qthelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-serializinghtml" [
+        label="\N==2.0.0"
+        shape="box"
     ]
 
     SQLAlchemy [
