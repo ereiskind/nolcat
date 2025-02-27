@@ -5,11 +5,17 @@ digraph package_dependencies {
         When multiple adjustments are present, order is label, style, shape
 
         Direct installation: `style="bold"`
+        Dockerfile package dependencies: `style="dashed"`
+        AWS Glue package dependencies: `style="dotted"`
         
         From 'requirements.txt`: `shape="component"`
         From AWS Glue: `shape="cylinder"`
         From Dockerfile: `shape="folder"`
         Dependencies: `shape="box"`
+    */
+    /* Edge Types
+        Dependencies of Dockerfile packages: `style="dashed"`
+        Dependencies of AWS Glue packages: `style="dotted"`
     */
     // Dependency relationships go from installed package to dependent package and are listed under the former
 
@@ -192,6 +198,9 @@ digraph package_dependencies {
         style="bold"
         shape="folder"
     ]
+    gevent -> greenlet [style="dashed"]
+    gevent -> "zope.event" [style="dashed"]
+    gevent -> "zope.interface" [style="dashed"]
 
     graphviz [
         label="\N==0.20.3"
@@ -209,6 +218,7 @@ digraph package_dependencies {
         style="bold"
         shape="folder"
     ]
+    gunicorn -> packaging [style="dashed"]
 
     h11 [
         label="\N==0.14.0"
@@ -639,4 +649,18 @@ digraph package_dependencies {
     yarl -> idna
     yarl -> multidict
     yarl -> propcache
+
+    "zope.event" [
+        label="\N==5.0"
+        style="dashed"
+        shape="box"
+    ]
+    "zope.event" -> setuptools [style="dashed"]
+
+    "zope.interface" [
+        label="\N==7.2"
+        style="dashed"
+        shape="box"
+    ]
+    "zope.interface" -> setuptools [style="dashed"]
 }
