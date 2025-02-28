@@ -6,12 +6,9 @@ Flask-WTF==1.2.1
 fsspec==2024.5.0
 graphviz==0.20.3
 lxml==5.2.1
-mysql==0.0.3
-mysqlclient==2.2.4
 openpyxl==3.1.2
 pandas[parquet, performance]==2.2.2
 PyInputPlus==0.2.12
-PyMySQL==1.1.0
 pytest==8.2.0
 pytest-dependency==0.6.0
 pytest-session2file==0.1.11
