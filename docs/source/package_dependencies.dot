@@ -206,6 +206,7 @@ digraph package_dependencies {
 
     fsspec [
         label="\N==2024.5.0"
+        color="red" // Possibly remove
         shape="component"
     ]
 
@@ -299,6 +300,19 @@ digraph package_dependencies {
     multidict [
         label="\N==6.1.0"
         shape="box"
+    ]
+
+    mysql [
+        label="\N==0.0.3"
+        color="red" // Possibly remove
+        shape="component"
+    ]
+    mysql -> mysqlclient
+
+    mysqlclient [
+        label="\N==2.2.4"
+        color="red" // Possibly remove
+        shape="component"
     ]
 
     numba [
@@ -404,6 +418,12 @@ digraph package_dependencies {
     PyInputPlus -> PySimpleValidate
     PyInputPlus -> stdiomask
 
+    PyMySQL [
+        label="\N==1.1.0"
+        color="red" // Possibly remove
+        shape="component"
+    ]
+
     PySimpleValidate [
         label="\N==0.2.12"
         shape="box"
@@ -486,6 +506,7 @@ digraph package_dependencies {
 
     s3fs [
         label="\N==2024.5.0"
+        color="red" // Possibly remove
         shape="component"
     ]
     s3fs -> aiobotocore
