@@ -158,7 +158,7 @@ digraph package_dependencies {
     ]
 
     colorama [
-        label="\N==0.4.6"
+        label="\N==0.4.*"
         shape="box"
     ]
 
@@ -282,7 +282,7 @@ digraph package_dependencies {
     Jinja2 -> MarkupSafe
 
     jmespath [
-        label="\N==1.0.1"
+        label="\N==1.0.*"
         shape="box"
     ]
 
