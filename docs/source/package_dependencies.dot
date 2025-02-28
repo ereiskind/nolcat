@@ -386,7 +386,7 @@ digraph package_dependencies {
     PyInputPlus -> stdiomask
 
     PyMySQL [
-        label="\N==1.0.2"
+        label="\N==1.1.0"
         style="bold"
         shape="component"
     ]
