@@ -2,16 +2,23 @@ digraph package_dependencies {
     graph [rankdir=TB]
 
     /* Node Types
-        When multiple adjustments are present, order is label, style, shape
+        When multiple adjustments are present, order is label, style, color, fillcolor, shape
 
-        Packages used in code: `style="bold"`
+        Top level packages:
+            style="filled"
+            color="#782f40"
+            fillcolor="#ceb888"
+        Automated optional dependencies:
+            style="bold"
+            color="#782f40"
+
+        In 'requirements.txt`: `shape="component"`
+        In Dockerfile: `shape="folder"`
+        Automatically installed by AWS Glue: `shape="cylinder"`
+        Dependencies: `shape="box"`
+
         Dockerfile package dependencies: `style="dashed"`
         AWS Glue package dependencies: `style="dotted"`
-        
-        From 'requirements.txt`: `shape="component"`
-        From AWS Glue: `shape="cylinder"`
-        From Dockerfile: `shape="folder"`
-        Dependencies: `shape="box"`
     */
     /* Edge Types
         Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
