@@ -4,7 +4,7 @@ digraph package_dependencies {
     /* Node Types
         When multiple adjustments are present, order is label, style, shape
 
-        Direct installation: `style="bold"`
+        Packages used in code: `style="bold"`
         Dockerfile package dependencies: `style="dashed"`
         AWS Glue package dependencies: `style="dotted"`
         
@@ -14,10 +14,11 @@ digraph package_dependencies {
         Dependencies: `shape="box"`
     */
     /* Edge Types
+        Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
+
         Dependencies of Dockerfile packages: `style="dashed"`
         Dependencies of AWS Glue packages: `style="dotted"`
     */
-    // Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
 
     aiobotocore [
         label="\N==2.13.3"
@@ -76,7 +77,9 @@ digraph package_dependencies {
 
     awscli [
         label="\N==1.23.5"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="cylinder"
     ]
     awscli -> botocore [style="dotted"]
@@ -93,7 +96,9 @@ digraph package_dependencies {
 
     beautifulsoup4 [
         label="\N==4.12.3"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     beautifulsoup4 -> soupsieve
@@ -105,7 +110,9 @@ digraph package_dependencies {
 
     boto3 [
         label="\N==1.34.69"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     boto3 -> botocore
@@ -123,6 +130,7 @@ digraph package_dependencies {
     Bottleneck [
         label="\N==1.4.2"
         style="bold"
+        color="#782f40"
         shape="box"
     ]
     Bottleneck -> numpy
@@ -159,7 +167,9 @@ digraph package_dependencies {
 
     Flask [
         label="\N==3.0.3"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     Flask -> blinker
@@ -170,7 +180,9 @@ digraph package_dependencies {
 
     "Flask-SQLAlchemy" [
         label="\N==3.1.1"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "Flask-SQLAlchemy" -> Flask
@@ -178,7 +190,9 @@ digraph package_dependencies {
 
     "Flask-WTF" [
         label="\N==1.2.1"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "Flask-WTF" -> Flask
@@ -192,13 +206,14 @@ digraph package_dependencies {
 
     fsspec [
         label="\N==2024.5.0"
-        style="bold"
         shape="component"
     ]
 
     gevent [
         label="\N==24.11.1"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="folder"
     ]
     gevent -> greenlet [style="dashed"]
@@ -207,7 +222,9 @@ digraph package_dependencies {
 
     graphviz [
         label="\N==0.20.3"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
 
@@ -218,7 +235,9 @@ digraph package_dependencies {
 
     gunicorn [
         label="\N==23.0.0"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="folder"
     ]
     gunicorn -> packaging [style="dashed"]
@@ -266,7 +285,9 @@ digraph package_dependencies {
 
     lxml [
         label="\N==5.2.1"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
 
@@ -282,20 +303,19 @@ digraph package_dependencies {
 
     mysql [
         label="\N==0.0.3"
-        style="bold"
         shape="component"
     ]
     mysql -> mysqlclient
 
     mysqlclient [
         label="\N==2.2.4"
-        style="bold"
         shape="component"
     ]
 
     numba [
         label="\N==0.61.0"
         style="bold"
+        color="#782f40"
         shape="box"
     ]
     numba -> llvmlite
@@ -304,6 +324,7 @@ digraph package_dependencies {
     numexpr [
         label="\N==2.10.2"
         style="bold"
+        color="#782f40"
         shape="box"
     ]
     numexpr -> numpy
@@ -315,7 +336,9 @@ digraph package_dependencies {
 
     openpyxl [
         label="\N==3.1.2"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     openpyxl -> "et-xmlfile"
@@ -327,7 +350,9 @@ digraph package_dependencies {
 
     pandas [
         label="\N==2.2.2"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     pandas -> numpy
@@ -338,11 +363,13 @@ digraph package_dependencies {
     pandas -> tzdata
 
     "pandas[parquet]" [
+        color="#782f40"
         shape="component"
     ]
     "pandas[parquet]" -> pyarrow
 
     "pandas[performance]" [
+        color="#782f40"
         shape="component"
     ]
     "pandas[performance]" -> Bottleneck
@@ -362,6 +389,7 @@ digraph package_dependencies {
     pyarrow [
         label="\N==19.0.1"
         style="bold"
+        color="#782f40"
         shape="box"
     ]
     pyarrow -> numpy
@@ -379,7 +407,9 @@ digraph package_dependencies {
 
     PyInputPlus [
         label="\N==0.2.12"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     PyInputPlus -> PySimpleValidate
@@ -387,7 +417,6 @@ digraph package_dependencies {
 
     PyMySQL [
         label="\N==1.1.0"
-        style="bold"
         shape="component"
     ]
 
@@ -398,7 +427,9 @@ digraph package_dependencies {
 
     pytest [
         label="\N==8.2.0"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     pytest -> iniconfig
@@ -407,7 +438,9 @@ digraph package_dependencies {
 
     "pytest-dependency" [
         label="\N==0.6.0"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "pytest-dependency" -> pytest
@@ -415,7 +448,9 @@ digraph package_dependencies {
 
     "pytest-session2file" [
         label="\N==0.1.11"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "pytest-session2file" -> pytest
@@ -439,7 +474,9 @@ digraph package_dependencies {
 
     requests [
         label="\N==2.31.0"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     requests -> "charset-normalizer"
@@ -449,7 +486,9 @@ digraph package_dependencies {
 
     "requests-toolbelt" [
         label="\N==1.0.0"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "requests-toolbelt" -> requests
@@ -463,7 +502,6 @@ digraph package_dependencies {
 
     s3fs [
         label="\N==2024.5.0"
-        style="bold"
         shape="component"
     ]
     s3fs -> aiobotocore
@@ -503,7 +541,9 @@ digraph package_dependencies {
 
     Sphinx [
         label="\N==7.3.7"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     Sphinx -> alabaster
@@ -524,7 +564,9 @@ digraph package_dependencies {
 
     "sphinx-autobuild" [
         label="\N==2024.4.16"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "sphinx-autobuild" -> colorama
@@ -536,7 +578,9 @@ digraph package_dependencies {
 
     "sphinx-autodocgen" [
         label="\N==1.3"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     "sphinx-autodocgen" -> Sphinx
@@ -573,7 +617,9 @@ digraph package_dependencies {
 
     SQLAlchemy [
         label="\N==2.0.29"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     SQLAlchemy -> greenlet
@@ -636,7 +682,9 @@ digraph package_dependencies {
 
     WTForms [
         label="\N==3.1.2"
-        style="bold"
+        style="filled"
+        color="#782f40"
+        fillcolor="#ceb888"
         shape="component"
     ]
     WTForms -> MarkupSafe
