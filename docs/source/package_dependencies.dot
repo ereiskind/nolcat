@@ -34,7 +34,7 @@ digraph package_dependencies {
     ]
 
     aiohttp [
-        label="\N==3.11.12"
+        label="\N==3.11.13"
         shape="box"
     ]
     aiohttp -> aiohappyeyeballs
@@ -477,7 +477,7 @@ digraph package_dependencies {
     s3transfer -> botocore
 
     setuptools [
-        label="\N==75.8.0"
+        label="\N==75.8.2"
         shape="box"
     ]
 
