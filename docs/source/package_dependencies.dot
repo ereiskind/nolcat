@@ -291,7 +291,7 @@ digraph package_dependencies {
     ]
 
     Jinja2 [
-        label="\N==3.1.5"
+        label="\N==3.1.*"
         shape="box"
     ]
     Jinja2 -> MarkupSafe
@@ -727,7 +727,7 @@ digraph package_dependencies {
     watchfiles -> anyio
 
     websockets [
-        label="\N==15.0"
+        label="\N==15.0.*"
         shape="box"
     ]
 
