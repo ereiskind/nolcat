@@ -7,15 +7,12 @@ digraph package_dependencies {
         Packages used in code
             `style="filled"
             fillcolor="#CEB888"`
-        Packages used in Flask app creation
+        Packages used outside code, including in Flask app creation
             `style="filled"
             fillcolor="#DFD1A7"`
         Packages used in AWS Glue
             `style="filled"
             fillcolor="#FFC72C"`
-        Packages invoked outside code
-            `style="filled"
-            fillcolor="#5CB8B2"`
         
         Package installed because of Flask app: `shape="folder"`
         Package installed because of AWS Glue: `shape="cylinder"`
@@ -249,7 +246,7 @@ digraph package_dependencies {
     graphviz [
         label="\N==0.20.3"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -312,7 +309,7 @@ digraph package_dependencies {
     lxml [
         label="\N==5.2.1"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -499,7 +496,7 @@ digraph package_dependencies {
     "pytest-session2file" [
         label="\N==0.1.11"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -603,7 +600,7 @@ digraph package_dependencies {
     Sphinx [
         label="\N==7.3.7"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -627,7 +624,7 @@ digraph package_dependencies {
     "sphinx-autobuild" [
         label="\N==2024.4.16"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -642,7 +639,7 @@ digraph package_dependencies {
     "sphinx-autodocgen" [
         label="\N==1.3"
         style="filled"
-        fillcolor="#5CB8B2"
+        fillcolor="#DFD1A7"
         color="#782F40"
         penwidth=4
         shape="box"
