@@ -223,14 +223,10 @@ digraph package_dependencies {
     ]
 
     fsspec [
-        label="\N==2024.5.0"
-        color="red" // Possibly remove
-        shape="component"
-        /*
+        label="\N==2025.3.0"
+        style="bold"
         color="#782F40"
-        penwidth=4
         shape="box"
-        */
     ]
 
     gevent [
@@ -388,11 +384,19 @@ digraph package_dependencies {
         shape="box"
     ]
     pandas -> numpy
+    pandas -> "pandas[aws]"
     pandas -> "pandas[parquet]"
     pandas -> "pandas[performance]"
     pandas -> "python-dateutil"
     pandas -> pytz
     pandas -> tzdata
+
+    "pandas[aws]" [
+        color="#782F40"
+        shape="box"
+    ]
+    "pandas[aws]" -> fsspec
+    "pandas[aws]" -> s3fs
 
     "pandas[parquet]" [
         color="#782F40"
@@ -532,14 +536,10 @@ digraph package_dependencies {
     rsa -> pyasn1 [style="dotted"]
 
     s3fs [
-        label="\N==2024.5.0"
-        color="red" // Possibly remove
-        shape="component"
-        /*
+        label="\N==2025.3.0"
+        style="bold"
         color="#782F40"
-        penwidth=4
         shape="box"
-        */
     ]
     s3fs -> aiobotocore
     s3fs -> aiohttp
@@ -669,7 +669,7 @@ digraph package_dependencies {
     SQLAlchemy -> "typing_extensions"
 
     starlette [
-        label="\N==0.46.0"
+        label="\N==0.46.*"
         shape="box"
     ]
     starlette -> anyio
