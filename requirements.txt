@@ -5,7 +5,9 @@ Flask==3.0.3
 Flask-SQLAlchemy==3.1.1
 Flask-WTF==1.2.1
 fsspec==2024.5.0 # Unused, exists only as dependency for also-unused `s3fs`
+# gevent==24.11.1 added by Dockerfile
 graphviz==0.20.3
+# gunicorn==23.0.0 added by Dockerfile
 lxml==5.2.1
 mysql==0.0.3  # Unused, but when all MySQL packages are removed, Python container doesn't stay open after `up -d`
 mysqlclient==2.2.4  # Unused, but when all MySQL packages are removed, Python container doesn't stay open after `up -d`
