@@ -42,7 +42,7 @@ digraph package_dependencies {
     aiobotocore -> wrapt
 
     aiohappyeyeballs [
-        label="\N==2.4.6"
+        label="\N==2.4.*"
         shape="box"
     ]
 
