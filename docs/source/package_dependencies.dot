@@ -327,25 +327,17 @@ digraph package_dependencies {
 
     mysql [
         label="\N==0.0.3"
-        color="red" // Possibly remove
-        shape="component"
-        /*
         color="#782F40"
         penwidth=4
         shape="box"
-        */
     ]
     mysql -> mysqlclient
 
     mysqlclient [
         label="\N==2.2.4"
-        color="red" // Possibly remove
-        shape="component"
-        /*
         color="#782F40"
         penwidth=4
         shape="box"
-        */
     ]
 
     numba [
@@ -455,17 +447,6 @@ digraph package_dependencies {
     ]
     PyInputPlus -> PySimpleValidate
     PyInputPlus -> stdiomask
-
-    PyMySQL [
-        label="\N==1.1.0"
-        color="red" // Possibly remove
-        shape="component"
-        /*
-        color="#782F40"
-        penwidth=4
-        shape="box"
-        */
-    ]
 
     PySimpleValidate [
         label="\N==0.2.12"
