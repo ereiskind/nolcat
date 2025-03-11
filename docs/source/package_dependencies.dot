@@ -121,7 +121,7 @@ digraph package_dependencies {
     ]
 
     boto3 [
-        label="\N==1.34.69"
+        label="\N==1.37.1"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
