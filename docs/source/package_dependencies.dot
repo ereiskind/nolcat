@@ -34,6 +34,8 @@ digraph package_dependencies {
 
     aiobotocore [
         label="\N==2.21.1"
+        color="#782F40"
+        penwidth=4
         shape="box"
     ]
     aiobotocore -> aiohttp
