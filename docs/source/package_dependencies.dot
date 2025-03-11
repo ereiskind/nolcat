@@ -603,7 +603,7 @@ digraph package_dependencies {
     Sphinx -> "sphinxcontrib-serializinghtml"
 
     "sphinx-autobuild" [
-        label="\N==2024.4.16"
+        label="\N==2024.10.3"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
