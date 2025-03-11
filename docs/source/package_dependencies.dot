@@ -33,7 +33,7 @@ digraph package_dependencies {
     */
 
     aiobotocore [
-        label="\N==2.13.3"
+        label="\N==2.21.1"
         shape="box"
     ]
     aiobotocore -> aiohttp
@@ -42,7 +42,7 @@ digraph package_dependencies {
     aiobotocore -> wrapt
 
     aiohappyeyeballs [
-        label="\N==2.4.*"
+        label="\N==2.5.*"
         shape="box"
     ]
 
@@ -88,7 +88,7 @@ digraph package_dependencies {
     ]
 
     awscli [
-        label="\N==1.23.5"
+        label="\N==1.38.*" // Glue default to awscli==1.23.5 --> 1.23.5
         style="filled"
         fillcolor="#FFC72C"
         shape="cylinder"
@@ -133,7 +133,7 @@ digraph package_dependencies {
     boto3 -> s3transfer
 
     botocore [
-        label="\N==1.34.162"
+        label="\N==1.37.1"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -431,7 +431,7 @@ digraph package_dependencies {
     pyarrow -> numpy
 
     pyasn1 [
-        label="\N==0.6.1"
+        label="\N==0.6.1" // Glue default to awscli==1.23.5 --> 0.4.8
         style="dotted"
         shape="cylinder"
     ]
@@ -500,7 +500,7 @@ digraph package_dependencies {
     ]
 
     PyYAML [
-        label="\N==5.4.1"
+        label="\N==6.0.2" // Glue default to awscli==1.23.5 --> 5.4.1
         style="dotted"
         shape="cylinder"
     ]
@@ -546,7 +546,7 @@ digraph package_dependencies {
     s3fs -> fsspec
 
     s3transfer [
-        label="\N==0.10.4"
+        label="\N==0.11.3"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -554,7 +554,7 @@ digraph package_dependencies {
     s3transfer -> botocore
 
     setuptools [
-        label="\N==75.8.2"
+        label="\N==76.0.0"
         shape="box"
     ]
 
