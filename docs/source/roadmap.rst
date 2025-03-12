@@ -27,33 +27,9 @@ Iteration 0: Prepare for COUNTER R5.1
 * Edit ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to allow R5 or R5.1 URLs
 * Add saving JSON files to `ConvertJSONDictToDataframe.create_dataframe()`
 
-Iteration 2: COUNTER Only Product
-=================================
-* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
-* Create "ingest_usage/upload-COUNTER-reports.html" page
-* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-
 Iteration 3: Minimum Viable Product
 ===================================
-* Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
-* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-4.html" page
-* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
-* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` as two separate int fields if needed
-* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
-* If able to get drop-down working, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Create "ingest_usage/save-non-COUNTER-usage.html" page
-* Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
 
 Iteration 4: Minimum Viable Product with Tests and Test Database
 ================================================================
@@ -62,14 +38,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 Basic Enhancement Iterations
 ****************************
 These iterations make NoLCAT more robust and easier to use through relatively small adjustments. Many of these iterations move functionality from the SQL command line to the GUI.
-
-Iteration 0: Prepare for COUNTER R5.1
-=====================================
-* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-* Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
-* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
-* Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
-* Write ``tests.test_ConvertJSONDictToDataframe.test_create_dataframe_from_R5b1_JSON()``
 
 Iteration 1: View Lists
 =======================
