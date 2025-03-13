@@ -1,0 +1,761 @@
+digraph package_dependencies {
+    graph [rankdir=TB]
+
+    /* Node Types
+        When multiple adjustments are present, order is label, style, fillcolor, color, penwidth, shape
+
+        Packages used in code
+            `style="filled"
+            fillcolor="#CEB888"`
+        Packages used outside code, including in Flask app creation
+            `style="filled"
+            fillcolor="#DFD1A7"`
+        Packages used in AWS Glue
+            `style="filled"
+            fillcolor="#FFC72C"`
+        
+        Package installed because of Flask app: `shape="folder"`
+        Package installed because of AWS Glue: `shape="cylinder"`
+        Package installed due to code: `shape="box"`
+
+        Dependencies of packages installed because of Flask app: `style="dashed"`
+        Dependencies of packages installed because of AWS Glue: `style="dotted"`
+
+        Package included in 'requirements.txt`: `color="#782F40"`
+        Package directly included in 'requirements.txt`: `penwidth=4`
+        Packages in 'requirements.txt' as automated dependencies: `style="bold"`
+    */
+    /* Edge Types
+        Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
+
+        Dependencies of Dockerfile packages: `style="dashed"`
+        Dependencies of AWS Glue packages: `style="dotted"`
+    */
+
+    aiobotocore [
+        label="\N==2.21.1"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    aiobotocore -> aiohttp
+    aiobotocore -> aioitertools
+    aiobotocore -> botocore
+    aiobotocore -> wrapt
+
+    aiohappyeyeballs [
+        label="\N==2.5.*"
+        shape="box"
+    ]
+
+    aiohttp [
+        label="\N==3.11.13"
+        shape="box"
+    ]
+    aiohttp -> aiohappyeyeballs
+    aiohttp -> aiosignal
+    aiohttp -> attrs
+    aiohttp -> frozenlist
+    aiohttp -> multidict
+    aiohttp -> propcache
+    aiohttp -> yarl
+
+    aioitertools [
+        label="\N==0.12.0"
+        shape="box"
+    ]
+
+    aiosignal [
+        label="\N==1.3.2"
+        shape="box"
+    ]
+    aiosignal -> frozenlist
+
+    alabaster [
+        label="\N==0.7.16"
+        shape="box"
+    ]
+
+    anyio [
+        label="\N==4.8.0"
+        shape="box"
+    ]
+    anyio -> "typing_extensions"
+    anyio -> idna
+    anyio -> sniffio
+
+    attrs [
+        label="\N==25.1.0"
+        shape="box"
+    ]
+
+    awscli [
+        label="\N==1.38.*" // Glue default to awscli==1.23.5 --> 1.23.5
+        style="filled"
+        fillcolor="#FFC72C"
+        shape="cylinder"
+    ]
+    awscli -> botocore [style="dotted"]
+    awscli -> colorama [style="dotted"]
+    awscli -> docutils [style="dotted"]
+    awscli -> PyYAML [style="dotted"]
+    awscli -> rsa [style="dotted"]
+    awscli -> s3transfer [style="dotted"]
+
+    Babel [
+        label="\N==2.17.0"
+        shape="box"
+    ]
+
+    beautifulsoup4 [
+        label="\N==4.12.3"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    beautifulsoup4 -> soupsieve
+
+    blinker [
+        label="\N==1.9.0"
+        shape="box"
+    ]
+
+    boto3 [
+        label="\N==1.37.1"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    boto3 -> botocore
+    boto3 -> jmespath
+    boto3 -> s3transfer
+
+    botocore [
+        label="\N==1.37.1"
+        style="filled"
+        fillcolor="#CEB888"
+        shape="box"
+    ]
+    botocore -> jmespath
+    botocore -> "python-dateutil"
+    botocore -> urllib3
+
+    Bottleneck [
+        label="\N==1.4.2"
+        style="bold"
+        color="#782F40"
+        shape="box"
+    ]
+    Bottleneck -> numpy
+
+    certifi [
+        label="\N==2025.1.31"
+        shape="box"
+    ]
+
+    "charset-normalizer" [
+        label="\N==3.4.1"
+        shape="box"
+    ]
+
+    click [
+        label="\N==8.1.8"
+        shape="box"
+    ]
+
+    colorama [
+        label="\N==0.4.*"
+        shape="box"
+    ]
+
+    docutils [
+        label="\N==0.21.2"
+        shape="box"
+    ]
+
+    "et-xmlfile" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    Flask [
+        label="\N==3.0.3"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    Flask -> blinker
+    Flask -> click
+    Flask -> itsdangerous
+    Flask -> Jinja2
+    Flask -> Werkzeug
+
+    "Flask-SQLAlchemy" [
+        label="\N==3.1.1"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "Flask-SQLAlchemy" -> Flask
+    "Flask-SQLAlchemy" -> SQLAlchemy
+
+    "Flask-WTF" [
+        label="\N==1.2.1"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "Flask-WTF" -> Flask
+    "Flask-WTF" -> itsdangerous
+    "Flask-WTF" -> WTForms
+
+    frozenlist [
+        label="\N==1.5.0"
+        shape="box"
+    ]
+
+    fsspec [
+        label="\N==2025.3.0"
+        style="bold"
+        color="#782F40"
+        shape="box"
+    ]
+
+    gevent [
+        label="\N==24.11.1"
+        style="filled"
+        fillcolor="#DFD1A7"
+        shape="folder"
+    ]
+    gevent -> greenlet [style="dashed"]
+    gevent -> "zope.event" [style="dashed"]
+    gevent -> "zope.interface" [style="dashed"]
+
+    graphviz [
+        label="\N==0.20.3"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+
+    greenlet [
+        label="\N==3.1.1"
+        shape="box"
+    ]
+
+    gunicorn [
+        label="\N==23.0.0"
+        style="filled"
+        fillcolor="#DFD1A7"
+        shape="folder"
+    ]
+    gunicorn -> packaging [style="dashed"]
+
+    h11 [
+        label="\N==0.14.0"
+        shape="box"
+    ]
+
+    idna [
+        label="\N==3.10"
+        shape="box"
+    ]
+
+    imagesize [
+        label="\N==1.4.1"
+        shape="box"
+    ]
+
+    iniconfig [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    itsdangerous [
+        label="\N==2.2.0"
+        shape="box"
+    ]
+
+    Jinja2 [
+        label="\N==3.1.*"
+        shape="box"
+    ]
+    Jinja2 -> MarkupSafe
+
+    jmespath [
+        label="\N==1.0.*"
+        shape="box"
+    ]
+
+    llvmlite [
+        label="\N==0.44.0"
+        shape="box"
+    ]
+
+    lxml [
+        label="\N==5.2.1"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+
+    MarkupSafe [
+        label="\N==3.0.2"
+        shape="box"
+    ]
+
+    multidict [
+        label="\N==6.1.0"
+        shape="box"
+    ]
+
+    mysql [
+        label="\N==0.0.3"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    mysql -> mysqlclient
+
+    mysqlclient [
+        label="\N==2.2.4"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+
+    numba [
+        label="\N==0.61.0"
+        style="bold"
+        color="#782F40"
+        shape="box"
+    ]
+    numba -> llvmlite
+    numba -> numpy
+
+    numexpr [
+        label="\N==2.10.2"
+        style="bold"
+        color="#782F40"
+        shape="box"
+    ]
+    numexpr -> numpy
+
+    numpy [
+        label="\N==2.1.3"
+        style="filled"
+        fillcolor="#CEB888"
+        shape="box"
+    ]
+
+    openpyxl [
+        label="\N==3.1.2"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    openpyxl -> "et-xmlfile"
+
+    packaging [
+        label="\N==24.2"
+        shape="box"
+    ]
+
+    pandas [
+        label="\N==2.2.2"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    pandas -> numpy
+    pandas -> "pandas[aws]"
+    pandas -> "pandas[parquet]"
+    pandas -> "pandas[performance]"
+    pandas -> "python-dateutil"
+    pandas -> pytz
+    pandas -> tzdata
+
+    "pandas[aws]" [
+        color="#782F40"
+        shape="box"
+    ]
+    "pandas[aws]" -> fsspec
+    "pandas[aws]" -> s3fs
+
+    "pandas[parquet]" [
+        color="#782F40"
+        shape="box"
+    ]
+    "pandas[parquet]" -> pyarrow
+
+    "pandas[performance]" [
+        color="#782F40"
+        shape="box"
+    ]
+    "pandas[performance]" -> Bottleneck
+    "pandas[performance]" -> numba
+    "pandas[performance]" -> numexpr
+
+    pluggy [
+        label="\N==1.5.0"
+        shape="box"
+    ]
+
+    propcache [
+        label="\N==0.3.0"
+        shape="box"
+    ]
+
+    pyarrow [
+        label="\N==19.0.1"
+        style="bold"
+        color="#782f40"
+        shape="box"
+    ]
+    pyarrow -> numpy
+
+    pyasn1 [
+        label="\N==0.6.1" // Glue default to awscli==1.23.5 --> 0.4.8
+        style="dotted"
+        shape="cylinder"
+    ]
+
+    Pygments [
+        label="\N==2.19.1"
+        shape="box"
+    ]
+
+    PyInputPlus [
+        label="\N==0.2.12"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    PyInputPlus -> PySimpleValidate
+    PyInputPlus -> stdiomask
+
+    PySimpleValidate [
+        label="\N==0.2.12"
+        shape="box"
+    ]
+
+    pytest [
+        label="\N==8.2.0"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    pytest -> iniconfig
+    pytest -> packaging
+    pytest -> pluggy
+
+    "pytest-dependency" [
+        label="\N==0.6.0"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "pytest-dependency" -> pytest
+    "pytest-dependency" -> setuptools
+
+    "pytest-session2file" [
+        label="\N==0.1.11"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "pytest-session2file" -> pytest
+
+    "python-dateutil" [
+        label="\N==2.9.0.post0"
+        shape="box"
+    ]
+    "python-dateutil" -> six
+
+    pytz [
+        label="\N==2025.1"
+        shape="box"
+    ]
+
+    PyYAML [
+        label="\N==6.0.2" // Glue default to awscli==1.23.5 --> 5.4.1
+        style="dotted"
+        shape="cylinder"
+    ]
+
+    requests [
+        label="\N==2.31.0"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    requests -> "charset-normalizer"
+    requests -> certifi
+    requests -> idna
+    requests -> urllib3
+
+    "requests-toolbelt" [
+        label="\N==1.0.0"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "requests-toolbelt" -> requests
+
+    rsa [
+        label="\N==4.7.2"
+        style="dotted"
+        shape="cylinder"
+    ]
+    rsa -> pyasn1 [style="dotted"]
+
+    s3fs [
+        label="\N==2025.3.0"
+        style="bold"
+        color="#782F40"
+        shape="box"
+    ]
+    s3fs -> aiobotocore
+    s3fs -> aiohttp
+    s3fs -> fsspec
+
+    s3transfer [
+        label="\N==0.11.3"
+        style="filled"
+        fillcolor="#CEB888"
+        shape="box"
+    ]
+    s3transfer -> botocore
+
+    setuptools [
+        label="\N==76.0.0"
+        shape="box"
+    ]
+
+    six [
+        label="\N==1.17.0"
+        shape="box"
+    ]
+
+    sniffio [
+        label="\N==1.3.1"
+        shape="box"
+    ]
+
+    snowballstemmer [
+        label="\N==2.2.0"
+        shape="box"
+    ]
+
+    soupsieve [
+        label="\N==2.6"
+        shape="box"
+    ]
+
+    Sphinx [
+        label="\N==7.3.7"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    Sphinx -> alabaster
+    Sphinx -> Babel
+    Sphinx -> docutils
+    Sphinx -> imagesize
+    Sphinx -> Jinja2
+    Sphinx -> packaging
+    Sphinx -> Pygments
+    Sphinx -> requests
+    Sphinx -> snowballstemmer
+    Sphinx -> "sphinxcontrib-applehelp"
+    Sphinx -> "sphinxcontrib-devhelp"
+    Sphinx -> "sphinxcontrib-htmlhelp"
+    Sphinx -> "sphinxcontrib-jsmath"
+    Sphinx -> "sphinxcontrib-qthelp"
+    Sphinx -> "sphinxcontrib-serializinghtml"
+
+    "sphinx-autobuild" [
+        label="\N==2024.10.3"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "sphinx-autobuild" -> colorama
+    "sphinx-autobuild" -> Sphinx
+    "sphinx-autobuild" -> starlette
+    "sphinx-autobuild" -> uvicorn
+    "sphinx-autobuild" -> watchfiles
+    "sphinx-autobuild" -> websockets
+
+    "sphinx-autodocgen" [
+        label="\N==1.3"
+        style="filled"
+        fillcolor="#DFD1A7"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    "sphinx-autodocgen" -> Sphinx
+
+    "sphinxcontrib-applehelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-devhelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-htmlhelp" [
+        label="\N==2.1.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-jsmath" [
+        label="\N==1.0.1"
+        shape="box"
+    ]
+
+    "sphinxcontrib-qthelp" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    "sphinxcontrib-serializinghtml" [
+        label="\N==2.0.0"
+        shape="box"
+    ]
+
+    SQLAlchemy [
+        label="\N==2.0.29"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    SQLAlchemy -> greenlet
+    SQLAlchemy -> "typing_extensions"
+
+    starlette [
+        label="\N==0.46.*"
+        shape="box"
+    ]
+    starlette -> anyio
+
+    stdiomask [
+        label="\N==0.0.6"
+        shape="box"
+    ]
+
+    "typing_extensions" [
+        label="\N==4.12.2"
+        shape="box"
+    ]
+
+    tzdata [
+        label="\N==2025.1"
+        shape="box"
+    ]
+
+    urllib3 [
+        label="\N==2.3.0"
+        shape="box"
+    ]
+
+    uvicorn [
+        label="\N==0.34.0"
+        shape="box"
+    ]
+    uvicorn -> click
+    uvicorn -> h11
+
+    watchfiles [
+        label="\N==1.0.4"
+        shape="box"
+    ]
+    watchfiles -> anyio
+
+    websockets [
+        label="\N==15.0.*"
+        shape="box"
+    ]
+
+    Werkzeug [
+        label="\N==3.1.3"
+        style="filled"
+        fillcolor="#CEB888"
+        shape="box"
+    ]
+    Werkzeug -> MarkupSafe
+
+    wrapt [
+        label="\N==1.17.2"
+        shape="box"
+    ]
+
+    WTForms [
+        label="\N==3.1.2"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+    WTForms -> MarkupSafe
+
+    yarl [
+        label="\N==1.18.3"
+        shape="box"
+    ]
+    yarl -> idna
+    yarl -> multidict
+    yarl -> propcache
+
+    "zope.event" [
+        label="\N==5.0"
+        style="dashed"
+        shape="box"
+    ]
+    "zope.event" -> setuptools [style="dashed"]
+
+    "zope.interface" [
+        label="\N==7.2"
+        style="dashed"
+        shape="box"
+    ]
+    "zope.interface" -> setuptools [style="dashed"]
+}

@@ -1,0 +1,2528 @@
+digraph function_call_chains {
+    graph [rankdir="LR"]
+
+    /* Cluster Types
+        `penwidth=5`
+        Class: `style="rounded"`
+        Tests: `style="dashed"`
+
+        Relation: `color="#ceb888"` (Gold)
+        Blueprint: `color="#782f40"` (Garnet)
+        Module collecting general functions: `color="#5cb8b2"`
+    */
+
+    node [  // To remove the fill color from the individual function nodes
+        style="filled"
+        fillcolor="white"
+    ]
+    /* Node Types
+        When multiple adjustments are present, order is label, style, shape
+
+        Test function: `style="dashed"`
+        Fixture function: `style="dotted"`
+
+        Route functions: `shape="cds"`
+        Function connecting to S3: `shape="folder"`
+        Function connecting to MySQL: `shape="cylinder"`
+        Other functions: `shape="box"`
+    */
+
+    /*
+        Edges represent function calls
+            Edges are instantiated under the cluster containing the calling function
+            Edges go from the calling function to the called function
+        Function calls include
+            Redirects between Flask routes via `url_for()`
+            Calls to a Flask route function with the Flask test client (these use the URL in the decorator, not the function name)
+        Function calls don't include calls to SQLAlchemy engines purely for the purpose of passing to another function
+    */
+
+    subgraph cluster_fiscalYears {
+        label="nolcat.models.fiscalYears"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_fiscalYears [
+            label="state_data_types"
+            shape="box"
+        ]
+        calculate_depreciated_ACRL_60b [shape="box"]
+        calculate_depreciated_ACRL_63 [shape="box"]
+        calculate_ACRL_61a [shape="box"]
+        calculate_ACRL_61b [shape="box"]
+        calculate_ARL_18 [shape="box"]
+        calculate_ARL_19 [shape="box"]
+        calculate_ARL_20 [shape="box"]
+        create_usage_tracking_records_for_fiscal_year [shape="box"]
+        collect_fiscal_year_usage_statistics [shape="box"]
+    }
+    calculate_depreciated_ACRL_60b -> query_database
+    calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
+    calculate_depreciated_ACRL_60b -> return_value_from_query_statement
+    calculate_depreciated_ACRL_60b -> database_query_fail_statement
+    calculate_depreciated_ACRL_63 -> query_database
+    calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
+    calculate_depreciated_ACRL_63 -> return_value_from_query_statement
+    calculate_depreciated_ACRL_63 -> database_query_fail_statement
+    calculate_ACRL_61a -> query_database
+    calculate_ACRL_61a -> extract_value_from_single_value_df
+    calculate_ACRL_61a -> return_value_from_query_statement
+    calculate_ACRL_61a -> database_query_fail_statement
+    calculate_ACRL_61b -> query_database
+    calculate_ACRL_61b -> extract_value_from_single_value_df
+    calculate_ACRL_61b -> return_value_from_query_statement
+    calculate_ACRL_61b -> database_query_fail_statement
+    calculate_ARL_18 -> query_database
+    calculate_ARL_18 -> extract_value_from_single_value_df
+    calculate_ARL_18 -> return_value_from_query_statement
+    calculate_ARL_18 -> database_query_fail_statement
+    calculate_ARL_19 -> query_database
+    calculate_ARL_19 -> extract_value_from_single_value_df
+    calculate_ARL_19 -> return_value_from_query_statement
+    calculate_ARL_19 -> database_query_fail_statement
+    calculate_ARL_20 -> query_database
+    calculate_ARL_20 -> extract_value_from_single_value_df
+    calculate_ARL_20 -> return_value_from_query_statement
+    calculate_ARL_20 -> database_query_fail_statement
+    create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    create_usage_tracking_records_for_fiscal_year -> load_data_into_database
+    create_usage_tracking_records_for_fiscal_year -> query_database
+    create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
+    create_usage_tracking_records_for_fiscal_year -> return_dataframe_from_query_statement
+    create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
+    collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
+    collect_fiscal_year_usage_statistics -> load_data_into_database
+    collect_fiscal_year_usage_statistics -> query_database
+    collect_fiscal_year_usage_statistics -> update_database
+    collect_fiscal_year_usage_statistics -> first_new_PK_value
+    collect_fiscal_year_usage_statistics -> format_list_for_stdout
+    collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_fiscal_year_usage_statistics -> database_query_fail_statement
+    collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement
+    collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
+    collect_fiscal_year_usage_statistics -> update_database_success_regex
+    collect_fiscal_year_usage_statistics -> harvest_R5_SUSHI_success_statement
+
+
+    subgraph cluster_annualStatistics {
+        label="nolcat.models.annualStatistics"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_annualStatistics [
+            label="state_data_types"
+            shape="box"
+        ]
+        add_annual_statistic_value [shape="box"]
+    }
+
+
+    subgraph cluster_vendors {
+        label="nolcat.models.vendors"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_vendors [
+            label="state_data_types"
+            shape="box"
+        ]
+        get_statisticsSources_records [shape="box"]
+        get_resourceSources_records [shape="box"]
+        add_note_in_vendors [
+            label="add_note"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_vendorNotes {
+        label="nolcat.models.vendorNotes"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_vendorNotes [
+            label="state_data_types"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_statisticsSources {
+        label="nolcat.models.statisticsSources"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_statisticsSources [
+            label="state_data_types"
+            shape="box"
+        ]
+        fetch_SUSHI_information [shape="box"]
+        _harvest_R5_SUSHI [shape="box"]
+        _harvest_single_report [shape="box"]
+        _check_if_data_in_database [shape="box"]
+        collect_usage_statistics [shape="box"]
+        add_note_in_statisticsSources [
+            label="add_note"
+            shape="box"
+        ]
+    }
+    fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
+    _harvest_R5_SUSHI -> fetch_SUSHI_information
+    _harvest_R5_SUSHI -> _harvest_single_report
+    _harvest_R5_SUSHI -> make_SUSHI_call
+    _harvest_R5_SUSHI -> successful_SUSHI_call_statement
+    _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+    _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+    _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    _harvest_single_report -> _check_if_data_in_database
+    _harvest_single_report -> state_data_types_in_COUNTERData
+    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
+    _harvest_single_report -> make_SUSHI_call
+    _harvest_single_report -> last_day_of_month
+    _harvest_single_report -> return_string_of_dataframe_info
+    _harvest_single_report -> save_unconverted_data_via_upload
+    _harvest_single_report -> S3_file_name_timestamp
+    _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    _harvest_single_report -> failed_upload_to_S3_statement
+    _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    _harvest_single_report -> no_data_returned_by_SUSHI_statement
+    _harvest_single_report -> reports_with_no_usage_regex
+    _check_if_data_in_database -> query_database
+    _check_if_data_in_database -> extract_value_from_single_value_df
+    _check_if_data_in_database -> return_value_from_query_statement
+    _check_if_data_in_database -> database_query_fail_statement
+    collect_usage_statistics -> _harvest_R5_SUSHI
+    collect_usage_statistics -> load_data_into_database
+    collect_usage_statistics -> first_new_PK_value
+    collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_usage_statistics -> harvest_R5_SUSHI_success_statement
+
+
+    subgraph cluster_statisticsSourceNotes {
+        label="nolcat.models.statisticsSourceNotes"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_statisticsSourceNotes [
+            label="state_data_types"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_resourceSources {
+        label="nolcat.models.resourceSources"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_resourceSources [
+            label="state_data_types"
+            shape="box"
+        ]
+        add_access_stop_date [shape="box"]
+        remove_access_stop_date [shape="box"]
+        change_StatisticsSource [shape="box"]
+        add_note_in_resourceSources [
+            label="add_note"
+            shape="box"
+        ]
+    }
+    add_access_stop_date -> update_database
+    add_access_stop_date -> database_update_fail_statement
+    add_access_stop_date -> update_database_success_regex
+    remove_access_stop_date -> update_database
+    remove_access_stop_date -> database_update_fail_statement
+    remove_access_stop_date -> update_database_success_regex
+    change_StatisticsSource -> state_data_types_in_statisticsResourceSources
+    change_StatisticsSource -> load_data_into_database
+    change_StatisticsSource -> query_database
+    change_StatisticsSource -> update_database
+    change_StatisticsSource -> database_query_fail_statement
+    change_StatisticsSource -> database_update_fail_statement
+    change_StatisticsSource -> update_database_success_regex
+
+
+    subgraph cluster_resourceSourceNotes {
+        label="nolcat.models.resourceSourceNotes"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_resourceSourceNotes [
+            label="state_data_types"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_statisticsResourceSources {
+        label="nolcat.models.statisticsResourceSources"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_statisticsResourceSources [
+            label="state_data_types"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_annualUsageCollectionTracking {
+        label="nolcat.models.annualUsageCollectionTracking"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_annualUsageCollectionTracking [
+            label="state_data_types"
+            shape="box"
+        ]
+        collect_annual_usage_statistics [shape="box"]
+        upload_nonstandard_usage_file [shape="box"]
+        download_nonstandard_usage_file [shape="folder"]
+    }
+    collect_annual_usage_statistics -> _harvest_R5_SUSHI
+    collect_annual_usage_statistics -> load_data_into_database
+    collect_annual_usage_statistics -> query_database
+    collect_annual_usage_statistics -> update_database
+    collect_annual_usage_statistics -> first_new_PK_value
+    collect_annual_usage_statistics -> initialize_relation_class_object_statement
+    collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    collect_annual_usage_statistics -> return_value_from_query_statement
+    collect_annual_usage_statistics -> database_query_fail_statement
+    collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement
+    collect_annual_usage_statistics -> load_data_into_database_success_regex
+    collect_annual_usage_statistics -> update_database_success_regex
+    collect_annual_usage_statistics -> harvest_R5_SUSHI_success_statement
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket
+    upload_nonstandard_usage_file -> update_database
+    upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    upload_nonstandard_usage_file -> file_IO_statement
+    upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+    upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement
+    upload_nonstandard_usage_file -> update_database_success_regex
+    download_nonstandard_usage_file -> file_IO_statement
+
+
+    subgraph cluster_COUNTERData {
+        label="nolcat.models.COUNTERData"
+        penwidth=5
+        style="rounded"
+        color="#ceb888"
+
+        state_data_types_in_COUNTERData [
+            label="state_data_types"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_SUSHICallAndResponse {
+        label="nolcat.SUSHICallAndResponse"
+        penwidth=5
+        style="rounded"
+
+        make_SUSHI_call [shape="box"]
+        _make_API_call [shape="box"]
+        _convert_Response_to_JSON [shape="box"]
+        _save_raw_Response_text [shape="box"]
+        _handle_SUSHI_exceptions [shape="box"]
+        _evaluate_individual_SUSHI_exception [shape="box"]
+        _stdout_API_response_based_on_size [shape="box"]
+    }
+    make_SUSHI_call -> _make_API_call
+    make_SUSHI_call -> _convert_Response_to_JSON
+    make_SUSHI_call -> _save_raw_Response_text
+    make_SUSHI_call -> _handle_SUSHI_exceptions
+    make_SUSHI_call -> _stdout_API_response_based_on_size
+    make_SUSHI_call -> format_list_for_stdout
+    make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    make_SUSHI_call -> failed_SUSHI_call_statement
+    make_SUSHI_call -> no_data_returned_by_SUSHI_statement
+    _convert_Response_to_JSON -> _stdout_API_response_based_on_size
+    _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    _save_raw_Response_text -> query_database
+    _save_raw_Response_text -> save_unconverted_data_via_upload
+    _save_raw_Response_text -> extract_value_from_single_value_df
+    _save_raw_Response_text -> S3_file_name_timestamp
+    _save_raw_Response_text -> file_IO_statement
+    _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    _save_raw_Response_text -> database_query_fail_statement
+    _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
+    _handle_SUSHI_exceptions -> format_list_for_stdout
+    _evaluate_individual_SUSHI_exception -> query_database
+    _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+
+
+    subgraph cluster_UploadCOUNTERReports {
+        label="nolcat.UploadCOUNTERReports"
+        penwidth=5
+        style="rounded"
+
+        create_dataframe_in_UploadCOUNTERReports [
+            label="create_dataframe"
+            shape="box"
+        ]
+    }
+    create_dataframe_in_UploadCOUNTERReports -> state_data_types_in_COUNTERData
+    create_dataframe_in_UploadCOUNTERReports -> return_string_of_dataframe_info
+    create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
+
+
+    subgraph cluster_ConvertJSONDictToDataframe {
+        label="nolcat.ConvertJSONDictToDataframe"
+        penwidth=5
+        style="rounded"
+
+        create_dataframe_in_ConvertJSONDictToDataframe [
+            label="create_dataframe"
+            shape="box"
+        ]
+        _transform_R5_JSON [shape="box"]
+        _transform_R5b1_JSON [shape="box"]
+        _serialize_dates [shape="box"]
+    }
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
+
+
+    subgraph cluster_annual_stats {
+        label="nolcat.annual_stats"
+        penwidth=5
+        color="#782f40"
+
+        annual_stats_homepage [shape="cds"]
+        show_fiscal_year_details [shape="cds"]
+    }
+    annual_stats_homepage -> show_fiscal_year_details
+    annual_stats_homepage -> query_database
+    annual_stats_homepage -> Flask_error_statement
+    annual_stats_homepage -> database_query_fail_statement
+    show_fiscal_year_details -> annual_stats_homepage
+    show_fiscal_year_details -> state_data_types_in_fiscalYears
+    show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
+    show_fiscal_year_details -> query_database
+    show_fiscal_year_details -> Flask_error_statement
+    show_fiscal_year_details -> database_query_fail_statement
+
+
+    subgraph cluster_ingest_usage {
+        label="nolcat.ingest_usage"
+        penwidth=5
+        color="#782f40"
+
+        ingest_usage_homepage [shape="cds"]
+        upload_COUNTER_data [shape="cds"]
+        harvest_SUSHI_statistics [shape="cds"]
+        upload_non_COUNTER_reports [shape="cds"]
+    }
+    upload_COUNTER_data -> ingest_usage_homepage
+    upload_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    upload_COUNTER_data -> load_data_into_database
+    upload_COUNTER_data -> update_database
+    upload_COUNTER_data -> first_new_PK_value
+    upload_COUNTER_data -> check_if_data_already_in_COUNTERData
+    upload_COUNTER_data -> truncate_longer_lines
+    upload_COUNTER_data -> format_list_for_stdout
+    upload_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
+    upload_COUNTER_data -> Flask_error_statement
+    upload_COUNTER_data -> database_update_fail_statement
+    upload_COUNTER_data -> update_database_success_regex
+    harvest_SUSHI_statistics -> ingest_usage_homepage
+    harvest_SUSHI_statistics -> collect_usage_statistics
+    harvest_SUSHI_statistics -> query_database
+    harvest_SUSHI_statistics -> initialize_relation_class_object_statement
+    harvest_SUSHI_statistics -> Flask_error_statement
+    harvest_SUSHI_statistics -> database_query_fail_statement
+    upload_non_COUNTER_reports -> ingest_usage_homepage
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file
+    upload_non_COUNTER_reports -> query_database
+    upload_non_COUNTER_reports -> create_AUCT_SelectField_options
+    upload_non_COUNTER_reports -> Flask_error_statement
+    upload_non_COUNTER_reports -> upload_nonstandard_usage_file_success_regex
+    upload_non_COUNTER_reports -> database_query_fail_statement
+
+
+    subgraph cluster_initialization {
+        label="nolcat.initialization"
+        penwidth=5
+        color="#782f40"
+
+        collect_FY_and_vendor_data [shape="cds"]
+        collect_sources_data [shape="cds"]
+        collect_AUCT_and_historical_COUNTER_data [shape="cds"]
+        upload_historical_non_COUNTER_usage [shape="cds"]
+        data_load_complete [shape="cds"]
+    }
+    collect_FY_and_vendor_data -> collect_sources_data
+    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    collect_FY_and_vendor_data -> state_data_types_in_vendors
+    collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    collect_FY_and_vendor_data -> load_data_into_database
+    collect_FY_and_vendor_data -> first_new_PK_value
+    collect_FY_and_vendor_data -> Flask_error_statement
+    collect_FY_and_vendor_data -> load_data_into_database_success_regex
+    collect_sources_data -> collect_AUCT_and_historical_COUNTER_data
+    collect_sources_data -> state_data_types_in_statisticsSources
+    collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    collect_sources_data -> state_data_types_in_resourceSources
+    collect_sources_data -> state_data_types_in_resourceSourceNotes
+    collect_sources_data -> load_data_into_database
+    collect_sources_data -> first_new_PK_value
+    collect_sources_data -> Flask_error_statement
+    collect_sources_data -> load_data_into_database_success_regex
+    collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
+    collect_AUCT_and_historical_COUNTER_data -> collect_sources_data
+    collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage
+    collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    collect_AUCT_and_historical_COUNTER_data -> create_dataframe_in_UploadCOUNTERReports
+    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
+    collect_AUCT_and_historical_COUNTER_data -> query_database
+    collect_AUCT_and_historical_COUNTER_data -> update_database
+    collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value
+    collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
+    collect_AUCT_and_historical_COUNTER_data -> format_list_for_stdout
+    collect_AUCT_and_historical_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
+    collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
+    collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
+    collect_AUCT_and_historical_COUNTER_data -> database_query_fail_statement
+    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+    collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+    upload_historical_non_COUNTER_usage -> data_load_complete
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
+    upload_historical_non_COUNTER_usage -> query_database
+    upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
+    upload_historical_non_COUNTER_usage -> initialize_relation_class_object_statement
+    upload_historical_non_COUNTER_usage -> Flask_error_statement
+    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
+    upload_historical_non_COUNTER_usage -> database_query_fail_statement
+
+
+    subgraph cluster_login {
+        label="nolcat.login"
+        penwidth=5
+        color="#782f40"
+
+        login_homepage [shape="cds"]
+    }
+
+
+    subgraph cluster_view_lists {
+        label="nolcat.view_lists"
+        penwidth=5
+        color="#782f40"
+
+        view_lists_homepage [shape="cds"]
+        view_list_record [shape="cds"]
+        edit_list_record [shape="cds"]
+    }
+
+
+    subgraph cluster_view_usage {
+        label="nolcat.view_usage"
+        penwidth=5
+        color="#782f40"
+
+        create_COUNTER_fixed_vocab_list [shape="box"]
+        set_encoding [shape="box"]
+        create_downloads_folder [shape="box"]
+        view_usage_homepage [shape="cds"]
+        run_custom_SQL_query [shape="cds"]
+        use_predefined_SQL_query [shape="cds"]
+        start_query_wizard [shape="cds"]
+        query_wizard_sort_redirect [shape="cds"]
+        construct_PR_query_with_wizard [shape="cds"]
+        construct_DR_query_with_wizard [shape="cds"]
+        construct_TR_query_with_wizard [shape="cds"]
+        construct_IR_query_with_wizard [shape="cds"]
+        download_non_COUNTER_usage [shape="cds"]
+    }
+    run_custom_SQL_query -> set_encoding
+    run_custom_SQL_query -> create_downloads_folder
+    run_custom_SQL_query -> view_usage_homepage
+    run_custom_SQL_query -> query_database
+    run_custom_SQL_query -> file_extensions_and_mimetypes
+    run_custom_SQL_query -> Flask_error_statement
+    run_custom_SQL_query -> list_folder_contents_statement
+    run_custom_SQL_query -> check_if_file_exists_statement
+    run_custom_SQL_query -> database_query_fail_statement
+    use_predefined_SQL_query -> set_encoding
+    use_predefined_SQL_query -> create_downloads_folder
+    use_predefined_SQL_query -> view_usage_homepage
+    use_predefined_SQL_query -> query_database
+    use_predefined_SQL_query -> last_day_of_month
+    use_predefined_SQL_query -> file_extensions_and_mimetypes
+    use_predefined_SQL_query -> Flask_error_statement
+    use_predefined_SQL_query -> list_folder_contents_statement
+    use_predefined_SQL_query -> check_if_file_exists_statement
+    use_predefined_SQL_query -> database_query_fail_statement
+    use_predefined_SQL_query -> attempted_SUSHI_call_with_invalid_dates_statement
+    start_query_wizard -> view_usage_homepage
+    start_query_wizard -> query_wizard_sort_redirect
+    start_query_wizard -> query_database
+    start_query_wizard -> last_day_of_month
+    start_query_wizard -> Flask_error_statement
+    start_query_wizard -> database_query_fail_statement
+    query_wizard_sort_redirect -> start_query_wizard
+    query_wizard_sort_redirect -> Flask_error_statement
+    query_wizard_sort_redirect -> attempted_SUSHI_call_with_invalid_dates_statement
+    construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_PR_query_with_wizard -> set_encoding
+    construct_PR_query_with_wizard -> create_downloads_folder
+    construct_PR_query_with_wizard -> view_usage_homepage
+    construct_PR_query_with_wizard -> query_database
+    construct_PR_query_with_wizard -> return_string_of_dataframe_info
+    construct_PR_query_with_wizard -> file_extensions_and_mimetypes
+    construct_PR_query_with_wizard -> Flask_error_statement
+    construct_PR_query_with_wizard -> list_folder_contents_statement
+    construct_PR_query_with_wizard -> check_if_file_exists_statement
+    construct_PR_query_with_wizard -> database_query_fail_statement
+    construct_DR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_DR_query_with_wizard -> set_encoding
+    construct_DR_query_with_wizard -> create_downloads_folder
+    construct_DR_query_with_wizard -> view_usage_homepage
+    construct_DR_query_with_wizard -> query_database
+    construct_DR_query_with_wizard -> return_string_of_dataframe_info
+    construct_DR_query_with_wizard -> file_extensions_and_mimetypes
+    construct_DR_query_with_wizard -> Flask_error_statement
+    construct_DR_query_with_wizard -> list_folder_contents_statement
+    construct_DR_query_with_wizard -> check_if_file_exists_statement
+    construct_DR_query_with_wizard -> database_query_fail_statement
+    construct_TR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_TR_query_with_wizard -> set_encoding
+    construct_TR_query_with_wizard -> create_downloads_folder
+    construct_TR_query_with_wizard -> view_usage_homepage
+    construct_TR_query_with_wizard -> query_database
+    construct_TR_query_with_wizard -> return_string_of_dataframe_info
+    construct_TR_query_with_wizard -> file_extensions_and_mimetypes
+    construct_TR_query_with_wizard -> Flask_error_statement
+    construct_TR_query_with_wizard -> list_folder_contents_statement
+    construct_TR_query_with_wizard -> check_if_file_exists_statement
+    construct_TR_query_with_wizard -> database_query_fail_statement
+    construct_IR_query_with_wizard -> create_COUNTER_fixed_vocab_list
+    construct_IR_query_with_wizard -> set_encoding
+    construct_IR_query_with_wizard -> create_downloads_folder
+    construct_IR_query_with_wizard -> view_usage_homepage
+    construct_IR_query_with_wizard -> query_database
+    construct_IR_query_with_wizard -> return_string_of_dataframe_info
+    construct_IR_query_with_wizard -> file_extensions_and_mimetypes
+    construct_IR_query_with_wizard -> Flask_error_statement
+    construct_IR_query_with_wizard -> list_folder_contents_statement
+    construct_IR_query_with_wizard -> check_if_file_exists_statement
+    construct_IR_query_with_wizard -> database_query_fail_statement
+    download_non_COUNTER_usage -> create_downloads_folder
+    download_non_COUNTER_usage -> view_usage_homepage
+    download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
+    download_non_COUNTER_usage -> download_nonstandard_usage_file
+    download_non_COUNTER_usage -> query_database
+    download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
+    download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    download_non_COUNTER_usage -> non_COUNTER_file_name_regex
+    download_non_COUNTER_usage -> file_extensions_and_mimetypes
+    download_non_COUNTER_usage -> Flask_error_statement
+    download_non_COUNTER_usage -> list_folder_contents_statement
+    download_non_COUNTER_usage -> check_if_file_exists_statement
+    download_non_COUNTER_usage -> database_query_fail_statement
+
+
+    subgraph cluster_PATH_TO_CREDENTIALS_FILE {
+        label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
+        penwidth=5
+
+        PATH_TO_CREDENTIALS_FILE [shape="box"]
+    }
+    PATH_TO_CREDENTIALS_FILE -> check_if_file_exists_statement
+
+
+    subgraph cluster_app {
+        label="nolcat.app"
+        penwidth=5
+        color="#5cb8b2"
+
+        filter_empty_parentheses [shape="box"]
+        configure_logging [shape="box"]
+        page_not_found [shape="box"]
+        internal_server_error [shape="box"]
+        create_app [shape="box"]
+        "create_app.create_db" [shape="box"]
+        "create_app.homepage" [shape="cds"]
+        "create_app.download_file" [shape="cds"]
+        last_day_of_month [shape="box"]
+        first_new_PK_value [shape="box"]
+        return_string_of_dataframe_info [shape="box"]
+        change_single_field_dataframe_into_series [shape="box"]
+        restore_boolean_values_to_boolean_field [shape="box"]
+        upload_file_to_S3_bucket [shape="folder"]
+        create_AUCT_SelectField_options [shape="box"]
+        load_data_into_database [shape="cylinder"]
+        query_database [shape="cylinder"]
+        check_if_data_already_in_COUNTERData [shape="box"]
+        truncate_longer_lines [shape="box"]
+        update_database [shape="cylinder"]
+        save_unconverted_data_via_upload [shape="box"]
+        ISSN_regex [shape="box"]
+        ISBN_regex [shape="box"]
+        extract_value_from_single_value_df [shape="box"]
+        S3_file_name_timestamp [shape="box"]
+        non_COUNTER_file_name_regex [shape="box"]
+    }
+    filter_empty_parentheses -> remove_IDE_spacing_from_statement
+    configure_logging -> filter_empty_parentheses
+    create_app -> configure_logging
+    "create_app.create_db" -> create_app
+    "create_app.download_file" -> file_extensions_and_mimetypes
+    first_new_PK_value -> query_database
+    first_new_PK_value -> extract_value_from_single_value_df
+    first_new_PK_value -> return_value_from_query_statement
+    first_new_PK_value -> database_query_fail_statement
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    query_database -> remove_IDE_spacing_from_statement
+    check_if_data_already_in_COUNTERData -> query_database
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    check_if_data_already_in_COUNTERData -> format_list_for_stdout
+    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
+    check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    update_database -> query_database
+    update_database -> truncate_longer_lines
+    update_database -> extract_value_from_single_value_df
+    update_database -> remove_IDE_spacing_from_statement
+    update_database -> database_query_fail_statement
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
+    save_unconverted_data_via_upload -> format_list_for_stdout
+
+
+    subgraph cluster_statements {
+        label="nolcat.statements"
+        penwidth=5
+        color="#5cb8b2"
+
+        file_extensions_and_mimetypes [shape="box"]
+        format_list_for_stdout [shape="box"]
+        remove_IDE_spacing_from_statement [shape="box"]
+        initialize_relation_class_object_statement [shape="box"]
+        fixture_variable_value_declaration_statement [shape="box"]
+        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
+        unable_to_get_updated_primary_key_values_statement [shape="box"]
+        Flask_error_statement [shape="box"]
+        file_IO_statement [shape="box"]
+        list_folder_contents_statement [shape="box"]
+        check_if_file_exists_statement [shape="box"]
+        failed_upload_to_S3_statement [shape="box"]
+        unable_to_delete_test_file_in_S3_statement [shape="box"]
+        upload_file_to_S3_bucket_success_regex [shape="box"]
+        upload_nonstandard_usage_file_success_regex [shape="box"]
+        return_value_from_query_statement [shape="box"]
+        return_dataframe_from_query_statement [shape="box"]
+        database_query_fail_statement [shape="box"]
+        database_update_fail_statement [shape="box"]
+        add_data_success_and_update_database_fail_statement [shape="box"]
+        database_function_skip_statements [shape="box"]
+        load_data_into_database_success_regex [shape="box"]
+        update_database_success_regex [shape="box"]
+        successful_SUSHI_call_statement [shape="box"]
+        harvest_R5_SUSHI_success_statement [shape="box"]
+        failed_SUSHI_call_statement [shape="box"]
+        no_data_returned_by_SUSHI_statement [shape="box"]
+        attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
+        reports_with_no_usage_regex [shape="box"]
+        skip_test_due_to_SUSHI_error_regex [shape="box"]
+    }
+    list_folder_contents_statement -> format_list_for_stdout
+    database_update_fail_statement -> remove_IDE_spacing_from_statement
+    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
+
+
+    subgraph cluster_relations {
+        label="tests.data.relations"
+        penwidth=5
+        color="#5cb8b2"
+
+        fiscalYears_relation_in_relations [
+            label="fiscalYears_relation"
+            shape="box"
+        ]
+        annualStatistics_relation_in_relations [
+            label="annualStatistics_relation"
+            shape="box"
+        ]
+        vendors_relation_in_relations [
+            label="vendors_relation"
+            shape="box"
+        ]
+        vendorNotes_relation_in_relations [
+            label="vendorNotes_relation"
+            shape="box"
+        ]
+        statisticsSources_relation_in_relations [
+            label="statisticsSources_relation"
+            shape="box"
+        ]
+        statisticsSourceNotes_relation_in_relations [
+            label="statisticsSourceNotes_relation"
+            shape="box"
+        ]
+        resourceSources_relation_in_relations [
+            label="resourceSources_relation"
+            shape="box"
+        ]
+        resourceSourceNotes_relation_in_relations [
+            label="resourceSourceNotes_relation"
+            shape="box"
+        ]
+        statisticsResourceSources_relation_in_relations [
+            label="statisticsResourceSources_relation"
+            shape="box"
+        ]
+        annualUsageCollectionTracking_relation_in_relations [
+            label="annualUsageCollectionTracking_relation"
+            shape="box"
+        ]
+        workbook_0_2017_relation_in_relations [
+            label="workbook_0_2017_relation"
+            shape="box"
+        ]
+        workbook_1_2017_relation_in_relations [
+            label="workbook_1_2017_relation"
+            shape="box"
+        ]
+        workbook_2_2017_relation_in_relations [
+            label="workbook_2_2017_relation"
+            shape="box"
+        ]
+        workbook_0_2018_relation_in_relations [
+            label="workbook_0_2018_relation"
+            shape="box"
+        ]
+        workbook_1_2018_relation_in_relations [
+            label="workbook_1_2018_relation"
+            shape="box"
+        ]
+        workbook_2_2018_relation_in_relations [
+            label="workbook_2_2018_relation"
+            shape="box"
+        ]
+        workbook_0_2019_relation_in_relations [
+            label="workbook_0_2019_relation"
+            shape="box"
+        ]
+        workbook_1_2019_relation_in_relations [
+            label="workbook_1_2019_relation"
+            shape="box"
+        ]
+        workbook_2_2019_relation_in_relations [
+            label="workbook_2_2019_relation"
+            shape="box"
+        ]
+        workbook_3_2019_relation_in_relations [
+            label="workbook_3_2019_relation"
+            shape="box"
+        ]
+        workbook_0_2020_relation_in_relations [
+            label="workbook_0_2020_relation"
+            shape="box"
+        ]
+        workbook_1_2020_relation_in_relations [
+            label="workbook_1_2020_relation"
+            shape="box"
+        ]
+        workbook_2_2020_relation_in_relations [
+            label="workbook_2_2020_relation"
+            shape="box"
+        ]
+        workbook_3_2020_relation_in_relations [
+            label="workbook_3_2020_relation"
+            shape="box"
+        ]
+    }
+    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
+    annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
+    vendors_relation_in_relations -> state_data_types_in_vendors
+    vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
+    statisticsSources_relation_in_relations -> state_data_types_in_statisticsSources
+    statisticsSourceNotes_relation_in_relations -> state_data_types_in_statisticsSourceNotes
+    resourceSources_relation_in_relations -> state_data_types_in_resourceSources
+    resourceSourceNotes_relation_in_relations -> state_data_types_in_resourceSourceNotes
+    statisticsResourceSources_relation_in_relations -> state_data_types_in_statisticsResourceSources
+    annualUsageCollectionTracking_relation_in_relations -> state_data_types_in_annualUsageCollectionTracking
+    workbook_0_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2017_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2018_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2019_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_0_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
+    workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
+
+
+    subgraph cluster_conftest {
+        label="tests.conftest"
+        penwidth=5
+        style="dashed"
+        color="#5cb8b2"
+
+        engine [
+            style="dotted"
+            shape="cylinder"
+        ]
+        app [
+            style="dotted"
+            shape="box"
+        ]
+        client [
+            style="dotted"
+            shape="box"
+        ]
+        db [
+            style="dotted"
+            shape="box"
+        ]
+        session [
+            style="dotted"
+            shape="box"
+        ]
+        fiscalYears_relation_in_conftest [
+            label="fiscalYears_relation"
+            style="dotted"
+            shape="box"
+        ]
+        annualStatistics_relation_in_conftest [
+            label="annualStatistics_relation"
+            style="dotted"
+            shape="box"
+        ]
+        vendors_relation_in_conftest [
+            label="vendors_relation"
+            style="dotted"
+            shape="box"
+        ]
+        vendorNotes_relation_in_conftest [
+            label="vendorNotes_relation"
+            style="dotted"
+            shape="box"
+        ]
+        statisticsSources_relation_in_conftest [
+            label="statisticsSources_relation"
+            style="dotted"
+            shape="box"
+        ]
+        statisticsSourceNotes_relation_in_conftest [
+            label="statisticsSourceNotes_relation"
+            style="dotted"
+            shape="box"
+        ]
+        resourceSources_relation_in_conftest [
+            label="resourceSources_relation"
+            style="dotted"
+            shape="box"
+        ]
+        resourceSourceNotes_relation_in_conftest [
+            label="resourceSourceNotes_relation"
+            style="dotted"
+            shape="box"
+        ]
+        statisticsResourceSources_relation_in_conftest [
+            label="statisticsResourceSources_relation"
+            style="dotted"
+            shape="box"
+        ]
+        annualUsageCollectionTracking_relation_in_conftest [
+            label="annualUsageCollectionTracking_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_0_2017_relation_in_conftest [
+            label="workbook_0_2017_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_1_2017_relation_in_conftest [
+            label="workbook_1_2017_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_2_2017_relation_in_conftest [
+            label="workbook_2_2017_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_0_2018_relation_in_conftest [
+            label="workbook_0_2018_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_1_2018_relation_in_conftest [
+            label="workbook_1_2018_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_2_2018_relation_in_conftest [
+            label="workbook_2_2018_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_0_2019_relation_in_conftest [
+            label="workbook_0_2019_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_1_2019_relation_in_conftest [
+            label="workbook_1_2019_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_2_2019_relation_in_conftest [
+            label="workbook_2_2019_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_3_2019_relation_in_conftest [
+            label="workbook_3_2019_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_0_2020_relation_in_conftest [
+            label="workbook_0_2020_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_1_2020_relation_in_conftest [
+            label="workbook_1_2020_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_2_2020_relation_in_conftest [
+            label="workbook_2_2020_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbook_3_2020_relation_in_conftest [
+            label="workbook_3_2020_relation"
+            style="dotted"
+            shape="box"
+        ]
+        workbooks_and_relations [
+            style="dotted"
+            shape="box"
+        ]
+        create_COUNTERData_workbook_iterdir_list [
+            style="dotted"
+            shape="box"
+        ]
+        COUNTERData_relation [
+            style="dotted"
+            shape="box"
+        ]
+        download_destination [
+            style="dotted"
+            shape="box"
+        ]
+        path_to_sample_file [
+            style="dotted"
+            shape="box"
+        ]
+        remove_file_from_S3 [
+            style="dotted"
+            shape="folder"
+        ]
+        non_COUNTER_AUCT_object_before_upload [
+            style="dotted"
+            shape="folder"
+        ]
+        non_COUNTER_AUCT_object_after_upload [
+            style="dotted"
+            shape="box"
+        ]
+        non_COUNTER_file_to_download_from_S3 [
+            style="dotted"
+            shape="folder"
+        ]
+        header_value [
+            style="dotted"
+            shape="box"
+        ]
+        most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
+        match_direct_SUSHI_harvest_result [
+            style="dotted"
+            shape="box"
+        ]
+        COUNTER_reports_offered_by_statistics_source [
+            style="dotted"
+            shape="box"
+        ]
+        prepare_HTML_page_for_comparison [
+            style="dotted"
+            shape="box"
+        ]
+    }
+    app -> create_app
+    app -> configure_logging
+    client -> app
+    db -> app
+    fiscalYears_relation_in_conftest -> fiscalYears_relation_in_relations
+    annualStatistics_relation_in_conftest -> annualStatistics_relation_in_relations
+    vendors_relation_in_conftest -> vendors_relation_in_relations
+    vendorNotes_relation_in_conftest -> vendorNotes_relation_in_relations
+    statisticsSources_relation_in_conftest -> statisticsSources_relation_in_relations
+    statisticsSourceNotes_relation_in_conftest -> statisticsSourceNotes_relation_in_relations
+    resourceSources_relation_in_conftest -> resourceSources_relation_in_relations
+    resourceSourceNotes_relation_in_conftest -> resourceSourceNotes_relation_in_relations
+    statisticsResourceSources_relation_in_conftest -> statisticsResourceSources_relation_in_relations
+    annualUsageCollectionTracking_relation_in_conftest -> annualUsageCollectionTracking_relation_in_relations
+    workbook_0_2017_relation_in_conftest -> workbook_0_2017_relation_in_relations
+    workbook_1_2017_relation_in_conftest -> workbook_1_2017_relation_in_relations
+    workbook_2_2017_relation_in_conftest -> workbook_2_2017_relation_in_relations
+    workbook_0_2018_relation_in_conftest -> workbook_0_2018_relation_in_relations
+    workbook_1_2018_relation_in_conftest -> workbook_1_2018_relation_in_relations
+    workbook_2_2018_relation_in_conftest -> workbook_2_2018_relation_in_relations
+    workbook_0_2019_relation_in_conftest -> workbook_0_2019_relation_in_relations
+    workbook_1_2019_relation_in_conftest -> workbook_1_2019_relation_in_relations
+    workbook_2_2019_relation_in_conftest -> workbook_2_2019_relation_in_relations
+    workbook_3_2019_relation_in_conftest -> workbook_3_2019_relation_in_relations
+    workbook_0_2020_relation_in_conftest -> workbook_0_2020_relation_in_relations
+    workbook_1_2020_relation_in_conftest -> workbook_1_2020_relation_in_relations
+    workbook_2_2020_relation_in_conftest -> workbook_2_2020_relation_in_relations
+    workbook_3_2020_relation_in_conftest -> workbook_3_2020_relation_in_relations
+    workbooks_and_relations -> workbook_0_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2017_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2018_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2019_relation_in_conftest
+    workbooks_and_relations -> workbook_0_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_1_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_2_2020_relation_in_conftest
+    workbooks_and_relations -> workbook_3_2020_relation_in_conftest
+    COUNTERData_relation -> workbooks_and_relations
+    COUNTERData_relation -> create_COUNTERData_workbook_iterdir_list
+    remove_file_from_S3 -> fixture_variable_value_declaration_statement
+    remove_file_from_S3 -> unable_to_delete_test_file_in_S3_statement
+    remove_file_from_S3 -> path_to_sample_file
+    non_COUNTER_AUCT_object_before_upload -> query_database
+    non_COUNTER_AUCT_object_before_upload -> initialize_relation_class_object_statement
+    non_COUNTER_AUCT_object_before_upload -> unable_to_delete_test_file_in_S3_statement
+    non_COUNTER_AUCT_object_before_upload -> database_function_skip_statements
+    non_COUNTER_AUCT_object_before_upload -> path_to_sample_file
+    non_COUNTER_AUCT_object_after_upload -> query_database
+    non_COUNTER_AUCT_object_after_upload -> initialize_relation_class_object_statement
+    non_COUNTER_AUCT_object_after_upload -> database_function_skip_statements
+    non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
+    non_COUNTER_file_to_download_from_S3 -> fixture_variable_value_declaration_statement
+    non_COUNTER_file_to_download_from_S3 -> file_IO_statement
+    non_COUNTER_file_to_download_from_S3 -> failed_upload_to_S3_statement
+    non_COUNTER_file_to_download_from_S3 -> unable_to_delete_test_file_in_S3_statement
+    non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
+    non_COUNTER_file_to_download_from_S3 -> download_destination
+    non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
+    non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
+    most_recent_month_with_usage -> last_day_of_month
+    match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    match_direct_SUSHI_harvest_result -> query_database
+    match_direct_SUSHI_harvest_result -> database_function_skip_statements
+    COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
+    COUNTER_reports_offered_by_statistics_source -> successful_SUSHI_call_statement
+
+
+    subgraph cluster_test_AnnualStatistics {
+        label="tests.test_AnnualStatistics"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        test_add_annual_statistic_value [
+            style="dashed"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_test_AnnualUsageCollectionTracking {
+        label="tests.test_AnnualUsageCollectionTracking"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        AUCT_fixture_for_SUSHI [
+            style="dotted"
+            shape="box"
+        ]
+        harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
+            label="harvest_R5_SUSHI_result"
+            style="dotted"
+            shape="folder"
+        ]
+        test_collect_annual_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        sample_FileStorage_object [
+            style="dotted"
+            shape="box"
+        ]
+        test_upload_nonstandard_usage_file [
+            style="dashed"
+            shape="folder"
+        ]
+        test_download_nonstandard_usage_file [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    AUCT_fixture_for_SUSHI -> query_database
+    AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
+    AUCT_fixture_for_SUSHI -> database_function_skip_statements
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> unable_to_delete_test_file_in_S3_statement
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> return_value_from_query_statement
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> database_function_skip_statements
+    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
+    test_collect_annual_usage_statistics -> query_database
+    test_collect_annual_usage_statistics -> engine
+    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
+    test_collect_annual_usage_statistics -> database_function_skip_statements
+    test_collect_annual_usage_statistics -> load_data_into_database_success_regex
+    test_collect_annual_usage_statistics -> update_database_success_regex
+    test_collect_annual_usage_statistics -> client
+    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
+    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
+    sample_FileStorage_object -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
+    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload
+    test_upload_nonstandard_usage_file -> query_database
+    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
+    test_upload_nonstandard_usage_file -> format_list_for_stdout
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file_success_regex
+    test_upload_nonstandard_usage_file -> return_value_from_query_statement
+    test_upload_nonstandard_usage_file -> database_function_skip_statements
+    test_upload_nonstandard_usage_file -> client
+    test_upload_nonstandard_usage_file -> path_to_sample_file
+    test_upload_nonstandard_usage_file -> sample_FileStorage_object
+    test_download_nonstandard_usage_file -> download_nonstandard_usage_file
+    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3
+    test_download_nonstandard_usage_file -> list_folder_contents_statement
+    test_download_nonstandard_usage_file -> download_destination
+    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload
+
+
+    subgraph cluster_test_app {
+        label="tests.test_app"
+        penwidth=5
+        style="dashed"
+        color="#5cb8b2"
+
+        test_flask_app_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_flask_client_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_SQLAlchemy_engine_creation [
+            style="dashed"
+            shape="box"
+        ]
+        test_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_404_page [
+            style="dashed"
+            shape="box"
+        ]
+        test_load_data_into_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_query_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_loading_connected_data_into_other_relation [
+            style="dashed"
+            shape="box"
+        ]
+        test_download_file [
+            style="dashed"
+            shape="box"
+        ]
+        test_first_new_PK_value [
+            style="dashed"
+            shape="box"
+        ]
+        test_change_single_field_dataframe_into_series [
+            style="dashed"
+            shape="box"
+        ]
+        test_restore_boolean_values_to_boolean_field [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_file_to_S3_bucket [
+            style="dashed"
+            shape="folder"
+        ]
+        test_create_AUCT_SelectField_options [
+            style="dashed"
+            shape="box"
+        ]
+        test_truncate_longer_lines [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database_with_insert_statement [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database_with_insert_statement [
+            style="dashed"
+            shape="box"
+        ]
+        test_prepare_HTML_page_for_comparison [
+            style="dashed"
+            shape="box"
+        ]
+        file_name_stem_and_data [
+            style="dotted"
+            shape="folder"
+        ]
+        test_save_unconverted_data_via_upload [
+            style="dashed"
+            shape="folder"
+        ]
+        test_ISSN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_ISBN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_last_day_of_month [
+            style="dashed"
+            shape="box"
+        ]
+        test_extract_value_from_single_value_df [
+            style="dashed"
+            shape="box"
+        ]
+        test_S3_file_name_timestamp [
+            style="dashed"
+            shape="box"
+        ]
+        test_non_COUNTER_file_name_regex [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    test_flask_app_creation -> app
+    test_flask_client_creation -> client
+    test_SQLAlchemy_engine_creation -> engine
+    test_homepage -> "create_app.homepage"
+    test_homepage -> client
+    test_404_page -> page_not_found
+    test_404_page -> client
+    test_load_data_into_database -> load_data_into_database
+    test_load_data_into_database -> load_data_into_database_success_regex
+    test_load_data_into_database -> vendors_relation_in_conftest
+    test_query_database -> state_data_types_in_vendors
+    test_query_database -> query_database
+    test_query_database -> vendors_relation_in_conftest
+    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    test_loading_connected_data_into_other_relation -> query_database
+    test_loading_connected_data_into_other_relation -> database_function_skip_statements
+    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
+    test_download_file -> "create_app.download_file"
+    test_download_file -> file_extensions_and_mimetypes
+    test_download_file -> client
+    test_download_file -> path_to_sample_file
+    test_first_new_PK_value -> first_new_PK_value
+    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
+    test_upload_file_to_S3_bucket -> format_list_for_stdout
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
+    test_upload_file_to_S3_bucket -> path_to_sample_file
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_truncate_longer_lines -> truncate_longer_lines
+    vendors_relation_after_test_update_database -> state_data_types_in_vendors
+    test_update_database -> state_data_types_in_vendors
+    test_update_database -> query_database
+    test_update_database -> update_database
+    test_update_database -> database_function_skip_statements
+    test_update_database -> update_database_success_regex
+    test_update_database -> vendors_relation_after_test_update_database
+    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> query_database
+    test_update_database_with_insert_statement -> update_database
+    test_update_database_with_insert_statement -> database_function_skip_statements
+    test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
+    file_name_stem_and_data -> S3_file_name_timestamp
+    file_name_stem_and_data -> most_recent_month_with_usage
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
+    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
+    test_ISSN_regex -> ISSN_regex
+    test_ISBN_regex -> ISBN_regex
+    test_last_day_of_month -> last_day_of_month
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_S3_file_name_timestamp -> S3_file_name_timestamp
+    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
+
+
+    subgraph cluster_test_bp_annual_stats {
+        label="tests.test_bp_annual_stats"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        test_GET_request_for_annual_stats_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_show_fiscal_year_details [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_EditFiscalYearForm [
+            style="dashed"
+            shape="box"
+        ]
+        test_show_fiscal_year_details_submitting_EditAUCTForm [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage
+    test_GET_request_for_annual_stats_homepage -> query_database
+    test_GET_request_for_annual_stats_homepage -> database_function_skip_statements
+    test_GET_request_for_annual_stats_homepage -> client
+
+
+    subgraph cluster_test_bp_ingest_usage {
+        label="tests.test_bp_ingest_usage"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        test_ingest_usage_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_COUNTER_data_via_Excel [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_COUNTER_data_via_SQL_insert [
+            style="dashed"
+            shape="box"
+        ]
+        test_match_direct_SUSHI_harvest_result [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_harvest_SUSHI_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_SUSHI_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_upload_non_COUNTER_reports [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_non_COUNTER_reports [
+            style="dashed"
+            shape="folder"
+        ]
+    }
+    test_ingest_usage_homepage -> ingest_usage_homepage
+    test_ingest_usage_homepage -> client
+    test_upload_COUNTER_data_via_Excel -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
+    test_upload_COUNTER_data_via_Excel -> query_database
+    test_upload_COUNTER_data_via_Excel -> format_list_for_stdout
+    test_upload_COUNTER_data_via_Excel -> database_function_skip_statements
+    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
+    test_upload_COUNTER_data_via_Excel -> client
+    test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
+    test_upload_COUNTER_data_via_Excel -> COUNTERData_relation
+    test_upload_COUNTER_data_via_Excel -> header_value
+    test_upload_COUNTER_data_via_Excel -> prepare_HTML_page_for_comparison
+    test_upload_COUNTER_data_via_SQL_insert -> state_data_types_in_COUNTERData
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data
+    test_upload_COUNTER_data_via_SQL_insert -> query_database
+    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_SQL_insert -> database_function_skip_statements
+    test_upload_COUNTER_data_via_SQL_insert -> client
+    test_upload_COUNTER_data_via_SQL_insert -> header_value
+    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
+    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_GET_request_for_harvest_SUSHI_statistics -> query_database
+    test_GET_request_for_harvest_SUSHI_statistics -> database_function_skip_statements
+    test_GET_request_for_harvest_SUSHI_statistics -> client
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
+    test_harvest_SUSHI_statistics -> query_database
+    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
+    test_harvest_SUSHI_statistics -> database_function_skip_statements
+    test_harvest_SUSHI_statistics -> client
+    test_harvest_SUSHI_statistics -> header_value
+    test_harvest_SUSHI_statistics -> most_recent_month_with_usage
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_GET_request_for_upload_non_COUNTER_reports -> query_database
+    test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
+    test_GET_request_for_upload_non_COUNTER_reports -> database_function_skip_statements
+    test_GET_request_for_upload_non_COUNTER_reports -> client
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
+    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
+    test_upload_non_COUNTER_reports -> query_database
+    test_upload_non_COUNTER_reports -> format_list_for_stdout
+    test_upload_non_COUNTER_reports -> client
+    test_upload_non_COUNTER_reports -> path_to_sample_file
+    test_upload_non_COUNTER_reports -> header_value
+    test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
+
+
+    subgraph cluster_test_bp_initialization {
+        label="tests.test_bp_initialization"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        blank_annualUsageCollectionTracking_data_types [
+            style="dotted"
+            shape="box"
+        ]
+        create_fiscalYears_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_annualStatistics_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_vendors_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_vendorNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsSourceNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_resourceSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_resourceSourceNotes_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_statisticsResourceSources_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_blank_annualUsageCollectionTracking_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        create_annualUsageCollectionTracking_CSV_file [
+            style="dotted"
+            shape="box"
+        ]
+        test_GET_request_for_collect_FY_and_vendor_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_FY_and_vendor_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_sources_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_collect_AUCT_and_historical_COUNTER_data [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_upload_historical_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
+        files_for_test_upload_historical_non_COUNTER_usage [
+            style="dotted"
+            shape="folder"
+        ]
+        "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage" [
+            style="dotted"
+            shape="box"
+        ]
+        test_upload_historical_non_COUNTER_usage [
+            style="dashed"
+            shape="folder"
+        ]
+    }
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
+    create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
+    create_annualStatistics_CSV_file -> annualStatistics_relation_in_conftest
+    create_vendors_CSV_file -> vendors_relation_in_conftest
+    create_vendorNotes_CSV_file -> vendorNotes_relation_in_conftest
+    create_statisticsSources_CSV_file -> statisticsSources_relation_in_conftest
+    create_statisticsSourceNotes_CSV_file -> statisticsSourceNotes_relation_in_conftest
+    create_resourceSources_CSV_file -> resourceSources_relation_in_conftest
+    create_resourceSourceNotes_CSV_file -> resourceSourceNotes_relation_in_conftest
+    create_statisticsResourceSources_CSV_file -> statisticsResourceSources_relation_in_conftest
+    create_blank_annualUsageCollectionTracking_CSV_file -> blank_annualUsageCollectionTracking_data_types
+    create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_GET_request_for_collect_FY_and_vendor_data -> client
+    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
+    test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendors
+    test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
+    test_collect_FY_and_vendor_data -> query_database
+    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
+    test_collect_FY_and_vendor_data -> database_function_skip_statements
+    test_collect_FY_and_vendor_data -> fiscalYears_relation_in_conftest
+    test_collect_FY_and_vendor_data -> annualStatistics_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendors_relation_in_conftest
+    test_collect_FY_and_vendor_data -> vendorNotes_relation_in_conftest
+    test_collect_FY_and_vendor_data -> client
+    test_collect_FY_and_vendor_data -> header_value
+    test_collect_FY_and_vendor_data -> create_fiscalYears_CSV_file
+    test_collect_FY_and_vendor_data -> create_annualStatistics_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendors_CSV_file
+    test_collect_FY_and_vendor_data -> create_vendorNotes_CSV_file
+    test_collect_sources_data -> state_data_types_in_statisticsSources
+    test_collect_sources_data -> state_data_types_in_statisticsSourceNotes
+    test_collect_sources_data -> state_data_types_in_resourceSources
+    test_collect_sources_data -> state_data_types_in_resourceSourceNotes
+    test_collect_sources_data -> state_data_types_in_statisticsResourceSources
+    test_collect_sources_data -> collect_sources_data
+    test_collect_sources_data -> query_database
+    test_collect_sources_data -> change_single_field_dataframe_into_series
+    test_collect_sources_data -> database_function_skip_statements
+    test_collect_sources_data -> statisticsSources_relation_in_conftest
+    test_collect_sources_data -> statisticsSourceNotes_relation_in_conftest
+    test_collect_sources_data -> resourceSources_relation_in_conftest
+    test_collect_sources_data -> resourceSourceNotes_relation_in_conftest
+    test_collect_sources_data -> statisticsResourceSources_relation_in_conftest
+    test_collect_sources_data -> client
+    test_collect_sources_data -> header_value
+    test_collect_sources_data -> create_statisticsSources_CSV_file
+    test_collect_sources_data -> create_resourceSources_CSV_file
+    test_collect_sources_data -> create_resourceSourceNotes_CSV_file
+    test_collect_sources_data -> create_statisticsResourceSources_CSV_file
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> client
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> blank_annualUsageCollectionTracking_data_types
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> create_blank_annualUsageCollectionTracking_CSV_file
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
+    test_collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_COUNTERData
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data
+    test_collect_AUCT_and_historical_COUNTER_data -> query_database
+    test_collect_AUCT_and_historical_COUNTER_data -> database_function_skip_statements
+    test_collect_AUCT_and_historical_COUNTER_data -> annualUsageCollectionTracking_relation_in_conftest
+    test_collect_AUCT_and_historical_COUNTER_data -> client
+    test_collect_AUCT_and_historical_COUNTER_data -> create_COUNTERData_workbook_iterdir_list
+    test_collect_AUCT_and_historical_COUNTER_data -> COUNTERData_relation
+    test_collect_AUCT_and_historical_COUNTER_data -> client
+    test_collect_AUCT_and_historical_COUNTER_data -> header_value
+    test_collect_AUCT_and_historical_COUNTER_data -> create_annualUsageCollectionTracking_CSV_file
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> database_function_skip_statements
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> client
+    files_for_test_upload_historical_non_COUNTER_usage -> unable_to_delete_test_file_in_S3_statement
+    "files_for_test_upload_historical_non_COUNTER_usage._files_for_test_upload_historical_non_COUNTER_usage" -> check_if_file_exists_statement
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
+    test_upload_historical_non_COUNTER_usage -> query_database
+    test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
+    test_upload_historical_non_COUNTER_usage -> format_list_for_stdout
+    test_upload_historical_non_COUNTER_usage -> database_function_skip_statements
+    test_upload_historical_non_COUNTER_usage -> client
+    test_upload_historical_non_COUNTER_usage -> header_value
+
+
+    subgraph cluster_test_bp_login {
+        label="tests.test_bp_login"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        test_login_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_logging_in [
+            style="dashed"
+            shape="box"
+        ]
+        test_logging_in_as_admin [
+            style="dashed"
+            shape="box"
+        ]
+        test_creating_an_account [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    test_login_homepage -> login_homepage
+    test_login_homepage -> client
+
+
+    subgraph cluster_test_bp_view_lists {
+        label="tests.test_bp_view_lists"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        test_view_lists_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_view_list_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_view_list_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_edit_list_record_for_existing_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_edit_list_record_for_new_record [
+            style="dashed"
+            shape="box"
+        ]
+        test_edit_list_record [
+            style="dashed"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_test_bp_view_usage {
+        label="tests.test_bp_view_usage"
+        penwidth=5
+        style="dashed"
+        color="#782f40"
+
+        COUNTER_download_CSV [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_COUNTER_fixed_vocab_list [
+            style="dashed"
+            shape="box"
+        ]
+        test_set_encoding [
+            style="dashed"
+            shape="box"
+        ]
+        test_view_usage_homepage [
+            style="dashed"
+            shape="box"
+        ]
+        test_run_custom_SQL_query [
+            style="dashed"
+            shape="box"
+        ]
+        test_use_predefined_SQL_query [
+            style="dashed"
+            shape="box"
+        ]
+        start_query_wizard_form_data [
+            style="dotted"
+            shape="box"
+        ]
+        test_start_query_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_query_wizard_sort_redirect [
+            style="dashed"
+            shape="box"
+        ]
+        PR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_PR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        DR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_DR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        TR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_TR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        IR_parameters [
+            style="dotted"
+            shape="box"
+        ]
+        test_construct_IR_query_with_wizard [
+            style="dashed"
+            shape="box"
+        ]
+        construct_PR_query_with_wizard_without_string_match [
+            style="dashed"
+            shape="box"
+        ]
+        test_GET_request_for_download_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
+        test_download_non_COUNTER_usage [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    COUNTER_download_CSV -> create_downloads_folder
+    COUNTER_download_CSV -> unable_to_delete_test_file_in_S3_statement
+    test_create_COUNTER_fixed_vocab_list -> create_COUNTER_fixed_vocab_list
+    test_set_encoding -> set_encoding
+    test_view_usage_homepage -> view_usage_homepage
+    test_view_usage_homepage -> client
+    test_run_custom_SQL_query -> run_custom_SQL_query
+    test_run_custom_SQL_query -> client
+    test_run_custom_SQL_query -> header_value
+    test_run_custom_SQL_query -> COUNTER_download_CSV
+    test_use_predefined_SQL_query -> state_data_types_in_COUNTERData
+    test_use_predefined_SQL_query -> use_predefined_SQL_query
+    test_use_predefined_SQL_query -> query_database
+    test_use_predefined_SQL_query -> database_function_skip_statements
+    test_use_predefined_SQL_query -> client
+    test_use_predefined_SQL_query -> header_value
+    test_use_predefined_SQL_query -> COUNTER_download_CSV
+    start_query_wizard_form_data -> query_database
+    start_query_wizard_form_data -> last_day_of_month
+    start_query_wizard_form_data -> database_function_skip_statements
+    test_start_query_wizard -> start_query_wizard
+    test_start_query_wizard -> client
+    test_start_query_wizard -> header_value
+    test_start_query_wizard -> start_query_wizard_form_data
+    test_GET_query_wizard_sort_redirect -> start_query_wizard
+    test_GET_query_wizard_sort_redirect -> client
+    test_GET_query_wizard_sort_redirect -> header_value
+    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data
+    test_construct_PR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard
+    test_construct_PR_query_with_wizard -> query_database
+    test_construct_PR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_PR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_PR_query_with_wizard -> database_function_skip_statements
+    test_construct_PR_query_with_wizard -> client
+    test_construct_PR_query_with_wizard -> header_value
+    test_construct_PR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_PR_query_with_wizard -> PR_parameters
+    test_construct_DR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard
+    test_construct_DR_query_with_wizard -> query_database
+    test_construct_DR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_DR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_DR_query_with_wizard -> database_function_skip_statements
+    test_construct_DR_query_with_wizard -> client
+    test_construct_DR_query_with_wizard -> header_value
+    test_construct_DR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_DR_query_with_wizard -> DR_parameters
+    test_construct_TR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard
+    test_construct_TR_query_with_wizard -> query_database
+    test_construct_TR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_TR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_TR_query_with_wizard -> database_function_skip_statements
+    test_construct_TR_query_with_wizard -> client
+    test_construct_TR_query_with_wizard -> header_value
+    test_construct_TR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_TR_query_with_wizard -> TR_parameters
+    test_construct_IR_query_with_wizard -> state_data_types_in_COUNTERData
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard
+    test_construct_IR_query_with_wizard -> query_database
+    test_construct_IR_query_with_wizard -> return_string_of_dataframe_info
+    test_construct_IR_query_with_wizard -> check_if_file_exists_statement
+    test_construct_IR_query_with_wizard -> database_function_skip_statements
+    test_construct_IR_query_with_wizard -> client
+    test_construct_IR_query_with_wizard -> header_value
+    test_construct_IR_query_with_wizard -> COUNTER_download_CSV
+    test_construct_IR_query_with_wizard -> IR_parameters
+    construct_PR_query_with_wizard_without_string_match -> construct_PR_query_with_wizard
+    construct_PR_query_with_wizard_without_string_match -> client
+    construct_PR_query_with_wizard_without_string_match -> header_value
+    construct_PR_query_with_wizard_without_string_match -> prepare_HTML_page_for_comparison
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_GET_request_for_download_non_COUNTER_usage -> query_database
+    test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options
+    test_GET_request_for_download_non_COUNTER_usage -> database_function_skip_statements
+    test_GET_request_for_download_non_COUNTER_usage -> client
+    test_download_non_COUNTER_usage -> create_downloads_folder
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage
+    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
+    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
+    test_download_non_COUNTER_usage -> client
+    test_download_non_COUNTER_usage -> header_value
+
+
+    subgraph cluster_test_ConvertJSONDictToDataframe {
+        label="tests.test_ConvertJSONDictToDataframe"
+        penwidth=5
+        style="dashed"
+
+        sample_SUSHI_PR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_PR_response_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_IR [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_dataframe -> state_data_types_in_COUNTERData
+    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_dataframe
+    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_dataframe
+    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_dataframe
+    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_dataframe
+
+
+    subgraph cluster_test_FiscalYears {
+        label="tests.test_FiscalYears"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        FY2020_FiscalYears_object [
+            style="dotted"
+            shape="box"
+        ]
+        test_calculate_depreciated_ACRL_60b [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_depreciated_ACRL_63 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ACRL_61a [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ACRL_61b [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_18 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_19 [
+            style="dashed"
+            shape="box"
+        ]
+        test_calculate_ARL_20 [
+            style="dashed"
+            shape="box"
+        ]
+        FY2023_FiscalYears_object_and_record [
+            style="dotted"
+            shape="box"
+        ]
+        load_new_record_into_fiscalYears [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_usage_tracking_records_for_fiscal_year [
+            style="dashed"
+            shape="box"
+        ]
+        FY2022_FiscalYears_object [
+            style="dotted"
+            shape="box"
+        ]
+        test_collect_fiscal_year_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    FY2020_FiscalYears_object -> query_database
+    FY2020_FiscalYears_object -> initialize_relation_class_object_statement
+    FY2020_FiscalYears_object -> database_function_skip_statements
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b
+    test_calculate_depreciated_ACRL_60b -> client
+    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63
+    test_calculate_depreciated_ACRL_63 -> client
+    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object
+    test_calculate_ACRL_61a -> calculate_ACRL_61a
+    test_calculate_ACRL_61a -> client
+    test_calculate_ACRL_61a -> FY2020_FiscalYears_object
+    test_calculate_ACRL_61b -> calculate_ACRL_61b
+    test_calculate_ACRL_61b -> client
+    test_calculate_ACRL_61b -> FY2020_FiscalYears_object
+    test_calculate_ARL_18 -> calculate_ARL_18
+    test_calculate_ARL_18 -> client
+    test_calculate_ARL_18 -> FY2020_FiscalYears_object
+    test_calculate_ARL_19 -> calculate_ARL_19
+    test_calculate_ARL_19 -> client
+    test_calculate_ARL_19 -> FY2020_FiscalYears_object
+    test_calculate_ARL_20 -> calculate_ARL_20
+    test_calculate_ARL_20 -> client
+    test_calculate_ARL_20 -> FY2020_FiscalYears_object
+    load_new_record_into_fiscalYears -> load_data_into_database
+    load_new_record_into_fiscalYears -> database_function_skip_statements
+    load_new_record_into_fiscalYears -> load_data_into_database_success_regex
+    load_new_record_into_fiscalYears -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
+    test_create_usage_tracking_records_for_fiscal_year -> query_database
+    test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
+    test_create_usage_tracking_records_for_fiscal_year -> database_function_skip_statements
+    test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
+    test_create_usage_tracking_records_for_fiscal_year -> client
+    test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> load_new_record_into_fiscalYears
+    FY2022_FiscalYears_object -> query_database
+    FY2022_FiscalYears_object -> initialize_relation_class_object_statement
+    FY2022_FiscalYears_object -> database_function_skip_statements
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
+    test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
+    test_collect_fiscal_year_usage_statistics -> query_database
+    test_collect_fiscal_year_usage_statistics -> update_database
+    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> database_function_skip_statements
+    test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
+    test_collect_fiscal_year_usage_statistics -> update_database_success_regex
+    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
+
+
+    subgraph cluster_test_ResourceSources {
+        label="tests.test_ResourceSources"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        test_add_access_stop_date [
+            style="dashed"
+            shape="box"
+        ]
+        test_remove_access_stop_date [
+            style="dashed"
+            shape="box"
+        ]
+        test_change_StatisticsSource [
+            style="dashed"
+            shape="box"
+        ]
+        test_add_note_in_test_ResourceSources [
+            label="test_add_note"
+            style="dashed"
+            shape="box"
+        ]
+    }
+
+
+    subgraph cluster_test_statements {
+        label="tests.test_statements"
+        penwidth=5
+        style="dashed"
+        color="#5cb8b2"
+
+        test_format_list_for_stdout_with_list [
+            style="dashed"
+            shape="box"
+        ]
+        test_format_list_for_stdout_with_generator [
+            style="dashed"
+            shape="box"
+        ]
+        test_remove_IDE_spacing_from_statement [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    test_format_list_for_stdout_with_list -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
+    test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
+
+
+    subgraph cluster_test_StatisticsSources {
+        label="tests.test_StatisticsSources"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        current_month_like_most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
+        StatisticsSources_fixture [
+            style="dotted"
+            shape="box"
+        ]
+        test_fetch_SUSHI_information_for_API [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_SUSHI_information_for_display [
+            style="dashed"
+            shape="box"
+        ]
+        SUSHI_credentials_fixture_in_test_StatisticsSources [
+            label="SUSHI_credentials_fixture"
+            style="dotted"
+            shape="box"
+        ]
+        reports_offered_by_StatisticsSource_fixture [
+            style="dotted"
+            shape="box"
+        ]
+        test_COUNTER_reports_offered_by_statistics_source [
+            style="dashed"
+            shape="box"
+        ]
+        test_check_if_data_in_database_no [
+            style="dashed"
+            shape="box"
+        ]
+        test_check_if_data_in_database_yes [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_single_report [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_single_report_with_partial_date_range [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI_with_report_to_harvest [
+            style="dashed"
+            shape="box"
+        ]
+        test_harvest_R5_SUSHI_with_invalid_dates [
+            style="dashed"
+            shape="box"
+        ]
+        month_before_month_like_most_recent_month_with_usage [
+            style="dotted"
+            shape="box"
+        ]
+        harvest_R5_SUSHI_result_in_test_StatisticsSources [
+            label="harvest_R5_SUSHI_result"
+            style="dotted"
+            shape="box"
+        ]
+        test_collect_usage_statistics [
+            style="dashed"
+            shape="box"
+        ]
+        test_add_note_in_test_StatisticsSources [
+            label="test_add_note"
+            style="dashed"
+            shape="box"
+        ]
+        partially_duplicate_COUNTER_data [
+            style="dotted"
+            shape="box"
+        ]
+        non_duplicate_COUNTER_data [
+            style="dotted"
+            shape="box"
+        ]
+        test_check_if_data_already_in_COUNTERData [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    current_month_like_most_recent_month_with_usage -> last_day_of_month
+    StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
+    StatisticsSources_fixture -> query_database
+    StatisticsSources_fixture -> extract_value_from_single_value_df
+    StatisticsSources_fixture -> fixture_variable_value_declaration_statement
+    StatisticsSources_fixture -> database_function_skip_statements
+    StatisticsSources_fixture -> most_recent_month_with_usage
+    test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
+    test_fetch_SUSHI_information_for_display -> StatisticsSources_fixture
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
+    SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture
+    reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source
+    reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture
+    reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture
+    test_check_if_data_in_database_no -> _check_if_data_in_database
+    test_check_if_data_in_database_no -> client
+    test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
+    test_check_if_data_in_database_no -> StatisticsSources_fixture
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture
+    test_check_if_data_in_database_yes -> _check_if_data_in_database
+    test_check_if_data_in_database_yes -> client
+    test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
+    test_check_if_data_in_database_yes -> StatisticsSources_fixture
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report -> _harvest_single_report
+    test_harvest_single_report -> last_day_of_month
+    test_harvest_single_report -> database_function_skip_statements
+    test_harvest_single_report -> reports_with_no_usage_regex
+    test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
+    test_harvest_single_report -> client
+    test_harvest_single_report -> most_recent_month_with_usage
+    test_harvest_single_report -> StatisticsSources_fixture
+    test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report
+    test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
+    test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
+    test_harvest_single_report_with_partial_date_range -> skip_test_due_to_SUSHI_error_regex
+    test_harvest_single_report_with_partial_date_range -> client
+    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture
+    test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI -> client
+    test_harvest_R5_SUSHI -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
+    test_harvest_R5_SUSHI_with_report_to_harvest -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
+    test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
+    test_harvest_R5_SUSHI_with_invalid_dates -> attempted_SUSHI_call_with_invalid_dates_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
+    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
+    month_before_month_like_most_recent_month_with_usage -> last_day_of_month
+    month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
+    harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
+    test_collect_usage_statistics -> collect_usage_statistics
+    test_collect_usage_statistics -> load_data_into_database_success_regex
+    test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
+    test_collect_usage_statistics -> StatisticsSources_fixture
+    test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
+    partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
+    non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
+    test_check_if_data_already_in_COUNTERData -> query_database
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData
+    test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_check_if_data_already_in_COUNTERData -> database_function_skip_statements
+    test_check_if_data_already_in_COUNTERData -> partially_duplicate_COUNTER_data
+    test_check_if_data_already_in_COUNTERData -> non_duplicate_COUNTER_data
+
+
+    subgraph cluster_test_SUSHICallAndResponse {
+        label="tests.test_SUSHICallAndResponse"
+        penwidth=5
+        style="dashed"
+
+        SUSHI_credentials_fixture_in_test_SUSHICallAndResponse [
+            label="SUSHI_credentials_fixture"
+            style="dotted"
+            shape="box"
+        ]
+        StatisticsSource_instance_name [
+            style="dotted"
+            shape="box"
+        ]
+        test_status_call [
+            style="dashed"
+            shape="box"
+        ]
+        test_status_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        test_reports_call [
+            style="dashed"
+            shape="box"
+        ]
+        test_reports_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        list_of_reports [
+            style="dotted"
+            shape="box"
+        ]
+        test_PR_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        test_DR_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        test_TR_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        test_IR_call_validity [
+            style="dashed"
+            shape="box"
+        ]
+        test_call_with_invalid_credentials [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    StatisticsSource_instance_name -> query_database
+    StatisticsSource_instance_name -> extract_value_from_single_value_df
+    StatisticsSource_instance_name -> database_function_skip_statements
+    test_status_call -> make_SUSHI_call
+    test_status_call -> database_function_skip_statements
+    test_status_call -> reports_with_no_usage_regex
+    test_status_call -> skip_test_due_to_SUSHI_error_regex
+    test_status_call -> client
+    test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_status_call -> StatisticsSource_instance_name
+    test_status_call_validity -> make_SUSHI_call
+    test_status_call_validity -> client
+    test_status_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_status_call_validity -> StatisticsSource_instance_name
+    test_reports_call -> make_SUSHI_call
+    test_reports_call -> database_function_skip_statements
+    test_reports_call -> reports_with_no_usage_regex
+    test_reports_call -> skip_test_due_to_SUSHI_error_regex
+    test_reports_call -> client
+    test_reports_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_reports_call -> StatisticsSource_instance_name
+    test_reports_call_validity -> make_SUSHI_call
+    test_reports_call_validity -> client
+    test_reports_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_reports_call_validity -> StatisticsSource_instance_name
+    list_of_reports -> COUNTER_reports_offered_by_statistics_source
+    list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_PR_call_validity -> make_SUSHI_call
+    test_PR_call_validity -> database_function_skip_statements
+    test_PR_call_validity -> reports_with_no_usage_regex
+    test_PR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_PR_call_validity -> client
+    test_PR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_PR_call_validity -> StatisticsSource_instance_name
+    test_PR_call_validity -> list_of_reports
+    test_DR_call_validity -> make_SUSHI_call
+    test_DR_call_validity -> database_function_skip_statements
+    test_DR_call_validity -> reports_with_no_usage_regex
+    test_DR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_DR_call_validity -> client
+    test_DR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_DR_call_validity -> StatisticsSource_instance_name
+    test_DR_call_validity -> list_of_reports
+    test_TR_call_validity -> make_SUSHI_call
+    test_TR_call_validity -> database_function_skip_statements
+    test_TR_call_validity -> reports_with_no_usage_regex
+    test_TR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_TR_call_validity -> client
+    test_TR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_TR_call_validity -> StatisticsSource_instance_name
+    test_TR_call_validity -> list_of_reports
+    test_IR_call_validity -> make_SUSHI_call
+    test_IR_call_validity -> database_function_skip_statements
+    test_IR_call_validity -> reports_with_no_usage_regex
+    test_IR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_IR_call_validity -> client
+    test_IR_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_IR_call_validity -> StatisticsSource_instance_name
+    test_IR_call_validity -> list_of_reports
+    test_call_with_invalid_credentials -> make_SUSHI_call
+    test_call_with_invalid_credentials -> client
+    test_call_with_invalid_credentials -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
+    test_call_with_invalid_credentials -> StatisticsSource_instance_name
+
+
+    subgraph cluster_test_UploadCOUNTERReports {
+        label="tests.test_UploadCOUNTERReports"
+        penwidth=5
+        style="dashed"
+
+        sample_COUNTER_report_workbook [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_single_workbook [
+            style="dashed"
+            shape="box"
+        ]
+        sample_COUNTER_report_workbooks [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    sample_COUNTER_report_workbook -> create_COUNTERData_workbook_iterdir_list
+    test_create_dataframe_from_single_workbook -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe_from_single_workbook -> workbooks_and_relations
+    test_create_dataframe_from_single_workbook -> sample_COUNTER_report_workbook
+    sample_COUNTER_report_workbooks -> create_COUNTERData_workbook_iterdir_list
+    test_create_dataframe -> create_dataframe_in_UploadCOUNTERReports
+    test_create_dataframe -> COUNTERData_relation
+    test_create_dataframe -> sample_COUNTER_report_workbooks
+
+
+    subgraph cluster_test_Vendors {
+        label="tests.test_Vendors"
+        penwidth=5
+        style="dashed"
+        color="#ceb888"
+
+        test_get_statisticsSources_records [
+            style="dashed"
+            shape="box"
+        ]
+        test_get_resourceSources_records [
+            style="dashed"
+            shape="box"
+        ]
+        test_add_note_in_test_Vendors [
+            label="test_add_note"
+            style="dashed"
+            shape="box"
+        ]
+    }
+}
