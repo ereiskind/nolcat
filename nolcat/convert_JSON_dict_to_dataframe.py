@@ -84,22 +84,19 @@ class ConvertJSONDictToDataframe:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
                 log.error(message)
-                #ToDo: Save JSON as file
                 return message
         elif COUNTER_release == "5.1":
             try:
                 df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
-                message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
                 log.error(message)
-                #ToDo: Save JSON as file
                 return message
         else:
-            message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+            message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
             log.error(message)
-            #ToDo: Save JSON as file
             return message
         return df  # The method will only get here if one of the private harvest methods was successful
 

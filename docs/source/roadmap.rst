@@ -20,10 +20,6 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
-Iteration 0: Prepare for COUNTER R5.1
-=====================================
-* Add saving JSON files to `ConvertJSONDictToDataframe.create_dataframe()`
-
 Iteration 3: Minimum Viable Product
 ===================================
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
