@@ -1,0 +1,1466 @@
+{
+    "Report_Header": {
+        "Created": "2025-01-15T00:00:00Z",
+        "Created_By": "EBSCO Information Services",
+        "Report_ID": "TR",
+        "Release": "5.1",
+        "Report_Name": "Title Report",
+        "Institution_Name": "FLORIDA STATE UNIV-MAIN",
+        "Institution_ID": {
+            "Proprietary": [
+                "EBSCOhost:a0000000"
+            ]
+        },
+        "Report_Filters": {
+            "Begin_Date": "2025-01-01",
+            "End_Date": "2025-02-28"
+        },
+        "Report_Attributes": {
+            "Attributes_To_Show": [
+                "YOP",
+                "Access_Type",
+                "Access_Method"
+            ]
+        },
+        "Registry_Record": "https://registry.countermetrics.org/platform/b2b2736c-2cb9-48ec-91f4-870336acfb1c"
+    },
+    "Report_Items": [
+        {
+            "Title": "All Things Medieval: An Encyclopedia of the Medieval World",
+            "Publisher": "Greenwood Publishing Group",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-0-313-36462-4",
+                "Proprietary": "EBSCOhost:KBID:1169944"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2011",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 15
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 7,
+                            "2025-02": 84
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 14
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 6,
+                            "2025-02": 85
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 5,
+                            "2025-02": 82
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 10,
+                            "2025-02": 89
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Atlantis: Revista de la Asociación Española de Estudios Anglo-Norteamericanos",
+            "Publisher": "Asociación Española de Estudios Anglo-Norteamericanos",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "1989-6840",
+                "Print_ISSN": "0210-6124",
+                "Proprietary": "EBSCOhost:KBID:99636"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2018",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Black Jesus and Other Superheroes: Stories",
+            "Publisher": "University of Nebraska Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-1-4962-0186-7",
+                "Proprietary": "EBSCOhost:KBID:14169788"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2017",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 34
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 33
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 34
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 32
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Critical Survey of Graphic Novels: Heroes & Superheroes",
+            "Publisher": "Salem Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-1-68217-956-7",
+                "Proprietary": "EBSCOhost:KBID:17154218"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2013",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 5
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Cyclopedia of Literary Characters",
+            "Publisher": "Salem Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-1-61925-497-8",
+                "Proprietary": "EBSCOhost:KBID:3197643"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2015",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 12
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 11
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 17
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 13
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Encountering The Goddess: A Translation Of The DevÃ¥i-MÃ¥ahÃ¥atmya And A Study Of Its Interpretation (Suny Series In Hindu Studies)",
+            "Publisher": "State University of New York Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-0-7914-0445-4",
+                "Proprietary": "EBSCOhost:KBID:963532"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "1991",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Learning Python: learn to code like a professional with Python - an open source, versatile, and powerful programming language",
+            "Publisher": "Packt Publishing",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-1-78355-171-2",
+                "Proprietary": "EBSCOhost:KBID:8404620"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2015",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 24
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 21
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 24
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 25
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Print_ISSN": "0363-0277",
+                "Proprietary": "EBSCOhost:KBID:45875"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2025",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 7
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 6,
+                            "2025-02": 7
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 14,
+                            "2025-02": 9
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2023",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2022",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2021",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2020",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2019",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2017",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2016",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2014",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 8,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2008",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 5,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 11,
+                            "2025-02": 4
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2007",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2006",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 14,
+                            "2025-02": 11
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 24,
+                            "2025-02": 9
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 17,
+                            "2025-02": 7
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 35,
+                            "2025-02": 14
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2005",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2004",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2003",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2001",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1996",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1995",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1994",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 4
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1993",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1992",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1991",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1990",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1988",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 8
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1985",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1981",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1977",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1976",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "LJ: Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Print_ISSN": "0360-3113",
+                "Proprietary": "EBSCOhost:KBID:789434"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "1976",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist",
+            "Publisher": "New Scientist Ltd.",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "2059-5387",
+                "Print_ISSN": "0262-4079",
+                "Proprietary": "EBSCOhost:KBID:16190823"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2021",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 5
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 6
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2019",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2018",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 4,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 6,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 17,
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2010",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Social Work Practice with Survivors of Sex Trafficking and Commercial Sexual Exploitation",
+            "Publisher": "Columbia University Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-0-231-18092-4",
+                "Proprietary": "EBSCOhost:KBID:16837067"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2018",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 7
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 15
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 11
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 15
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "The Washington Post",
+            "Publisher": "The Washington Post Company",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Print_ISSN": "0190-8286",
+                "Proprietary": "EBSCOhost:KBID:69285"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Newspaper_or_Newsletter",
+                    "Access_Type": "Controlled",
+                    "YOP": "2005",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Newspaper_or_Newsletter",
+                    "Access_Type": "Controlled",
+                    "YOP": "1997",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Newspaper_or_Newsletter",
+                    "Access_Type": "Controlled",
+                    "YOP": "1995",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "Women and Language",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Print_ISSN": "8755-4550",
+                "Proprietary": "EBSCOhost:KBID:69983"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2017",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2012",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2009",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 5
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "0001",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Yale Law Journal",
+            "Publisher": "Yale Law Journal",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "1939-8611",
+                "Print_ISSN": "0044-0094",
+                "Proprietary": "EBSCOhost:KBID:70693"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2013",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "The Yellow House: A Memoir (2019 National Book Award Winner)",
+            "Publisher": "Grove Press",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "ISBN": "978-0-8021-2508-8",
+                "Proprietary": "EBSCOhost:KBID:26526353"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2019",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 11
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 17
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 15
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 13
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "Вiсник Вiнницького полiтехнiчного iнституту",
+            "Publisher": "Винницкий национальный технический университет",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "1997-9274",
+                "Print_ISSN": "1997-9266",
+                "Proprietary": "EBSCOhost:KBID:16772632"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "مجله علم‌سنجی کاسپین",
+            "Publisher": "Babol University of Medical Sciences",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "2383-157X",
+                "Print_ISSN": "2423-4710",
+                "Proprietary": "EBSCOhost:KBID:19757737"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "フランシスコ・タレガ",
+            "Publisher": "",
+            "Platform": "EBSCOhost",
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Book",
+                    "Access_Type": "Controlled",
+                    "YOP": "2005",
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "农业工程学报 = Transactions Of The Chinese Society Of Agricultural Engineering",
+            "Publisher": "Chinese Society of Agricultural Engineering",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Print_ISSN": "1002-6819",
+                "Proprietary": "EBSCOhost:KBID:124107"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2016",
+                    "Performance": {
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "日本助産学会誌 = Journal of Japan Academy of Midwifery",
+            "Publisher": "日本助産学会",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "1882-4307",
+                "Print_ISSN": "0917-6357",
+                "Proprietary": "EBSCOhost:KBID:401887"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Title": "한국정보통신학회논문지=Journal of the Korea Institute of Information and Communication Engineering",
+            "Publisher": "한국정보통신학회",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Online_ISSN": "2288-4165",
+                "Print_ISSN": "2234-4772",
+                "Proprietary": "EBSCOhost:KBID:2493445"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Journal",
+                    "Access_Type": "Controlled",
+                    "YOP": "2024",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        }
+    ]
+}

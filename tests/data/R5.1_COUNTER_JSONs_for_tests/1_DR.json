@@ -1,0 +1,133 @@
+{
+    "Report_Header": {
+        "Created": "2025-01-15T00:00:00Z",
+        "Created_By": "EBSCO Information Services",
+        "Report_ID": "DR",
+        "Release": "5.1",
+        "Report_Name": "Database Report",
+        "Institution_Name": "FLORIDA STATE UNIV-MAIN",
+        "Institution_ID": {
+            "Proprietary": [
+                "EBSCOhost:a0000000"
+            ]
+        },
+        "Report_Filters": {
+            "Begin_Date": "2025-01-01",
+            "End_Date": "2025-02-28"
+        },
+        "Report_Attributes": {
+            "Attributes_To_Show": [
+                "Access_Method"
+            ]
+        },
+        "Registry_Record": "https://registry.countermetrics.org/platform/b2b2736c-2cb9-48ec-91f4-870336acfb1c"
+    },
+    "Report_Items": [
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Proprietary": "EBSCOhost:hia"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Database_AI",
+                    "Performance": {
+                        "Searches_Regular": {
+                            "2025-01": 522,
+                            "2025-02": 1198
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Journal",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 12,
+                            "2025-02": 67
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 14,
+                            "2025-02": 77
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Database": "Popular Educational Periodicals, 1758-1889",
+            "Publisher": "American Antiquarian Society Historical Periodical",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Proprietary": "EBSCOhost:eup"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Database_Aggregated",
+                    "Performance": {
+                        "Searches_Automated": {
+                            "2025-01": 32,
+                            "2025-02": 66
+                        },
+                        "Searches_Regular": {
+                            "2025-01": 523,
+                            "2025-02": 1099
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        },
+        {
+            "Database": "Washington Post Video Collection",
+            "Publisher": "Washington Post",
+            "Platform": "EBSCOhost",
+            "Item_ID": {
+                "Proprietary": "EBSCOhost:vwp"
+            },
+            "Attribute_Performance": [
+                {
+                    "Data_Type": "Database_Full",
+                    "Performance": {
+                        "Searches_Automated": {
+                            "2025-01": 17,
+                            "2025-02": 46
+                        },
+                        "Searches_Regular": {
+                            "2025-01": 2802,
+                            "2025-02": 4185
+                        }
+                    },
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Data_Type": "Database_Full_Item",
+                    "Performance": {
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Access_Method": "Regular"
+                }
+            ]
+        }
+    ]
+}

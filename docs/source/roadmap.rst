@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 0: Prepare for COUNTER R5.1
 =====================================
-* Create the files in "tests/data/R5.1_COUNTER_JSONs_for_tests" for statistics sources 1 and 2 (may not be needed)
 * Edit ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` so "Data_Type" only in 'attributes_to_show' for R5 (line 945)
 * Edit ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to allow R5 or R5.1 URLs
 * Add saving JSON files to `ConvertJSONDictToDataframe.create_dataframe()`

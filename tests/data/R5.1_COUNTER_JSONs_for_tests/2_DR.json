@@ -1,0 +1,167 @@
+RAW
+
+{
+    "Report_Header": {
+        "Created": "2025-01-15T00:00:00Z",
+        "Created_By": "Scholarly iQ",
+        "Report_ID": "DR",
+        "Release": "5.1",
+        "Report_Name": "Database Report",
+        "Institution_Name": "Florida State University",
+        "Registry_Record": "https://registry.countermetrics.org/platform/a44d3e70-3166-4d1e-870f-69bb22335a77",
+        "Institution_ID": {
+            "Proprietary": [
+                "Gale:location:aaaa00000"
+            ]
+        },
+        "Report_Filters": {
+            "Begin_Date": "2025-01-01",
+            "End_Date": "2025-02-28"
+        },
+        "Report_Attributes": {
+            "Attributes_To_Show": [
+                "Access_Method"
+            ]
+        }
+    },
+    "Report_Items": [
+        {
+            "Database": "Gale Business: Entrepreneurship",
+            "Publisher": "Gale Cengage Learning",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:SBRC"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 4,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 4,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 4
+                        }
+                    },
+                    "Data_Type": "Book",
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Performance": {
+                        "Searches_Regular": {
+                            "2025-01": 27,
+                            "2025-02": 18
+                        }
+                    },
+                    "Data_Type": "Database_Aggregated",
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 17,
+                            "2025-02": 9
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 14,
+                            "2025-02": 11
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 14,
+                            "2025-02": 12
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 15,
+                            "2025-02": 11
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 4
+                        }
+                    },
+                    "Data_Type": "Newspaper_or_Newsletter",
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Data_Type": "Other",
+                    "Access_Method": "Regular"
+                },
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Reference_Work",
+                    "Access_Method": "Regular"
+                }
+            ]
+        }
+    ]
+}

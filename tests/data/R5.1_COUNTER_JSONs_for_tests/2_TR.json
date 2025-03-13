@@ -1,0 +1,914 @@
+{
+    "Report_Header": {
+        "Created": "2025-01-15T00:00:00Z",
+        "Created_By": "Scholarly iQ",
+        "Report_ID": "TR",
+        "Release": "5.1",
+        "Report_Name": "Title Report",
+        "Institution_Name": "Florida State University",
+        "Registry_Record": "https://registry.countermetrics.org/platform/a44d3e70-3166-4d1e-870f-69bb22335a77",
+        "Institution_ID": {
+            "Proprietary": [
+                "Gale:location:aaaa00000"
+            ]
+        },
+        "Report_Filters": {
+            "Begin_Date": "2025-01-01",
+            "End_Date": "2025-02-28"
+        },
+        "Report_Attributes": {
+            "Attributes_To_Show": [
+                "Access_Method",
+                "YOP",
+                "Access_Type",
+                "Section_Type"
+            ]
+        }
+    },
+    "Report_Items": [
+        {
+            "Title": "Business Plans Handbook,Vol.1",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:5BPW",
+                "Online_ISSN": "1084-4473",
+                "ISBN": "978-1-4144-0460-8"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Data_Type": "Reference_Work",
+                    "Access_Method": "Regular",
+                    "YOP": "2005",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Business Plans Handbook,Vol.21",
+            "Publisher": "Gale, part of Cengage Group",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:2YUQ",
+                "Online_ISSN": "1084-4473",
+                "ISBN": "978-1-4144-7252-2"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Reference_Work",
+                    "Access_Method": "Regular",
+                    "YOP": "2011",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Associations: International Organizations,Ed.57",
+            "Publisher": "Gale, part of Cengage Group",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:3DLK"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Reference_Work",
+                    "Access_Method": "Regular",
+                    "YOP": "2018",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Associations: National Organizations of the U.S.,Ed.57",
+            "Publisher": "Gale, part of Cengage Group",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:3DLL"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Data_Type": "Reference_Work",
+                    "Access_Method": "Regular",
+                    "YOP": "2018",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:1273",
+                "Online_ISSN": "0363-0277"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "1997",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 6
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 6
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "1998",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "1999",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2000",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2001",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2003",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2004",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 5
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 4
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2006",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 9
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 9
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2007",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2008",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 5,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 5,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2009",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2010",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2011",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 6
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 6
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 4
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2013",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2014",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 5
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 5
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 5
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 5
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2015",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2016",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2017",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2021",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist",
+            "Publisher": "New Scientist",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:0361",
+                "Online_ISSN": "0262-4079"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2024",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist International Edition",
+            "Publisher": "New Scientist Ltd",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:49N1",
+                "Online_ISSN": "0028-6664"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 8
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 8
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2022",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 4
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 4
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Small Business Resource Center",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:5GBM",
+                "ISBN": "978-1-5358-8336-8"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 3
+                        }
+                    },
+                    "Data_Type": "Book",
+                    "Access_Method": "Regular",
+                    "YOP": "2021",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Unique_Title_Investigations": {
+                            "2025-02": 2
+                        },
+                        "Unique_Title_Requests": {
+                            "2025-02": 2
+                        },
+                        "Total_Item_Investigations": {
+                            "2025-02": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 3
+                        }
+                    },
+                    "Data_Type": "Book",
+                    "Access_Method": "Regular",
+                    "YOP": "2023",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:2875",
+                "Online_ISSN": "8755-4550"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "1999",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2001",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        },
+        {
+            "Title": "Yale Law Journal",
+            "Publisher": "Yale University, School of Law",
+            "Platform": "Gale",
+            "Item_ID": {
+                "Proprietary": "Gale:6653",
+                "Online_ISSN": "0044-0094"
+            },
+            "Attribute_Performance": [
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 5,
+                            "2025-02": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 5,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 2,
+                            "2025-02": 2
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2013",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Total_Item_Requests": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-02": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-02": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2016",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1,
+                            "2025-02": 3
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2019",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 4
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 4
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 3
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 3
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2021",
+                    "Access_Type": "Controlled"
+                },
+                {
+                    "Performance": {
+                        "Total_Item_Investigations": {
+                            "2025-01": 2
+                        },
+                        "Total_Item_Requests": {
+                            "2025-01": 2
+                        },
+                        "Unique_Item_Investigations": {
+                            "2025-01": 1
+                        },
+                        "Unique_Item_Requests": {
+                            "2025-01": 1
+                        }
+                    },
+                    "Data_Type": "Journal",
+                    "Access_Method": "Regular",
+                    "YOP": "2024",
+                    "Access_Type": "Controlled"
+                }
+            ]
+        }
+    ]
+}
