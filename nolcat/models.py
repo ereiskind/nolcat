@@ -943,18 +943,23 @@ class StatisticsSources(db.Model):
                     del SUSHI_parameters["include_parent_details"]
                 
                 if report_name == "PR":
-                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                    SUSHI_parameters["attributes_to_show"] = "Access_Method"
                 elif report_name == "DR":
-                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                    SUSHI_parameters["attributes_to_show"] = "Access_Method"
                 elif report_name == "TR":
-                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+                    SUSHI_parameters["attributes_to_show"] = "Access_Method|YOP|Access_Type"
                 elif report_name == "IR":
-                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                    SUSHI_parameters["attributes_to_show"] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                     SUSHI_parameters["include_parent_details"] = "True"
                 else:
                     #ToDo: Allow for standard reports not matching an available customizable report to be pulled
                     log.warning(f"The {report_name} report for {self.statistics_source_name} isn't recognized as a customizable report. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+
+                if not re.search(r"/r5\d+/", SUSHI_info['URL']):
+                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # In R5.1, this is mandatory
+                    if report_name == "TR":
+                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # This was removed after R5
 
                 #Subsection: Make API Call(s)
                 SUSHI_data_response, flash_message_list = self._harvest_single_report(

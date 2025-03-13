@@ -20,14 +20,6 @@ Planned Iterations
 ******************
 * Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
-Prepare for COUNTER R5.1
-========================
-* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-* Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
-* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
-* Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
-* Write ``tests.test_ConvertJSONDictToDataframe.test_create_dataframe_from_R5b1_JSON()``
-
 Move COUNTER Data to Parquet Files in S3
 ========================================
 * Create constant for use in determining location of parquet files
@@ -59,7 +51,6 @@ Move COUNTER Data to Parquet Files in S3
 
 Iteration 3: Minimum Viable Product
 ===================================
-* Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 
 Iteration 4: Minimum Viable Product with Tests and Test Database

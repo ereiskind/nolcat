@@ -79,7 +79,7 @@ COUNTER refers to the fields in their reports as "elements." Not all elements ar
 * Component_Online_ISSN (IR) -- Not preserved in NoLCAT
 * Component_URI (IR) -- Not preserved in NoLCAT
 * Data_Type (PR, DR, TR, IR)
-* Section_Type (TR)
+* Section_Type (TR) -- Removed in CoP 5.1
 * YOP (TR, IR)
 * Access_Type (TR, IR)
 * Access_Method (PR, DR, TR, IR)
@@ -99,6 +99,8 @@ COUNTER Code of Practice 5.1 was released 2023-05-05, and it brought a few chang
 
 * The fixed vocabulary for Data_Types is expanded
 * The Access_Type terms have been clarified
+
+The CoP used for 5.1 and beyond is specified in the URL, so the URL used determines the CoP. While the instructions indicate the URL should remain the same, with the release being in the URL as the first part of the call path, there is no guarantee of this. While a statistics source's current CoP and URL could be pulled from the COUNTER registry, doing so would give the user no control over which CoP is used during transition periods.
 
 For the official information about transitioning from R5 to R5.1, see https://cop5.projectcounter.org/en/5.1/13-transitioning/03-transitioning-from-counter-r5-to-r51.html.
 

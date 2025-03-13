@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2024-10-16 ##########
+########## Passing 2025-02-13 ##########
 
 import pytest
 import logging
@@ -99,10 +99,12 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 
 #Section: Tests and Fixture for SUSHI Credentials
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
-    """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
+    """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
+    
+    Regex taken from https://stackoverflow.com/a/3809435. """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r"https?://.*\.(\w{3}|\w{2,3}\.\w{2})(/.*)?/", credentials['URL'])
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -144,6 +146,7 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI
     )
 
 
+@pytest.mark.dependency()
 def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_StatisticsSource_fixture):
     """Tests creating list of available reports from a `/reports` SUSHI call.
     
@@ -157,6 +160,7 @@ def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_Statist
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if a given date and statistics source combination has any usage in the database when there aren't any matches.
     
@@ -171,6 +175,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
@@ -191,7 +196,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
-@pytest.mark.dependency()
+@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
