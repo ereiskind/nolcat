@@ -22,7 +22,6 @@ Planned Iterations
 
 Iteration 0: Prepare for COUNTER R5.1
 =====================================
-* Edit ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` so "Data_Type" only in 'attributes_to_show' for R5 (line 945)
 * Add saving JSON files to `ConvertJSONDictToDataframe.create_dataframe()`
 
 Iteration 3: Minimum Viable Product
