@@ -18,7 +18,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Figure out how to make fuzzy matching work--as of now, test including fuzzy search for "EBSCO" passes but doesn't return "EBSCOhost" as a match
 
 Move COUNTER Data to Parquet Files in S3
 ========================================
@@ -48,6 +47,7 @@ Move COUNTER Data to Parquet Files in S3
 
 * Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
 * Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
+* Look out for fuzzy matching methods for strings in parquet files--current ``(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))`` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
 
 Iteration 3: Minimum Viable Product
 ===================================

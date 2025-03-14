@@ -97,7 +97,25 @@ COUNTER Code of Practice 5.1 was released 2023-05-05, and it brought a few chang
   * In R5, books were reported at the chapter level, meaning the item-level metrics won't align
   * The Section_Type attribute is depreciated
 
-* The fixed vocabulary for Data_Types is expanded
+* The fixed vocabulary for Data_Types expanded, adding
+
+  * Audiovisual
+  * Conference
+  * Conference_Item
+  * Database_Aggregated (replacing 'Database')
+  * Database_AI (replacing 'Database')
+  * Database_Full (replacing 'Database')
+  * Database_Full_Item
+  * Image
+  * Interactive_Resource
+  * News_Item
+  * Patent
+  * Reference_Item
+  * Reference_Work
+  * Software
+  * Sound
+  * Standard
+
 * The Access_Type terms have been clarified
 
 The CoP used for 5.1 and beyond is specified in the URL, so the URL used determines the CoP. While the instructions indicate the URL should remain the same, with the release being in the URL as the first part of the call path, there is no guarantee of this. While a statistics source's current CoP and URL could be pulled from the COUNTER registry, doing so would give the user no control over which CoP is used during transition periods.

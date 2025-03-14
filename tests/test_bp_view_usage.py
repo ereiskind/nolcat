@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2025-02-13 ##########
+########## Passing 2025-03-14 ##########
 
 import pytest
 import logging
@@ -206,7 +206,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -216,8 +216,8 @@ def PR_parameters(request):
     """
     if request.param == "Filter by fixed vocabulary fields":
         form_input = {
-            'begin_date': date.fromisoformat('2016-07-01'),
-            'end_date': date.fromisoformat('2017-06-30'),
+            'begin_date': date.fromisoformat('2018-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
             'display_fields': 'platform',
             'platform_filter': "",
             'data_type_filter': forms.data_type_values['Platform'][0],
@@ -230,7 +230,7 @@ def PR_parameters(request):
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
-                AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
+                AND usage_date>='2018-07-01' AND usage_date<='2020-06-30'
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
@@ -259,7 +259,7 @@ def PR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY platform, metric_type, usage_date;
-        """  #ALERT: Test indicates `EBSCO` query parameter returns no data
+        """
         yield (form_input, query)
 
 
@@ -315,7 +315,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 def DR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -455,7 +455,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 def TR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -687,7 +687,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 def IR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -922,40 +922,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         database_df.sort_values(['metric_type', 'usage_date', 'SUM(usage_count)'], ignore_index=True),
     )
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
-
-
-def test_construct_PR_query_with_wizard_without_string_match(client, header_value):
-    """Tests using the PR query wizard with a string that won't return any matches."""
-    form_input = {
-        'begin_date': date.fromisoformat('2019-01-01'),
-        'end_date': date.fromisoformat('2019-12-31'),
-        'display_fields': (
-            ('platform', "Platform"),
-            ('data_type', "Data Type"),
-            ('access_method', "Access Method"),
-        ),
-        'platform_filter': "not going to match",
-        'data_type_filter': (forms.data_type_values['Platform']),
-        'access_method_filter': tuple(forms.access_method_values),
-        'metric_type_filter': (
-            forms.metric_type_values['Searches_Platform'],
-            forms.metric_type_values['Total_Item_Investigations'],
-            forms.metric_type_values['Unique_Item_Investigations'],
-            forms.metric_type_values['Unique_Title_Investigations'],
-            forms.metric_type_values['Total_Item_Requests'],
-            forms.metric_type_values['Unique_Item_Requests'],
-            forms.metric_type_values['Unique_Title_Requests'],
-        ),
-        'open_in_Excel': False,
-    }
-    POST_response = client.post(
-        '/view_usage/query-wizard/PR',
-        follow_redirects=True,
-        headers=header_value,
-        data=form_input,
-    )
-    assert POST_response.status == "200 OK"
-    assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
 
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):

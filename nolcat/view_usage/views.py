@@ -404,7 +404,7 @@ def construct_PR_query_with_wizard():
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             search_term = escape_string(form.platform_filter.data).decode('utf-8', errors='backslashreplace')
-            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
         
@@ -507,21 +507,21 @@ def construct_DR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             search_term = escape_string(form.resource_name_filter.data).decode('utf-8', errors='backslashreplace')
-            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             search_term = escape_string(form.publisher_filter.data).decode('utf-8', errors='backslashreplace')
-            publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
             
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             search_term = escape_string(form.platform_filter.data).decode('utf-8', errors='backslashreplace')
-            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
         
@@ -624,21 +624,21 @@ def construct_TR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             search_term = escape_string(form.resource_name_filter.data).decode('utf-8', errors='backslashreplace')
-            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             search_term = escape_string(form.publisher_filter.data).decode('utf-8', errors='backslashreplace')
-            publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            publisher_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
         
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             search_term = escape_string(form.platform_filter.data).decode('utf-8', errors='backslashreplace')
-            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
         
@@ -776,28 +776,28 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             search_term = escape_string(form.resource_name_filter.data).decode('utf-8', errors='backslashreplace')
-            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            resource_name_filter_option_statement = f"MATCH(resource_name) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             query = query + f"AND ({resource_name_filter_option_statement})\n"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             search_term = escape_string(form.publisher_filter.data).decode('utf-8', errors='backslashreplace')
-            publisher_filter_option_statement = f"MATCH(publisher) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            publisher_filter_option_statement = f"MATCH(publisher) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             query = query + f"AND ({publisher_filter_option_statement})\n"
 
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             search_term = escape_string(form.platform_filter.data).decode('utf-8', errors='backslashreplace')
-            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            platform_filter_option_statement = f"MATCH(platform) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             query = query + f"AND ({platform_filter_option_statement})\n"
         
         #Subsection: Add `parent_title` as Filter or Groupby Group
         if form.parent_title_filter.data:
             search_term = escape_string(form.parent_title_filter.data).decode('utf-8', errors='backslashreplace')
-            parent_title_filter_option_statement = f"MATCH(parent_title) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"
+            parent_title_filter_option_statement = f"MATCH(parent_title) AGAINST('{search_term}' IN NATURAL LANGUAGE MODE)"  #ALERT: Will need to change--problems with fuzzy matching
             log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
             query = query + f"AND ({parent_title_filter_option_statement})\n"
         
