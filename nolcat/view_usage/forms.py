@@ -19,33 +19,33 @@ from ..app import *
 # The keys are used in each form class to get only the possible valid values; to get all tuples for the drop-down, use the `.values()` iterator
 data_type_values = {
     'Article': ('Article', "Article"),
-    'Audiovisual': ('Audiovisual', "Audiovisual*"),
+    'Audiovisual': ('Audiovisual', "Audiovisual"),
     'Book': ('Book', "Book"),
     'Book_Segment': ('Book_Segment', "Book Segment"),
-    'Conference': ('Conference', "Conference*"),
-    'Conference_Item': ('Conference_Item', "Conference Item*"),
-    'Database_Aggregated': ('Database|Database_Aggregated', "Aggregated Database*"),
-    'Database_AI': ('Database|Database_AI', "A&I Database*"),
-    'Database_Full': ('Database|Database_Full', "Full Text Database*"),
-    'Database': ('Database', "Database"),
-    'Database_Full_Item': ('Database|Database_Full_Item', "Full Text Database Item*"),
+    'Conference': ('Conference', "Conference"),
+    'Conference_Item': ('Conference_Item', "Conference Item"),
+    'Database_Aggregated': ('Database|Database_Aggregated', "Aggregated Database"),
+    'Database_AI': ('Database|Database_AI', "A&I Database"),
+    'Database_Full': ('Database|Database_Full', "Full Text Database"),
+    'Database': ('Database|Database_Aggregated|Database_AI|Database_Full', "Database"),
+    'Database_Full_Item': ('Database_Full_Item', "Full Text Database Item"),
     'Dataset': ('Dataset', "Dataset"),
-    'Image': ('Image', "Image*"),
+    'Image': ('Image', "Image"),
     'Interactive_Resource': ('Interactive_Resource', "Interactive Resource*"),
     'Journal': ('Journal', "Journal"),
     'Multimedia': ('Multimedia', "Multimedia"),
-    'News_Item': ('News_Item', "News Item*"),
+    'News_Item': ('News_Item', "News Item"),
     'Newspaper_or_Newsletter': ('Newspaper_or_Newsletter', "Newspaper/Newsletter"),
-    'Other': ('Other', "Other"),
-    'Patent': ('Patent', "Patent*"),
+    'Other': ('Other|Database_Full_Item', "Other"),
+    'Patent': ('Patent', "Patent"),
     'Platform': ('Platform', "Platform"),
-    'Reference_Item': ('Reference_Item', "Reference Item*"),
-    'Reference_Work': ('Reference_Work', "Reference Work*"),
+    'Reference_Item': ('Reference_Item', "Reference Item"),
+    'Reference_Work': ('Reference_Work', "Reference Work"),
     'Report': ('Report', "Report"),
     'Repository_Item': ('Repository_Item', "Repository Item"),
-    'Software': ('Software', "Software*"),
-    'Sound': ('Sound', "Sound*"),
-    'Standard': ('Standard', "Standard*"),
+    'Software': ('Software', "Software"),
+    'Sound': ('Sound', "Sound"),
+    'Standard': ('Standard', "Standard"),
     'Thesis_or_Dissertation': ('Thesis_or_Dissertation', "Thesis/Dissertation"),
     'Unspecified': ('Unspecified', "Unspecified"),
 }
@@ -128,7 +128,7 @@ class PRQueryWizardForm(FlaskForm):
         ('access_method', "Access Method"),
     ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Article'],
         data_type_values['Audiovisual'],
         data_type_values['Book'],
@@ -184,7 +184,7 @@ class DRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the database the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Audiovisual'],
         data_type_values['Book'],
         data_type_values['Conference'],
@@ -247,7 +247,7 @@ class TRQueryWizardForm(FlaskForm):
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional(), Regexp(ISBN_regex())])
     ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex())])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Book'],
         data_type_values['Conference'],
         data_type_values['Journal'],
@@ -260,7 +260,7 @@ class TRQueryWizardForm(FlaskForm):
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
     ], validators=[Optional()])
-    section_type_filter = SelectMultipleField("Select all of the section types the query should return (this field is only used in COUNTER R5.0):", choices=[
+    section_type_filter = SelectMultipleField("Select all of the section types the query should return (this field is only used in COUNTER R5):", choices=[
         ('Article', "Article"),
         ('Book', "Book"),
         ('Chapter', "Chapter"),
@@ -319,7 +319,7 @@ class IRQueryWizardForm(FlaskForm):
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
     parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex())])
     parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex())])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Article'],
         data_type_values['Audiovisual'],
         data_type_values['Book'],
