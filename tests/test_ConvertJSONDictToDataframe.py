@@ -22,7 +22,7 @@ def sample_SUSHI_PR_response_R5_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI PR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_PR.json`
+        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_PR.json`
     """
     with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -34,7 +34,7 @@ def sample_SUSHI_PR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_R5_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_PR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_PR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -148,7 +148,7 @@ def sample_SUSHI_DR_response_R5_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI DR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\0_DR.json`
+        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\0_DR.json`
     """
     with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -160,7 +160,7 @@ def sample_SUSHI_DR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_R5_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\0_DR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\0_DR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -588,7 +588,7 @@ def sample_SUSHI_TR_response_R5_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI TR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_TR.json`
+        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_TR.json`
     """
     with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -600,7 +600,7 @@ def sample_SUSHI_TR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_R5_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_TR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_TR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -648,7 +648,7 @@ def sample_SUSHI_IR_response_R5_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI IR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_IR.json`
+        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_IR.json`
     """
     with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -660,7 +660,7 @@ def sample_SUSHI_IR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_R5_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5_COUNTER_JSONs_for_tests\\3_IR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_IR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -4505,7 +4505,7 @@ def sample_SUSHI_PR_response_R5b1_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI PR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_PR.json`
+        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_PR.json`
     """
     with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -4517,7 +4517,7 @@ def sample_SUSHI_PR_response_R5b1_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_R5b1_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_PR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_PR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -4563,7 +4563,7 @@ def sample_SUSHI_DR_response_R5b1_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI DR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\0_DR.json`
+        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\0_DR.json`
     """
     with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -4575,7 +4575,7 @@ def sample_SUSHI_DR_response_R5b1_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_R5b1_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\0_DR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\0_DR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -4714,7 +4714,7 @@ def sample_SUSHI_TR_response_R5b1_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI TR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_TR.json`
+        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_TR.json`
     """
     with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -4726,7 +4726,7 @@ def sample_SUSHI_TR_response_R5b1_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_R5b1_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_TR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_TR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
@@ -5011,7 +5011,7 @@ def sample_SUSHI_IR_response_R5b1_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI IR API calls.
     
     Yields:
-        dict: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_IR.json`
+        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_IR.json`
     """
     with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
@@ -5023,7 +5023,7 @@ def sample_SUSHI_IR_response_R5b1_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_R5b1_JSON_dict` fixture into a dataframe.
     
     Yields:
-        dataframe: the data in `tests\data\R5.1_COUNTER_JSONs_for_tests\\3_IR.json` as a dataframe
+        dataframe: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_IR.json` as a dataframe
     """
     df = pd.DataFrame(
         [
