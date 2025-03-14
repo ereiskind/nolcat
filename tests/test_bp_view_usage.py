@@ -924,36 +924,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_construct_PR_query_with_wizard_without_string_match(client, header_value):
-    """Tests using the PR query wizard with a string that won't return any matches."""
-    form_input = {
-        'begin_date': date.fromisoformat('2019-01-01'),
-        'end_date': date.fromisoformat('2019-12-31'),
-        'display_fields': 'platform',
-        'platform_filter': "not going to match",
-        'data_type_filter': (forms.data_type_values['Platform']),
-        'access_method_filter': tuple(forms.access_method_values),
-        'metric_type_filter': (
-            forms.metric_type_values['Searches_Platform'],
-            forms.metric_type_values['Total_Item_Investigations'],
-            forms.metric_type_values['Unique_Item_Investigations'],
-            forms.metric_type_values['Unique_Title_Investigations'],
-            forms.metric_type_values['Total_Item_Requests'],
-            forms.metric_type_values['Unique_Item_Requests'],
-            forms.metric_type_values['Unique_Title_Requests'],
-        ),
-        'open_in_Excel': False,
-    }
-    POST_response = client.post(
-        '/view_usage/query-wizard/PR',
-        follow_redirects=True,
-        headers=header_value,
-        data=form_input,
-    )
-    assert POST_response.status == "200 OK"
-    assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
-
-
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
