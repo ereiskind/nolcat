@@ -214,12 +214,6 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             end_date,
             bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
         )
-    #TEST: temp
-    log.warning(f"`isinstance(SUSHI_data_response, str)`: {isinstance(SUSHI_data_response, str)}")
-    if isinstance(SUSHI_data_response, str):
-        log.warning(f"`skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response)`: {skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response)}")
-        log.warning(f"`reports_with_no_usage_regex().fullmatch(SUSHI_data_response)`: {reports_with_no_usage_regex().fullmatch(SUSHI_data_response)}")
-    #TEST: end temp
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
     elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
