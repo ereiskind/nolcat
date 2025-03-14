@@ -206,7 +206,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, each selection must be its own key-value pair with the key being the field name; this does result in repeated keys.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -219,24 +219,22 @@ def PR_parameters(request):
             'begin_date': date.fromisoformat('2018-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
             'display_fields': 'platform',
-            'display_fields': 'data_type',
             'platform_filter': "",
             'data_type_filter': forms.data_type_values['Platform'][0],
-            'data_type_filter': forms.data_type_values['Report'][0],
             'access_method_filter': 'Regular',
             'metric_type_filter': forms.metric_type_values['Searches_Platform'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, data_type, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2018-07-01' AND usage_date<='2020-06-30'
-                AND (data_type='Platform' OR data_type='Report')
+                AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY platform, data_type, metric_type, usage_date;
+            GROUP BY platform, metric_type, usage_date;
         """
         yield (form_input, query)
     elif request.param == "Filter by platform name":
@@ -256,7 +254,7 @@ def PR_parameters(request):
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (MATCH(platform) AGAINST('EBSCO' IN NATURAL LANGUAGE MODE))  #ALERT: Will need to change--problems with fuzzy matching
+                AND (MATCH(platform) AGAINST('EBSCO' IN NATURAL LANGUAGE MODE))
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
@@ -317,7 +315,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 def DR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -457,7 +455,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 def TR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
@@ -689,7 +687,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 def IR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
-    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. For SelectMultipleFields, when multiple values are selected, each is included in the HTTP payload as a separate parameter; to copy this in the `data` attribute would require duplicate keys in a dict,so selecting multiple fields CANNOT be tested.
 
     Args:
         request (str): description of the use case
