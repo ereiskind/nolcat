@@ -9,5 +9,56 @@
 <body>
     <h1>Login Homepage</h1>
     
+    <!--TEST: temp-->
+    <form action="{{ url_for('login.login_homepage') }}" method="POST">
+        {{ form.csrf_token }}
+        <label>
+            {{ form.Bool_data.label }}
+            {{ form.Bool_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.int_data.label }}
+            {{ form.int_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.string_data.label }}
+            {{ form.string_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.date_data.label }}
+            {{ form.date_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.select_data.label }}
+            {{ form.select_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.file_data.label }}
+            {{ form.file_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.text_data.label }}
+            {{ form.text_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.multiple_select_data.label }}
+            {{ form.multiple_select_data }}
+        </label>
+        <br><br>
+        <label>
+            {{ form.multiple_file_data.label }} <br>
+            {{ form.multiple_file_data }}
+        </label>
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <!--TEST: end temp-->
 </body>
 </html>
