@@ -39,14 +39,23 @@ def login_homepage():
         return render_template('login/index.html', form=form)
     elif form.validate_on_submit():
         Bool_data = form.Bool_data.data
+        log.warning(f"`Bool_data` (type {type(Bool_data)}): {Bool_data}")
         int_data = form.int_data.data
+        log.warning(f"`int_data` (type {type(int_data)}): {int_data}")
         string_data = form.string_data.data
+        log.warning(f"`string_data` (type {type(string_data)}): {string_data}")
         date_data = form.date_data.data
+        log.warning(f"`date_data` (type {type(date_data)}): {date_data}")
         select_data = form.select_data.data
+        log.warning(f"`select_data` (type {type(select_data)}): {select_data}")
         file_data = form.file_data.data
+        log.warning(f"`file_data` (type {type(file_data)}): {file_data}")
         text_data = form.text_data.data
+        log.warning(f"`text_data` (type {type(text_data)}): {text_data}")
         multiple_select_data = form.multiple_select_data.data
+        log.warning(f"`multiple_select_data` (type {type(multiple_select_data)}): {multiple_select_data}")
         multiple_file_data = form.multiple_file_data.data
+        log.warning(f"`multiple_file_data` (type {type(multiple_file_data)}): {multiple_file_data}")
 
         payload = request.get_json()
         log.warning(f"`payload` (type {type(payload)}):\n{payload}")
