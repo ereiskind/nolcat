@@ -48,8 +48,8 @@ def login_homepage():
         log.warning(f"`date_data` (type {type(date_data)}): {date_data}")
         select_data = form.select_data.data
         log.warning(f"`select_data` (type {type(select_data)}): {select_data}")
-        file_data = form.file_data.data
-        log.warning(f"`file_data` (type {type(file_data)}): {file_data}")
+        #file_data = form.file_data.data
+        #log.warning(f"`file_data` (type {type(file_data)}): {file_data}")
         text_data = form.text_data.data
         log.warning(f"`text_data` (type {type(text_data)}): {text_data}")
         multiple_select_data = form.multiple_select_data.data
