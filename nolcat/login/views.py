@@ -2,8 +2,6 @@ import logging
 from flask import render_template
 #TEST: temp
 from flask import request
-from flask import redirect
-from flask import url_for
 from flask import abort
 from flask import flash
 #TEST: end temp
