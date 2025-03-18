@@ -133,8 +133,6 @@ def login_homepage():
             'url': 'http://nolcat:5000/login/'
         }
         '''
-        # [2025-03-18 16:30:38] nolcat.login.views::142 - Log statement with `request.get_json()` before content type change raised 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
-        # [2025-03-18 19:02:27] nolcat.login.views::145 - Log statement with `request.json` before content type change raised 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
         '''  [2025-03-18 19:02:27] nolcat.login.views::147 - `request.headers` (type <class 'werkzeug.datastructures.headers.EnvironHeaders'>):
             Host: nolcat:5000
             Connection: close
@@ -150,20 +148,7 @@ def login_homepage():
             Accept-Language: en-US,en;q=0.9
             Cookie: session=eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U
         '''
-        try:
-            request.headers['Content-Type'] = 'application/json'
-        except Exception as e1:
-            log.warning(f"Setting value of `request.headers['Content-Type']` raised {e1}")
-        try:
-            log.warning(f"`request.headers` (type {type(request.headers)}):\n{request.headers}")
-        except Exception as e:
-            log.warning(f"Log statement with `request.headers` after content type change raised {e}")
-        try:
-            log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
-        except Exception as e:
-            log.warning(f"Log statement with `request.get_json()` after content type change raised {e}")
-        payload = request.get_json()  #TEST: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
-        log.warning(f"`payload` (type {type(payload)}):\n{payload}")
+        payload = {"the_key": "the_value"}
         lambda_name = "test_lambda_function"
         call_lambda(lambda_name, json.dumps(payload))  # `json.dumps()` is for JSON -> str, so second arg of `call_lambda()` is string
         return "Workflow triggered"
