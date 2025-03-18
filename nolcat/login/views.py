@@ -136,8 +136,17 @@ def login_homepage():
             'url': 'http://nolcat:5000/login/'
         }
         '''
-        log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
-        # HTTP request header used for testing: {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+        try:
+            log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
+        except Exception as e:
+            log.warning(f"Log statement with `request.get_json()` before content type change raised {e}")
+        log.warning(f"`request['environ']` (type {type(request['environ'])}):\n{request['environ']}")
+        request['environ']['Content-Type'] = 'application/json'
+        log.warning(f"`request['environ']` after adding content type:\n{request['environ']}")
+        try:
+            log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
+        except Exception as e:
+            log.warning(f"Log statement with `request.get_json()` after content type change raised {e}")
         payload = request.get_json()  #TEST: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
         log.warning(f"`payload` (type {type(payload)}):\n{payload}")
         lambda_name = "test_lambda_function"
