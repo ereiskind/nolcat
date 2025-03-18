@@ -834,15 +834,15 @@ def extract_value_from_single_value_df(df, expect_int=True):
     return return_value
 
 
-def S3_file_name_timestamp():
-    """The string with the `strftime()` format code to use in S3 file names.
+def AWS_timestamp_format():
+    """The `strftime()` format code to use with AWS names.
 
-    ISO format cannot be used for timestamps in S3 file names because S3 file names can't contain colons.
+    ISO format cannot be used where AWS calls for datetimes--S3 file names can't contain colons, while Step Function execution names only accept alphanumeric characters, hyphens, and underscores.
     
     Returns:
         str: Python datetime format code
     """
-    return '%Y-%m-%dT%H.%M.%S'
+    return '%Y-%m-%dT%H-%M-%S'
 
 
 def non_COUNTER_file_name_regex():
