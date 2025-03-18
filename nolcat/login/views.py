@@ -139,15 +139,34 @@ def login_homepage():
         }
         '''
         # [2025-03-18 16:30:38] nolcat.login.views::142 - Log statement with `request.get_json()` before content type change raised 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+        # [2025-03-18 19:02:27] nolcat.login.views::145 - Log statement with `request.json` before content type change raised 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+        '''  [2025-03-18 19:02:27] nolcat.login.views::147 - `request.headers` (type <class 'werkzeug.datastructures.headers.EnvironHeaders'>):
+            Host: nolcat:5000
+            Connection: close
+            Content-Length: 369
+            Cache-Control: max-age=0
+            Origin: http://x.x.x.x
+            Content-Type: application/x-www-form-urlencoded
+            Upgrade-Insecure-Requests: 1
+            User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36
+            Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+            Referer: http://x.x.x.x/login/
+            Accept-Encoding: gzip, deflate
+            Accept-Language: en-US,en;q=0.9
+            Cookie: session=eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U
+        '''
         try:
-            log.warning(f"`request.json` (type {type(request.json)}):\n{request.json}")
-        except Exception as e:
-            log.warning(f"Log statement with `request.json` after content type change raised {e}")
+            request.headers['Content-Type'] = 'application/json'
+        except Exception as e1:
+            log.warning(f"Setting value of `request.headers['Content-Type']` raised {e1}")
+            try:
+                request.headers.Content-Type = 'application/json'
+            except Exception as e2:
+                log.warning(f"Setting value of `request.headers.Content-Type` raised {e2}")
         try:
             log.warning(f"`request.headers` (type {type(request.headers)}):\n{request.headers}")
         except Exception as e:
             log.warning(f"Log statement with `request.headers` after content type change raised {e}")
-        #ToDo: Add to header -- `['Content-Type'] = 'application/json'`
         try:
             log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
         except Exception as e:
