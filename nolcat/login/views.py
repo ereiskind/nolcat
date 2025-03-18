@@ -138,13 +138,16 @@ def login_homepage():
             'url': 'http://nolcat:5000/login/'
         }
         '''
+        # [2025-03-18 16:30:38] nolcat.login.views::142 - Log statement with `request.get_json()` before content type change raised 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
         try:
-            log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
+            log.warning(f"`request.json` (type {type(request.json)}):\n{request.json}")
         except Exception as e:
-            log.warning(f"Log statement with `request.get_json()` before content type change raised {e}")
-        log.warning(f"`request['environ']` (type {type(request['environ'])}):\n{request['environ']}")
-        request['environ']['Content-Type'] = 'application/json'
-        log.warning(f"`request['environ']` after adding content type:\n{request['environ']}")
+            log.warning(f"Log statement with `request.json` after content type change raised {e}")
+        try:
+            log.warning(f"`request.headers` (type {type(request.headers)}):\n{request.headers}")
+        except Exception as e:
+            log.warning(f"Log statement with `request.headers` after content type change raised {e}")
+        #ToDo: Add to header -- `['Content-Type'] = 'application/json'`
         try:
             log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
         except Exception as e:
