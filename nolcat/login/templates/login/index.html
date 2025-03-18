@@ -10,7 +10,7 @@
     <h1>Login Homepage</h1>
     
     <!--TEST: temp-->
-    <form action="{{ url_for('login.login_homepage') }}" method="POST">
+    <form action="{{ url_for('login.login_homepage') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <label>
             {{ form.Bool_data.label }}
