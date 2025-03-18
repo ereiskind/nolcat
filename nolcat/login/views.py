@@ -49,6 +49,8 @@ def login_homepage():
         multiple_select_data = form.multiple_select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::56 - `multiple_select_data` (type <class 'list'>): ['a', 'c']
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
         # [2025-03-18 16:05:24] nolcat.login.views::51 - `multiple_file_data[0]` (type <class 'str'>): hello_world.py
+        for x in multiple_file_data:
+            log.warning(f"{x} (type {type(x)})")
 
         # [2025-03-18 16:05:24] nolcat.login.views::53 - `request` (type <class 'werkzeug.local.LocalProxy'>): <Request 'http://nolcat:5000/login/' [POST]>
         '''
