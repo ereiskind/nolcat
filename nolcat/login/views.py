@@ -48,7 +48,7 @@ def login_homepage():
         text_data = form.text_data.data  # [2025-03-18 15:44:48] nolcat.login.views::54 - `text_data` (type <class 'str'>): 2222222222222
         multiple_select_data = form.multiple_select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::56 - `multiple_select_data` (type <class 'list'>): ['a', 'c']
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
-        log.warning(f"`multiple_file_data` (type {type(multiple_file_data)}): {multiple_file_data}")
+        log.warning(f"`multiple_file_data[0]` (type {type(multiple_file_data[0])}): {multiple_file_data[0]}")
 
         payload = request.get_json()
         log.warning(f"`payload` (type {type(payload)}):\n{payload}")
