@@ -50,7 +50,10 @@ def login_homepage():
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
         log.warning(f"`multiple_file_data[0]` (type {type(multiple_file_data[0])}): {multiple_file_data[0]}")
 
-        payload = request.get_json()
+        log.warning(f"`request` (type {type(request)}): {request}\n{request.__dict__}")
+        log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
+        # HTTP request header used for testing: {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+        payload = request.get_json()  #TEST: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
         log.warning(f"`payload` (type {type(payload)}):\n{payload}")
         lambda_name = "test_lambda_function"
         call_lambda(lambda_name, json.dumps(payload))  # `json.dumps()` is for JSON -> str, so second arg of `call_lambda()` is string
