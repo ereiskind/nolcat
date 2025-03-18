@@ -159,10 +159,6 @@ def login_homepage():
             request.headers['Content-Type'] = 'application/json'
         except Exception as e1:
             log.warning(f"Setting value of `request.headers['Content-Type']` raised {e1}")
-            try:
-                request.headers.Content-Type = 'application/json'
-            except Exception as e2:
-                log.warning(f"Setting value of `request.headers.Content-Type` raised {e2}")
         try:
             log.warning(f"`request.headers` (type {type(request.headers)}):\n{request.headers}")
         except Exception as e:
