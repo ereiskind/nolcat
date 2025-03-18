@@ -22,7 +22,7 @@ class TestForm(FlaskForm):
         (2, "Display Two"),
         (3, "Display Three"),
     ], validate_choice=False)
-    #file_data = FileField("Select a file for the file field value:", validators=[DataRequired()])
+    file_data = FileField("Select a file for the file field value:")  #TEST: `, validators=[DataRequired()]` raises error saying no file even when a file is added
     text_data = TextAreaField("Enter text for the text area field value:", validators=[DataRequired()])
     multiple_select_data = SelectMultipleField("Select multiple options for the select multiple field value:", choices=[
         ('a', "Display A"),
