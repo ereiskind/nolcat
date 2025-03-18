@@ -48,9 +48,94 @@ def login_homepage():
         text_data = form.text_data.data  # [2025-03-18 15:44:48] nolcat.login.views::54 - `text_data` (type <class 'str'>): 2222222222222
         multiple_select_data = form.multiple_select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::56 - `multiple_select_data` (type <class 'list'>): ['a', 'c']
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
-        log.warning(f"`multiple_file_data[0]` (type {type(multiple_file_data[0])}): {multiple_file_data[0]}")
+        # [2025-03-18 16:05:24] nolcat.login.views::51 - `multiple_file_data[0]` (type <class 'str'>): hello_world.py
 
-        log.warning(f"`request` (type {type(request)}): {request}\n{request.__dict__}")
+        # [2025-03-18 16:05:24] nolcat.login.views::53 - `request` (type <class 'werkzeug.local.LocalProxy'>): <Request 'http://nolcat:5000/login/' [POST]>
+        '''
+        {
+            'method': 'POST',
+            'scheme': 'http',
+            'server': ('0.0.0.0', 5000),
+            'root_path': '',
+            'path': '/login/',
+            'query_string': b'',
+            'headers': EnvironHeaders([
+                ('Host', 'nolcat:5000'),
+                ('Connection', 'close'),
+                ('Content-Length', '261'),
+                ('Cache-Control', 'max-age=0'),
+                ('Origin', 'http://3.85.236.91'),
+                ('Content-Type', 'application/x-www-form-urlencoded'),
+                ('Upgrade-Insecure-Requests', '1'),
+                ('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'),
+                ('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'),
+                ('Referer', 'http://3.85.236.91/login/'),
+                ('Accept-Encoding', 'gzip, deflate'),
+                ('Accept-Language', 'en-US,en;q=0.9'),
+                ('Cookie', 'session=eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U')
+            ]),
+            'remote_addr': '172.18.0.2',
+            'environ': {
+                'wsgi.errors': <gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7ff055201b70>,
+                'wsgi.version': (1, 0),
+                'wsgi.multithread': False,
+                'wsgi.multiprocess': True,
+                'wsgi.run_once': False,
+                'wsgi.file_wrapper': <class 'gunicorn.http.wsgi.FileWrapper'>,
+                'wsgi.input_terminated': True,
+                'SERVER_SOFTWARE': 'gunicorn/23.0.0',
+                'wsgi.input': <gunicorn.http.body.Body object at 0x7ff055201fd0>,
+                'gunicorn.socket': <socket.socket fd=9, family=2, type=1, proto=0, laddr=('172.18.0.3', 5000), raddr=('172.18.0.2', 49018)>,
+                'REQUEST_METHOD': 'POST',
+                'QUERY_STRING': '',
+                'RAW_URI': '/login/',
+                'SERVER_PROTOCOL': 'HTTP/1.0',
+                'HTTP_HOST': 'nolcat:5000',
+                'HTTP_CONNECTION': 'close',
+                'CONTENT_LENGTH': '261',
+                'HTTP_CACHE_CONTROL': 'max-age=0',
+                'HTTP_ORIGIN': 'http://3.85.236.91',
+                'CONTENT_TYPE': 'application/x-www-form-urlencoded',
+                'HTTP_UPGRADE_INSECURE_REQUESTS': '1',
+                'HTTP_USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+                'HTTP_ACCEPT': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                'HTTP_REFERER': 'http://3.85.236.91/login/',
+                'HTTP_ACCEPT_ENCODING': 'gzip, deflate',
+                'HTTP_ACCEPT_LANGUAGE': 'en-US,en;q=0.9',
+                'HTTP_COOKIE': 'session=eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U',
+                'wsgi.url_scheme': 'http',
+                'REMOTE_ADDR': '172.18.0.2',
+                'REMOTE_PORT': '49018',
+                'SERVER_NAME': '0.0.0.0',
+                'SERVER_PORT': '5000',
+                'PATH_INFO': '/login/',
+                'SCRIPT_NAME': '',
+                'werkzeug.request': <Request 'http://nolcat:5000/login/' [POST]>
+            },
+            'shallow': False,
+            'json_module': <flask.json.provider.DefaultJSONProvider object at 0x7ff056cd79b0>,
+            'cookies': ImmutableMultiDict([('session', 'eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U')]),
+            'url_rule': <Rule '/login/' (GET, HEAD, POST, OPTIONS) -> login.login_homepage>,
+            'view_args': {},
+            'stream': <gunicorn.http.body.Body object at 0x7ff055201fd0>,
+            '_parsed_content_type': ('application/x-www-form-urlencoded', {}),
+            'content_length': 261,
+            'form': ImmutableMultiDict([
+                ('csrf_token', 'IjJkODk5MDM0MmE5MDI1YWViNDZkMjc0OWU3ZmRhNzEzMDQ2MWZlNzUi.Z9mZrg.vZJr-nKGDKa8pIHC8Hta2gVps_U'),
+                ('int_data', '1'),
+                ('string_data', 'df'),
+                ('date_data', '2025-02-25'),
+                ('select_data', '2'),
+                ('text_data', 'qqqqqqq'),
+                ('multiple_select_data', 'a'),
+                ('multiple_select_data', 'b'),
+                ('multiple_file_data', 'hello_world.py')
+            ]),
+            'files': ImmutableMultiDict([]),
+            'host': 'nolcat:5000',
+            'url': 'http://nolcat:5000/login/'
+        }
+        '''
         log.warning(f"`request.get_json()` (type {type(request.get_json())}):\n{request.get_json()}")
         # HTTP request header used for testing: {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
         payload = request.get_json()  #TEST: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
