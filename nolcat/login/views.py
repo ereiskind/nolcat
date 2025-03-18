@@ -41,17 +41,11 @@ def login_homepage():
         string_data = form.string_data.data  # [2025-03-18 15:44:48] nolcat.login.views::46 - `string_data` (type <class 'str'>): df
         date_data = form.date_data.data  # [2025-03-18 15:44:48] nolcat.login.views::48 - `date_data` (type <class 'datetime.date'>): 2025-02-25
         select_data = form.select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::50 - `select_data` (type <class 'str'>): 1
-        try:
-            file_data = form.file_data.data
-            log.warning(f"`file_data` (type {type(file_data)}): {file_data}")
-        except Exception as e:
-            log.warning(f"`file_data` raised {e}")
+        file_data = form.file_data.data  # [2025-03-18 20:36:41] nolcat.login.views::46 - `file_data` (type <class 'werkzeug.datastructures.file_storage.FileStorage'>): <FileStorage: '58_2020.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')>
         text_data = form.text_data.data  # [2025-03-18 15:44:48] nolcat.login.views::54 - `text_data` (type <class 'str'>): 2222222222222
         multiple_select_data = form.multiple_select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::56 - `multiple_select_data` (type <class 'list'>): ['a', 'c']
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
-        # [2025-03-18 16:05:24] nolcat.login.views::51 - `multiple_file_data[0]` (type <class 'str'>): hello_world.py
-        for x in multiple_file_data:
-            log.warning(f"{x} (type {type(x)})")
+        # [2025-03-18 16:05:24] nolcat.login.views::51 - `multiple_file_data[0]` (type <class 'werkzeug.datastructures.file_storage.FileStorage'>): <FileStorage: '391_Oct 2022-Jun 2023.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')>
 
         # [2025-03-18 16:05:24] nolcat.login.views::53 - `request` (type <class 'werkzeug.local.LocalProxy'>): <Request 'http://nolcat:5000/login/' [POST]>
         '''
