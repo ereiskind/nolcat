@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 def call_lambda(name_of_lambda_function, payload):
-    lambda_client = boto3.client("lambda")
+    #TEST: `boto3.client("lambda")` here raises `botocore.exceptions.NoRegionError: You must specify a region.`
     lambda_client.invoke(
         FunctionName=name_of_lambda_function,
         InvocationType="Event",  # "Invoke the function asynchronously. Send events that fail multiple times to the function’s dead-letter queue (if one is configured). The API response only includes a status code."

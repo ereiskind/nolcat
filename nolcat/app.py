@@ -101,6 +101,7 @@ log = logging.getLogger(__name__)
 csrf = CSRFProtect()
 db = SQLAlchemy()
 s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
+lambda_client = boto3.client("lambda")  #TEST: In `views.py`, raised `botocore.exceptions.NoRegionError: You must specify a region.`; if client creation works here, move note about authentications above client inits
 
 
 def page_not_found(error):
