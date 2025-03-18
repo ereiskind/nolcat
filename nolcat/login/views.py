@@ -38,23 +38,16 @@ def login_homepage():
     if request.method == 'GET':
         return render_template('login/index.html', form=form)
     elif form.validate_on_submit():
-        Bool_data = form.Bool_data.data
-        log.warning(f"`Bool_data` (type {type(Bool_data)}): {Bool_data}")
-        int_data = form.int_data.data
-        log.warning(f"`int_data` (type {type(int_data)}): {int_data}")
-        string_data = form.string_data.data
-        log.warning(f"`string_data` (type {type(string_data)}): {string_data}")
-        date_data = form.date_data.data
-        log.warning(f"`date_data` (type {type(date_data)}): {date_data}")
-        select_data = form.select_data.data
-        log.warning(f"`select_data` (type {type(select_data)}): {select_data}")
+        Bool_data = form.Bool_data.data  # [2025-03-18 15:44:48] nolcat.login.views::42 - `Bool_data` (type <class 'bool'>): True
+        int_data = form.int_data.data  # [2025-03-18 15:44:48] nolcat.login.views::44 - `int_data` (type <class 'int'>): 2
+        string_data = form.string_data.data  # [2025-03-18 15:44:48] nolcat.login.views::46 - `string_data` (type <class 'str'>): df
+        date_data = form.date_data.data  # [2025-03-18 15:44:48] nolcat.login.views::48 - `date_data` (type <class 'datetime.date'>): 2025-02-25
+        select_data = form.select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::50 - `select_data` (type <class 'str'>): 1
         #file_data = form.file_data.data
         #log.warning(f"`file_data` (type {type(file_data)}): {file_data}")
-        text_data = form.text_data.data
-        log.warning(f"`text_data` (type {type(text_data)}): {text_data}")
-        multiple_select_data = form.multiple_select_data.data
-        log.warning(f"`multiple_select_data` (type {type(multiple_select_data)}): {multiple_select_data}")
-        multiple_file_data = form.multiple_file_data.data
+        text_data = form.text_data.data  # [2025-03-18 15:44:48] nolcat.login.views::54 - `text_data` (type <class 'str'>): 2222222222222
+        multiple_select_data = form.multiple_select_data.data  # [2025-03-18 15:44:48] nolcat.login.views::56 - `multiple_select_data` (type <class 'list'>): ['a', 'c']
+        multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
         log.warning(f"`multiple_file_data` (type {type(multiple_file_data)}): {multiple_file_data}")
 
         payload = request.get_json()
