@@ -21,7 +21,6 @@ Planned Iterations
 
 Move COUNTER Data to Parquet Files in S3
 ========================================
-* Create constant for use in determining location of parquet files
 * Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
 * Create function to save COUNTER dataframe into a parquet file
 * Adjust functions below to use parquet instead of MySQL

@@ -43,9 +43,14 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 BUCKET_NAME = secrets.Bucket
+TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
+
+PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
+PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
+TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
+TEST_NON_COUNTER_FILE_PATH = "nolcat/usage/test/raw_vendor_reports/"
 PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
 PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
-TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
 
 
 def filter_empty_parentheses(log_statement):
