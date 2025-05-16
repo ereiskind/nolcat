@@ -21,6 +21,7 @@ Planned Iterations
 
 Move COUNTER Data to Parquet Files in S3
 ========================================
+* ``SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;`` for records without load timestamps (legacy data currently loaded)--decide if file should be named null or if harvest dates should try to be found from saved files
 * Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
 * Create function to save COUNTER dataframe into a parquet file
 * Adjust functions below to use parquet instead of MySQL
