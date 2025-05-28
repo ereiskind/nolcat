@@ -13,17 +13,6 @@ from ..models import *
 from ..statements import *
 
 log = logging.getLogger(__name__)
-#ToDo: Testing based on https://www.edstem.com/blog/orchestrating-async-workflows-aws/
-
-
-def call_lambda(name_of_lambda_function, payload):
-    #TEST: `boto3.client("lambda")` here raises `botocore.exceptions.NoRegionError: You must specify a region.`
-    lambda_client.invoke(
-        FunctionName=name_of_lambda_function,
-        InvocationType="Event",  # "Invoke the function asynchronously. Send events that fail multiple times to the function’s dead-letter queue (if one is configured). The API response only includes a status code."
-        Payload=payload  # "The JSON that you want to provide to your Lambda function as input."
-    )
-    return None
 
 
 @bp.route('/', methods=['GET', 'POST'])  #TEST: methods are temp
@@ -148,9 +137,24 @@ def login_homepage():
             Accept-Language: en-US,en;q=0.9
             Cookie: session=eyJjc3JmX3Rva2VuIjoiMmQ4OTkwMzQyYTkwMjVhZWI0NmQyNzQ5ZTdmZGE3MTMwNDYxZmU3NSJ9.Z9mRdA.vEqDiO4UNssMRfukIj7KdjIEW5U
         '''
-        payload = {"the_key": "the_value"}
-        lambda_name = "test_lambda_function"
-        call_lambda(lambda_name, json.dumps(payload))  # `json.dumps()` is for JSON -> str, so second arg of `call_lambda()` is string
+        step_function_input = {
+            "Bool_input": Bool_data,
+            "int_input": int_data,
+            "string_input": string_data,
+            "date_input": date_data,
+            "select_input": select_data,
+            "file_input": file_data,
+            "text_input": text_data,
+            "multiple_select_input": multiple_select_data,
+            "multiple_file_input": multiple_file_data,
+        }
+
+        step_functions_client.start_execution(
+            # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html
+            stateMachineArn=STATE_MACHINE_ARN,
+            name=f"execution-{datetime.now().strftime(AWS_timestamp_format())}",  # Unique execution name
+            input=json.dumps(step_function_input)  # The string that contains the JSON input data for the execution,...Length constraints apply to the payload size, and are expressed as bytes in UTF-8 encoding.
+        )
         return "Workflow triggered"
     else:
         message = Flask_error_statement(form.errors)

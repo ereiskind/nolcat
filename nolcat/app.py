@@ -43,6 +43,7 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 BUCKET_NAME = secrets.Bucket
+STATE_MACHINE_ARN = secrets.StateMachineArn
 PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
 PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
@@ -101,7 +102,9 @@ log = logging.getLogger(__name__)
 csrf = CSRFProtect()
 db = SQLAlchemy()
 s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
-lambda_client = boto3.client("lambda")  #TEST: In `views.py`, raised `botocore.exceptions.NoRegionError: You must specify a region.`; if client creation works here, move note about authentications above client inits
+step_functions_client = boto3.client('stepfunctions')  #TEST: If client creation works here, move note about authentications above client inits
+# https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/<client_name>.html
+# <client_name> can be `s3`, `stepfunctions`
 
 
 def page_not_found(error):
