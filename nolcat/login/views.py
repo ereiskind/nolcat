@@ -160,8 +160,8 @@ def login_homepage():
             "string_input": string_data,
             #"date_input": date_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::170 - `json.dumps` on type <class 'datetime.date'> raises Object of type date is not JSON serializable
             "select_input": select_data,
-            "file_input": file_data,
-            #"text_input": text_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::180 - `json.dumps` on type <class 'werkzeug.datastructures.file_storage.FileStorage'> raises Object of type FileStorage is not JSON serializable
+            #"file_input": file_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::180 - `json.dumps` on type <class 'werkzeug.datastructures.file_storage.FileStorage'> raises Object of type FileStorage is not JSON serializable
+            "text_input": text_data,
             "multiple_select_input": multiple_select_data,
             #"multiple_file_input": multiple_file_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::195 - `json.dumps` on type <class 'list'> raises Object of type FileStorage is not JSON serializable
         }
