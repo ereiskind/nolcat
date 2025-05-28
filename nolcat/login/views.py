@@ -141,58 +141,13 @@ def login_homepage():
             "Bool_input": Bool_data,
             "int_input": int_data,
             "string_input": string_data,
-            "date_input": date_data,
+            #"date_input": date_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::170 - `json.dumps` on type <class 'datetime.date'> raises Object of type date is not JSON serializable
             "select_input": select_data,
             "file_input": file_data,
-            "text_input": text_data,
+            #"text_input": text_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::180 - `json.dumps` on type <class 'werkzeug.datastructures.file_storage.FileStorage'> raises Object of type FileStorage is not JSON serializable
             "multiple_select_input": multiple_select_data,
-            "multiple_file_input": multiple_file_data,
+            #"multiple_file_input": multiple_file_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::195 - `json.dumps` on type <class 'list'> raises Object of type FileStorage is not JSON serializable
         }
-
-        try:
-            json.dumps({"Bool_input": Bool_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(Bool_data)} raises {e}")
-        
-        try:
-            json.dumps({"int_input": int_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(int_data)} raises {e}")
-        
-        try:
-            json.dumps({"string_input": string_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(string_data)} raises {e}")
-        
-        try:
-            json.dumps({"date_input": date_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(date_data)} raises {e}")
-        
-        try:
-            json.dumps({"select_input": select_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(select_data)} raises {e}")
-        
-        try:
-            json.dumps({"file_input": file_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(file_data)} raises {e}")
-        
-        try:
-            json.dumps({"text_input": text_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(text_data)} raises {e}")
-        
-        try:
-            json.dumps({"multiple_select_input": multiple_select_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(multiple_select_data)} raises {e}")
-        
-        try:
-            json.dumps({"multiple_file_input": multiple_file_data,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on type {type(multiple_file_data)} raises {e}")
 
         step_functions_client.start_execution(
             # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html
