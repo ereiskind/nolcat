@@ -151,6 +151,21 @@ def login_homepage():
         #TEST: [2025-05-28 21:31:50] nolcat.login.views::172 - `json.dumps` on `workbook` of type <class 'openpyxl.workbook.workbook.Workbook'> raises Object of type Workbook is not JSON serializable
         #TEST: [2025-05-28 21:31:50] nolcat.login.views::177 - `json.dumps` on `worksheet` of type <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'> raises Object of type ReadOnlyWorksheet is not JSON serializable
 
+        import pandas as pd
+        df = pd.DataFrame(
+            [
+                [1, 10, "a"],
+                [2, 20, "b"],
+                [3, 30, "c"],
+            ],
+            columns=["one", "two", "three"],
+        )
+        df=df.astype({"three": 'string'})
+        try:
+            json.dumps({"dataframe_input": df,})
+        except Exception as e:
+            log.warning(f"`json.dumps` on `df` of type {type(df)} raises {e}")
+
         step_functions_client.start_execution(
             # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html
             stateMachineArn=STATE_MACHINE_ARN,
