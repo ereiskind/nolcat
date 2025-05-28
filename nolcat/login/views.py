@@ -36,23 +36,6 @@ def login_homepage():
         multiple_file_data = form.multiple_file_data.data  # [2025-03-18 15:44:48] nolcat.login.views::58 - `multiple_file_data` (type <class 'list'>): ['hello_world.json', 'hello_world.py']
         # [2025-03-18 16:05:24] nolcat.login.views::51 - `multiple_file_data[0]` (type <class 'werkzeug.datastructures.file_storage.FileStorage'>): <FileStorage: '391_Oct 2022-Jun 2023.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')>
 
-        from openpyxl import load_workbook
-        for wb in multiple_file_data:
-            log.info(f"`wb` (type {type(wb)}): {wb}")
-            log.info(f"`wb.stream._file` (type {type(wb.stream._file)}): {wb.stream._file}")
-            try:
-                workbook = load_workbook(filename=wb, read_only=True)
-            except Exception as e1:
-                try:
-                    workbook = load_workbook(filename=wb.stream._file, read_only=True)
-                except Exception as e2:
-                    log.warning(f"`load_workbook()` raised exceptions {e1} AND {e2}")
-                    continue
-            for tab in workbook.sheetnames:
-                worksheet = workbook[tab]
-        log.info(f"`workbook` (type {type(workbook)}): {workbook}")
-        log.info(f"`worksheet` (type {type(worksheet)}): {worksheet}")
-
         # [2025-03-18 16:05:24] nolcat.login.views::53 - `request` (type <class 'werkzeug.local.LocalProxy'>): <Request 'http://nolcat:5000/login/' [POST]>
         '''
         {
@@ -165,16 +148,8 @@ def login_homepage():
             "multiple_select_input": multiple_select_data,
             #"multiple_file_input": multiple_file_data,  #TEST: [2025-05-28 20:35:12] nolcat.login.views::195 - `json.dumps` on type <class 'list'> raises Object of type FileStorage is not JSON serializable
         }
-
-        try:
-            json.dumps({"workbook_input": workbook,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on `workbook` of type {type(Bool_data)} raises {e}")
-        
-        try:
-            json.dumps({"worksheet_input": worksheet,})
-        except Exception as e:
-            log.warning(f"`json.dumps` on `worksheet` of type {type(Bool_data)} raises {e}")
+        #TEST: [2025-05-28 21:31:50] nolcat.login.views::172 - `json.dumps` on `workbook` of type <class 'openpyxl.workbook.workbook.Workbook'> raises Object of type Workbook is not JSON serializable
+        #TEST: [2025-05-28 21:31:50] nolcat.login.views::177 - `json.dumps` on `worksheet` of type <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'> raises Object of type ReadOnlyWorksheet is not JSON serializable
 
         step_functions_client.start_execution(
             # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html
