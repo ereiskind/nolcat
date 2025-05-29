@@ -37,6 +37,16 @@ digraph function_call_chains {
         Function calls don't include calls to SQLAlchemy engines purely for the purpose of passing to another function
     */
 
+    subgraph cluster_PATH_TO_CREDENTIALS_FILE {
+        label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
+        // Moved to start because it's at the beginning of the "nolcat.models" file
+        penwidth=5
+
+        PATH_TO_CREDENTIALS_FILE [shape="box"]
+    }
+    PATH_TO_CREDENTIALS_FILE -> check_if_file_exists_statement
+
+
     subgraph cluster_fiscalYears {
         label="nolcat.models.fiscalYears"
         penwidth=5
@@ -639,15 +649,6 @@ digraph function_call_chains {
     download_non_COUNTER_usage -> list_folder_contents_statement
     download_non_COUNTER_usage -> check_if_file_exists_statement
     download_non_COUNTER_usage -> database_query_fail_statement
-
-
-    subgraph cluster_PATH_TO_CREDENTIALS_FILE {
-        label="nolcat.models.PATH_TO_CREDENTIALS_FILE"
-        penwidth=5
-
-        PATH_TO_CREDENTIALS_FILE [shape="box"]
-    }
-    PATH_TO_CREDENTIALS_FILE -> check_if_file_exists_statement
 
 
     subgraph cluster_app {
