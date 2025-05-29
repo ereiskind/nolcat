@@ -110,7 +110,7 @@ def page_not_found(error):
 
 def internal_server_error(error):
     """Returns the 500 page when a HTTP 500 error is raised."""
-    return render_template('500.html', error=error), 500  #ToDo: This doesn't seem to be working; figure out why
+    return render_template('500.html', error=error), 500
 
 
 def create_app():
