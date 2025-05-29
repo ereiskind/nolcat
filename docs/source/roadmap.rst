@@ -19,35 +19,124 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-Move COUNTER Data to Parquet Files in S3
-========================================
-* ``SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;`` for records without load timestamps (legacy data currently loaded)--decide if file should be named null or if harvest dates should try to be found from saved files
-* Create function for making S3 folder for each ``statisticsSource`` instance, with name of PK number, at first SUSHI pull for that source
-* Create function to save COUNTER dataframe into a parquet file
-* Adjust functions below to use parquet instead of MySQL
+Move Code to Glue Jobs and Data to Parquet
+==========================================
+* Ensure ERD/class diagram and function call chain diagram are up to date
+* Create AWS and parquet documentation
+* Create folder for saving AWS downloads, then save that folder to gitignore
+* Create Glue job for logging config
 
-  * ``nolcat.ingest_usage.upload_COUNTER_data()``
-  * ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
-  * ``nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()``
-  * ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
-  * ``nolcat.models.fiscalYears.collect_fiscal_year_usage_statistics()``
-  * ``tests.test_FiscalYears.FY2022_FiscalYears_object()``
-  * ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
-  * ``nolcat.models.statisticsSources.collect_usage_statistics()``
-  * ``tests.test_StatisticsSources.test_collect_usage_statistics()``
-  * ``nolcat.models.annualUsageCollectionTracking.collect_annual_usage_statistics()``
-  * ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
+  * Create "nolcat/nolcat/logging_config.py" file
+  * Move logging config functions from "app.py" to above file
+  * In all other code files, remove logging module import (and any other unused imports) and import logging config file
+  * Create Glue job named ``logging_config``
+  * Connect above job to this repo
+  * Pull file into Glue job
 
-* Modify or create alternate versions of functions below and modify calls to them to adjust for parquet
+* Create main Glue job file
 
-  * ``nolcat.statements.add_data_success_and_update_database_fail_statement()``
-  * ``nolcat.statements.database_function_skip_statements()``
-  * ``nolcat.statements.load_data_into_database_success_regex()``
-  * ``nolcat.statements.reports_with_no_usage_regex()``
+  * Create "nolcat/nolcat/nolcat_glue_job.py" and "nolcat/tests/test_nolcat_glue_job.py" files
+  * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above changes
+  * Move test functions corresponding to the functions above, along with all necessary fixtures, to "test_nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above changes
+  * Confirm all tests still pass
+  * Create Glue job named ``nolcat_glue_job``
+  * Connect above job to this repo
+  * Pull file into Glue job
+  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
 
-* Determine what code, if any, is needed in Step Functions to let Glue combine parquet with MySQL of other relations
-* Have SQL queries including ``COUNTERData`` relation use Athena instead of pandas/SQLAlchemy/MySQL
-* Look out for fuzzy matching methods for strings in parquet files--current ``(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))`` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
+* Develop ``nolcat.nolcat.models.COUNTERData`` relation to parquet file transformer
+
+  * Develop method to switch data storage format
+  * Save test data in parquet format
+  * Run ``SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;`` on production data to confirm available production data and find out what parquet files need to be created
+  * Determine how files with production data lacking timestamps should be named (null? get dates from shared files?)
+
+* Move ``nolcat.ConvertJSONDictsToDataframe`` to Glue job
+
+  * Move class ``nolcat.ConvertJSONDictsToDataframe`` into "nolcat/nolcat/nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above changes
+  * Move length constants out of class, then update reference to them in "nolcat/nolcat/models.py"
+  * Move test functions corresponding to the class, along with all necessary fixtures, to "test_nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above changes
+  * Delete files with all content moved elsewhere
+  * Confirm all tests still pass
+  * Pull file into Glue job
+  * Confirm configs still set properly
+
+* Save ``nolcat.ConvertJSONDictsToDataframe`` output as parquet in S3
+
+  * Confirm all methods of ``nolcat.ConvertJSONDictsToDataframe`` except ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()`` are private
+  * Get list of all calls to ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()``
+  * Add ``statistics_source_ID`` and ``report_type`` to class inputs
+  * End ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()`` by saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
+  * Adjust calls to ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()`` to not expect return values
+  * Adjust tests and function call chain diagram to correspond with above changes
+  * Add check for saved parquet or error file after call to ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()``
+  * List all functions in function call chains ending in a call to ``nolcat.ConvertJSONDictsToDataframe.create_dataframe()``
+  * For all functions above, adjust to anticipate no return value if successful
+  * Adjust tests and function call chain diagram to correspond with above changes
+
+* Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
+* Create function to check S3 file existence and type with fuzzy matching
+
+  * Frame function in "nolcat/nolcat/nolcat_glue_job.py"
+  * Write code for checking if a timestamp is between two times, with bounds as ``now()`` calls before the SUSHI call and just before the file check
+  * Write function checking if S3 file with matching stats source ID and timestamp passing check above exists and returning its file type
+  * Have function read, output the content of, and delete the file if the type isn't parquet
+  * Write a test for this in "test_nolcat_glue_job.py"
+
+* Figure out how to move a dataframe to a step function
+
+  * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
+  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
+  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html, https://pandas.pydata.org/docs/reference/api/pandas.json_normalize.html, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html, or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html; determine which works best for reversion
+
+* Move ``nolcat.UploadCOUNTERReports`` to Glue job
+
+  * Split class ``nolcat.UploadCOUNTERReports`` into separate classes for tabular COUNTER to dataframe and manipulation of dataframe for saving to S3
+  * Move latter class into "nolcat/nolcat/nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above changes
+  * Add ``statistics_source_ID`` as an attribute of both classes
+  * Revise end of first new class to send dataframe converted to JSON to step function
+  * Copy existing ``nolcat.UploadCOUNTERReports`` test functions and their relevant fixtures to "test_nolcat_glue_job.py"
+  * Rename existing test function file for ``nolcat.UploadCOUNTERReports`` and update the test functions to match the revised class
+  * Update function call chain diagram to reflect above changes
+  * Confirm all tests still pass
+  * Pull file into Glue job
+  * Confirm configs still set properly
+
+* Save ``nolcat.UploadCOUNTERReports`` output as parquet in S3
+
+  * Update second class made from ``nolcat.UploadCOUNTERReports`` to take in a JSON made from a dataframe and end with saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
+  * Get list of all calls to second class made from ``nolcat.UploadCOUNTERReports``
+  * Adjust above calls to not expect return values
+  * Adjust function call chain diagram to correspond with above changes
+  * Adjust tests and their relevant fixtures for changed calls to reflect changes
+  * Adjust function call chain diagram to correspond with above changes
+  * Add check for saved parquet or error file after call to second class made from ``nolcat.UploadCOUNTERReports``
+  * List all functions in function call chains ending in a call to second class made from ``nolcat.UploadCOUNTERReports``
+  * For all functions above, adjust to anticipate no return value if successful
+  * Adjust tests and function call chain diagram to correspond with above changes
+
+* Move other functions and classes to be determined to "nolcat/nolcat/nolcat_glue_job.py"
+* Remove ``nolcat.models.COUNTERData`` class
+
+  * Move sole class method to "nolcat/nolcat/nolcat_glue_job.py"
+  * Update function call chain diagram to reflect above change
+  * Update all references to former method
+  * Remove connections to class from other relation classes
+  * Change any remaining references to class attributes
+  * Delete class
+  * Update function call chain diagram to reflect above change
+
+* Delete any statement functions no longer in use
+* Change functions querying only the ``nolcat.models.COUNTERData`` relation to querying the parquet files in S3 with Athena
+
+  * Look out for fuzzy matching methods for strings in parquet files--current ``(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))`` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
+
+* Figure out how to have Athena execute queries requesting data from both the relational database and parquet files in S3
 
 Iteration 3: Minimum Viable Product
 ===================================
