@@ -29,6 +29,8 @@ class ConvertJSONDictToDataframe:
         self.DOI_LENGTH (int): A class variable for the length of the `COUNTERData.DOI` and `COUNTERData.parent_DOI` fields.
         self.PROPRIETARY_ID_LENGTH (int): A class variable for the length of the `COUNTERData.proprietary_ID` and `COUNTERData.parent_proprietary_ID` fields.
         self.URI_LENGTH (int): A class variable for the length of the `COUNTERData.URI` and `COUNTERData.parent_URI` fields.
+        proprietary_ID_regex (re.Pattern): A class variable for a regex to match a proprietary ID label.
+        author_regex (re.Pattern): A class variable for a regex to match an author label.
         self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
     Methods:
