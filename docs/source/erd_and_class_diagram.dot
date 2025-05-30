@@ -308,7 +308,10 @@ digraph erd_and_classes {
         COUNTER_report_files
 
         // Methods
-        create_dataframe [shape="Mrecord"]
+        create_dataframe_in_UploadCOUNTERReports [
+            shape="Mrecord"
+            label="create_dataframe"
+        ]
     }
 
 
