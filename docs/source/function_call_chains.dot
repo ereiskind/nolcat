@@ -2036,6 +2036,22 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_create_dataframe_from_R5b1_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_IR [
+            style="dashed"
+            shape="box"
+        ]
     }
     sample_SUSHI_PR_response_dataframe -> state_data_types_in_COUNTERData
     sample_SUSHI_DR_response_dataframe -> state_data_types_in_COUNTERData
