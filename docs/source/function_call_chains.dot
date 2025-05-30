@@ -682,6 +682,7 @@ digraph function_call_chains {
         extract_value_from_single_value_df [shape="box"]
         AWS_timestamp_format [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
+        empty_string_regex [shape="box"]
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
     configure_logging -> filter_empty_parentheses
@@ -1352,6 +1353,10 @@ digraph function_call_chains {
             shape="box"
         ]
         test_non_COUNTER_file_name_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_empty_string_regex [
             style="dashed"
             shape="box"
         ]
