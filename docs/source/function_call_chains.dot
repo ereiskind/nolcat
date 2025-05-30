@@ -1960,7 +1960,15 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
+        sample_SUSHI_PR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
         sample_SUSHI_DR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5_dataframe [
             style="dotted"
             shape="box"
         ]
@@ -1968,23 +1976,47 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
+        sample_SUSHI_TR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
         sample_SUSHI_IR_response_R5_JSON_dict [
             style="dotted"
             shape="box"
         ]
-        sample_SUSHI_PR_response_dataframe [
+        sample_SUSHI_IR_response_R5_dataframe [
             style="dotted"
             shape="box"
         ]
-        sample_SUSHI_DR_response_dataframe [
+        sample_SUSHI_PR_response_R5b1_JSON_dict [
             style="dotted"
             shape="box"
         ]
-        sample_SUSHI_TR_response_dataframe [
+        sample_SUSHI_PR_response_R5b1_dataframe [
             style="dotted"
             shape="box"
         ]
-        sample_SUSHI_IR_response_dataframe [
+        sample_SUSHI_DR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5b1_dataframe [
             style="dotted"
             shape="box"
         ]
