@@ -332,10 +332,16 @@ digraph erd_and_classes {
         SUSHI_JSON_dictionary
 
         // Methods
-        create_dataframe [shape="Mrecord"]
+        create_dataframe_in_ConvertJSONDictToDataframe [
+            shape="Mrecord"
+            label="create_dataframe"
+        ]
         _transform_R5_JSON [shape="Mrecord"]
         _transform_R5b1_JSON [shape="Mrecord"]
         _serialize_dates [shape="Mrecord"]
+        _extraction_start_logging_statement [shape="Mrecord"]
+        _extraction_complete_logging_statement [shape="Mrecord"]
+        _increase_field_length_logging_statement [shape="Mrecord"]
     }
 
 
