@@ -23,8 +23,6 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Create Glue job for logging config
 
-  * Create "nolcat/nolcat/logging_config.py" file
-  * Move logging config functions from "app.py" to above file
   * In all other code files, remove logging module import (and any other unused imports) and import logging config file
   * Create Glue job named `logging_config`
   * Connect above job to this repo
