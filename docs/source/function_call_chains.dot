@@ -426,7 +426,7 @@ digraph function_call_chains {
     annual_stats_homepage -> query_database
     annual_stats_homepage -> Flask_error_statement
     annual_stats_homepage -> database_query_fail_statement
-    show_fiscal_year_details -> state_data_types_in_FiscalYears
+    show_fiscal_year_details -> state_data_types_in_fiscalYears
     show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
     show_fiscal_year_details -> annual_stats_homepage
     show_fiscal_year_details -> query_database
@@ -483,7 +483,7 @@ digraph function_call_chains {
         upload_historical_non_COUNTER_usage [shape="cds"]
         data_load_complete [shape="cds"]
     }
-    collect_FY_and_vendor_data -> state_data_types_in_FiscalYears
+    collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     collect_FY_and_vendor_data -> state_data_types_in_vendors
     collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
@@ -859,7 +859,7 @@ digraph function_call_chains {
             shape="box"
         ]
     }
-    fiscalYears_relation_in_relations -> state_data_types_in_FiscalYears
+    fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
     annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
     vendors_relation_in_relations -> state_data_types_in_vendors
     vendorNotes_relation_in_relations -> state_data_types_in_vendorNotes
@@ -1662,7 +1662,7 @@ digraph function_call_chains {
             shape="folder"
         ]
     }
-    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_FiscalYears
+    blank_annualUsageCollectionTracking_data_types -> state_data_types_in_fiscalYears
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_statisticsSources
     blank_annualUsageCollectionTracking_data_types -> state_data_types_in_annualUsageCollectionTracking
     create_fiscalYears_CSV_file -> fiscalYears_relation_in_conftest
@@ -1678,7 +1678,7 @@ digraph function_call_chains {
     create_annualUsageCollectionTracking_CSV_file -> annualUsageCollectionTracking_relation_in_conftest
     test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data
     test_GET_request_for_collect_FY_and_vendor_data -> client
-    test_collect_FY_and_vendor_data -> state_data_types_in_FiscalYears
+    test_collect_FY_and_vendor_data -> state_data_types_in_fiscalYears
     test_collect_FY_and_vendor_data -> state_data_types_in_annualStatistics
     test_collect_FY_and_vendor_data -> state_data_types_in_vendors
     test_collect_FY_and_vendor_data -> state_data_types_in_vendorNotes
