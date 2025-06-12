@@ -21,8 +21,6 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Create AWS and parquet documentation
-* Create folder for saving AWS downloads, then save that folder to gitignore
 * Create Glue job for logging config
 
   * Create "nolcat/nolcat/logging_config.py" file
