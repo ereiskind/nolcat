@@ -150,7 +150,7 @@ The preferred setup for testing database interactions involves performing all te
 
   * `test_bp_initialization`
 
-3. Tests needing data in all relations but `COUNTERData` (works with SQL but not after above test)
+3. Tests needing data in all relations but `COUNTERData`
 
   * `test_bp_ingest_usage`
 
