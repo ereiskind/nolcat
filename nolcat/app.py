@@ -52,7 +52,7 @@ PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within 
 PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 
 
-log = configure_logging.getLogger(__name__)
+log = configure_logging().getLogger(__name__)
 
 
 csrf = CSRFProtect()
