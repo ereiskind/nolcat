@@ -21,7 +21,6 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Ensure ERD/class diagram and function call chain diagram are up to date
 * Create AWS and parquet documentation
 * Create folder for saving AWS downloads, then save that folder to gitignore
 * Create Glue job for logging config
