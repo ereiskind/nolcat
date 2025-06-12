@@ -1,4 +1,3 @@
-import logging
 import re
 from datetime import date
 from datetime import datetime
@@ -9,6 +8,7 @@ import io
 from math import ceil
 import pandas as pd
 
+from .logging_config import *
 from .app import *
 # `from .models import *` to use `COUNTERData.state_data_types()` causes a circular import error
 

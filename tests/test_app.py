@@ -2,7 +2,6 @@
 ########## Passing 2025-03-14 ##########
 
 import pytest
-import logging
 from datetime import date
 from datetime import datetime
 from random import choice
@@ -16,6 +15,7 @@ import flask
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

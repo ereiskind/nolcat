@@ -1,6 +1,3 @@
-import logging
-from datetime import date
-import calendar
 from ast import literal_eval
 from flask import render_template
 from flask import request
@@ -9,10 +6,10 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 import pandas as pd
-from werkzeug.utils import secure_filename
 
 from . import bp
 from .forms import *
+from ..logging_config import *
 from ..app import *
 from ..models import *
 from ..statements import *

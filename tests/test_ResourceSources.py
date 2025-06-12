@@ -2,9 +2,9 @@
 ########## No tests written 2025-03-14 ##########
 
 import pytest
-import logging
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.logging_config import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)

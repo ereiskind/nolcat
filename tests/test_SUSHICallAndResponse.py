@@ -2,14 +2,13 @@
 ########## Passing 2025-03-14 ##########
 
 import pytest
-import logging
-import calendar
 from datetime import date
 import re
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from conftest import COUNTER_reports_offered_by_statistics_source
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse

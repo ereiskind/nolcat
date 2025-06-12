@@ -1,5 +1,3 @@
-import logging
-from pathlib import Path
 import re
 from flask import render_template
 from flask import redirect
@@ -11,6 +9,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
+from ..logging_config import *
 from ..app import *
 from ..models import *
 from ..statements import *
