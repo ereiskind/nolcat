@@ -1050,7 +1050,7 @@ class StatisticsSources(db.Model):
                     if isinstance(df, str):
                         message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                         log.warning(message)
-                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
+                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                         logging_message = save_unconverted_data_via_upload(
                             SUSHI_data_response,
                             file_name_stem,
@@ -1091,7 +1091,7 @@ class StatisticsSources(db.Model):
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)
-                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"
+                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                 logging_message = save_unconverted_data_via_upload(
                     SUSHI_data_response,
                     file_name_stem,
