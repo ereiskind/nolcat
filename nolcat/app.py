@@ -1,5 +1,4 @@
 import io
-import logging
 from pathlib import Path
 from datetime import datetime
 from itertools import product
@@ -18,6 +17,7 @@ from numpy import squeeze
 import boto3
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
+from .logging_config import configure_logging
 from .statements import *
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
@@ -52,7 +52,7 @@ PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within 
 PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 
 
-log = logging.getLogger(__name__)
+log = configure_logging.getLogger(__name__)
 
 
 csrf = CSRFProtect()
