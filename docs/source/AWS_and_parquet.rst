@@ -29,13 +29,13 @@ Glue is an ETL service with jobs that can work like programming functions. The d
 * Data I/O
 
   * Data comes into jobs in JSON format, generally via step functions
-  * ``awsglue.utils.getResolvedOptions(sys.argv, ["input_key"])`` is used to retrieve the data from the JSON
+  * `awsglue.utils.getResolvedOptions(sys.argv, ["input_key"])` is used to retrieve the data from the JSON
 
-    * ``input_key`` represents the variable names, which are the key values in the input JSON
+    * `input_key` represents the variable names, which are the key values in the input JSON
     * The function returns a list
 
   * Output JSON, which can go to step functions, is metadata; code is designed for ETL and *must* contain a load to storage, frequently S3
-  * Functions and classes in other Glue jobs can be called, but the S3 URI(s) of the other job(s) must be added to the ``pythonPath``, ``referencedPath``, and ``additionalPythonModules`` config fields in a comma-delineated list; as above, values cannot be returned through code
+  * Functions and classes in other Glue jobs can be called, but the S3 URI(s) of the other job(s) must be added to the `pythonPath`, `referencedPath`, and `additionalPythonModules` config fields in a comma-delineated list; as above, values cannot be returned through code
 
 * Testing
 
