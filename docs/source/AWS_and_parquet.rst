@@ -57,24 +57,18 @@ Step Functions
 Step Functions create workflows among other AWS services.
 
 * Step Functions objects/workflows are called state machines; the individual steps are called states
-* State machine triggers are ???
+* State machines are triggered within Python code with API function `start_execution()` (https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html)
+
+  * Arguments to the state machine are sent as a string with JSON formatting (JSON/dict after `json.dumps()`)
+  * There's a max payload size, but it isn't specified
+
 * State machine output is determined by the last step in the state machine; this can be email via SNS, an API call, ect.
 * Testing
 
-  * 
-  * To test the AWS Step Function, click the Execute button and paste in the parameters that will be sent into the Glue ETL Job as JSON. An example of this can be found in the step-functions-test-parameters.json attached file.
+  * "Start execution" bring up a text box for parameters to send into Glue job states; the parameters need to be formatted as JSON where the keys are the values of the argument pairs in the Glue "startJobRun" state and the values are the data that should go into the state machine
   * When a test starts, the state machine's logging output is brought up; links to logging for any states that have it are included in the text log
 
 * State machine construction define input parameters and imported libraries for Glue jobs
-#######
-
-* 
-* Start triggered by Flask sending input, which is taken in as JSON
-
-
-
-
-#######
 
 SNS
 ---
