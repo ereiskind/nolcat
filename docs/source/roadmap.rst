@@ -23,15 +23,6 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Create main Glue job file
 
-  * Create Glue job named `nolcat_glue_job`
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
-  * Connect above job to this repo, placing file in "nolcat" folder
-  * Push Glue job to repo
-  * Create Glue job named `test_nolcat_glue_job`
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
-  * Connect above job to this repo, placing file in "tests" folder
-  * Push Glue job to repo
-  * Pull repo into IDE, which will create "nolcat/nolcat/nolcat_glue_job.py" and "nolcat/tests/test_nolcat_glue_job.py" files
   * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat_glue_job.py"
   * Update function call chain diagram to reflect above changes
   * Move test functions corresponding to the functions above, along with all necessary fixtures, to "test_nolcat_glue_job.py"
