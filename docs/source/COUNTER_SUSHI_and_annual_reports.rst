@@ -124,7 +124,7 @@ For the official information about transitioning from R5 to R5.1, see https://co
 
 Annual Usage Statistics
 ***********************
-Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the ``annualStatistics`` relation. That relation's class contains methods to calculate all of the metrics described below.
+Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the `annualStatistics` relation. That relation's class contains methods to calculate all of the metrics described below.
 
 ACRL/IPEDS 61a. Total E-book & E-media Usage
 ============================================

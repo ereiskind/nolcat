@@ -656,13 +656,22 @@ digraph function_call_chains {
     download_non_COUNTER_usage -> database_query_fail_statement
 
 
-    subgraph cluster_app {
-        label="nolcat.app"
+    subgraph cluster_logging_config {
+        label="nolcat.logging_config"
         penwidth=5
         color="#5cb8b2"
 
         filter_empty_parentheses [shape="box"]
         configure_logging [shape="box"]
+    }
+    filter_empty_parentheses -> remove_IDE_spacing_from_statement
+
+
+    subgraph cluster_app {
+        label="nolcat.app"
+        penwidth=5
+        color="#5cb8b2"
+
         page_not_found [shape="box"]
         internal_server_error [shape="box"]
         create_app [shape="box"]
@@ -689,7 +698,6 @@ digraph function_call_chains {
         non_COUNTER_file_name_regex [shape="box"]
         empty_string_regex [shape="box"]
     }
-    filter_empty_parentheses -> remove_IDE_spacing_from_statement
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
     create_app -> page_not_found

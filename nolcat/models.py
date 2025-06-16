@@ -1,18 +1,17 @@
 """These classes represent the relations in the database."""
 
-import logging
 from pathlib import Path
 import sys
 import json
 import re
 from datetime import date
 from datetime import datetime
-import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
+from .logging_config import *
 from .app import *
 from .statements import *
 from .SUSHI_call_and_response import SUSHICallAndResponse

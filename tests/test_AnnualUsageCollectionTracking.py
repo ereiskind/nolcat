@@ -1,14 +1,14 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
 from filecmp import cmp
 from pandas.testing import assert_frame_equal
 from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

@@ -1,8 +1,7 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
 import json
 from datetime import date
 from datetime import datetime
@@ -17,6 +16,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

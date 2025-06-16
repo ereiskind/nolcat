@@ -1,11 +1,8 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
 from random import choice
-from pathlib import Path
-import os
 import re
 from ast import literal_eval
 from filecmp import cmp
@@ -17,6 +14,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import prepare_HTML_page_for_comparison
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

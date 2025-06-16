@@ -1,14 +1,14 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
 from datetime import date
 from random import choice
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

@@ -4,22 +4,17 @@ The fixtures for connecting to the database are primarily based upon the fixture
 """
 
 import pytest
-import logging
 from pathlib import Path
 from datetime import date
-import calendar
 from random import choice
 import re
 import html
 from sqlalchemy import create_engine
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
-from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
-from nolcat.app import create_app
-from nolcat.app import configure_logging
-from nolcat.app import s3_client
+from nolcat.logging_config import *
+from nolcat.app import *
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.models import *
 from nolcat.statements import *
@@ -102,6 +97,7 @@ def db(app):
     # http://alexmic.net/flask-sqlalchemy-pytest/ with modifications at https://stackoverflow.com/q/28526781
     # https://spotofdata.com/flask-testing/
     # https://www.appsloveworld.com/coding/flask/3/rollback-many-transactions-between-tests-in-flask
+    #ToDo: If ``nolcat.app.db`` is needed, import with alias ``_db`` and import ``create_app``, ``configure_logging``, ``s3_client`` on their own lines with note about alias preventing wildcard usage
     pass
 
 

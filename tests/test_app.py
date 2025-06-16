@@ -1,8 +1,7 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
 from datetime import date
 from datetime import datetime
 from random import choice
@@ -16,6 +15,7 @@ import flask
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *

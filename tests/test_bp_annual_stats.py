@@ -1,13 +1,11 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-06-12 ##########
 
 import pytest
-import logging
-from pathlib import Path
-import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.statements import *
 from nolcat.annual_stats import *

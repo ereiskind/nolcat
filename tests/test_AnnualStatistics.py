@@ -1,9 +1,10 @@
 """Tests the methods in AnnualStatistics."""
-########## No tests written 2025-03-14 ##########
+########## No tests written 2025-06-12 ##########
 
 import pytest
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 
