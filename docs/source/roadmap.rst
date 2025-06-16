@@ -24,21 +24,31 @@ Move Code to Glue Jobs and Data to Parquet
 * Create Glue job for logging config
 
   * Create Glue job named `logging_config`
-  * Connect above job to this repo
-  * Pull file into Glue job
+  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
+  * Connect above job to this repo, placing file in "nolcat" folder
+  * Push Glue job to repo
+  * Pull repo into IDE, which will create new "nolcat/nolcat/logging_config.py" file
+  * Move contents of old/renamed "nolcat/nolcat/logging_config.py" file into new file, then delete old/renamed file
+  * Push to repo, then pull to Glue job
 
 * Create main Glue job file
 
-  * Create "nolcat/nolcat/nolcat_glue_job.py" and "nolcat/tests/test_nolcat_glue_job.py" files
+  * Create Glue job named `nolcat_glue_job`
+  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
+  * Connect above job to this repo, placing file in "nolcat" folder
+  * Push Glue job to repo
+  * Create Glue job named `test_nolcat_glue_job`
+  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
+  * Connect above job to this repo, placing file in "tests" folder
+  * Push Glue job to repo
+  * Pull repo into IDE, which will create "nolcat/nolcat/nolcat_glue_job.py" and "nolcat/tests/test_nolcat_glue_job.py" files
   * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat_glue_job.py"
   * Update function call chain diagram to reflect above changes
   * Move test functions corresponding to the functions above, along with all necessary fixtures, to "test_nolcat_glue_job.py"
   * Update function call chain diagram to reflect above changes
+  * For all tests, get call chains and adjust conftest calls
+  * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
-  * Create Glue job named `nolcat_glue_job`
-  * Connect above job to this repo
-  * Pull file into Glue job
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
 
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
@@ -54,6 +64,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Move length constants out of class, then update reference to them in "nolcat/nolcat/models.py"
   * Move test functions corresponding to the class, along with all necessary fixtures, to "test_nolcat_glue_job.py"
   * Update function call chain diagram to reflect above changes
+  * For all tests, get call chains and adjust conftest calls
   * Delete files with all content moved elsewhere
   * Confirm all tests still pass
   * Pull file into Glue job
@@ -85,7 +96,7 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
   * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
-  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html, https://pandas.pydata.org/docs/reference/api/pandas.json_normalize.html, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html, or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html; determine which works best for reversion
+  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html (does `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.` need to be addressed?) (https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html can also be used, but `to_json()` output of string must be converted to dict with `json.loads()`)
 
 * Move `nolcat.UploadCOUNTERReports` to Glue job
 
@@ -97,6 +108,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Copy existing `nolcat.UploadCOUNTERReports` test functions and their relevant fixtures to "test_nolcat_glue_job.py"
   * Rename existing test function file for `nolcat.UploadCOUNTERReports` and update the test functions to match the revised class
   * Update function call chain diagram to reflect above changes
+  * For all tests, get call chains and adjust conftest calls
   * Confirm all tests still pass
   * Pull file into Glue job
   * Confirm configs still set properly

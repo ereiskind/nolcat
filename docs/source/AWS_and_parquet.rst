@@ -79,14 +79,32 @@ Simple Notification Service (SNS) sends messages from applications to other appl
 Moving Data to AWS
 ==================
 
-1. Create S3 Locations
+1. Create GitHub Token
 ----------------------
+1. Go to https://github.com/settings/personal-access-tokens
+2. Name the token
+3. Set the expiration date to 90 days
+4. Select the repo the Glue job will connect to
+5. In "Repository permissions", grant read and write access for contents and pull requests
+6. Create token, then copy its value
 
 2. Create Glue Jobs
 -------------------
+1. In the AWS console, go to "AWS Glue" > "ETL Jobs" > "Notebooks" and select "Script editor"
+2. Select "Python shell" and either create a blank script or upload a script
+3. In the "Job details" tab,
 
-3. Create SNS Topic
--------------------
+  * Create a job name
+  * Select an IAM role
+  * Unselect loading common analytics libraries
+  * Open "Advanced properties"
+  * Change script path to Glue jobs section of NoLCAT S3 folder
+  * Add the S3 URI(s) of any Glue jobs called in this job in a comma-delimited list (no spaces)
+
+4. Save the job
+5. In the "Version Control" tab, select GitHub as the service, add the GitHub personal access token and repo owner, select the repo and branch, then enter the name of the folder the file to be copied is in
+6. Select "Actions" > "Push to repository"
+7. Pull changes from repo to IDE
 
 Parquet
 *******
