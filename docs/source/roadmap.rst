@@ -21,16 +21,6 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Create Glue job for logging config
-
-  * Create Glue job named `logging_config`
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
-  * Connect above job to this repo, placing file in "nolcat" folder
-  * Push Glue job to repo
-  * Pull repo into IDE, which will create new "nolcat/nolcat/logging_config.py" file
-  * Move contents of old/renamed "nolcat/nolcat/logging_config.py" file into new file, then delete old/renamed file
-  * Push to repo, then pull to Glue job
-
 * Create main Glue job file
 
   * Create Glue job named `nolcat_glue_job`
