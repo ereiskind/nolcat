@@ -667,6 +667,15 @@ digraph function_call_chains {
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
 
 
+    subgraph cluster_nolcat_glue_job {
+        label="nolcat.nolcat_glue_job"
+        penwidth=5
+        color="#5cb8b2"
+
+        //functions here
+    }
+
+
     subgraph cluster_app {
         label="nolcat.app"
         penwidth=5
@@ -1169,6 +1178,16 @@ digraph function_call_chains {
     match_direct_SUSHI_harvest_result -> engine
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
     COUNTER_reports_offered_by_statistics_source -> successful_SUSHI_call_statement
+
+
+    subgraph cluster_test_nolcat_glue_job {
+        label="tests.test_nolcat_glue_job"
+        penwidth=5
+        style="dashed"
+        color="#5cb8b2"
+
+        //functions here
+    }
 
 
     subgraph cluster_test_AnnualStatistics {
