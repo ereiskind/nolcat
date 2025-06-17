@@ -31,6 +31,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
 
+* Review placement of functions in conftest
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
   * Develop method to switch data storage format
