@@ -1,9 +1,43 @@
-# imports here
+from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+import boto3
 
 from .logging_config import *
 
-#ALERT: Move constants here
+"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
+The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multiple possible import statements in try-except blocks are used to handle the problem.
+"""
+try:
+    import nolcat_secrets as secrets
+except:
+    try:
+        from . import nolcat_secrets as secrets
+    except:
+        try:
+            from nolcat import nolcat_secrets as secrets
+        except:
+            print("None of the provided import statements for `nolcat\\nolcat_secrets.py` worked.")
+
+DATABASE_USERNAME = secrets.Username
+DATABASE_PASSWORD = secrets.Password
+DATABASE_HOST = secrets.Host
+DATABASE_PORT = secrets.Port
+DATABASE_SCHEMA_NAME = secrets.Database
+SECRET_KEY = secrets.Secret
+BUCKET_NAME = secrets.Bucket
+TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
+
+PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
+PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
+TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
+TEST_NON_COUNTER_FILE_PATH = "nolcat/usage/test/raw_vendor_reports/"
+PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
+PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
+
+csrf = CSRFProtect()
+db = SQLAlchemy()
+s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
 
 log = logging.getLogger(__name__)
 
