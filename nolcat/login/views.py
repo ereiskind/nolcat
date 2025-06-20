@@ -157,7 +157,7 @@ def login_homepage():
             # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/stepfunctions/client/start_execution.html
             stateMachineArn=STATE_MACHINE_ARN,
             name=f"execution-{datetime.now().strftime(AWS_timestamp_format())}",  # Unique execution name
-            input=json.dumps(step_function_input)  # The string that contains the JSON input data for the execution,...Length constraints apply to the payload size, and are expressed as bytes in UTF-8 encoding.
+            input=json.dumps(step_function_input)  # The string that contains the JSON input data for the execution,...Length constraints apply to the payload size (see https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html#service-limits-task-executions), and are expressed as bytes in UTF-8 encoding.
         )
         return "Workflow triggered"
     else:
