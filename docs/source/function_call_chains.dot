@@ -672,7 +672,7 @@ digraph function_call_chains {
         penwidth=5
         color="#5cb8b2"
 
-        //functions here
+        last_day_of_month [shape="box"]
     }
 
 
@@ -687,7 +687,6 @@ digraph function_call_chains {
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
-        last_day_of_month [shape="box"]
         first_new_PK_value [shape="box"]
         return_string_of_dataframe_info [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]

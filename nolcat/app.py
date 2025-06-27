@@ -4,8 +4,6 @@ from datetime import datetime
 from itertools import product
 import json
 import re
-from datetime import date
-import calendar
 from sqlalchemy import text
 from flask import Flask
 from flask import render_template
@@ -138,29 +136,6 @@ def create_app():
 
 
     return app
-
-
-def last_day_of_month(original_date):
-    """The function for returning the last day of a given month.
-
-    When COUNTER date ranges include the day, the "End_Date" value needs to be the last day of the month. This function facilitates finding that last day while combining two previously existing functions, both named `last_day_of_month`: one accepting and returning datetime.date objects, the other getting pd.Timestamp objects and returning strings for use in pandas `map` functions.
-
-    Args:
-        original_date (datetime.date or pd.Timestamp): the original date; if from a dataframe, the dataframe of origin will have the date in a datetime64[ns] data type, but within this function, the data type is Timestamp
-    
-    Returns:
-        datetime.date: the last day of the month
-        str: the last day of the given month in ISO format
-    """
-    if isinstance(original_date, date):
-        return date(
-            original_date.year,
-            original_date.month,
-            calendar.monthrange(original_date.year, original_date.month)[1],
-        )
-    elif isinstance(original_date, pd.Timestamp):
-        year_and_month_string = original_date.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
-        return year_and_month_string + str(original_date.days_in_month)
 
 
 def first_new_PK_value(relation):
