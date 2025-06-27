@@ -1185,8 +1185,12 @@ digraph function_call_chains {
         style="dashed"
         color="#5cb8b2"
 
-        //functions here
+        test_last_day_of_month [
+            style="dashed"
+            shape="box"
+        ]
     }
+    test_last_day_of_month -> last_day_of_month
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1381,10 +1385,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_last_day_of_month [
-            style="dashed"
-            shape="box"
-        ]
         test_extract_value_from_single_value_df [
             style="dashed"
             shape="box"
@@ -1462,7 +1462,6 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_ISSN_regex -> ISSN_regex
     test_ISBN_regex -> ISBN_regex
-    test_last_day_of_month -> last_day_of_month
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
     test_AWS_timestamp_format -> AWS_timestamp_format
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex

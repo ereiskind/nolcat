@@ -485,13 +485,6 @@ def test_ISBN_regex():
     assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
 
 
-def test_last_day_of_month():
-    """Tests returning the last day of the given month."""
-    assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
-    assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
-    assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
-
-
 def test_extract_value_from_single_value_df():
     """Tests extracting the value from a dataframe containing a single value."""
     assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10

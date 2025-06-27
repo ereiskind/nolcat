@@ -1,13 +1,26 @@
+"""This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
+########## Passing ??? ##########
+
 import pytest
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.logging_config import *
+from nolcat.nolcat_glue_job import *
+#from nolcat.app import *
+#from nolcat.statements import *
+#from nolcat.annual_stats import *
+#from nolcat.<blueprint> import *
+#from nolcat.<class file name> import <class name>
 
 log = logging.getLogger(__name__)
 
 
 #SECTION: Basic Helper Function Tests
-# test_app.test_last_day_of_month
+def test_last_day_of_month():
+    """Tests returning the last day of the given month."""
+    assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
+    assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
+    assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
 
 # test_app.test_ISSN_regex
 
