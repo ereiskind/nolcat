@@ -2417,7 +2417,6 @@ digraph function_call_chains {
     test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture
     test_check_if_data_in_database_no -> _check_if_data_in_database
     test_check_if_data_in_database_no -> client
-    test_check_if_data_in_database_no -> most_recent_month_with_usage
     test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
     test_check_if_data_in_database_no -> StatisticsSources_fixture
     test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture

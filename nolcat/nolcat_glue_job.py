@@ -67,6 +67,45 @@ def last_day_of_month(original_date):
     elif isinstance(original_date, pd.Timestamp):
         year_and_month_string = original_date.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
         return year_and_month_string + str(original_date.days_in_month)
+'''
+Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` via `nolcat.models.StatisticsSources._harvest_single_report()` after calls to `SUSHICallAndResponse`
+    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI()`
+    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`
+    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`  
+    Called in `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`
+        Called in test `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
+            Called in fixture `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()` for `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
+    Called in `nolcat.models.StatisticsSources.collect_usage_statistics()`
+        Called in test `tests.test_StatisticsSources.test_collect_usage_statistics()`
+            Called in fixture `tests.test_StatisticsSources.harvest_R5_SUSHI_result()` for `tests.test_StatisticsSources.test_collect_usage_statistics()`
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
+        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
+Called in `SUSHICallAndResponse` in non-fixture `tests.conftest.COUNTER_reports_offered_by_statistics_source()` via `tests.test_StatisticsSources.reports_offered_by_StatisticsSource_fixture()` via both `tests.test_StatisticsSources.StatisticsSources_fixture()` and `tests.test_StatisticsSources.SUSHI_credentials_fixture_in_test_StatisticsSources()` via `tests.test_StatisticsSources.most_recent_month_with_usage()`
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
+Called in `nolcat.models.StatisticsSources._harvest_single_report()` in loop designed to combine the output of multiple calls to `SUSHICallAndResponse`
+    test_harvest_single_report -> _harvest_single_report -> last_day_of_month
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> last_day_of_month
+Called in `SUSHICallAndResponse` in non-fixture `tests.conftest.COUNTER_reports_offered_by_statistics_source()` via `tests.test_SUSHICallAndResponse.list_of_reports()` via `tests.test_SUSHICallAndResponse.SUSHI_credentials_fixture()`
+    test_PR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    test_DR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    test_TR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    test_IR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+Called in `tests.test_bp_view_usage.start_query_wizard_form_data()` after a SQL query on relation `COUNTERData`
+    test_start_query_wizard -> start_query_wizard_form_data -> last_day_of_month
+    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data -> last_day_of_month
+
+Make call function with call to database including or after `last_day_of_month`; check if `COUNTERData` relation is referenced
+    test_harvest_R5_SUSHI -> most_recent_month_with_usage -> last_day_of_month
+    test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage -> last_day_of_month
+    test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage -> last_day_of_month
+'''
 
 # app.ISSN_regex
 
