@@ -25,21 +25,19 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat/nolcat_glue_job.py"
 
-    * Get function call chain for function
+    * Get function call chain for function and its test(s)
     * Cut and paste function from original file to "nolcat/nolcat_glue_job.py"
-    * Move node for function and its corresponding edges to the cluster for "nolcat/nolcat_glue_job.py"
+    * In function call chain diagram, move node for function and its corresponding edges to the cluster for "nolcat/nolcat_glue_job.py"
     * Get function call chain for test(s) of function
     * Cut and paste test(s) of function, along with all necessary fixtures, from original file to "nolcat/test_nolcat_glue_job.py"
-    * Move node(s) for test(s) of function and its corresponding edges to the cluster for "tests/test_nolcat_glue_job.py"
-    * Adjust conftest calls based on function call chains
+    * In function call chain diagram, move node(s) for test(s) of function and its corresponding edges to the cluster for "tests/test_nolcat_glue_job.py"
     * For both the function and its test(s), use pre-move function calls chains to create list of what other functions will need to be changed, and save the list as comments below the function(s)
 
-  * For functions in test files that weren't moved, get call chains and adjust conftest calls
   * Remove "nolcat/statements.py" import statements
   * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
 
-* Review placement of functions in conftest
+* For all test functions, get call chains and adjust conftest calls
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
   * Develop method to switch data storage format
