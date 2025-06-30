@@ -706,15 +706,6 @@ def extract_value_from_single_value_df(df, expect_int=True):
     return return_value
 
 
-def non_COUNTER_file_name_regex():
-    """A regex for the format of non-COUNTER usage files saved in S3.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
-
-
 def empty_string_regex():
     """A regex for matching empty strings and whitespace-only strings.
 
