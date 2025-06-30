@@ -22,7 +22,12 @@ def test_last_day_of_month():
     assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
     assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
 
-# test_app.test_ISSN_regex
+
+def test_ISSN_regex():
+    """Tests matching the regex object to ISSN strings."""
+    assert ISSN_regex().fullmatch("1234-5678") is not None
+    assert ISSN_regex().fullmatch("1123-000x") is not None
+    assert ISSN_regex().fullmatch("0987-6543 ") is not None
 
 # test_app.test_ISBN_regex
 

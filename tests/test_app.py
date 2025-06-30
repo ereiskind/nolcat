@@ -469,13 +469,6 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert f"{file_name_stem}.txt" in bucket_contents
 
 
-def test_ISSN_regex():
-    """Tests matching the regex object to ISSN strings."""
-    assert ISSN_regex().fullmatch("1234-5678") is not None
-    assert ISSN_regex().fullmatch("1123-000x") is not None
-    assert ISSN_regex().fullmatch("0987-6543 ") is not None
-
-
 def test_ISBN_regex():
     """Tests matching the regex object to ISBN strings."""
     assert ISBN_regex().fullmatch("978-1-56619-909-4") is not None
