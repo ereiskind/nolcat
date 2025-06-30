@@ -227,6 +227,64 @@ def format_list_for_stdout(stdout_list):
         return '\n'.join([f"{k}: {v}" for k, v in stdout_list.items()])
     else:
         return '\n'.join([str(file_path) for file_path in stdout_list])
+'''
+Called in `nolcat.statements.list_folder_contents_statement()` in the return value
+    test_download_nonstandard_usage_file -> list_folder_contents_statement -> format_list_for_stdout
+    test_run_custom_SQL_query -> run_custom_SQL_query -> list_folder_contents_statement -> format_list_for_stdout
+    test_use_predefined_SQL_query -> use_predefined_SQL_query -> list_folder_contents_statement -> format_list_for_stdout
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> list_folder_contents_statement -> format_list_for_stdout
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> list_folder_contents_statement -> format_list_for_stdout
+Called in `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()` in the return value
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
+'''
 
 
 # statements.remove_IDE_spacing_from_statement
