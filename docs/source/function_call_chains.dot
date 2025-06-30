@@ -674,6 +674,7 @@ digraph function_call_chains {
 
         last_day_of_month [shape="box"]
         ISSN_regex [shape="box"]
+        ISBN_regex [shape="box"]
     }
 
 
@@ -700,7 +701,6 @@ digraph function_call_chains {
         truncate_longer_lines [shape="box"]
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
-        ISBN_regex [shape="box"]
         extract_value_from_single_value_df [shape="box"]
         AWS_timestamp_format [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
