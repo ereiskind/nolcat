@@ -685,15 +685,6 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITH
     return message
 
 
-def ISSN_regex():
-    """A regex object matching an ISSN.
-
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
-
-
 def ISBN_regex():
     """A regex object matching an ISBN.
 

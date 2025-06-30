@@ -107,7 +107,13 @@ Make call function with call to database including or after `last_day_of_month`;
     test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage -> last_day_of_month
 '''
 
-# app.ISSN_regex
+def ISSN_regex():
+    """A regex object matching an ISSN.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
 
 # app.ISBN_regex
 
