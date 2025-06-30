@@ -62,7 +62,32 @@ def test_empty_string_regex():
     assert empty_string_regex().fullmatch("\n") is not None
 
 
-#ToDo: Create test for `nolcat.app.return_string_of_dataframe_info`
+def test_return_string_of_dataframe_info():
+    """Tests returning a string version of `DataFrame.info()` for logging statements."""
+    one = pd.DataFrame(
+        [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+        ],
+        columns=["a", "b"],
+    )
+    assert return_string_of_dataframe_info(one) == "<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 2 columns):\n #   Column  Non-Null Count  Dtype\n---  ------  --------------  -----\n 0   a       3 non-null      int64\n 1   b       3 non-null      int64\ndtypes: int64(2)\nmemory usage: 180.0 bytes\n"
+    two = pd.DataFrame(
+        [
+            [10, "a", True],
+            [100, "b", None],
+            [1000, "c", False],
+        ],
+        columns=["int", "string", "Bool"],
+    )
+    two.index.name = "index"
+    two = two.astype({
+        "int": 'int',
+        "string": 'string',
+        "Bool": 'boolean',
+    })
+    assert return_string_of_dataframe_info(two) == "<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 3 columns):\n #   Column  Non-Null Count  Dtype  \n---  ------  --------------  -----  \n 0   int     3 non-null      int64  \n 1   string  3 non-null      string \n 2   Bool    2 non-null      boolean\ndtypes: boolean(1), int64(1), string(1)\nmemory usage: 186.0 bytes\n"
 
 
 # test_statements.test_format_list_for_stdout_with_list
