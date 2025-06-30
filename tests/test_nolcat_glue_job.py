@@ -47,7 +47,12 @@ def test_AWS_timestamp_format():
     assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
 
 
-# test_app.test_non_COUNTER_file_name_regex
+def test_non_COUNTER_file_name_regex():
+    """Tests matching the regex object to file names."""
+    assert non_COUNTER_file_name_regex().fullmatch("1_2020.csv") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("100_2021.xlsx") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("55_2016.pdf") is not None
+    assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
 
 
 # test_app.test_empty_string_regex
