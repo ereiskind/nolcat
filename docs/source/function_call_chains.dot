@@ -677,6 +677,7 @@ digraph function_call_chains {
         ISBN_regex [shape="box"]
         AWS_timestamp_format [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
+        empty_string_regex [shape="box"]
     }
 
 
@@ -704,7 +705,6 @@ digraph function_call_chains {
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
         extract_value_from_single_value_df [shape="box"]
-        empty_string_regex [shape="box"]
     }
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging

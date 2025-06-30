@@ -704,12 +704,3 @@ def extract_value_from_single_value_df(df, expect_int=True):
         elif isinstance(return_value, float):
             return_value = int(return_value)
     return return_value
-
-
-def empty_string_regex():
-    """A regex for matching empty strings and whitespace-only strings.
-
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"^\s*$")
