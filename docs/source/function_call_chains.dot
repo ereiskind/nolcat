@@ -1213,6 +1213,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_format_list_for_stdout_with_list [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1221,6 +1225,7 @@ digraph function_call_chains {
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
     test_empty_string_regex -> empty_string_regex
     test_return_string_of_dataframe_info -> return_string_of_dataframe_info
+    test_format_list_for_stdout_with_list -> format_list_for_stdout
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -2291,10 +2296,6 @@ digraph function_call_chains {
         style="dashed"
         color="#5cb8b2"
 
-        test_format_list_for_stdout_with_list [
-            style="dashed"
-            shape="box"
-        ]
         test_format_list_for_stdout_with_generator [
             style="dashed"
             shape="box"
@@ -2304,7 +2305,6 @@ digraph function_call_chains {
             shape="box"
         ]
     }
-    test_format_list_for_stdout_with_list -> format_list_for_stdout
     test_format_list_for_stdout_with_generator -> format_list_for_stdout
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement

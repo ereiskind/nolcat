@@ -89,8 +89,9 @@ def test_return_string_of_dataframe_info():
     })
     assert return_string_of_dataframe_info(two) == "<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 3 columns):\n #   Column  Non-Null Count  Dtype  \n---  ------  --------------  -----  \n 0   int     3 non-null      int64  \n 1   string  3 non-null      string \n 2   Bool    2 non-null      boolean\ndtypes: boolean(1), int64(1), string(1)\nmemory usage: 186.0 bytes\n"
 
-
-# test_statements.test_format_list_for_stdout_with_list
+def test_format_list_for_stdout_with_list():
+    """Test pretty printing a list by adding a line break between each item."""
+    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
 
 
 # test_statements.test_format_list_for_stdout_with_generator

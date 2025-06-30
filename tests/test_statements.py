@@ -12,11 +12,6 @@ from nolcat.statements import *
 log = logging.getLogger(__name__)
 
 
-def test_format_list_for_stdout_with_list():
-    """Test pretty printing a list by adding a line break between each item."""
-    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
-
-
 def test_format_list_for_stdout_with_generator(create_COUNTERData_workbook_iterdir_list):
     """Test pretty printing a list created by a generator object by adding a line break between each item.
     
