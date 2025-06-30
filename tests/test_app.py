@@ -475,10 +475,3 @@ def test_extract_value_from_single_value_df():
     assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"
     assert extract_value_from_single_value_df(pd.DataFrame([[10.0]])) == 10
     assert extract_value_from_single_value_df(pd.DataFrame([[None]])) == 0
-
-
-def test_empty_string_regex():
-    """Tests matching the regex object to empty and whitespace-only strings."""
-    assert empty_string_regex().fullmatch("") is not None
-    assert empty_string_regex().fullmatch(" ") is not None
-    assert empty_string_regex().fullmatch("\n") is not None

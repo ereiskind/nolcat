@@ -55,7 +55,11 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
 
 
-# test_app.test_empty_string_regex
+def test_empty_string_regex():
+    """Tests matching the regex object to empty and whitespace-only strings."""
+    assert empty_string_regex().fullmatch("") is not None
+    assert empty_string_regex().fullmatch(" ") is not None
+    assert empty_string_regex().fullmatch("\n") is not None
 
 
 #ToDo: Create test for `nolcat.app.return_string_of_dataframe_info`
