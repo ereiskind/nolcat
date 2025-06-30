@@ -678,6 +678,7 @@ digraph function_call_chains {
         AWS_timestamp_format [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
         empty_string_regex [shape="box"]
+        return_string_of_dataframe_info [shape="box"]
     }
 
 
@@ -693,7 +694,6 @@ digraph function_call_chains {
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
         first_new_PK_value [shape="box"]
-        return_string_of_dataframe_info [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
