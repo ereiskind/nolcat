@@ -28,12 +28,11 @@ Move Code to Glue Jobs and Data to Parquet
     * Get function call chain for function and its test(s)
     * Cut and paste function from original file to "nolcat/nolcat_glue_job.py"
     * In function call chain diagram, move node for function and its corresponding edges to the cluster for "nolcat/nolcat_glue_job.py"
-    * Get function call chain for test(s) of function
     * Cut and paste test(s) of function, along with all necessary fixtures, from original file to "nolcat/test_nolcat_glue_job.py"
     * In function call chain diagram, move node(s) for test(s) of function and its corresponding edges to the cluster for "tests/test_nolcat_glue_job.py"
     * For both the function and its test(s), use pre-move function calls chains to create list of what other functions will need to be changed, and save the list as comments below the function(s)
 
-  * Remove "nolcat/statements.py" import statements
+  * Remove "nolcat/statements.py" and unneeded "nolcat/app.py" import statements
   * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
 
