@@ -30,7 +30,13 @@ def test_ISSN_regex():
     assert ISSN_regex().fullmatch("0987-6543 ") is not None
 
 
-# test_app.test_ISBN_regex
+def test_ISBN_regex():
+    """Tests matching the regex object to ISBN strings."""
+    assert ISBN_regex().fullmatch("978-1-56619-909-4") is not None
+    assert ISBN_regex().fullmatch("1-56619-909-3") is not None
+    assert ISBN_regex().fullmatch("1257561035") is not None
+    assert ISBN_regex().fullmatch("9781566199094") is not None
+    assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
 
 
 # test_app.test_AWS_timestamp_format

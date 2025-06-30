@@ -469,15 +469,6 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert f"{file_name_stem}.txt" in bucket_contents
 
 
-def test_ISBN_regex():
-    """Tests matching the regex object to ISBN strings."""
-    assert ISBN_regex().fullmatch("978-1-56619-909-4") is not None
-    assert ISBN_regex().fullmatch("1-56619-909-3") is not None
-    assert ISBN_regex().fullmatch("1257561035") is not None
-    assert ISBN_regex().fullmatch("9781566199094") is not None
-    assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
-
-
 def test_extract_value_from_single_value_df():
     """Tests extracting the value from a dataframe containing a single value."""
     assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
