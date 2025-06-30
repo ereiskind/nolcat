@@ -128,7 +128,15 @@ def ISBN_regex():
     return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
 
 
-# app.AWS_timestamp_format
+def AWS_timestamp_format():
+    """The `strftime()` format code to use with AWS names.
+
+    ISO format cannot be used where AWS calls for datetimes--S3 file names can't contain colons, while Step Function execution names only accept alphanumeric characters, hyphens, and underscores.
+    
+    Returns:
+        str: Python datetime format code
+    """
+    return '%Y-%m-%dT%H-%M-%S'
 
 
 # app.non_COUNTER_file_name_regex
