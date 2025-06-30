@@ -1197,10 +1197,15 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_AWS_timestamp_format [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
     test_ISBN_regex -> ISBN_regex
+    test_AWS_timestamp_format -> AWS_timestamp_format
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1391,10 +1396,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_AWS_timestamp_format [
-            style="dashed"
-            shape="box"
-        ]
         test_non_COUNTER_file_name_regex [
             style="dashed"
             shape="box"
@@ -1463,7 +1464,6 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    test_AWS_timestamp_format -> AWS_timestamp_format
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
     test_empty_string_regex -> empty_string_regex
 

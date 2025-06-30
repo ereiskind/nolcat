@@ -2,6 +2,7 @@
 ########## Passing ??? ##########
 
 import pytest
+from datetime import datetime
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.logging_config import *
@@ -39,7 +40,11 @@ def test_ISBN_regex():
     assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
 
 
-# test_app.test_AWS_timestamp_format
+def test_AWS_timestamp_format():
+    """Tests formatting a datetime value with the given format code."""
+    assert datetime(2022, 1, 12, 23, 59, 59).strftime(AWS_timestamp_format()) == "2022-01-12T23-59-59"
+    assert datetime(2024, 7, 4, 2, 45, 8).strftime(AWS_timestamp_format()) == "2024-07-04T02-45-08"
+    assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
 
 
 # test_app.test_non_COUNTER_file_name_regex
