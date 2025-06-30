@@ -33,23 +33,6 @@ def file_extensions_and_mimetypes():
     }
 
 
-def format_list_for_stdout(stdout_list):
-    """Changes a sequence into a string which places each item of the list on its own line.
-
-    Using the list comprehension allows the function to accept generators, which are transformed into lists by the comprehension, and to handle both lists and generators with individual items that aren't strings by type juggling.
-
-    Args:
-        stdout_list (list or generator): a sequence for pretty printing to stdout
-    
-    Returns:
-        str: the sequence contents with a line break between each item
-    """
-    if isinstance(stdout_list, dict):
-        return '\n'.join([f"{k}: {v}" for k, v in stdout_list.items()])
-    else:
-        return '\n'.join([str(file_path) for file_path in stdout_list])
-
-
 def remove_IDE_spacing_from_statement(statement):
     """Removes from a SQL statement the newlines and spaces used to for readability in the IDE.
 

@@ -679,6 +679,7 @@ digraph function_call_chains {
         non_COUNTER_file_name_regex [shape="box"]
         empty_string_regex [shape="box"]
         return_string_of_dataframe_info [shape="box"]
+        format_list_for_stdout [shape="box"]
     }
 
 
@@ -738,7 +739,6 @@ digraph function_call_chains {
         color="#5cb8b2"
 
         file_extensions_and_mimetypes [shape="box"]
-        format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         fixture_variable_value_declaration_statement [shape="box"]
