@@ -2301,15 +2301,6 @@ digraph function_call_chains {
     }
 
 
-    subgraph cluster_test_statements {
-        label="tests.test_statements"
-        penwidth=5
-        style="dashed"
-        color="#5cb8b2"
-
-    }
-
-
     subgraph cluster_test_StatisticsSources {
         label="tests.test_StatisticsSources"
         penwidth=5

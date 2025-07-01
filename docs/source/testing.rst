@@ -165,7 +165,6 @@ The preferred setup for testing database interactions involves performing all te
   * `test_ConvertJSONDictToDataframe`
   * `test_FiscalYears`
   * `test_ResourceSources`
-  * `test_statements`
   * `test_StatisticsSources`
   * `test_SUSHICallAndResponse`
   * `test_UploadCOUNTERReports`
