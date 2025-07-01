@@ -117,7 +117,23 @@ def test_format_list_for_stdout_with_generator(create_COUNTERData_workbook_iterd
     assert len(result.split('\n')) == 14
 
 
-# test_statements.test_remove_IDE_spacing_from_statement
+def test_remove_IDE_spacing_from_statement():
+    """Test removing newlines and indentations from SQL statements."""
+    statement = """
+        SELECT
+            a,
+            b,
+            c
+        FROM relation
+            JOIN anotherRelation ON relation.a=anotherRelation.a
+        WHERE
+            a > 10 AND
+            (
+                b='spam' OR
+                b='eggs'
+            );
+    """
+    assert remove_IDE_spacing_from_statement(statement) == "SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"
 
 
 # test_app.test_truncate_longer_lines

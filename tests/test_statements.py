@@ -10,22 +10,3 @@ from nolcat.models import *
 from nolcat.statements import *
 
 log = logging.getLogger(__name__)
-
-
-def test_remove_IDE_spacing_from_statement():
-    """Test removing newlines and indentations from SQL statements."""
-    statement = """
-        SELECT
-            a,
-            b,
-            c
-        FROM relation
-            JOIN anotherRelation ON relation.a=anotherRelation.a
-        WHERE
-            a > 10 AND
-            (
-                b='spam' OR
-                b='eggs'
-            );
-    """
-    assert remove_IDE_spacing_from_statement(statement) == "SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"
