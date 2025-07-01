@@ -10,7 +10,6 @@ from conftest import mock_FileStorage_object  # Direct import is required becaus
 from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
-from nolcat.app import *
 
 log = logging.getLogger(__name__)
 

@@ -2,7 +2,6 @@
 ########## Passing 2025-06-12 ##########
 
 import pytest
-from datetime import date
 from datetime import datetime
 from random import choice
 from filecmp import cmp
