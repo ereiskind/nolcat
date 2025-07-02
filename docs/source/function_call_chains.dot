@@ -682,6 +682,7 @@ digraph function_call_chains {
         format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
         truncate_longer_lines [shape="box"]
+        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
     }
 
 
@@ -742,7 +743,6 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         fixture_variable_value_declaration_statement [shape="box"]
-        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
         Flask_error_statement [shape="box"]
         file_IO_statement [shape="box"]
