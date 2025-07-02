@@ -739,7 +739,36 @@ def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records
         return f"The SUSHI harvest for statistics source {statistics_source_name} successfully found {number_of_records} records."
 
 
-# statements.failed_SUSHI_call_statement
+def failed_SUSHI_call_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
+    """This statement indicates a failed call to `SUSHICallAndResponse.make_SUSHI_call()`.
+
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+        error_messages (str): the message detailing the error(s) returned by `SUSHICallAndResponse.make_SUSHI_call()`
+        SUSHI_error (bool, optional): indicates if the error is a SUSHI error handled by the program; default is `True`
+        no_usage_data (bool, optional): indicates if the error indicates that there shouldn't be any usage data; default is `False`
+        stop_API_calls (bool, optional): indicates if the error is stopping all SUSHI calls to the given statistics source; default is `False`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if '\n' in error_messages:
+        error_messages = f"s\n{error_messages}\n"
+    else:
+        error_messages = f" {error_messages} "
+    
+    if SUSHI_error:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the SUSHI error{error_messages}"
+    else:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the error{error_messages}"
+    
+    if no_usage_data:
+        return f"{main_value[:-1]}, so the call returned no usage data."
+    elif stop_API_calls:
+        return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
+    else:
+        return main_value[:-1]  # Removing the whitespace character at the end
 
 
 # statements.no_data_returned_by_SUSHI_statement
