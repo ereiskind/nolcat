@@ -769,6 +769,86 @@ def failed_SUSHI_call_statement(call_path, statistics_source_name, error_message
         return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
     else:
         return main_value[:-1]  # Removing the whitespace character at the end
+'''
+Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` in return value
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+            test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+            test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return value via `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
+Called in `nolcat.SUSHICallAndResponse._convert_Response_to_JSON()` in return value in `nolcat.SUSHICallAndResponse.make_SUSHI_call()`
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_status_call -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_status_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_reports_call -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_reports_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_PR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_DR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_TR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_IR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return value
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_status_call -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_status_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_reports_call -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_reports_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_PR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_DR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_TR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_IR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> failed_SUSHI_call_statement
+'''
 
 
 # statements.no_data_returned_by_SUSHI_statement
