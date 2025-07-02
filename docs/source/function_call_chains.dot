@@ -689,6 +689,7 @@ digraph function_call_chains {
         no_data_returned_by_SUSHI_statement [shape="box"]
         attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
         reports_with_no_usage_regex [shape="box"]
+        skip_test_due_to_SUSHI_error_regex [shape="box"]
     }
 
 
@@ -766,7 +767,6 @@ digraph function_call_chains {
         database_function_skip_statements [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
-        skip_test_due_to_SUSHI_error_regex [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
