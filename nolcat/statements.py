@@ -63,26 +63,6 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
 
 
 #Section: Files, File Organization, and File I/O
-#Subsection: Logging/Output Statements
-def check_if_file_exists_statement(file_path, alone=True):
-    """This statement indicates if there's a file at the given file path for the logging output.
-
-   Information about the logging statement's relative location in a function can be added at the very beginning of the statement.
-
-    Args:
-        file_path (pathlib.Path): the path to the file being checked
-        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; default is `True`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    main_value = f"here's a file at {file_path.resolve()}: {file_path.is_file()}"
-    if alone:
-        return "T" + main_value
-    else:
-        return " t" + main_value
-
-
 #Subsection: Error Statements
 def failed_upload_to_S3_statement(file_name, error_message):
     """This statement indicates that a call to `nolcat.app.upload_file_to_S3_bucket()` returned an error, meaning the file that should've been uploaded isn't being saved.
