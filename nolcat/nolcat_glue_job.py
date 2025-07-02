@@ -912,6 +912,43 @@ def reports_with_no_usage_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
     return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
+'''
+Called in `nolcat.models.StatisticsSources._harvest_single_report()`
+    test_harvest_single_report -> _harvest_single_report -> reports_with_no_usage_regex
+        test_harvest_single_report -> reports_with_no_usage_regex
+        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> reports_with_no_usage_regex
+            test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
+Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
+Called in `tests/test_SUSHICallAndResponse`
+    test_status_call -> reports_with_no_usage_regex
+    test_reports_call -> reports_with_no_usage_regex
+    test_PR_call_validity -> reports_with_no_usage_regex
+    test_DR_call_validity -> reports_with_no_usage_regex
+    test_TR_call_validity -> reports_with_no_usage_regex
+    test_IR_call_validity -> reports_with_no_usage_regex
+'''
 
 
 # statements.skip_test_due_to_SUSHI_error_regex
