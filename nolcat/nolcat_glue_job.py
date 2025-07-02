@@ -885,6 +885,22 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
         str: the statement for outputting the arguments to logging
     """
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+'''
+Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` in return value
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
+Called in `assert` statement in test
+    test_harvest_R5_SUSHI_with_invalid_dates -> attempted_SUSHI_call_with_invalid_dates_statement
+'''
 
 
 # statements.reports_with_no_usage_regex
