@@ -692,6 +692,7 @@ digraph function_call_chains {
         skip_test_due_to_SUSHI_error_regex [shape="box"]
         fixture_variable_value_declaration_statement [shape="box"]
         Flask_error_statement [shape="box"]
+        database_function_skip_statements [shape="box"]
     }
 
 
@@ -764,7 +765,6 @@ digraph function_call_chains {
         database_query_fail_statement [shape="box"]
         database_update_fail_statement [shape="box"]
         add_data_success_and_update_database_fail_statement [shape="box"]
-        database_function_skip_statements [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
     }

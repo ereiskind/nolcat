@@ -260,29 +260,6 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
 
 
-def database_function_skip_statements(return_value, is_test_function=True, SUSHI_error=False, no_data=False):
-    """This statement provides the logging output when a pytest skip is initiated after a `nolcat.app.query_database()`, `nolcat.app.load_data_into_database()`, or `nolcat.app.update_database()` function fails.
-    
-    Args:
-        return_value (str): the error message returned by the database helper function
-        is_test_function (bool, optional): indicates if this function is being called within a test function; default is `True`
-        SUSHI_error (bool, optional): indicates if the skip is because a SUSHI call returned a SUSHI error; default is `False`
-        no_data (bool, optional): indicates if the skip is because a SUSHI call returned no data; default is `False`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if is_test_function:
-        if SUSHI_error:
-            return f"Unable to run test because the API call raised a server-based SUSHI error, specifically {return_value[0].lower()}{return_value[1:]}"
-        elif no_data:
-            return f"Unable to run test because no SUSHI data was in the API call response, specifically raising {return_value[0].lower()}{return_value[1:]}"
-        else:
-            return f"Unable to run test because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
-    else:
-        return f"Unable to create fixture because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
-
-
 #Subsection: Success Regexes
 def load_data_into_database_success_regex():
     """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
