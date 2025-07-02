@@ -48,22 +48,6 @@ def initialize_relation_class_object_statement(relation_class_name, object_value
     return f"The following {relation_class_name} object was initialized based on the query results:\n{object_value}"
 
 
-def fixture_variable_value_declaration_statement(variable_name, variable_value):
-    """This statement adds the value of any arguments used in fixture functions to the logging output for troubleshooting purposes.
-
-    Args:
-        variable_name (str): the name of the argument/variable
-        variable_value (object): the argument/variable value
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if isinstance(variable_value, Path):
-        return f"The `{variable_name}` is {variable_value.resolve()}."
-    else:
-        return f"The `{variable_name}` is {variable_value}."
-
-
 #Subsection: Error Statements
 def unable_to_get_updated_primary_key_values_statement(relation, error):
     """This statement prepares the error raised by `nolcat.app.first_new_PK_value()` for the logging output.
