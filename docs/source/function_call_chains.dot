@@ -694,7 +694,9 @@ digraph function_call_chains {
         Flask_error_statement [shape="box"]
         database_function_skip_statements [shape="box"]
         file_IO_statement [shape="box"]
+        list_folder_contents_statement [shape="box"]
     }
+    list_folder_contents_statement -> format_list_for_stdout
 
 
     subgraph cluster_app {
@@ -754,7 +756,6 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
-        list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
         failed_upload_to_S3_statement [shape="box"]
         unable_to_delete_test_file_in_S3_statement [shape="box"]
@@ -768,7 +769,6 @@ digraph function_call_chains {
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
     }
-    list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
 

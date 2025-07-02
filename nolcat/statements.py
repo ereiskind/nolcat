@@ -64,25 +64,6 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
 
 #Section: Files, File Organization, and File I/O
 #Subsection: Logging/Output Statements
-def list_folder_contents_statement(file_path, alone=True):
-    """This statement lists the contents of a folder for the logging output.
-
-    Information about the logging statement's relative location in a function can be added at the very beginning of the statement.
-
-    Args:
-        file_path (pathlib.Path): the folder whose contents are being listed
-        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; default is `True`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    main_value = f"he files in the folder {file_path.resolve()}\n{format_list_for_stdout(file_path.iterdir())}"
-    if alone:
-        return "T" + main_value
-    else:
-        return " t" + main_value
-
-
 def check_if_file_exists_statement(file_path, alone=True):
     """This statement indicates if there's a file at the given file path for the logging output.
 
