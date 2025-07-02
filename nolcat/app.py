@@ -472,22 +472,6 @@ def check_if_data_already_in_COUNTERData(df):
         return (df, None)
 
 
-def truncate_longer_lines(line):
-    """Truncates any string longer than 150 characters at 150 characters.
-
-    Args:
-        line (str or bin): a string to possibly truncate
-    
-    Returns:
-        str: a string of 150 characters at most
-    """
-    line = str(line)  # Type juggling in case the parameter value is a binary string
-    if len(line) > 150:
-        return line[:147] + "..."
-    else:
-        return line
-
-
 def update_database(update_statement, engine):
     """A wrapper for the `Engine.execute()` method that includes the error handling.
 

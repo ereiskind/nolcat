@@ -681,6 +681,7 @@ digraph function_call_chains {
         return_string_of_dataframe_info [shape="box"]
         format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
+        truncate_longer_lines [shape="box"]
     }
 
 
@@ -703,7 +704,6 @@ digraph function_call_chains {
         load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
         check_if_data_already_in_COUNTERData [shape="box"]
-        truncate_longer_lines [shape="box"]
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
         extract_value_from_single_value_df [shape="box"]

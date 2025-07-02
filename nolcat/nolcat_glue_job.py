@@ -630,7 +630,20 @@ Called in `nolcat.statements.database_update_fail_statement()` in return value
 '''
 
 
-# app.truncate_longer_lines
+def truncate_longer_lines(line):
+    """Truncates any string longer than 150 characters at 150 characters.
+
+    Args:
+        line (str or bin): a string to possibly truncate
+    
+    Returns:
+        str: a string of 150 characters at most
+    """
+    line = str(line)  # Type juggling in case the parameter value is a binary string
+    if len(line) > 150:
+        return line[:147] + "..."
+    else:
+        return line
 
 
 #SUBSECTION: SUSHI Statements and Regexes
