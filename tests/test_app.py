@@ -312,12 +312,6 @@ def test_create_AUCT_SelectField_options():
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 
-def test_truncate_longer_lines():
-    """Tests truncating aly string longer than 50 characters to just 50 characters including the ellipsis at the end."""
-    assert truncate_longer_lines("This is shorter than 50 characters.") == "This is shorter than 50 characters."
-    assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
-
-
 @pytest.fixture
 def vendors_relation_after_test_update_database():
     """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.

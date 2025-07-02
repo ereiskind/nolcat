@@ -136,7 +136,10 @@ def test_remove_IDE_spacing_from_statement():
     assert remove_IDE_spacing_from_statement(statement) == "SELECT a, b, c FROM relation JOIN anotherRelation ON relation.a=anotherRelation.a WHERE a > 10 AND ( b='spam' OR b='eggs' );"
 
 
-# test_app.test_truncate_longer_lines
+def test_truncate_longer_lines():
+    """Tests truncating aly string longer than 50 characters to just 50 characters including the ellipsis at the end."""
+    assert truncate_longer_lines("This is shorter than 50 characters.") == "This is shorter than 50 characters."
+    assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
 
 
 #SECTION: Dataframe Adjustment Tests

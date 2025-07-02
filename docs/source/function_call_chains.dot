@@ -1225,6 +1225,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_truncate_longer_lines [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1237,6 +1241,7 @@ digraph function_call_chains {
     test_format_list_for_stdout_with_generator -> format_list_for_stdout
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
+    test_truncate_longer_lines -> truncate_longer_lines
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1391,10 +1396,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_truncate_longer_lines [
-            style="dashed"
-            shape="box"
-        ]
         vendors_relation_after_test_update_database [
             style="dotted"
             shape="box"
@@ -1463,7 +1464,6 @@ digraph function_call_chains {
     test_upload_file_to_S3_bucket -> path_to_sample_file
     test_upload_file_to_S3_bucket -> remove_file_from_S3
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
-    test_truncate_longer_lines -> truncate_longer_lines
     vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     test_update_database -> query_database
