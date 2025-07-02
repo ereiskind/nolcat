@@ -874,7 +874,17 @@ def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_em
         return main_value + " because the SUSHI data didn't have a `Report_Items` section."
 
 
-# statements.attempted_SUSHI_call_with_invalid_dates_statement
+def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
+    """This statement indicates an attempter SUSHI call with an invalid date range.
+
+    Args:
+        end_date (datetime.date): the given end date of the range
+        start_date (datetime.date): the given start date of the range
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
 
 
 # statements.reports_with_no_usage_regex

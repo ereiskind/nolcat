@@ -335,21 +335,6 @@ def update_database_success_regex():
 
 
 #Section: SUSHI API Calls
-#Subsection: Logging/Output Statements
-#Subsection: Error Statements
-def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
-    """This statement indicates an attempter SUSHI call with an invalid date range.
-
-    Args:
-        end_date (datetime.date): the given end date of the range
-        start_date (datetime.date): the given start date of the range
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
-
-
 #Subsection: Success Regexes
 def reports_with_no_usage_regex():
     """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.

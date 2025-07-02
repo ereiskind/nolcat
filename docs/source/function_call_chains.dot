@@ -687,6 +687,7 @@ digraph function_call_chains {
         harvest_R5_SUSHI_success_statement [shape="box"]
         failed_SUSHI_call_statement [shape="box"]
         no_data_returned_by_SUSHI_statement [shape="box"]
+        attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
     }
 
 
@@ -764,7 +765,6 @@ digraph function_call_chains {
         database_function_skip_statements [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
-        attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
         reports_with_no_usage_regex [shape="box"]
         skip_test_due_to_SUSHI_error_regex [shape="box"]
     }
