@@ -691,6 +691,22 @@ def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_ty
         return f"Changing the JSON-like dictionary of {report_type} for {statistics_source_name} into a dataframe raised the error {error_message}."
     else:
         return f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error_message}."
+'''
+Called in `nolcat.models.StatisticsSources._harvest_single_report()` in return value
+    test_harvest_single_report -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
+'''
 
 
 # statements.successful_SUSHI_call_statement
