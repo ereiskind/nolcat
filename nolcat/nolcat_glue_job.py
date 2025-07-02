@@ -228,16 +228,6 @@ def format_list_for_stdout(stdout_list):
     else:
         return '\n'.join([str(file_path) for file_path in stdout_list])
 '''
-Called in `nolcat.statements.list_folder_contents_statement()` in the return value
-    test_download_nonstandard_usage_file -> list_folder_contents_statement -> format_list_for_stdout
-    test_run_custom_SQL_query -> run_custom_SQL_query -> list_folder_contents_statement -> format_list_for_stdout
-    test_use_predefined_SQL_query -> use_predefined_SQL_query -> list_folder_contents_statement -> format_list_for_stdout
-    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
-    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
-    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
-    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> list_folder_contents_statement -> format_list_for_stdout
-    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> list_folder_contents_statement -> format_list_for_stdout
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> list_folder_contents_statement -> format_list_for_stdout
 Called in `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()` in the return value
     test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
