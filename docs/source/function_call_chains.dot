@@ -691,6 +691,7 @@ digraph function_call_chains {
         reports_with_no_usage_regex [shape="box"]
         skip_test_due_to_SUSHI_error_regex [shape="box"]
         fixture_variable_value_declaration_statement [shape="box"]
+        Flask_error_statement [shape="box"]
     }
 
 
@@ -751,7 +752,6 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
-        Flask_error_statement [shape="box"]
         file_IO_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]

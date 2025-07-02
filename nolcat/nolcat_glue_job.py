@@ -990,7 +990,16 @@ def fixture_variable_value_declaration_statement(variable_name, variable_value):
         return f"The `{variable_name}` is {variable_value}."
 
 
-# statements.Flask_error_statement
+def Flask_error_statement(error_statement):
+    """This statement provides details on why the form couldn't be successfully submitted.
+
+    Args:
+        error_statement (dict): the error(s) returned by the form submission
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The form submission failed because of the following error(s):\n{'\n'.join([f"{k}: {v}" for k, v in error_statement.items()])}"
 
 
 # statements.database_function_skip_statements
