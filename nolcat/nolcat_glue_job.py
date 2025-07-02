@@ -903,7 +903,15 @@ Called in `assert` statement in test
 '''
 
 
-# statements.reports_with_no_usage_regex
+def reports_with_no_usage_regex():
+    """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.
+
+    In the pytest modules, the statements using this function are looking just for those SUSHI responses with neither data nor a SUSHI error, but this regex matches all return values that indicate no usage data was returned; having the `skip_test_due_to_SUSHI_error_regex()` comparison first in test functions means `failed_SUSHI_call_statement()` return values indicating no usage data are never compared to this regex.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
+    """
+    return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
 # statements.skip_test_due_to_SUSHI_error_regex
