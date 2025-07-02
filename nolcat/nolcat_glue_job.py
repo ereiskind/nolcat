@@ -960,6 +960,17 @@ def skip_test_due_to_SUSHI_error_regex():
         re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`
     """
     return re.compile(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?")
+'''
+Called in `tests/test_SUSHICallAndResponse` to compare to `SUSHICallAndResponse.make_SUSHI_call()` return value
+    test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
+    test_harvest_single_report_with_partial_date_range -> skip_test_due_to_SUSHI_error_regex
+    test_status_call -> skip_test_due_to_SUSHI_error_regex
+    test_reports_call -> skip_test_due_to_SUSHI_error_regex
+    test_PR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_DR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_TR_call_validity -> skip_test_due_to_SUSHI_error_regex
+    test_IR_call_validity -> skip_test_due_to_SUSHI_error_regex
+'''
 
 
 #SUBSECTION: Testing and Error Statements
