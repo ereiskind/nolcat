@@ -722,7 +722,21 @@ def successful_SUSHI_call_statement(call_path, statistics_source_name):
     return f"The call to the `{call_path}` endpoint for {statistics_source_name} was successful."
 
 
-# statements.harvest_R5_SUSHI_success_statement
+def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records, fiscal_year=None):
+    """This statement indicates a successful call to `StatisticsSources._harvest_R5_SUSHI()`.
+
+    Args:
+        statistics_source_name (str): the name of the statistics source
+        number_of_records (int): the number of records found by `StatisticsSources._harvest_R5_SUSHI()`
+        fiscal_year (str, optional): the fiscal year for the `StatisticsSources._harvest_R5_SUSHI()` call; default is `None`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if fiscal_year:
+        return f"The SUSHI harvest for statistics source {statistics_source_name} for FY {fiscal_year} successfully found {number_of_records} records."
+    else:
+        return f"The SUSHI harvest for statistics source {statistics_source_name} successfully found {number_of_records} records."
 
 
 # statements.failed_SUSHI_call_statement

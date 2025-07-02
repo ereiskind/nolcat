@@ -336,23 +336,6 @@ def update_database_success_regex():
 
 #Section: SUSHI API Calls
 #Subsection: Logging/Output Statements
-def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records, fiscal_year=None):
-    """This statement indicates a successful call to `StatisticsSources._harvest_R5_SUSHI()`.
-
-    Args:
-        statistics_source_name (str): the name of the statistics source
-        number_of_records (int): the number of records found by `StatisticsSources._harvest_R5_SUSHI()`
-        fiscal_year (str, optional): the fiscal year for the `StatisticsSources._harvest_R5_SUSHI()` call; default is `None`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if fiscal_year:
-        return f"The SUSHI harvest for statistics source {statistics_source_name} for FY {fiscal_year} successfully found {number_of_records} records."
-    else:
-        return f"The SUSHI harvest for statistics source {statistics_source_name} successfully found {number_of_records} records."
-
-
 #Subsection: Error Statements
 def failed_SUSHI_call_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
     """This statement indicates a failed call to `SUSHICallAndResponse.make_SUSHI_call()`.
