@@ -693,6 +693,7 @@ digraph function_call_chains {
         fixture_variable_value_declaration_statement [shape="box"]
         Flask_error_statement [shape="box"]
         database_function_skip_statements [shape="box"]
+        file_IO_statement [shape="box"]
     }
 
 
@@ -753,7 +754,6 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
-        file_IO_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
         failed_upload_to_S3_statement [shape="box"]

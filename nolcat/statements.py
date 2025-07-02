@@ -64,24 +64,6 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
 
 #Section: Files, File Organization, and File I/O
 #Subsection: Logging/Output Statements
-def file_IO_statement(name_of_file, origin_location, destination_location, upload=True):
-    """This statement prepares the name of a file to be subject to an I/O process, plus its origin and destination, for the logging output.
-
-    Args:
-        name_of_file (str): the name the file will have after the I/O process
-        origin_location (str or Path): the original file location with description
-        destination_location (str or Path): the new file location with description
-        upload (bool, optional): if the I/O operation is an upload (versus a download); default is `True`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if upload:
-        return f"About to upload file '{name_of_file}' from {origin_location} to {destination_location}."
-    else:
-        return f"About to download file '{name_of_file}' from {origin_location} to {destination_location}."
-
-
 def list_folder_contents_statement(file_path, alone=True):
     """This statement lists the contents of a folder for the logging output.
 
