@@ -644,6 +644,35 @@ def truncate_longer_lines(line):
         return line[:147] + "..."
     else:
         return line
+'''
+Called in `nolcat.app.update_database()` in return value if there was a problem with the update
+    add_access_stop_date -> update_database -> truncate_longer_lines
+    remove_access_stop_date -> update_database -> truncate_longer_lines
+    change_StatisticsSource -> update_database -> truncate_longer_lines
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> truncate_longer_lines
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
+    test_update_database -> update_database -> truncate_longer_lines
+        test_update_database_with_insert_statement -> update_database -> truncate_longer_lines
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> truncate_longer_lines
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> truncate_longer_lines
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
+    test_collect_fiscal_year_usage_statistics -> update_database -> truncate_longer_lines
+        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> truncate_longer_lines
+'''
 
 
 #SUBSECTION: SUSHI Statements and Regexes
