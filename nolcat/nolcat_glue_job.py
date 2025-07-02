@@ -709,7 +709,17 @@ Called in `nolcat.models.StatisticsSources._harvest_single_report()` in return v
 '''
 
 
-# statements.successful_SUSHI_call_statement
+def successful_SUSHI_call_statement(call_path, statistics_source_name):
+    """This statement indicates a successful call to `SUSHICallAndResponse.make_SUSHI_call()`.
+
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The call to the `{call_path}` endpoint for {statistics_source_name} was successful."
 
 
 # statements.harvest_R5_SUSHI_success_statement

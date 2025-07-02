@@ -336,19 +336,6 @@ def update_database_success_regex():
 
 #Section: SUSHI API Calls
 #Subsection: Logging/Output Statements
-def successful_SUSHI_call_statement(call_path, statistics_source_name):
-    """This statement indicates a successful call to `SUSHICallAndResponse.make_SUSHI_call()`.
-
-    Args:
-        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-        statistics_source_name (str): the name of the statistics source
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"The call to the `{call_path}` endpoint for {statistics_source_name} was successful."
-
-
 def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records, fiscal_year=None):
     """This statement indicates a successful call to `StatisticsSources._harvest_R5_SUSHI()`.
 
