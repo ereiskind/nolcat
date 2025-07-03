@@ -1088,6 +1088,137 @@ def database_query_fail_statement(error_message, value_type="load requested page
         return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:].replace(' raised', ', which raised')}"
     else:
         return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
+'''
+Called in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` via `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
+Called in `nolcat.SUSHICallAndResponse._evaluate_individual_SUSHI_exception()` via `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()`via `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
+Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` in return statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_check_if_data_in_database_no -> _check_if_data_in_database -> database_query_fail_statement
+    test_check_if_data_in_database_yes -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
+Called in `nolcat.app.check_if_data_already_in_COUNTERData()` in return value
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
+Called in return statements with minimal cascading changes
+    change_StatisticsSource -> database_query_fail_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> database_query_fail_statement
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> database_query_fail_statement
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> database_query_fail_statement
+    test_calculate_ACRL_61a -> calculate_ACRL_61a -> database_query_fail_statement
+    test_calculate_ACRL_61b -> calculate_ACRL_61b -> database_query_fail_statement
+    test_calculate_ARL_18 -> calculate_ARL_18 -> database_query_fail_statement
+    test_calculate_ARL_19 -> calculate_ARL_19 -> database_query_fail_statement
+    test_calculate_ARL_20 -> calculate_ARL_20 -> database_query_fail_statement
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> database_query_fail_statement
+'''
 
 
 # statements.return_value_from_query_statement
