@@ -1272,6 +1272,14 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
         str: the statement for outputting the arguments to logging
     """
     return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
+'''
+Called in return statements for SUSHI collection
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
+'''
 
 
 # statements.return_dataframe_from_query_statement
