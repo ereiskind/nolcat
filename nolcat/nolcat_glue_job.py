@@ -1465,6 +1465,29 @@ def change_single_field_dataframe_into_series(df):
         dtype=df[df.columns[0]].dtype,
         name=df.columns[0],
     )
+'''
+Called in `nolcat.app.create_AUCT_SelectField_options()` in return value
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+            test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+            test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+            test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+                test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+                    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+                    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+Called in tests
+    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
+    test_collect_sources_data -> change_single_field_dataframe_into_series
+'''
 
 
 # app.restore_boolean_values_to_boolean_field
