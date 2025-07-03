@@ -83,23 +83,6 @@ def upload_nonstandard_usage_file_success_regex():
 
 
 #Section: Database Interactions
-#Subsection: Logging/Output Statements
-def return_dataframe_from_query_statement(query_subject, df):
-    """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
-
-    Args:
-        query_subject (str): a short summary of what the query was for
-        df (dataframe): the dataframe returned by `nolcat.app.query_database()`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if df.shape[0] > 20:
-        return f"The beginning and the end of the query for {query_subject}:\n{df.head(10)}\n...\n{df.tail(10)}"
-    else:
-        return f"The result of the query for {query_subject}:\n{df}"
-
-
 #Subsection: Error Statements
 def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
