@@ -234,38 +234,6 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     assert cmp(path_to_sample_file, download_location)
 
 
-def test_create_AUCT_SelectField_options():
-    """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
-    df = pd.DataFrame(
-        [
-            [1, 1, "First Statistics Source", "2017"],
-            [2, 1, "Second Statistics Source", "2017"],
-            [1, 2, "First Statistics Source", "2018"],
-            [3, 2, "Third Statistics Source", "2018"],
-        ],
-        columns=["AUCT_statistics_source", "AUCT_fiscal_year", "statistics_source_name", "fiscal_year"],
-    )
-    result_list = [
-        (
-            (1, 1),
-            "First Statistics Source--FY 2017",
-        ),
-        (
-            (2, 1),
-            "Second Statistics Source--FY 2017",
-        ),
-        (
-            (1, 2),
-            "First Statistics Source--FY 2018",
-        ),
-        (
-            (3, 2),
-            "Third Statistics Source--FY 2018",
-        ),
-    ]
-    assert create_AUCT_SelectField_options(df) == result_list
-
-
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 

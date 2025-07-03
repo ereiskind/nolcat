@@ -186,7 +186,36 @@ def test_restore_boolean_values_to_boolean_field():
     assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
-# test_app.test_create_AUCT_SelectField_options
+def test_create_AUCT_SelectField_options():
+    """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
+    df = pd.DataFrame(
+        [
+            [1, 1, "First Statistics Source", "2017"],
+            [2, 1, "Second Statistics Source", "2017"],
+            [1, 2, "First Statistics Source", "2018"],
+            [3, 2, "Third Statistics Source", "2018"],
+        ],
+        columns=["AUCT_statistics_source", "AUCT_fiscal_year", "statistics_source_name", "fiscal_year"],
+    )
+    result_list = [
+        (
+            (1, 1),
+            "First Statistics Source--FY 2017",
+        ),
+        (
+            (2, 1),
+            "Second Statistics Source--FY 2017",
+        ),
+        (
+            (1, 2),
+            "First Statistics Source--FY 2018",
+        ),
+        (
+            (3, 2),
+            "Third Statistics Source--FY 2018",
+        ),
+    ]
+    assert create_AUCT_SelectField_options(df) == result_list
 
 
 # test_app.test_extract_value_from_single_value_df
