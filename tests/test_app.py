@@ -205,21 +205,6 @@ def test_first_new_PK_value():
     assert first_new_PK_value('vendors') == 8
 
 
-def test_restore_boolean_values_to_boolean_field():
-    """Tests the replacement of MySQL's single-bit int data type with pandas's `boolean` data type."""
-    tinyint_s = pd.Series(
-        [1, 0, pd.NA, 1],
-        dtype='Int8',  # pandas' single-bit int data type is used because it allows nulls; using the Python data type raises an error
-        name="boolean_values",
-    )
-    boolean_s = pd.Series(
-        [True, False, pd.NA, True],
-        dtype='boolean',
-        name="boolean_values",
-    )
-    assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
-
-
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(

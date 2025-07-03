@@ -171,7 +171,19 @@ def test_change_single_field_dataframe_into_series():
     assert_series_equal(change_single_field_dataframe_into_series(df), s)
 
 
-# test_app.test_restore_boolean_values_to_boolean_field
+def test_restore_boolean_values_to_boolean_field():
+    """Tests the replacement of MySQL's single-bit int data type with pandas's `boolean` data type."""
+    tinyint_s = pd.Series(
+        [1, 0, pd.NA, 1],
+        dtype='Int8',  # pandas' single-bit int data type is used because it allows nulls; using the Python data type raises an error
+        name="boolean_values",
+    )
+    boolean_s = pd.Series(
+        [True, False, pd.NA, True],
+        dtype='boolean',
+        name="boolean_values",
+    )
+    assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
 # test_app.test_create_AUCT_SelectField_options

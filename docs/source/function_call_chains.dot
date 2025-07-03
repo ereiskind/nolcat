@@ -1233,6 +1233,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_restore_boolean_values_to_boolean_field [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1247,6 +1251,7 @@ digraph function_call_chains {
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
     test_truncate_longer_lines -> truncate_longer_lines
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1385,10 +1390,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_restore_boolean_values_to_boolean_field [
-            style="dashed"
-            shape="box"
-        ]
         test_upload_file_to_S3_bucket [
             style="dashed"
             shape="folder"
@@ -1457,7 +1458,6 @@ digraph function_call_chains {
     test_download_file -> client
     test_download_file -> path_to_sample_file
     test_first_new_PK_value -> first_new_PK_value
-    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
