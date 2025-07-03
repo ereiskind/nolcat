@@ -1312,6 +1312,26 @@ def database_update_fail_statement(update_statement):
     message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
     print(message)
     return message
+'''
+Called in `nolcat.statements.add_data_success_and_update_database_fail_statement()` in return statement
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+Called in return statements with minimal cascading changes
+    add_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+    remove_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+    change_StatisticsSource -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+'''
 
 
 # statements.add_data_success_and_update_database_fail_statement
