@@ -1248,7 +1248,17 @@ def return_value_from_query_statement(return_value, type_of_query=None):
         return f"{main_value}{return_value} (type {type(return_value)}) was extracted."
 
 
-# statements.initialize_relation_class_object_statement
+def initialize_relation_class_object_statement(relation_class_name, object_value):
+    """This statement shows the value of a relation class object initialized using the values returned from a query.
+
+    Args:
+        relation_class_name (str): the name of the relation class
+        object_value (nolcat.models): a relation class object
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The following {relation_class_name} object was initialized based on the query results:\n{object_value}"
 
 
 # statements.unable_to_get_updated_primary_key_values_statement
