@@ -1366,7 +1366,15 @@ Called in mass SUSHI harvest functions in return statements
 
 
 #SUBSECTION: Result Statement Regexes
-# statements.load_data_into_database_success_regex
+def load_data_into_database_success_regex():
+    """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
+
+    The optional period at the end allows the regex to match when it's being used as the beginning of a statement.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
+    """
+    return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
 
 
 # statements.update_database_success_regex
