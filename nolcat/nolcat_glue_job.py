@@ -1334,7 +1334,18 @@ Called in return statements with minimal cascading changes
 '''
 
 
-# statements.add_data_success_and_update_database_fail_statement
+def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
+    """This statement indicates that data was successfully loaded into the database or the S3 bucket, but the corresponding update to the database failed.
+
+    Args:
+        load_data_response (str): the return value indicating success from `nolcat.app.load_data_into_database()` or `nolcat.app.upload_file_to_S3_bucket()`
+        update_statement (str): the SQL update statement
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    update_statement = database_update_fail_statement(update_statement)
+    return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
 
 
 #SUBSECTION: Result Statement Regexes
