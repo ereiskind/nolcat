@@ -33,21 +33,6 @@ def file_extensions_and_mimetypes():
     }
 
 
-#Section: General Statements
-#Subsection: Error Statements
-def unable_to_get_updated_primary_key_values_statement(relation, error):
-    """This statement prepares the error raised by `nolcat.app.first_new_PK_value()` for the logging output.
-
-    Args:
-        relation (str): the relation name
-        error (Exception): the Python Exception raised by `nolcat.app.first_new_PK_value()`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
-
-
 #Section: Files, File Organization, and File I/O
 #Subsection: Error Statements
 def failed_upload_to_S3_statement(file_name, error_message):
