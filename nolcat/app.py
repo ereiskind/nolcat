@@ -188,25 +188,6 @@ def first_new_PK_value(relation):
         return int(largest_PK_value) + 1
 
 
-def change_single_field_dataframe_into_series(df):
-    """The function for changing a dataframe with a single field into a series.
-
-    This function transforms any dataframe with a single non-index field into a series with the same index. Dataframes with multiindexes are accepted and those indexes are preserved.
-
-    Args:
-        df (dataframe): the dataframe to be transformed
-    
-    Returns:
-        pd.Series: a series object with the same exact data as the initial dataframe
-    """
-    return pd.Series(
-        data=squeeze(df.values),  # `squeeze` converts the numpy array from one column with n elements to an array with n elements
-        index=df.index,
-        dtype=df[df.columns[0]].dtype,
-        name=df.columns[0],
-    )
-
-
 def restore_boolean_values_to_boolean_field(series):
     """The function for converting the integer field used for Booleans in MySQL into a pandas `boolean` field.
 
