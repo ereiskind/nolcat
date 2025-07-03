@@ -1413,6 +1413,38 @@ def update_database_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
     """
     return re.compile(r"[Ss]uccessfully performed the update .+\.", flags=re.DOTALL)
+'''
+Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` and return value changed if matched
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database_success_regex
+        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database_success_regex
+        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+            test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+                test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
+Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` and return value changed if matched
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
+Called in `nolcat.models.ResourceSources` methods and return value changed if matched
+    add_access_stop_date -> update_database_success_regex
+    remove_access_stop_date -> update_database_success_regex
+    change_StatisticsSource -> update_database_success_regex
+Called in looping SUSHI calling functions in `nolcat.models` and return value changed if matched
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database_success_regex
+        test_collect_annual_usage_statistics -> update_database_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database_success_regex
+        test_collect_fiscal_year_usage_statistics -> update_database_success_regex
+Called in test assert statements
+    test_update_database -> update_database_success_regex
+    test_update_database_with_insert_statement -> update_database_success_regex
+'''
 
 
 #SUBSECTION: Common Dataframe Adjustments
