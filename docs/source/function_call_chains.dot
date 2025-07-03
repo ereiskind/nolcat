@@ -707,10 +707,12 @@ digraph function_call_chains {
         update_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
+        create_AUCT_SelectField_options [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
 
 
     subgraph cluster_app {
@@ -726,7 +728,6 @@ digraph function_call_chains {
         "create_app.download_file" [shape="cds"]
         first_new_PK_value [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
-        create_AUCT_SelectField_options [shape="box"]
         load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
         check_if_data_already_in_COUNTERData [shape="box"]
@@ -744,7 +745,6 @@ digraph function_call_chains {
     first_new_PK_value -> extract_value_from_single_value_df
     first_new_PK_value -> return_value_from_query_statement
     first_new_PK_value -> database_query_fail_statement
-    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
     query_database -> remove_IDE_spacing_from_statement
     check_if_data_already_in_COUNTERData -> query_database
     check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
