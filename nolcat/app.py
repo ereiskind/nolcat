@@ -188,20 +188,6 @@ def first_new_PK_value(relation):
         return int(largest_PK_value) + 1
 
 
-def restore_boolean_values_to_boolean_field(series):
-    """The function for converting the integer field used for Booleans in MySQL into a pandas `boolean` field.
-
-    MySQL stores Boolean values in a `TINYINT(1)` field, so any Boolean fields read from the database into a pandas dataframe appear as integer or float fields with the values `1`, `0`, and, if nulls are allowed, `pd.NA`. For simplicity, clarity, and consistency, turning these fields back into pandas `boolean` fields is often a good idea.
-
-    Args:
-        series (pd.Series): a Boolean field with numeric values and a numeric dtype from MySQL
-    
-    Returns:
-        pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
-    """
-    return series.astype('boolean')
-
-
 def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
     """The function for uploading files to a S3 bucket.
 

@@ -706,6 +706,7 @@ digraph function_call_chains {
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
+        restore_boolean_values_to_boolean_field [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
@@ -724,7 +725,6 @@ digraph function_call_chains {
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
         first_new_PK_value [shape="box"]
-        restore_boolean_values_to_boolean_field [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
         create_AUCT_SelectField_options [shape="box"]
         load_data_into_database [shape="cylinder"]
