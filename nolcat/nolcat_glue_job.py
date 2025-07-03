@@ -1529,6 +1529,21 @@ def create_AUCT_SelectField_options(df):
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
     return list(s.items())
+'''
+Called in `nolcat.initialization.upload_historical_non_COUNTER_usage()` for form creation
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+Called in `nolcat.ingest_usage.upload_non_COUNTER_reports()` for form creation
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+Called in `nolcat.view_usage.download_non_COUNTER_usage()` for form creation
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+        test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+'''
 
 
 # app.extract_value_from_single_value_df
