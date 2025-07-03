@@ -143,7 +143,32 @@ def test_truncate_longer_lines():
 
 
 #SECTION: Dataframe Adjustment Tests
-# test_app.test_change_single_field_dataframe_into_series
+def test_change_single_field_dataframe_into_series():
+    """Tests the transformation of a dataframe with a single field into a series."""
+    mx = pd.MultiIndex.from_frame(
+        pd.DataFrame(
+            [
+                [0, "a"],
+                [0, "b"],
+                [1, "a"],
+                [1, "c"],
+            ],
+            columns=["numbers", "letters"],
+        )
+    )
+    df = pd.DataFrame(
+        [[1], [2], [3], [4]],
+        index=mx,
+        dtype='int64',
+        columns=["test"],
+    )
+    s = pd.Series(
+        [1, 2, 3, 4],
+        index=mx,
+        dtype='int64',
+        name="test",
+    )
+    assert_series_equal(change_single_field_dataframe_into_series(df), s)
 
 
 # test_app.test_restore_boolean_values_to_boolean_field

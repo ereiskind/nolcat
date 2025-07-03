@@ -205,34 +205,6 @@ def test_first_new_PK_value():
     assert first_new_PK_value('vendors') == 8
 
 
-def test_change_single_field_dataframe_into_series():
-    """Tests the transformation of a dataframe with a single field into a series."""
-    mx = pd.MultiIndex.from_frame(
-        pd.DataFrame(
-            [
-                [0, "a"],
-                [0, "b"],
-                [1, "a"],
-                [1, "c"],
-            ],
-            columns=["numbers", "letters"],
-        )
-    )
-    df = pd.DataFrame(
-        [[1], [2], [3], [4]],
-        index=mx,
-        dtype='int64',
-        columns=["test"],
-    )
-    s = pd.Series(
-        [1, 2, 3, 4],
-        index=mx,
-        dtype='int64',
-        name="test",
-    )
-    assert_series_equal(change_single_field_dataframe_into_series(df), s)
-
-
 def test_restore_boolean_values_to_boolean_field():
     """Tests the replacement of MySQL's single-bit int data type with pandas's `boolean` data type."""
     tinyint_s = pd.Series(
