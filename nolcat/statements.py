@@ -113,33 +113,6 @@ def upload_nonstandard_usage_file_success_regex():
 
 #Section: Database Interactions
 #Subsection: Logging/Output Statements
-def return_value_from_query_statement(return_value, type_of_query=None):
-    """This statement shows an individual value or sequence of values returned by a call to `nolcat.app.query_database()`.
-
-    Args:
-        return_value (str, int, or tuple): the value(s) returned by `nolcat.app.query_database()`
-        type_of_query (str, optional): some descriptive information about the query; default is `None`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if type_of_query:
-        main_value = f"The {type_of_query} query returned a dataframe from which "
-    else:
-        main_value = f"The query returned a dataframe from which "
-    
-    if isinstance(return_value, tuple):
-        i = 0
-        for value in return_value:
-            if i==len(return_value)-1:
-                main_value = main_value + "and "
-            main_value = f"{main_value}{value} (type {type(value)}), "
-            i += 1
-        return f"{main_value[:-2]} were extracted."
-    else:
-        return f"{main_value}{return_value} (type {type(return_value)}) was extracted."
-
-
 def return_dataframe_from_query_statement(query_subject, df):
     """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
 
