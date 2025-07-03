@@ -1404,7 +1404,15 @@ Called in tests
 '''
 
 
-# statements.update_database_success_regex
+def update_database_success_regex():
+    """This regex object matches the success return statement for `nolcat.app.update_database()`.
+
+    The variable capitalization of the first letter allows the regex to match when it's being used as the latter half of a statement. The `re.DOTALL` flag is included because update statements include line breaks. The period at the end can be the period at the end of a sentence or the final period in the ellipsis from `nolcat.app.truncate_longer_lines()`.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
+    """
+    return re.compile(r"[Ss]uccessfully performed the update .+\.", flags=re.DOTALL)
 
 
 #SUBSECTION: Common Dataframe Adjustments
