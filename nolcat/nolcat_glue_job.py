@@ -1375,6 +1375,33 @@ def load_data_into_database_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
     return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
+'''
+Called in SUSHI calling functions in `nolcat.models`
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> load_data_into_database_success_regex
+        test_collect_annual_usage_statistics -> load_data_into_database_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
+        test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
+    test_collect_usage_statistics -> load_data_into_database_success_regex
+Called in `nolcat.initialization.collect_FY_and_vendor_data()` and return value changed if matched
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database_success_regex
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database_success_regex
+Called in `nolcat.initialization.collect_sources_data()` and return value changed if matched
+    test_collect_sources_data -> collect_sources_data -> load_data_into_database_success_regex
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> load_data_into_database_success_regex
+            test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> load_data_into_database_success_regex
+Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` and return value changed if matched
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+            test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+            test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
+Called in tests
+    test_load_data_into_database -> load_data_into_database_success_regex
+    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
+    test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
+        load_new_record_into_fiscalYears -> load_data_into_database_success_regex
+'''
 
 
 # statements.update_database_success_regex
