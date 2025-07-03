@@ -1502,6 +1502,13 @@ def restore_boolean_values_to_boolean_field(series):
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
     return series.astype('boolean')
+'''
+Called in tests
+    test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
+Called to create `nolcat.models.AnnualUsageCollectionTracking` object
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
+        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
+'''
 
 
 # app.create_AUCT_SelectField_options
