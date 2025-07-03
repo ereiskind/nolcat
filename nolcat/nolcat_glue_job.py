@@ -1346,6 +1346,23 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     """
     update_statement = database_update_fail_statement(update_statement)
     return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
+'''
+Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` in return statement
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+                        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+Called in mass SUSHI harvest functions in return statements
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
+'''
 
 
 #SUBSECTION: Result Statement Regexes
