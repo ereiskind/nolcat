@@ -696,6 +696,7 @@ digraph function_call_chains {
         file_IO_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
+        database_query_fail_statement [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
 
@@ -763,7 +764,6 @@ digraph function_call_chains {
         upload_nonstandard_usage_file_success_regex [shape="box"]
         return_value_from_query_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
-        database_query_fail_statement [shape="box"]
         database_update_fail_statement [shape="box"]
         add_data_success_and_update_database_fail_statement [shape="box"]
         load_data_into_database_success_regex [shape="box"]

@@ -157,22 +157,6 @@ def return_dataframe_from_query_statement(query_subject, df):
 
 
 #Subsection: Error Statements
-def database_query_fail_statement(error_message, value_type="load requested page"):
-    """This statement indicates the failure of a call to `nolcat.app.query_database()`.
-
-    Args:
-        error_message (str): the return statement indicating the failure of `nolcat.app.query_database()`
-        value_type (str, optional): the type of value that the query should have returned; default is ``
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if value_type == "load requested page":
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:].replace(' raised', ', which raised')}"
-    else:
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
-
-
 def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
 
