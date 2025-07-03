@@ -701,8 +701,10 @@ digraph function_call_chains {
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
+        database_update_fail_statement [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
+    database_update_fail_statement -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_app {
@@ -764,12 +766,10 @@ digraph function_call_chains {
         unable_to_delete_test_file_in_S3_statement [shape="box"]
         upload_file_to_S3_bucket_success_regex [shape="box"]
         upload_nonstandard_usage_file_success_regex [shape="box"]
-        database_update_fail_statement [shape="box"]
         add_data_success_and_update_database_fail_statement [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
     }
-    database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
 
 
