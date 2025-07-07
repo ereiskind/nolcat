@@ -384,11 +384,3 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert f"{file_name_stem}.json" in bucket_contents
     else:
         assert f"{file_name_stem}.txt" in bucket_contents
-
-
-def test_extract_value_from_single_value_df():
-    """Tests extracting the value from a dataframe containing a single value."""
-    assert extract_value_from_single_value_df(pd.DataFrame([[10]])) == 10
-    assert extract_value_from_single_value_df(pd.DataFrame([["hi"]])) == "hi"
-    assert extract_value_from_single_value_df(pd.DataFrame([[10.0]])) == 10
-    assert extract_value_from_single_value_df(pd.DataFrame([[None]])) == 0

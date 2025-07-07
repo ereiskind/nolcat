@@ -1241,6 +1241,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_extract_value_from_single_value_df [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1257,6 +1261,7 @@ digraph function_call_chains {
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1427,10 +1432,6 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
-        test_extract_value_from_single_value_df [
-            style="dashed"
-            shape="box"
-        ]
     }
     test_flask_app_creation -> app
     test_flask_client_creation -> client
@@ -1486,7 +1487,6 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
-    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
 
 
     subgraph cluster_test_bp_annual_stats {
