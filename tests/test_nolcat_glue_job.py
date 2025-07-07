@@ -228,9 +228,6 @@ def test_extract_value_from_single_value_df():
 
 
 #SECTION: MySQL Interaction Tests
-# test_app.test_SQLAlchemy_engine_creation
-
-
 # test_app.test_load_data_into_database
 
 
