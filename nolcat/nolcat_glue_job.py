@@ -5,6 +5,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 import boto3
 import pandas as pd
+from numpy import squeeze
 
 from .logging_config import *
 

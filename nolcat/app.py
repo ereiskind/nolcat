@@ -9,7 +9,6 @@ from flask import Flask
 from flask import render_template
 from flask import send_file
 import pandas as pd
-from numpy import squeeze
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from .logging_config import *

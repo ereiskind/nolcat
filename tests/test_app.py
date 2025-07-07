@@ -8,7 +8,6 @@ from filecmp import cmp
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from pandas.testing import assert_series_equal
 import sqlalchemy
 import flask
 

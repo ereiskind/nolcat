@@ -3,6 +3,7 @@
 
 import pytest
 from datetime import datetime
+from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.logging_config import *
