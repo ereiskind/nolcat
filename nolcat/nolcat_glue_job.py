@@ -1547,7 +1547,25 @@ Called in `nolcat.view_usage.download_non_COUNTER_usage()` for form creation
 '''
 
 
-# app.extract_value_from_single_value_df
+def extract_value_from_single_value_df(df, expect_int=True):
+    """The value in a dataframe containing a single value.
+
+    Since the single-value dataframes are often numerical query results, this function includes the type juggling to convert floats to ints and nulls to zeros. To ensure null values are preserved when strings are requested, the `expect_int` parameter is used.
+
+    Args:
+        df (dataframe): a dataframe with a single value
+        expect_int (bool, optional): if the return value is expected to have a numerical data type; default is True
+    
+    Returns:
+        int or str: the value in the dataframe
+    """
+    return_value = df.iloc[0].iloc[0]
+    if expect_int:
+        if return_value is None:
+            return_value = int(0)
+        elif isinstance(return_value, float):
+            return_value = int(return_value)
+    return return_value
 
 
 #SUBSECTION: MySQL Interaction

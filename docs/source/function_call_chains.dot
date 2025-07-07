@@ -708,6 +708,7 @@ digraph function_call_chains {
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
         create_AUCT_SelectField_options [shape="box"]
+        extract_value_from_single_value_df [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
@@ -733,7 +734,6 @@ digraph function_call_chains {
         check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
-        extract_value_from_single_value_df [shape="box"]
     }
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
