@@ -76,24 +76,6 @@ def test_404_page(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-@pytest.mark.dependency()
-def test_load_data_into_database(engine, vendors_relation):
-    """Tests loading data into a relation.
-
-    Testing the helper function for loading data into the database also confirms that the database and program are connected.
-    """
-    result = load_data_into_database(
-        df=vendors_relation,
-        relation='vendors',
-        engine=engine,
-        index_field_name='vendor_ID',
-    )
-    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
-    assert regex_match_object is not None
-    assert int(regex_match_object.group(1)) == 8
-    assert regex_match_object.group(2) == "vendors"
-
-
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_query_database(engine, vendors_relation):
     """Tests getting data from the database through a SQL query.

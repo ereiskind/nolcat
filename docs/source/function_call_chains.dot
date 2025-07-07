@@ -1245,6 +1245,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_load_data_into_database [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1262,6 +1266,10 @@ digraph function_call_chains {
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_load_data_into_database -> load_data_into_database
+    test_load_data_into_database -> load_data_into_database_success_regex
+    test_load_data_into_database -> engine
+    test_load_data_into_database -> vendors_relation_in_conftest
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1380,10 +1388,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_load_data_into_database [
-            style="dashed"
-            shape="box"
-        ]
         test_query_database [
             style="dashed"
             shape="box"
@@ -1439,10 +1443,6 @@ digraph function_call_chains {
     test_homepage -> "create_app.homepage"
     test_homepage -> client
     test_404_page -> client
-    test_load_data_into_database -> load_data_into_database
-    test_load_data_into_database -> load_data_into_database_success_regex
-    test_load_data_into_database -> engine
-    test_load_data_into_database -> vendors_relation_in_conftest
     test_query_database -> state_data_types_in_vendors
     test_query_database -> query_database
     test_query_database -> engine

@@ -228,7 +228,22 @@ def test_extract_value_from_single_value_df():
 
 
 #SECTION: MySQL Interaction Tests
-# test_app.test_load_data_into_database
+@pytest.mark.dependency()
+def test_load_data_into_database(engine, vendors_relation):
+    """Tests loading data into a relation.
+
+    Testing the helper function for loading data into the database also confirms that the database and program are connected.
+    """
+    result = load_data_into_database(
+        df=vendors_relation,
+        relation='vendors',
+        engine=engine,
+        index_field_name='vendor_ID',
+    )
+    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
+    assert regex_match_object is not None
+    assert int(regex_match_object.group(1)) == 8
+    assert regex_match_object.group(2) == "vendors"
 
 
 # test_app.test_loading_connected_data_into_other_relation
