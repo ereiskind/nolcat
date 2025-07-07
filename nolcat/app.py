@@ -259,38 +259,6 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         return message
 
 
-def load_data_into_database(df, relation, engine, index_field_name=None):
-    """A wrapper for the pandas `to_sql()` method that includes the error handling.
-
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
-
-    Args:
-        df (dataframe): the data to load into the database
-        relation (str): the relation the data is being loaded into
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        index_field_name (str or list of str): the name of the field(s) in the relation that the dataframe index values should be loaded into; default is `None`, same as in the wrapped method, which means the index field name(s) are matched to field(s) in the relation
-
-    Returns:
-        str: a message indicating success or including the error raised by the attempt to load the data
-    """
-    log.info(f"Starting `load_data_into_database()` for relation {relation}.")
-    try:
-        number_of_records = df.to_sql(
-            name=relation,
-            con=engine,
-            if_exists='append',
-            chunksize=1000,
-            index_label=index_field_name,
-        )
-        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
-        log.info(message)
-        return message
-    except Exception as error:
-        message = f"Loading data into the {relation} relation raised the error {error}."
-        log.error(message)
-        return message
-
-
 def query_database(query, engine, index=None):
     """A wrapper for the `pd.read_sql()` method that includes the error handling.
 
