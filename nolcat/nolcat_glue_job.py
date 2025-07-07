@@ -1767,6 +1767,29 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
         message = f"Loading data into the {relation} relation raised the error {error}."
         log.error(message)
         return message
+'''
+Called in methods calling `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` to add data to database
+    test_collect_usage_statistics -> collect_usage_statistics -> load_data_into_database
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> load_data_into_database
+            test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> load_data_into_database
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> load_data_into_database
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> load_data_into_database
+Called in initialization blueprint route functions
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database
+    test_collect_sources_data -> collect_sources_data -> load_data_into_database
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
+Called in `nolcat.ingest_usage.upload_COUNTER_data()` to add data to database
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> load_data_into_database
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> load_data_into_database
+Called in other functions to add data to database
+    change_StatisticsSource -> load_data_into_database
+    test_load_data_into_database -> load_data_into_database
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    load_new_record_into_fiscalYears -> load_data_into_database
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> load_data_into_database
+'''
 
 
 # app.query_database
