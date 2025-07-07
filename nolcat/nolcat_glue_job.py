@@ -1566,6 +1566,174 @@ def extract_value_from_single_value_df(df, expect_int=True):
         elif isinstance(return_value, float):
             return_value = int(return_value)
     return return_value
+'''
+Called in `nolcat.app.update_database()` impacting return value
+    add_access_stop_date -> update_database -> extract_value_from_single_value_df
+    remove_access_stop_date -> update_database -> extract_value_from_single_value_df
+    change_StatisticsSource -> update_database -> extract_value_from_single_value_df
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> extract_value_from_single_value_df
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_update_database_with_insert_statement -> update_database -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df
+        test_collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df
+Called in `nolcat.app.first_new_PK_value()` in return value
+    test_first_new_PK_value -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
+    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._save_raw_Response_text()` to get value passed to `nolcat.app.save_unconverted_data_via_upload()`
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+            test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+            test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_TR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+        test_IR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
+Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` impacting return value
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_check_if_data_in_database_no -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_check_if_data_in_database_yes -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
+Called in `nolcat.app.check_if_data_already_in_COUNTERData()` impacting return value
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+        test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+Called in `tests.test_StatisticsSources.StatisticsSources_fixture()` yield object
+    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_check_if_data_in_database_no -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_check_if_data_in_database_yes -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_harvest_single_report -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_harvest_R5_SUSHI -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+                test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture -> extract_value_from_single_value_df
+            test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
+                test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+    test_collect_usage_statistics -> StatisticsSources_fixture -> extract_value_from_single_value_df
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
+Other calls
+    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
+    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
+    test_calculate_ACRL_61a -> calculate_ACRL_61a -> extract_value_from_single_value_df
+    test_calculate_ACRL_61b -> calculate_ACRL_61b -> extract_value_from_single_value_df
+    test_calculate_ARL_18 -> calculate_ARL_18 -> extract_value_from_single_value_df
+    test_calculate_ARL_19 -> calculate_ARL_19 -> extract_value_from_single_value_df
+    test_calculate_ARL_20 -> calculate_ARL_20 -> extract_value_from_single_value_df
+    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
+    test_status_call -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_status_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_reports_call -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_reports_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_PR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_DR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+    test_call_with_invalid_credentials -> StatisticsSource_instance_name -> extract_value_from_single_value_df
+'''
 
 
 #SUBSECTION: MySQL Interaction
