@@ -4,11 +4,13 @@
 import pytest
 from datetime import datetime
 from pandas.testing import assert_series_equal
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.logging_config import *
 from nolcat.nolcat_glue_job import *
 #from nolcat.app import *
+from nolcat.models import *
 #from nolcat.statements import *
 #from nolcat.annual_stats import *
 #from nolcat.<blueprint> import *
@@ -246,7 +248,67 @@ def test_load_data_into_database(engine, vendors_relation):
     assert regex_match_object.group(2) == "vendors"
 
 
-# test_app.test_loading_connected_data_into_other_relation
+@pytest.mark.dependency(depends=['test_query_database'])
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
+    """Tests loading data into a second relation connected with foreign keys and performing a joined query.
+
+    This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
+    """
+    df_dtypes = {
+        "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
+        "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
+        "vendor_name": Vendors.state_data_types()['vendor_name'],
+        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
+    }
+
+    check = load_data_into_database(
+        df=statisticsSources_relation,
+        relation='statisticsSources',
+        engine=engine,
+        index_field_name='statistics_source_ID',
+    )
+    if not load_data_into_database_success_regex().fullmatch(check):
+        pytest.skip(database_function_skip_statements(check))
+    retrieved_data = query_database(
+        query="""
+            SELECT
+                statisticsSources.statistics_source_ID,
+                statisticsSources.statistics_source_name,
+                statisticsSources.statistics_source_retrieval_code,
+                vendors.vendor_name,
+                vendors.alma_vendor_code
+            FROM statisticsSources
+            JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
+            ORDER BY statisticsSources.statistics_source_ID;
+        """,
+        engine=engine,
+        index='statistics_source_ID'
+        # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+    )
+    if isinstance(retrieved_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_data))
+    retrieved_data = retrieved_data.astype(df_dtypes)
+
+    expected_output_data = pd.DataFrame(
+        [
+            ["ProQuest", "1", "ProQuest", None],
+            ["EBSCOhost", "2", "EBSCO", None],
+            ["Gale Cengage Learning", None, "Gale", None],
+            ["Duke UP", "3", "Duke UP", None],
+            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
+            ["DemographicsNow", None, "Gale", None],
+            ["Ebook Central", None, "ProQuest", None],
+            ["Peterson's Career Prep", None, "Gale", None],
+            ["Peterson's Test Prep", None, "Gale", None],
+            ["Peterson's Prep", None, "Gale", None],
+            ["Pivot", None, "ProQuest", None],
+            ["Ulrichsweb", None, "ProQuest", None],
+        ],
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
+    )
+    expected_output_data.index.name = "statistics_source_ID"
+    expected_output_data = expected_output_data.astype(df_dtypes)
+    assert_frame_equal(retrieved_data, expected_output_data)
 
 
 # test_app.test_query_database
