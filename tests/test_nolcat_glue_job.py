@@ -309,6 +309,13 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
     assert_frame_equal(retrieved_data, expected_output_data)
+'''
+Makes calls for data IO
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    test_loading_connected_data_into_other_relation -> query_database -> remove_IDE_spacing_from_statement
+Makes call to for match purposes
+    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+'''
 
 
 # test_app.test_query_database
