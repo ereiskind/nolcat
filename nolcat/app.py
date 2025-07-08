@@ -259,37 +259,6 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         return message
 
 
-def query_database(query, engine, index=None):
-    """A wrapper for the `pd.read_sql()` method that includes the error handling.
-
-    Args:
-        query (str): the SQL query
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        index (str or list of str): the field(s) in the resulting dataframe to use as the index; default is `None`, same as in the wrapped method
-    
-    Returns:
-        dataframe: the result of the query
-        str: a message including the error raised by the attempt to run the query
-    """
-    log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
-    try:
-        df = pd.read_sql(
-            sql=query,
-            con=engine,
-            index_col=index,
-        )
-        if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        else:
-            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        return df
-    except Exception as error:
-        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
-        log.error(message)
-        return message
-
-
 def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 

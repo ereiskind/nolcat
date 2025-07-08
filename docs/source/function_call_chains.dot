@@ -710,11 +710,13 @@ digraph function_call_chains {
         create_AUCT_SelectField_options [shape="box"]
         extract_value_from_single_value_df [shape="box"]
         load_data_into_database [shape="cylinder"]
+        query_database [shape="cylinder"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
     create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    query_database -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_app {
@@ -730,7 +732,6 @@ digraph function_call_chains {
         "create_app.download_file" [shape="cds"]
         first_new_PK_value [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
-        query_database [shape="cylinder"]
         check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
@@ -745,7 +746,6 @@ digraph function_call_chains {
     first_new_PK_value -> extract_value_from_single_value_df
     first_new_PK_value -> return_value_from_query_statement
     first_new_PK_value -> database_query_fail_statement
-    query_database -> remove_IDE_spacing_from_statement
     check_if_data_already_in_COUNTERData -> query_database
     check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
     check_if_data_already_in_COUNTERData -> format_list_for_stdout
