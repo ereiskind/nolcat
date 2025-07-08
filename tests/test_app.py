@@ -76,21 +76,6 @@ def test_404_page(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-@pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_query_database(engine, vendors_relation):
-    """Tests getting data from the database through a SQL query.
-
-    This test performs a `SELECT *` query on the relation that had data loaded into it in the previous test, confirming that the function works and that the database and program are connected to allow CRUD operations.
-    """
-    retrieved_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
-    assert_frame_equal(vendors_relation, retrieved_vendors_data)
-
-
 def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
     page = client.get(

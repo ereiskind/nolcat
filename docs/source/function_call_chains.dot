@@ -1253,6 +1253,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_query_database [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1282,6 +1286,10 @@ digraph function_call_chains {
     test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
     test_loading_connected_data_into_other_relation -> engine
     test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
+    test_query_database -> state_data_types_in_vendors
+    test_query_database -> query_database
+    test_query_database -> engine
+    test_query_database -> vendors_relation_in_conftest
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1400,10 +1408,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_query_database [
-            style="dashed"
-            shape="box"
-        ]
         test_download_file [
             style="dashed"
             shape="box"
@@ -1451,10 +1455,6 @@ digraph function_call_chains {
     test_homepage -> "create_app.homepage"
     test_homepage -> client
     test_404_page -> client
-    test_query_database -> state_data_types_in_vendors
-    test_query_database -> query_database
-    test_query_database -> engine
-    test_query_database -> vendors_relation_in_conftest
     test_download_file -> "create_app.download_file"
     test_download_file -> file_extensions_and_mimetypes
     test_download_file -> client
