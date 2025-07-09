@@ -1257,6 +1257,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_first_new_PK_value [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1290,6 +1294,7 @@ digraph function_call_chains {
     test_query_database -> query_database
     test_query_database -> engine
     test_query_database -> vendors_relation_in_conftest
+    test_first_new_PK_value -> first_new_PK_value
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1412,10 +1417,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_first_new_PK_value [
-            style="dashed"
-            shape="box"
-        ]
         test_upload_file_to_S3_bucket [
             style="dashed"
             shape="folder"
@@ -1459,7 +1460,6 @@ digraph function_call_chains {
     test_download_file -> file_extensions_and_mimetypes
     test_download_file -> client
     test_download_file -> path_to_sample_file
-    test_first_new_PK_value -> first_new_PK_value
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex

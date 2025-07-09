@@ -102,12 +102,6 @@ def test_download_file(client, path_to_sample_file):  #ToDo: If method for inter
 
 
 #Section: Test Helper Functions
-@pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_first_new_PK_value():
-    """Tests the retrieval of a relation's next primary key value."""
-    assert first_new_PK_value('vendors') == 8
-
-
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(

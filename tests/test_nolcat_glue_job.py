@@ -333,7 +333,10 @@ def test_query_database(engine, vendors_relation):
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-# test_app.test_first_new_PK_value
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_first_new_PK_value():
+    """Tests the retrieval of a relation's next primary key value."""
+    assert first_new_PK_value('vendors') == 8
 
 
 # Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
