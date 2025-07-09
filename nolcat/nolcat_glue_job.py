@@ -1821,6 +1821,296 @@ def query_database(query, engine, index=None):
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
+'''
+Called in `nolcat.app.update_database()`
+    add_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    remove_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    change_StatisticsSource -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_update_database -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_update_database_with_insert_statement -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.app.first_new_PK_value()`
+    test_first_new_PK_value -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` to determine return value
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_no -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_yes -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()` via `nolcat.SUSHICallAndResponse._handle_individual_SUSHI_exception()` impacting return value and used to create `nolcat.models.StatisticsSources` object for the `nolcat.models.StatisticsSources.add_note()` method
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.app.check_if_data_already_in_COUNTERData()` to determine return value
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+Called in `tests.test_FiscalYears.FY2020_FiscalYears_object()` to create object yielded by fixture
+    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ACRL_61a -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ACRL_61b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_18 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_19 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_20 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+Called in `tests.stest_StatisticsSources.StatisticsSources_fixture()` impacting returned yield value
+    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_no -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_in_database_yes -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
+Called in `tests.test_SUSHICallAndResponse.StatisticsSource_instance_name()` to get yielded value
+    test_status_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_status_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_reports_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_PR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_DR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_TR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_IR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+    test_call_with_invalid_credentials -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
+Other Calls
+    change_StatisticsSource -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
+    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_nonstandard_usage_file -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
+    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
+        test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
+    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
+        test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
+    test_loading_connected_data_into_other_relation -> query_database -> remove_IDE_spacing_from_statement
+    test_update_database_with_insert_statement -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> show_fiscal_year_details -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_Excel -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_SQL_insert -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
+        test_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
+        test_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_FY_and_vendor_data -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> query_database -> remove_IDE_spacing_from_statement
+    test_run_custom_SQL_query -> run_custom_SQL_query -> query_database -> remove_IDE_spacing_from_statement
+    test_use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
+    test_use_predefined_SQL_query -> use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
+    test_start_query_wizard -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_query_wizard_sort_redirect -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ACRL_61a -> calculate_ACRL_61a -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ACRL_61b -> calculate_ACRL_61b -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_18 -> calculate_ARL_18 -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_19 -> calculate_ARL_19 -> query_database -> remove_IDE_spacing_from_statement
+    test_calculate_ARL_20 -> calculate_ARL_20 -> query_database -> remove_IDE_spacing_from_statement
+    test_create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
+    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
+    test_check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
+'''
 
 
 # app.first_new_PK_value
