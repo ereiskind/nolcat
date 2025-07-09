@@ -2113,7 +2113,54 @@ Other Calls
 '''
 
 
-# app.first_new_PK_value
+def first_new_PK_value(relation):
+    """The function for getting the next value in the primary key sequence.
+
+    The default value of the SQLAlchemy `autoincrement` argument in the field constructor method adds `AUTO_INCREMENT` to the primary key field in the data definition language. Loading values, even ones following the sequential numbering that auto-incrementation would use, alters the relation's `AUTO_INCREMENT` attribute, causing a primary key duplication error. Stopping this error requires removing auto-incrementation from the primary key fields (by setting the `autoincrement` argument in the field constructor method to `False`); without the auto-incrementation, however, the primary key values must be included as the dataframe's record index field. This function finds the highest value in the primary key field of the given relation and returns the next integer.
+
+    Args:
+        relation (str): the name of the relation being checked
+    
+    Returns:
+        int: the first primary key value in the data to be uploaded to the relation
+        str: a message including the error raised by the attempt to run the query
+    """
+    log.info(f"Starting `first_new_PK_value()` for the {relation} relation.")
+    if relation == 'fiscalYears':
+        PK_field = 'fiscal_year_ID'
+    elif relation == 'vendors':
+        PK_field = 'vendor_ID'
+    elif relation == 'vendorNotes':
+        PK_field = 'vendor_notes_ID'
+    elif relation == 'statisticsSources':
+        PK_field = 'statistics_source_ID'
+    elif relation == 'statisticsSourceNotes':
+        PK_field = 'statistics_source_notes_ID'
+    elif relation == 'resourceSources':
+        PK_field = 'resource_source_ID'
+    elif relation == 'resourceSourceNotes':
+        PK_field = 'resource_source_notes_ID'
+    elif relation == 'COUNTERData':
+        PK_field = 'COUNTER_data_ID'
+    
+    largest_PK_value = query_database(
+        query=f"""
+            SELECT {PK_field} FROM {relation}
+            ORDER BY {PK_field} DESC
+            LIMIT 1;
+        """,
+        engine=db.engine,
+    )
+    if isinstance(largest_PK_value, str):
+        log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
+        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
+    elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+        log.debug(f"The {relation} relation is empty.")
+        return 0
+    else:
+        largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
+        log.debug(return_value_from_query_statement(largest_PK_value))
+        return int(largest_PK_value) + 1
 
 
 # app.check_if_data_already_in_COUNTERData
