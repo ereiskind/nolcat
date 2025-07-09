@@ -712,6 +712,7 @@ digraph function_call_chains {
         load_data_into_database [shape="cylinder"]
         query_database [shape="cylinder"]
         first_new_PK_value [shape="box"]
+        check_if_data_already_in_COUNTERData [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
@@ -722,6 +723,11 @@ digraph function_call_chains {
     first_new_PK_value -> extract_value_from_single_value_df
     first_new_PK_value -> return_value_from_query_statement
     first_new_PK_value -> database_query_fail_statement
+    check_if_data_already_in_COUNTERData -> query_database
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    check_if_data_already_in_COUNTERData -> format_list_for_stdout
+    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
+    check_if_data_already_in_COUNTERData -> database_query_fail_statement
 
 
     subgraph cluster_app {
@@ -736,7 +742,6 @@ digraph function_call_chains {
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
         upload_file_to_S3_bucket [shape="folder"]
-        check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
     }
@@ -746,11 +751,6 @@ digraph function_call_chains {
     create_app -> internal_server_error
     "create_app.create_db" -> create_app
     "create_app.download_file" -> file_extensions_and_mimetypes
-    check_if_data_already_in_COUNTERData -> query_database
-    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    check_if_data_already_in_COUNTERData -> format_list_for_stdout
-    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
-    check_if_data_already_in_COUNTERData -> database_query_fail_statement
     update_database -> query_database
     update_database -> truncate_longer_lines
     update_database -> extract_value_from_single_value_df
