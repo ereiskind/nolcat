@@ -2161,6 +2161,24 @@ def first_new_PK_value(relation):
         largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
         log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
+'''
+Called in `nolcat.models.StatisticsSources.collect_usage_statistics()` impacting loaded data and return statement
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+Called in other methods for calling `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+Called in `nolcat.ingest_usage.upload_COUNTER_data()` impacting loaded data
+    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+Called in initialization blueprint
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
+'''
 
 
 # app.check_if_data_already_in_COUNTERData
