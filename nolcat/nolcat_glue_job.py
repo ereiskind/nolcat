@@ -2430,6 +2430,15 @@ def failed_upload_to_S3_statement(file_name, error_message):
         str: the statement for outputting the arguments to logging
     """
     return f"Uploading the file {file_name} to S3 failed because {error_message[0].lower()}{error_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+'''
+Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` as possible return value
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
+'''
 
 
 # statements.unable_to_delete_test_file_in_S3_statement
