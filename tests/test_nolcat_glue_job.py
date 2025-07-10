@@ -367,7 +367,23 @@ def vendors_relation_after_test_update_database():
     yield df
 
 
-# test_app.test_update_database
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_update_database(engine, vendors_relation_after_test_update_database):
+    """Tests updating data in the database through a SQL update statement."""
+    update_result = update_database(
+        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+        engine=engine,
+    )
+    retrieved_updated_vendors_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
+    )
+    if isinstance(retrieved_updated_vendors_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert_frame_equal(vendors_relation_after_test_update_database, retrieved_updated_vendors_data)
 
 
 # test_app.vendors_relation_after_test_update_database_with_insert_statement

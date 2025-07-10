@@ -134,25 +134,6 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 
-@pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, vendors_relation_after_test_update_database):
-    """Tests updating data in the database through a SQL update statement."""
-    update_result = update_database(
-        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
-        engine=engine,
-    )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
-    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(vendors_relation_after_test_update_database, retrieved_updated_vendors_data)
-
-
 @pytest.fixture
 def vendors_relation_after_test_update_database_with_insert_statement():
     """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
