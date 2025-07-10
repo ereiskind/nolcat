@@ -342,7 +342,29 @@ def test_first_new_PK_value():
 # Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
 
 
-# test_app.vendors_relation_after_test_update_database
+@pytest.fixture
+def vendors_relation_after_test_update_database():
+    """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
 
 
 # test_app.test_update_database
