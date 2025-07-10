@@ -386,7 +386,31 @@ def test_update_database(engine, vendors_relation_after_test_update_database):
     assert_frame_equal(vendors_relation_after_test_update_database, retrieved_updated_vendors_data)
 
 
-# test_app.vendors_relation_after_test_update_database_with_insert_statement
+@pytest.fixture
+def vendors_relation_after_test_update_database_with_insert_statement():
+    """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+            ["A Vendor", None],
+            ["Another Vendor", "1"],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
 
 
 # test_app.test_update_database_with_insert_statement

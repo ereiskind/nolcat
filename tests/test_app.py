@@ -6,7 +6,6 @@ from datetime import datetime
 from random import choice
 from filecmp import cmp
 from bs4 import BeautifulSoup
-import pandas as pd
 from pandas.testing import assert_frame_equal
 import sqlalchemy
 import flask
@@ -132,33 +131,6 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
-
-
-@pytest.fixture
-def vendors_relation_after_test_update_database_with_insert_statement():
-    """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
-
-    Yields:
-        dataframe: data matching the updated `vendors` relation
-    """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
-            ["A Vendor", None],
-            ["Another Vendor", "1"],
-        ],
-        columns=["vendor_name", "alma_vendor_code"],
-    )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
