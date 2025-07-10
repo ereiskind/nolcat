@@ -3,11 +3,9 @@ from pathlib import Path
 from datetime import datetime
 import json
 import re
-from sqlalchemy import text
 from flask import Flask
 from flask import render_template
 from flask import send_file
-import pandas as pd
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from .logging_config import *
@@ -206,112 +204,6 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
-
-
-def update_database(update_statement, engine):
-    """A wrapper for the `Engine.execute()` method that includes the error handling.
-
-    The `execute()` method of the `sqlalchemy.engine.Engine` class automatically commits the changes made by the statement.
-
-    Args:
-        update_statement (str): the SQL update statement
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-    
-    Returns:
-        str: a message indicating success or including the error raised by the attempt to update the data
-    """
-    update_statement = remove_IDE_spacing_from_statement(update_statement)
-    display_update_statement = truncate_longer_lines(update_statement)
-    log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
-
-    # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
-    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
-    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
-    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
-    if UPDATE_regex:
-        query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
-        else:
-            log.debug(f"The records to be updated:\n{before_df}")
-    elif INSERT_regex:
-        query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
-        else:
-            before_number = extract_value_from_single_value_df(before_df)
-            log.debug(f"There are {before_number} records in the relation to be updated.")
-    elif TRUNCATE_regex:
-        log.debug(f"Since the change caused by TRUNCATE is absolute, not relative, the before condition of the relation doesn't need to be captured for comparison.")
-    else:
-        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
-
-    try:
-        with engine.connect() as connection:
-            try:
-                connection.execute(text(update_statement))
-                connection.commit()
-            except Exception as error:
-                message = f"Running the update statement {display_update_statement} raised the error {error}."
-                log.error(message)
-                return message
-    except Exception as error:
-        message = f"Opening a connection with engine {engine} raised the error {error}."
-        log.error(message)
-        return message
-    
-    if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
-        else:
-            log.debug(f"The records after being updated:\n{after_df}")
-            if before_df.equals(after_df):
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message
-    elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
-        else:
-            after_number = extract_value_from_single_value_df(after_df)
-            log.debug(f"There are {after_number} records in the relation that was updated.")
-            if before_number >= after_number:
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message
-    elif TRUNCATE_regex:
-        df = query_database(
-            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):
-            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
-        else:
-            if extract_value_from_single_value_df(df) > 0:
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message
-    else:
-        log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
-    message = f"Successfully performed the update {display_update_statement}."
-    log.info(message)
-    return message
 
 
 def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
