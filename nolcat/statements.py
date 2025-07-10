@@ -34,20 +34,6 @@ def file_extensions_and_mimetypes():
 
 
 #Section: Files, File Organization, and File I/O
-#Subsection: Error Statements
-def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
-    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
-
-    Args:
-        file_name (str): the final part of the name of the file in S3
-        error_message (str): the AWS error message returned by the attempt to delete the file
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Trying to remove file {file_name} from the S3 bucket raised the error {error_message}."
-
-
 #Subsection: Success Regexes
 def upload_file_to_S3_bucket_success_regex():
     """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
