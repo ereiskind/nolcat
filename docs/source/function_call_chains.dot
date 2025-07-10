@@ -1273,6 +1273,10 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
+        test_update_database_with_insert_statement [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1316,6 +1320,13 @@ digraph function_call_chains {
     test_update_database -> engine
     test_update_database -> vendors_relation_after_test_update_database
     vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> query_database
+    test_update_database_with_insert_statement -> update_database
+    test_update_database_with_insert_statement -> database_function_skip_statements
+    test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> engine
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1442,10 +1453,6 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
-        test_update_database_with_insert_statement [
-            style="dashed"
-            shape="box"
-        ]
         test_prepare_HTML_page_for_comparison [
             style="dashed"
             shape="box"
@@ -1474,13 +1481,6 @@ digraph function_call_chains {
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
     test_upload_file_to_S3_bucket -> path_to_sample_file
     test_upload_file_to_S3_bucket -> remove_file_from_S3
-    test_update_database_with_insert_statement -> state_data_types_in_vendors
-    test_update_database_with_insert_statement -> query_database
-    test_update_database_with_insert_statement -> update_database
-    test_update_database_with_insert_statement -> database_function_skip_statements
-    test_update_database_with_insert_statement -> update_database_success_regex
-    test_update_database_with_insert_statement -> engine
-    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     file_name_stem_and_data -> AWS_timestamp_format
     file_name_stem_and_data -> most_recent_month_with_usage

@@ -6,7 +6,6 @@ from datetime import datetime
 from random import choice
 from filecmp import cmp
 from bs4 import BeautifulSoup
-from pandas.testing import assert_frame_equal
 import sqlalchemy
 import flask
 
@@ -131,25 +130,6 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
-
-
-@pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
-    """Tests adding records to the database through a SQL insert statement."""
-    update_result = update_database(
-        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
-        engine=engine,
-    )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
-    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
 
 
 def test_prepare_HTML_page_for_comparison():
