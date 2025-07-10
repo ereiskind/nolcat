@@ -339,7 +339,7 @@ def test_first_new_PK_value():
     assert first_new_PK_value('vendors') == 8
 
 
-# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+# Testing of `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 
 @pytest.fixture
