@@ -2454,7 +2454,13 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
     return f"Trying to remove file {file_name} from the S3 bucket raised the error {error_message}."
 
 
-# statements.upload_file_to_S3_bucket_success_regex
+def upload_file_to_S3_bucket_success_regex():
+    """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
+    """
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
 
 
 # statements.upload_nonstandard_usage_file_success_regex

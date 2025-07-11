@@ -35,15 +35,6 @@ def file_extensions_and_mimetypes():
 
 #Section: Files, File Organization, and File I/O
 #Subsection: Success Regexes
-def upload_file_to_S3_bucket_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
-    """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
-
-
 def upload_nonstandard_usage_file_success_regex():
     """This regex object matches the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.
 
