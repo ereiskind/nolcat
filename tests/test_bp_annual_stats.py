@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 # `conftest.py` fixtures are imported automatically
 from nolcat.logging_config import *
 from nolcat.app import *
-from nolcat.statements import *
 from nolcat.annual_stats import *
 
 log = logging.getLogger(__name__)

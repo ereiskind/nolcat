@@ -34,7 +34,7 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Figure out `nolcat.nolcat_glue_job.remove_IDE_spacing_from_statement()` call in "nolcat/logging_config.py" and how to not have a circular import (move the function to "nolcat/logging_config.py"? Move logging to "nolcat/nolcat_glue_job.py"?)
   * Refine lists of cascading changes
-  * Remove "nolcat/statements.py" and unneeded "nolcat/app.py" import statements
+  * Remove unneeded "nolcat/app.py" import statements
   * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
 

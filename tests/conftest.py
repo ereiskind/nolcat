@@ -17,7 +17,6 @@ from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET_FOR_TESTS
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
 

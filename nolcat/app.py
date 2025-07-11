@@ -10,7 +10,6 @@ import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from .logging_config import *
 from .nolcat_glue_job import *
-from .statements import *
 
 log = logging.getLogger(__name__)
 

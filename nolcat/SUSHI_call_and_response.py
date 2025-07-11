@@ -10,7 +10,6 @@ from requests import Timeout
 from .logging_config import *
 from .app import *
 from .models import *
-from .statements import *
 
 log = logging.getLogger(__name__)
 

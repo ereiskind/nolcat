@@ -11,7 +11,6 @@ from nolcat.logging_config import *
 from nolcat.nolcat_glue_job import *
 #from nolcat.app import *
 from nolcat.models import *
-#from nolcat.statements import *
 #from nolcat.annual_stats import *
 #from nolcat.<blueprint> import *
 #from nolcat.<class file name> import <class name>

@@ -765,14 +765,6 @@ digraph function_call_chains {
     save_unconverted_data_via_upload -> format_list_for_stdout
 
 
-    subgraph cluster_statements {
-        label="nolcat.statements"
-        penwidth=5
-        color="#5cb8b2"
-
-    }
-
-
     subgraph cluster_relations {
         label="tests.data.relations"
         penwidth=5

@@ -11,7 +11,6 @@ from conftest import match_direct_SUSHI_harvest_result
 from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 

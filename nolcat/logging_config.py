@@ -1,8 +1,6 @@
 import logging
 from sqlalchemy import log as SQLAlchemy_log
 
-from .statements import *
-
 
 def filter_empty_parentheses(log_statement):
     """A filter removing log statements containing only empty parentheses.

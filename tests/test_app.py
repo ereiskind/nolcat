@@ -14,7 +14,6 @@ from conftest import prepare_HTML_page_for_comparison
 from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 

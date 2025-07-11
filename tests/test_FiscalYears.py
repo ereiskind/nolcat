@@ -11,7 +11,6 @@ from pandas.testing import assert_frame_equal
 from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 

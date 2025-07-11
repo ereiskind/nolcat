@@ -13,7 +13,6 @@ from dateutil.rrule import MONTHLY
 
 from .logging_config import *
 from .app import *
-from .statements import *
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
