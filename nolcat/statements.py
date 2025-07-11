@@ -31,16 +31,3 @@ def file_extensions_and_mimetypes():
         ".xml": "text/xml",
         ".zip": "application/zip",
     }
-
-
-#Section: Files, File Organization, and File I/O
-#Subsection: Success Regexes
-def upload_nonstandard_usage_file_success_regex():
-    """This regex object matches the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.
-
-    The `re.DOTALL` flag is included because update statements include line breaks.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
-    """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)

@@ -2589,7 +2589,15 @@ Called in `tests.conftest.non_COUNTER_file_to_download_from_S3()` indicating if 
 '''
 
 
-# statements.upload_nonstandard_usage_file_success_regex
+def upload_nonstandard_usage_file_success_regex():
+    """This regex object matches the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.
+
+    The `re.DOTALL` flag is included because update statements include line breaks.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
+    """
+    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
 
 
 #SUBSECTION: S3 Interaction Functions
