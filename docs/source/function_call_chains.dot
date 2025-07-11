@@ -1221,6 +1221,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_prepare_HTML_page_for_comparison [
+            style="dashed"
+            shape="box"
+        ]
         test_change_single_field_dataframe_into_series [
             style="dashed"
             shape="box"
@@ -1294,6 +1298,7 @@ digraph function_call_chains {
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
     test_truncate_longer_lines -> truncate_longer_lines
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
@@ -1463,10 +1468,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_prepare_HTML_page_for_comparison [
-            style="dashed"
-            shape="box"
-        ]
     }
     test_flask_app_creation -> app
     test_flask_client_creation -> client
@@ -1478,7 +1479,6 @@ digraph function_call_chains {
     test_download_file -> file_extensions_and_mimetypes
     test_download_file -> client
     test_download_file -> path_to_sample_file
-    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
 
 
     subgraph cluster_test_bp_annual_stats {
