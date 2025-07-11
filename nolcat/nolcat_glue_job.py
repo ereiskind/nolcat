@@ -2615,7 +2615,32 @@ Called only one time
 
 
 #SUBSECTION: S3 Interaction Functions
-# statements.file_extensions_and_mimetypes
+def file_extensions_and_mimetypes():
+    """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.
+    
+    This helper function is called in `create_app()` and thus must be before that function.
+
+    Returns:
+        dict: the file extensions and their corresponding mimetypes
+    """
+    return {
+        ".xlsx": "application/vnd.ms-excel",
+        ".csv": "text/csv",
+        ".tsv": "text/tab-separated-values",
+        ".pdf": "application/pdf",
+        ".docx": "application/msword",
+        ".pptx": "application/vnd.ms-powerpoint",
+        ".txt": "text/plain",
+        ".jpeg": "image/jpeg",
+        ".jpg":"image/jpeg",
+        ".png": "image/png",
+        ".svg": "image/svg+xml",
+        ".json": "application/json",
+        ".html": "text/html",
+        ".htm": "text/html",
+        ".xml": "text/xml",
+        ".zip": "application/zip",
+    }
 
 
 # app.upload_file_to_S3_bucket
