@@ -2,6 +2,7 @@ from datetime import date
 import calendar
 import io
 from itertools import product
+import json
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 import boto3
@@ -2818,4 +2819,76 @@ Called only once
 '''
 
 
-# app.save_unconverted_data_via_upload
+def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
+    """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
+
+    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
+
+    Args:
+        data (dict or str): the data to be saved to a file in S3
+        file_name_stem (str): the stem of the name the file will be saved with in S3
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+    
+    Returns:
+        str: a message indicating success or including the error raised by the attempt to load the data
+    """
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
+
+    #Section: Create Temporary File
+    #Subsection: Create File Path
+    if isinstance(data, dict):
+        temp_file_name = 'temp.json'
+    else:
+        temp_file_name = 'temp.txt'
+    temp_file_path = TOP_NOLCAT_DIRECTORY / temp_file_name
+    temp_file_path.unlink(missing_ok=True)
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at start of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
+
+    #Subsection: Save File
+    if temp_file_name == 'temp.json':
+        try:
+            with open(temp_file_path, 'wb') as file:
+                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                json.dump(data, file)
+            log.debug(f"Data written as bytes JSON to file object {file}.")
+        except Exception as TypeError:
+            with open(temp_file_path, 'wt') as file:
+                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                file.write(json.dumps(data))
+                log.debug(f"Data written as text JSON to file object {file}.")
+    else:
+        try:
+            with open(temp_file_path, 'wb') as file:
+                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                file.write(data)
+                log.debug(f"Data written as bytes to file object {file}.")
+        except Exception as binary_error:
+            try:
+                with open(temp_file_path, 'wt', encoding='utf-8', errors='backslashreplace') as file:
+                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                    file.write(data)
+                    log.debug(f"Data written as text to file object {file}.")
+            except Exception as text_error:
+                message = f"Writing data into a binary file raised the error {binary_error}; writing that data into a text file raised the error {text_error}."
+                log.error(message)
+                return message
+    log.debug(f"File at {temp_file_path} successfully created.")
+
+    #Section: Upload File to S3
+    file_name = file_name_stem + temp_file_path.suffix
+    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    logging_message = upload_file_to_S3_bucket(
+        temp_file_path,
+        file_name,
+        bucket_path=bucket_path,
+    )
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
+    temp_file_path.unlink()
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
+        message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
+        log.critical(message)
+    else:
+        message = logging_message
+        log.debug(message)
+    return message

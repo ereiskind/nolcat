@@ -720,6 +720,7 @@ digraph function_call_chains {
         upload_nonstandard_usage_file_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
+        save_unconverted_data_via_upload [shape="box"]
     }
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
@@ -740,6 +741,8 @@ digraph function_call_chains {
     update_database -> extract_value_from_single_value_df
     update_database -> remove_IDE_spacing_from_statement
     update_database -> database_query_fail_statement
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
+    save_unconverted_data_via_upload -> format_list_for_stdout
 
 
     subgraph cluster_app {
@@ -753,7 +756,6 @@ digraph function_call_chains {
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
-        save_unconverted_data_via_upload [shape="box"]
     }
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
@@ -761,8 +763,6 @@ digraph function_call_chains {
     create_app -> internal_server_error
     "create_app.create_db" -> create_app
     "create_app.download_file" -> file_extensions_and_mimetypes
-    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    save_unconverted_data_via_upload -> format_list_for_stdout
 
 
     subgraph cluster_relations {
