@@ -3,6 +3,7 @@
 
 import pytest
 from datetime import datetime
+from filecmp import cmp
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
@@ -432,7 +433,33 @@ def test_update_database_with_insert_statement(engine, vendors_relation_after_te
 
 
 #SECTION: S3 Interaction Tests
-# test_app.test_upload_file_to_S3_bucket
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+    """Tests uploading files to a S3 bucket."""
+    logging_message = upload_file_to_S3_bucket(
+        path_to_sample_file,
+        path_to_sample_file.name,
+        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
+    log.debug(logging_message)
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
+    assert path_to_sample_file.name in bucket_contents
+    download_location = tmp_path / path_to_sample_file.name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
+        Filename=download_location,
+    )
+    assert cmp(path_to_sample_file, download_location)
 
 
 # test_app.file_name_stem_and_data
