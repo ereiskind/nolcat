@@ -23,15 +23,6 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Create main Glue job file
 
-  * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat/nolcat_glue_job.py"
-
-    * Get function call chain for function and its test(s)
-    * Cut and paste function from original file to "nolcat/nolcat_glue_job.py"
-    * In function call chain diagram, move node for function and its corresponding edges to the cluster for "nolcat/nolcat_glue_job.py"
-    * Cut and paste test(s) of function, along with all necessary fixtures, from original file to "nolcat/test_nolcat_glue_job.py"
-    * In function call chain diagram, move node(s) for test(s) of function and its corresponding edges to the cluster for "tests/test_nolcat_glue_job.py"
-    * For both the function and its test(s), use pre-move function calls chains to create list of what other functions will need to be changed, and save the list as comments below the function(s)
-
   * Figure out `nolcat.nolcat_glue_job.remove_IDE_spacing_from_statement()` call in "nolcat/logging_config.py" and how to not have a circular import (move the function to "nolcat/logging_config.py"? Move logging to "nolcat/nolcat_glue_job.py"?)
   * Refine lists of cascading changes
   * Remove unneeded "nolcat/app.py" import statements

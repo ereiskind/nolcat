@@ -89,6 +89,3 @@ def test_download_file(client, path_to_sample_file):  #ToDo: If method for inter
     #else:
     #    with path_to_sample_file.open('rt') as file:
     #        assert file.read() == downloaded_file
-
-
-# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
