@@ -12,15 +12,15 @@
     "pythonVersion" : "3.9"
   },
   "defaultArguments" : {
-    "--extra-py-files" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/logging_config.py,s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py",
+    "--extra-py-files" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py",
     "--enable-job-insights" : "false",
-    "--additional-python-modules" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/logging_config.py,s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py",
+    "--additional-python-modules" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py",
     "--enable-observability-metrics" : "false",
     "--enable-glue-datacatalog" : "true",
     "library-set" : "none",
     "--job-language" : "python",
     "--TempDir" : "s3://aws-glue-assets-612489222122-us-east-1/temporary/",
-    "--extra-files" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/logging_config.py,s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py"
+    "--extra-files" : "s3://ec2.sandbox.lib.fsu.edu/nolcat/Glue_jobs/nolcat_glue_job.py"
   },
   "maxRetries" : 0,
   "allocatedCapacity" : 0,
