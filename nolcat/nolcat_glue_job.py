@@ -2641,6 +2641,31 @@ def file_extensions_and_mimetypes():
         ".xml": "text/xml",
         ".zip": "application/zip",
     }
+'''
+Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` impacting return value
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+Called in `nolcat.view_usage.download_non_COUNTER_usage()` in return value
+    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> file_extensions_and_mimetypes
+    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> file_extensions_and_mimetypes
+Called once
+    test_download_file -> file_extensions_and_mimetypes
+    test_run_custom_SQL_query -> run_custom_SQL_query -> file_extensions_and_mimetypes
+    test_use_predefined_SQL_query -> use_predefined_SQL_query -> file_extensions_and_mimetypes
+    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> file_extensions_and_mimetypes
+    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> file_extensions_and_mimetypes
+    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> file_extensions_and_mimetypes
+    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> file_extensions_and_mimetypes
+'''
 
 
 # app.upload_file_to_S3_bucket
