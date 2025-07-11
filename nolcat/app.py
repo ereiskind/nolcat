@@ -6,7 +6,6 @@ import re
 from flask import Flask
 from flask import render_template
 from flask import send_file
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from .logging_config import *
 from .nolcat_glue_job import *
@@ -131,78 +130,6 @@ def create_app():
 
 
     return app
-
-
-def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
-    """The function for uploading files to a S3 bucket.
-
-    SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
-
-    Args:
-        file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
-        file_name (str): the name the file will be saved under in the S3 bucket
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
-    
-    Returns:
-        str: the logging statement to indicate if uploading the data succeeded or failed
-    """
-    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
-    #Section: Confirm Bucket Exists
-    # The canonical way to check for a bucket's existence and the user's privilege to access it
-    try:
-        check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
-    except botocore.exceptions.ClientError as error:
-        message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
-        log.error(message)
-        return message
- 
-
-    #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{BUCKET_NAME}/{bucket_path}`.")
-    #Subsection: Upload File with `upload_fileobj()`
-    try:
-        file_object = open(file, 'rb')
-        log.debug(f"Successfully initialized {file_object} (type {type(file_object)}).")
-        try:
-            s3_client.upload_fileobj(
-                Fileobj=file_object,
-                Bucket=BUCKET_NAME,
-                Key=bucket_path + file_name,
-            )
-            file_object.close()
-            message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
-            log.info(message)
-            return message
-        except Exception as error:
-            log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
-            file_object.close()
-    except Exception as error:
-        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
-    
-    #Subsection: Upload File with `upload_file()`
-    try:
-        if file.is_file():
-            try:
-                s3_client.upload_file(  # This uploads `file` like a path-like object
-                    Filename=file,
-                    Bucket=BUCKET_NAME,
-                    Key=bucket_path + file_name,
-                )
-                message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
-                log.info(message)
-                return message
-            except Exception as error:
-                message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
-                log.error(message)
-                return message
-        else:
-            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
-            log.error(message)
-            return message
-    except AttributeError as error:
-        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
-        log.error(message)
-        return message
 
 
 def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
