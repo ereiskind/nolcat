@@ -661,10 +661,7 @@ digraph function_call_chains {
         penwidth=5
         color="#5cb8b2"
 
-        filter_empty_parentheses [shape="box"]
-        configure_logging [shape="box"]
     }
-    filter_empty_parentheses -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_nolcat_glue_job {
@@ -672,6 +669,8 @@ digraph function_call_chains {
         penwidth=5
         color="#5cb8b2"
 
+        filter_empty_parentheses [shape="box"]
+        configure_logging [shape="box"]
         last_day_of_month [shape="box"]
         ISSN_regex [shape="box"]
         ISBN_regex [shape="box"]
@@ -722,6 +721,7 @@ digraph function_call_chains {
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="box"]
     }
+    filter_empty_parentheses -> remove_IDE_spacing_from_statement
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
     add_data_success_and_update_database_fail_statement -> database_update_fail_statement
