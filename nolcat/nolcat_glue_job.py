@@ -2461,6 +2461,132 @@ def upload_file_to_S3_bucket_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
     return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
+'''
+Called in way that impacts flashed statements only
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
+Called once
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
+    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
+Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()`
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_status_call -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_status_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_reports_call -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_reports_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_PR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_DR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_TR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_IR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+    test_call_with_invalid_credentials -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
+Called in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` in return statement
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
+Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` impacting return statement
+    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
+Called in `tests.conftest.non_COUNTER_file_to_download_from_S3()` indicating if fixture was created successfully
+    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
+    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
+'''
 
 
 # statements.upload_nonstandard_usage_file_success_regex
