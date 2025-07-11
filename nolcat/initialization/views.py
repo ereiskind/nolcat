@@ -9,7 +9,6 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..logging_config import *
 from ..app import *
 from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports

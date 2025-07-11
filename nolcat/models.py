@@ -11,7 +11,6 @@ import pandas as pd
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
-from .logging_config import *
 from .app import *
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe

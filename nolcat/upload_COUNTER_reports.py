@@ -6,7 +6,6 @@ from random import choice
 from openpyxl import load_workbook
 import pandas as pd
 
-from .logging_config import *
 from .app import *
 from .models import *
 

@@ -16,7 +16,6 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
-from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 

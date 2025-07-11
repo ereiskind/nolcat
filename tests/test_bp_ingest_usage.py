@@ -14,7 +14,6 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import prepare_HTML_page_for_comparison
-from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.ingest_usage import *

@@ -4,7 +4,6 @@ from flask import Flask
 from flask import render_template
 from flask import send_file
 
-from .logging_config import *
 from .nolcat_glue_job import *
 
 log = logging.getLogger(__name__)

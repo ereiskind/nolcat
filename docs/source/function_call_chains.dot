@@ -656,14 +656,6 @@ digraph function_call_chains {
     download_non_COUNTER_usage -> database_query_fail_statement
 
 
-    subgraph cluster_logging_config {
-        label="nolcat.logging_config"
-        penwidth=5
-        color="#5cb8b2"
-
-    }
-
-
     subgraph cluster_nolcat_glue_job {
         label="nolcat.nolcat_glue_job"
         penwidth=5

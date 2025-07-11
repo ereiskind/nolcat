@@ -10,7 +10,6 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
-from nolcat.logging_config import *
 from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 

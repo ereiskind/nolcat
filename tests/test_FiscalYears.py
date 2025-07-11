@@ -8,7 +8,6 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.logging_config import *
 from nolcat.app import *
 from nolcat.models import *
 

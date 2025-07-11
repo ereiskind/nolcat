@@ -9,7 +9,6 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
-from nolcat.logging_config import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)

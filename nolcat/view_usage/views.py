@@ -10,7 +10,6 @@ from MySQLdb._mysql import escape_string  # `MySQLdb` in requirements.txt as `my
 
 from . import bp
 from .forms import *
-from ..logging_config import *
 from ..app import *
 from ..models import *
 
