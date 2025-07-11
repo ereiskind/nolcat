@@ -1273,6 +1273,10 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        file_name_stem_and_data [
+            style="dotted"
+            shape="folder"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1328,6 +1332,8 @@ digraph function_call_chains {
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
     test_upload_file_to_S3_bucket -> path_to_sample_file
     test_upload_file_to_S3_bucket -> remove_file_from_S3
+    file_name_stem_and_data -> AWS_timestamp_format
+    file_name_stem_and_data -> most_recent_month_with_usage
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -1454,10 +1460,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        file_name_stem_and_data [
-            style="dotted"
-            shape="folder"
-        ]
         test_save_unconverted_data_via_upload [
             style="dashed"
             shape="folder"
@@ -1474,8 +1476,6 @@ digraph function_call_chains {
     test_download_file -> client
     test_download_file -> path_to_sample_file
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
-    file_name_stem_and_data -> AWS_timestamp_format
-    file_name_stem_and_data -> most_recent_month_with_usage
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data

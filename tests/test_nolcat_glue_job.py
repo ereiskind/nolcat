@@ -4,6 +4,7 @@
 import pytest
 from datetime import datetime
 from filecmp import cmp
+from random import choice
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
@@ -462,7 +463,35 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     assert cmp(path_to_sample_file, download_location)
 
 
-# test_app.file_name_stem_and_data
+@pytest.fixture(params=[
+    {'Report_Header': {'Created': '2023-10-17T21:13:26Z','Created_By': 'ProQuest','Customer_ID': '0000','Report_ID': 'PR','Release': '5','Report_Name': 'Platform Master Report','Institution_Name': 'FLORIDA STATE UNIVERSITY','Institution_ID': [{'Type': 'Proprietary','Value': 'ProQuest:0000'}],'Report_Filters': [{'Name': 'Platform','Value': 'ProQuest'},{'Name': 'Begin_Date','Value': '2022-07-01'},{'Name': 'End_Date','Value': '2023-08-31'},{'Name': 'Data_Type','Value': 'Book|Journal'}],'Report_Attributes': [{'Name': 'Attributes_To_Show','Value': 'Data_Type|Access_Method'}]},'Report_Items': [{'Platform': 'ProQuest','Data_Type': 'Book','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 8},{'Metric_Type': 'Total_Item_Requests','Count': 9}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 2},{'Metric_Type': 'Total_Item_Requests','Count': 12}]}]},{'Platform': 'ProQuest','Data_Type': 'Journal','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 53},{'Metric_Type': 'Total_Item_Requests','Count': 89}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 77},{'Metric_Type': 'Total_Item_Requests','Count': 92}]}]}]},
+    "{'Report_Header': {'Created': '2023-10-17T21:13:26Z','Created_By': 'ProQuest','Customer_ID': '0000','Report_ID': 'PR','Release': '5','Report_Name': 'Platform Master Report','Institution_Name': 'FLORIDA STATE UNIVERSITY','Institution_ID': [{'Type': 'Proprietary','Value': 'ProQuest:0000'}],'Report_Filters': [{'Name': 'Platform','Value': 'ProQuest'},{'Name': 'Begin_Date','Value': '2022-07-01'},{'Name': 'End_Date','Value': '2023-08-31'},{'Name': 'Data_Type','Value': 'Book|Journal'}],'Report_Attributes': [{'Name': 'Attributes_To_Show','Value': 'Data_Type|Access_Method'}]},'Report_Items': [{'Platform': 'ProQuest','Data_Type': 'Book','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 8},{'Metric_Type': 'Total_Item_Requests','Count': 9}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 2},{'Metric_Type': 'Total_Item_Requests','Count': 12}]}]},{'Platform': 'ProQuest','Data_Type': 'Journal','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 53},{'Metric_Type': 'Total_Item_Requests','Count': 89}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 77},{'Metric_Type': 'Total_Item_Requests','Count': 92}]}]}]}",
+])
+def file_name_stem_and_data(request, most_recent_month_with_usage):
+    """Provides the contents and name stem for the file in `test_save_unconverted_data_via_upload()`, then removes that file from S3 after the test runs.
+
+    Args:
+        request (dict or str): the contents of the file that will be saved to S3
+
+    Yields:
+        tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
+    """
+    data = request.param
+    log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
+    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
+    log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
+    yield (file_name_stem, data)
+    if isinstance(data, dict):
+        file_name = file_name_stem + '.json'
+    else:
+        file_name = file_name_stem + '.txt'
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
 # test_app.test_save_unconverted_data_via_upload
