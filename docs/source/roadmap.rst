@@ -21,11 +21,10 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
+* As content is moved, remove items from cascading changes in "nolcat/nolcat_glue_job.py" and "tests/test_nolcat_glue_job.py"
 * Create main Glue job file
 
-  * Refine lists of cascading changes
   * Remove unneeded "nolcat/app.py" import statements
-  * Push changes to repo, then pull changes into Glue
   * Confirm all tests still pass
 
 * For all test functions, get call chains and adjust conftest calls

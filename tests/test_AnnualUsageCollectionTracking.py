@@ -8,7 +8,6 @@ from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
-from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)

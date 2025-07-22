@@ -2,7 +2,6 @@ from flask import render_template
 
 from . import bp
 #from .forms import *
-from ..app import *
 from ..models import *
 
 log = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ import logging
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.login import *
 
 log = logging.getLogger(__name__)

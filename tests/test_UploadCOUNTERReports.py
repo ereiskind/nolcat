@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import mock_FileStorage_object  # Direct import is required because it isn't a fixture
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)

@@ -7,7 +7,6 @@ import random
 import requests
 from requests import Timeout
 
-from .app import *
 from .models import *
 
 log = logging.getLogger(__name__)

@@ -8,7 +8,7 @@ import io
 from math import ceil
 import pandas as pd
 
-from .app import *
+from .nolcat_glue_job import *
 # `from .models import *` to use `COUNTERData.state_data_types()` causes a circular import error
 
 log = logging.getLogger(__name__)

@@ -8,7 +8,7 @@ import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from conftest import COUNTER_reports_offered_by_statistics_source
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 log = logging.getLogger(__name__)
