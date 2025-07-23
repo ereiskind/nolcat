@@ -339,9 +339,10 @@ def test_query_database(engine, vendors_relation):
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_first_new_PK_value():
+def test_first_new_PK_value(client):
     """Tests the retrieval of a relation's next primary key value."""
-    assert first_new_PK_value('vendors') == 8
+    with client:
+        assert first_new_PK_value('vendors') == 8
 
 
 # Testing of `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
@@ -373,12 +374,13 @@ def vendors_relation_after_test_update_database():
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, vendors_relation_after_test_update_database):
+def test_update_database(engine, client, vendors_relation_after_test_update_database):
     """Tests updating data in the database through a SQL update statement."""
-    update_result = update_database(
-        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
-        engine=engine,
-    )
+    with client:
+        update_result = update_database(
+            update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+            engine=engine,
+        )
     retrieved_updated_vendors_data = query_database(
         query="SELECT * FROM vendors;",
         engine=engine,
@@ -419,12 +421,13 @@ def vendors_relation_after_test_update_database_with_insert_statement():
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
+def test_update_database_with_insert_statement(engine, client, vendors_relation_after_test_update_database_with_insert_statement):
     """Tests adding records to the database through a SQL insert statement."""
-    update_result = update_database(
-        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
-        engine=engine,
-    )
+    with client:
+        update_result = update_database(
+            update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+            engine=engine,
+        )
     retrieved_updated_vendors_data = query_database(
         query="SELECT * FROM vendors;",
         engine=engine,
