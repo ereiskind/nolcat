@@ -253,7 +253,6 @@ def test_load_data_into_database(engine, vendors_relation):
     assert regex_match_object.group(2) == "vendors"
 
 
-@pytest.mark.dependency(depends=['test_query_database'])
 def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
