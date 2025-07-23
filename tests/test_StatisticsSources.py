@@ -378,6 +378,8 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     df = harvest_R5_SUSHI_result[0]
     # The fields and records in the two dataframes are in different orders; they need to be consistent for `assert_frame_equal()` to work
     field_order = df.columns.tolist()
+    print(f"`records_loaded_by_method` (type {type(records_loaded_by_method)}): {records_loaded_by_method}")  #TEST: temp
+    print(f"`field_order` (type {type(field_order)}): {field_order}")  #TEST: temp
     records_loaded_by_method = records_loaded_by_method[field_order]
     df = df.sort_values(
         by=field_order,
