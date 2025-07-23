@@ -145,12 +145,13 @@ The preferred setup for testing database interactions involves performing all te
 1. Tests loading data into a limited number of relations, after which the database must be cleared of data
 
   * `test_app`
+  * `test_nolcat_glue_job`
 
 2. Tests loading data into all relations but `COUNTERData`
 
   * `test_bp_initialization`
 
-3. Tests needing data in all relations but `COUNTERData`
+3. Tests needing data in all relations but `COUNTERData` (data must be reloaded for test to pass)
 
   * `test_bp_ingest_usage`
 

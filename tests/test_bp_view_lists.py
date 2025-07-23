@@ -1,5 +1,5 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## No tests written 2025-06-12 ##########
+########## No tests written 2025-07-22 ##########
 
 import pytest
 from bs4 import BeautifulSoup
