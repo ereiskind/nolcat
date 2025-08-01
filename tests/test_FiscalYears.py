@@ -25,7 +25,7 @@ def FY2020_FiscalYears_object(engine, caplog):
     Yields:
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     record = query_database(
         query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
         engine=engine,
@@ -45,65 +45,72 @@ def FY2020_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object):
+def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the old ACRL 60b value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
 
 
-def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object):
+def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the old ACRL 63 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
 
 
-def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object):
+def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61a value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ACRL_61a() == 73
 
 
-def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object):
+def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61b value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ACRL_61b() == 2190
 
 
-def test_calculate_ARL_18(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_18(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 18 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_18() == 2190
 
 
-def test_calculate_ARL_19(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_19(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 19 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_19() == 85613
 
 
-def test_calculate_ARL_20(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 20 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_20() == 0
 
@@ -150,7 +157,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
     Yields:
         None
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     method_result = load_data_into_database(
         df=FY2023_FiscalYears_object_and_record[1],
         relation='fiscalYears',
@@ -164,7 +171,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
 
 def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     #Section: Call Method
     with client:
@@ -318,7 +325,7 @@ def FY2022_FiscalYears_object(engine, caplog):
     Yields:
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     record = query_database(
         query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
         engine=engine,
@@ -341,9 +348,9 @@ def FY2022_FiscalYears_object(engine, caplog):
 @pytest.mark.slow
 def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
 
     #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
     # A random value is added at this point for greater variability in the testing

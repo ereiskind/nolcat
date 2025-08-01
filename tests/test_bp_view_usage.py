@@ -80,7 +80,7 @@ def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
 
 def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
@@ -133,15 +133,17 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
 
 
 @pytest.fixture
-def start_query_wizard_form_data(engine):
+def start_query_wizard_form_data(engine, caplog):
     """Creates the form data for `start_query_wizard()`.
     
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         dict: form input for the form on "query-wizard-start.html"
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     df = query_database(
         query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
         engine=engine,
@@ -259,7 +261,7 @@ def PR_parameters(request):
 
 def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -397,7 +399,7 @@ def DR_parameters(request):
 
 def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = DR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -629,7 +631,7 @@ def TR_parameters(request):
 
 def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = TR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -876,7 +878,7 @@ def IR_parameters(request):
 
 def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = IR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -919,7 +921,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
  
     page = client.get(
         '/view_usage/non-COUNTER-downloads',

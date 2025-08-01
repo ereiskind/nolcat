@@ -22,7 +22,6 @@ Planned Iterations
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * As content is moved, remove items from cascading changes in "nolcat/nolcat_glue_job.py" and "tests/test_nolcat_glue_job.py"
-* For all test functions, get call chains and adjust conftest calls
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
   * Develop method to switch data storage format
