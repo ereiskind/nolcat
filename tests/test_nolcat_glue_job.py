@@ -55,6 +55,15 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
 
 
+def test_parquet_file_name_regex():
+    """Tests matching the regex object to file names."""
+    assert parquet_file_name_regex().fullmatch("1_IR_2019-01-01.parquet") is not None
+    assert parquet_file_name_regex().fullmatch("100_DR_NULL.parquet") is not None
+    assert parquet_file_name_regex().fullmatch("55_PR_NULL.parquet") is not None
+    assert parquet_file_name_regex().fullmatch("99_PR1_NULL.parquet") is not None
+    assert parquet_file_name_regex().fullmatch("999_DR_2024-12-31.parquet") is not None
+
+
 def test_empty_string_regex():
     """Tests matching the regex object to empty and whitespace-only strings."""
     assert empty_string_regex().fullmatch("") is not None

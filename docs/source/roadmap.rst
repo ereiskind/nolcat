@@ -27,7 +27,6 @@ Move Code to Glue Jobs and Data to Parquet
   * Develop method to switch data storage format
   * Save test data in parquet format
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
-  * Determine how files with production data lacking timestamps should be named (null? get dates from shared files?)
 
 * Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
 

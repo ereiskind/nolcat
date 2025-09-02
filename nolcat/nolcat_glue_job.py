@@ -235,12 +235,21 @@ Called in fixture `tests.test_app.file_name_stem_and_data()` which is for `tests
 
 
 def non_COUNTER_file_name_regex():
-    """A regex for the format of non-COUNTER usage files saved in S3.
+    """A regex for the naming convention of non-COUNTER usage files saved in S3.
     
     Returns:
         re.Pattern: the regex object
     """
     return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
+
+
+def parquet_file_name_regex():
+    """A regex for the naming convention of parquet usage files containing COUNTER data in S3.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2})|(NULL))\.parquet")
 
 
 def empty_string_regex():
