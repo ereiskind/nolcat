@@ -10,12 +10,9 @@ secrets = {}
 with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
     for line in secrets_file.readlines():
         key, value = line.split(" = ")
-        print(f"Before: {value}")
         value = value.replace("'", "")
         value = value.replace("\n", "")
-        print(f"After: {value}")
         secrets[key] = value
-print(secrets)
 
 SQLALCHEMY_DATABASE_URI = f'mysql://{secrets['Username']}:{secrets['Password']}@{secrets['Host']}:{secrets['Port']}/{secrets['Database']}'
 
