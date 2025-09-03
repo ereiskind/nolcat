@@ -33,6 +33,6 @@ def query_database(query):
 #ToDo: Repeat this section for each production file
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
 for record in df.iterrows():
-    print(f"`record` (type {type(record)}): {record}")
-    print(f"`record[0]` (type {type(record[0])}): {record[0]}")
-    print(f"`record[1]` (type {type(record[1])}):\n{record[1]}")
+    print(f"`record[1]['statistics_source_ID']` (type {type(record[1]['statistics_source_ID'])}):\n{record[1]['statistics_source_ID']}")
+    print(f"`record[1]['report_type']` (type {type(record[1]['report_type'])}):\n{record[1]['report_type']}")
+    print(f"`record[1]['report_creation_date']` (type {type(record[1]['report_creation_date'])}):\n{record[1]['report_creation_date']}")
