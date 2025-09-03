@@ -1,5 +1,7 @@
 """This procedure for changing in MySQL to parquet files is inspired by the procedure at https://estuary.dev/blog/mysql-to-parquet/."""
 
+log = logging.getLogger(__name__)
+
 try:
     from nolcat.nolcat_glue_job import *
     log.info("`from nolcat.nolcat_glue_job import *` successful.")
@@ -33,8 +35,6 @@ except:
                                 log.info("`from nolcat.nolcat import nolcat_glue_job` successful.")
                             except:
                                 log.warning("None of the import statements worked")
-
-log = logging.getLogger(__name__)
 
 
 #SECTION: Break Down SQL Files
