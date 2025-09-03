@@ -11,6 +11,7 @@ with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
     for line in secrets_file.readlines():
         divided = line.split(" = '")
         secrets[divided[0]] = divided[:-3]
+print(secrets)
 
 SQLALCHEMY_DATABASE_URI = f'mysql://{secrets['Username']}:{secrets['Password']}@{secrets['Host']}:{secrets['Port']}/{secrets['Database']}'
 
