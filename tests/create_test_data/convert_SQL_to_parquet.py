@@ -31,8 +31,38 @@ def query_database(query):
 
 #SECTION: Break Down SQL Files
 #ToDo: Repeat this section for each production file
+save_location = Path('/nolcat/temp')  #ToDo: Create separate folders for each production file
+record_of_CSVs = save_location / '__record.txt'
+
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
 for record in df.iterrows():
     print(f"`record[1]['statistics_source_ID']` (type {type(record[1]['statistics_source_ID'])}):\n{record[1]['statistics_source_ID']}")
     print(f"`record[1]['report_type']` (type {type(record[1]['report_type'])}):\n{record[1]['report_type']}")
     print(f"`record[1]['report_creation_date']` (type {type(record[1]['report_creation_date'])}):\n{record[1]['report_creation_date']}")
+
+    #if record[1]['report_creation_date'] is None:
+    #    query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={record[1]['statistics_source_ID']}, report_type={record[1]['report_type']}, AND report_creation_date IS NULL;"
+    #else:
+    #    query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={record[1]['statistics_source_ID']}, report_type={record[1]['report_type']}, AND report_creation_date={record[1]['report_creation_date']};"
+    #df_to_save = query_database(query)
+
+    #CSV_file_name = f"{record[1]['statistics_source_ID']}_{record[1]['report_type']}_{record[1]['report_creation_date']}"  #ToDo: Check that dates are ISO format or `NULL`
+    #with open(record_of_CSVs, 'at', encoding='utf-8') as file:
+    #    file.write(CSV_file_name)
+    #    file.write("\tPublisher")
+    #    file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
+    #    file.write("\tPlatform")
+    #    file.write([f"\t\t{x}\n" for x in df_to_save['platform'].unique()])
+    #df_to_save.to_csv(
+    #    path=save_location / CSV_file_name,
+    #    index=False,
+    #)
+
+
+#SECTION: Create Parquet Files
+#ToDo: List folders to search for files
+#ToDo: Get deduped list of all files in folder(s) with names matching `re.compile(r'\d+_\w{2,3}_(\d{4}\-\d{2}\-\d{2})|(NULL)')`
+#ToDo: For all files from folder(s) with a given name:
+    #ToDo: `pd.from_csv`
+    #ToDo: Combine dataframes
+    #ToDo: `pd.to_parquet` in a S3 folder
