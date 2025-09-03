@@ -22,7 +22,6 @@ def query_database(query):
             sql=query,
             con=SQLALCHEMY_DATABASE_URI,
         )
-        print(f"The query `{query}` return a dataframe with the following metadata:\n{df.info()}")
         return df
     except Exception as error:
         message = f"Running the query `{query}` raised the error {error}."
