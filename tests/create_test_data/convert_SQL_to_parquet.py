@@ -50,9 +50,12 @@ record_of_CSVs = save_location / '__record.txt'
 
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
 for record in df.iterrows():
-    print(f"`record[1]['statistics_source_ID']` (type {type(record[1]['statistics_source_ID'])}):\n{record[1]['statistics_source_ID']}")
-    print(f"`record[1]['report_type']` (type {type(record[1]['report_type'])}):\n{record[1]['report_type']}")
-    print(f"`record[1]['report_creation_date']` (type {type(record[1]['report_creation_date'])}):\n{record[1]['report_creation_date']}")
+    statistics_source_ID = record[1]['statistics_source_ID']
+    report_type = record[1]['report_type']
+    if isinstance(record[1]['report_creation_date'], pd._libs.tslibs.timestamps.Timestamp):
+        report_creation_date = str(record[1]['report_creation_date'].isoformat())
+    else:
+        report_creation_date = "NULL"
 
     #if record[1]['report_creation_date'] is None:
     #    query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={record[1]['statistics_source_ID']}, report_type={record[1]['report_type']}, AND report_creation_date IS NULL;"
