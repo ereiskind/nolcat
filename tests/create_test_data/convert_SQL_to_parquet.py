@@ -46,7 +46,9 @@ def query_database(query):
 
 #SECTION: Break Down SQL Files
 save_location = Path(args.folder)
+print(f"`save_location`: {save_location}")  #TEST: temp
 save_location.parent.mkdir(parents=True, exist_ok=True)
+print(f"`save_location.exists()`: {save_location.exists()}")  #TEST: temp
 record_of_CSVs = save_location / '__record.txt'
 
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
@@ -65,7 +67,7 @@ for record in df.iterrows():
     df_to_save = query_database(query)
 
     CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}"
-    with open(record_of_CSVs, 'a+t', encoding='utf-8') as file:
+    with open(record_of_CSVs, 'a+', encoding='utf-8') as file:
         file.write(CSV_file_name)
         file.write("\tPublisher")
         file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
