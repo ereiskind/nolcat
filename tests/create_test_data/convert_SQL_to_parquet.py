@@ -76,7 +76,7 @@ for record in df.iterrows():
         for platform in df_to_save['platform'].unique():
             file.write(f"\t\t{platform}")
     df_to_save.to_csv(
-        path=save_location / CSV_file_name,
+        save_location / CSV_file_name,
         index=False,
     )
 
