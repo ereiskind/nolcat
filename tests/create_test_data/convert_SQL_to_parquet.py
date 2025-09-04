@@ -62,7 +62,6 @@ for record in df.iterrows():
     else:
         query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date='{report_creation_date}';"
     df_to_save = query_database(query)
-    print(df_to_save.head())
 
     #CSV_file_name = f"{record[1]['statistics_source_ID']}_{record[1]['report_type']}_{record[1]['report_creation_date']}"  #ToDo: Check that dates are ISO format or `NULL`
     #with open(record_of_CSVs, 'at', encoding='utf-8') as file:
