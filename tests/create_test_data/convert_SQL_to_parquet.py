@@ -54,6 +54,7 @@ for record in df.iterrows():
     report_type = record[1]['report_type']
     if isinstance(record[1]['report_creation_date'], pd._libs.tslibs.timestamps.Timestamp):
         report_creation_date = str(record[1]['report_creation_date'].isoformat())
+        print(report_creation_date)
     else:
         report_creation_date = "NULL"
 
