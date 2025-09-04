@@ -64,7 +64,7 @@ for record in df.iterrows():
     df_to_save = query_database(query)
 
     CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}"
-    with open(record_of_CSVs, 'at', encoding='utf-8') as file:
+    with open(record_of_CSVs, 'a+t', encoding='utf-8') as file:
         file.write(CSV_file_name)
         file.write("\tPublisher")
         file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
