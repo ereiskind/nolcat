@@ -70,9 +70,11 @@ for record in df.iterrows():
     with open(record_of_CSVs, 'a+', encoding='utf-8') as file:
         file.write(CSV_file_name)
         file.write("\tPublisher")
-        file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
+        for publisher in df_to_save['publisher'].unique():
+            file.write(f"\t\t{publisher}")
         file.write("\tPlatform")
-        file.write([f"\t\t{x}\n" for x in df_to_save['platform'].unique()])
+        for platform in df_to_save['platform'].unique():
+            file.write(f"\t\t{platform}")
     df_to_save.to_csv(
         path=save_location / CSV_file_name,
         index=False,
