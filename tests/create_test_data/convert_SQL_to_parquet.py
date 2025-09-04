@@ -46,9 +46,7 @@ def query_database(query):
 
 #SECTION: Break Down SQL Files
 save_location = Path(args.folder)
-print(f"`save_location`: {save_location}")  #TEST: temp
 save_location.mkdir(parents=True, exist_ok=True)
-print(f"`save_location.exists()`: {save_location.exists()}")  #TEST: temp
 record_of_CSVs = save_location / '__record.txt'
 
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
