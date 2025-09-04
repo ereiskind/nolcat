@@ -63,17 +63,17 @@ for record in df.iterrows():
         query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date='{report_creation_date}';"
     df_to_save = query_database(query)
 
-    #CSV_file_name = f"{record[1]['statistics_source_ID']}_{record[1]['report_type']}_{record[1]['report_creation_date']}"  #ToDo: Check that dates are ISO format or `NULL`
-    #with open(record_of_CSVs, 'at', encoding='utf-8') as file:
-    #    file.write(CSV_file_name)
-    #    file.write("\tPublisher")
-    #    file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
-    #    file.write("\tPlatform")
-    #    file.write([f"\t\t{x}\n" for x in df_to_save['platform'].unique()])
-    #df_to_save.to_csv(
-    #    path=save_location / CSV_file_name,
-    #    index=False,
-    #)
+    CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}"
+    with open(record_of_CSVs, 'at', encoding='utf-8') as file:
+        file.write(CSV_file_name)
+        file.write("\tPublisher")
+        file.write([f"\t\t{x}\n" for x in df_to_save['publisher'].unique()])
+        file.write("\tPlatform")
+        file.write([f"\t\t{x}\n" for x in df_to_save['platform'].unique()])
+    df_to_save.to_csv(
+        path=save_location / CSV_file_name,
+        index=False,
+    )
 
 
 #SECTION: Create Parquet Files
