@@ -88,7 +88,7 @@ CSV_names_and_paths = {}
 for file in save_location.iterdir():
     if regex.fullmatch(file.stem):
         CSV_names_and_paths[file.stem] = [file]
-if isinstance(str, args.combine):
+if isinstance(args.combine, str):
     for file in Path(args.combine).iterdir():
         if regex.fullmatch(file.stem):
             if CSV_names_and_paths.get(file.stem):
