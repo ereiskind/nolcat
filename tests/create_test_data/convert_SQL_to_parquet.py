@@ -46,6 +46,7 @@ def query_database(query):
 
 #SECTION: Break Down SQL Files
 save_location = Path(args.folder)
+save_location.parent.mkdir(parents=True)
 record_of_CSVs = save_location / '__record.txt'
 
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
