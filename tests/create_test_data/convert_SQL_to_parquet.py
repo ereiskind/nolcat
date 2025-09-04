@@ -64,7 +64,7 @@ for record in df.iterrows():
         query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date='{report_creation_date}';"
     df_to_save = query_database(query)
 
-    CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}"
+    CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}.csv"
     with open(record_of_CSVs, 'a+', encoding='utf-8') as file:
         file.write(f"{CSV_file_name}\n")
         file.write("\tPublisher\n")
