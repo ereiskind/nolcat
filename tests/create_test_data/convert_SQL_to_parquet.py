@@ -43,6 +43,45 @@ def query_database(query):
         print(message)
         return message
 
+def COUNTERData_data_types():
+    return {
+        "statistics_source_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
+        "report_type": 'string',
+        "resource_name": 'string',
+        "publisher": 'string',
+        "publisher_ID": 'string',
+        "platform": 'string',
+        "authors": 'string',
+        "publication_date": 'datetime64[ns]',
+        "article_version": 'string',
+        "DOI": 'string',
+        "proprietary_ID": 'string',
+        "ISBN": 'string',
+        "print_ISSN": 'string',
+        "online_ISSN": 'string',
+        "URI": 'string',
+        "data_type": 'string',
+        "section_type": 'string',
+        "YOP": 'Int16',  # Relation uses two-byte integer type, so code uses two-byte integer data type from pandas, which allows nulls
+        "access_type": 'string',
+        "access_method": 'string',
+        "parent_title": 'string',
+        "parent_authors": 'string',
+        "parent_publication_date": 'datetime64[ns]',
+        "parent_article_version": 'string',
+        "parent_data_type": 'string',
+        "parent_DOI": 'string',
+        "parent_proprietary_ID": 'string',
+        "parent_ISBN": 'string',
+        "parent_print_ISSN": 'string',
+        "parent_online_ISSN": 'string',
+        "parent_URI": 'string',
+        "metric_type": 'string',
+        "usage_date": 'datetime64[ns]',
+        "usage_count": 'int',  # Python's `int` is used to reinforce that this is a non-null field
+        "report_creation_date": 'datetime64[ns]',
+    }
+
 
 #SECTION: Break Down SQL Files
 save_location = Path(args.folder)
@@ -98,6 +137,28 @@ if isinstance(args.combine, str):
 print(CSV_names_and_paths)  #TEST: temp
 
 #for file_name, file_path_list in CSV_names_and_paths.items():
-    #ToDo: `pd.from_csv`
-    #ToDo: Combine dataframes
-    #ToDo: `pd.to_parquet` in a S3 folder
+#    data_from_CSVs = []
+#    for file_path in file_path_list:
+#        df_from_CSV = pd.read_csv(
+#            file_path,
+#            index_col=None,
+#            parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
+#            date_format='ISO8601',
+#            encoding='utf-8',
+#            encoding_errors='backslashreplace',
+#        )
+#        df_from_CSV = df_from_CSV.astype({k: v for (k, v) in COUNTERData_data_types().items() if k in df_from_CSV.columns})
+#        data_from_CSVs.append(df_from_CSV)
+#    combined_df = pd.concat(
+#        data_from_CSVs,
+#        ignore_index=True,
+#    )
+#    combined_df.to_parquet(
+#        f"{secrets['Bucket']}/nolcat/{rest of folders}/{file_name}.parquet",
+#        index=False,
+#        storage_options={
+#            "key": AWS_ACCESS_KEY_ID,
+#            "secret": secrets['Secret'],
+#            "token": AWS_SESSION_TOKEN,
+#        },
+#    )
