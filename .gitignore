@@ -135,7 +135,6 @@ dmypy.json
 # Scratch work folder
 .scratch/
 .scratch/*
-tests/create_test_data/temp_secrets.py
 
 # Variable Test-Related Files
 tests/logs/*

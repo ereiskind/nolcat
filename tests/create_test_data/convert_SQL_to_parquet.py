@@ -22,7 +22,7 @@ args = parser.parse_args()
 # Attempts to import `nolcat.nolcat.nolcat_glue_job.py` failed, so the content needed from that file is repeated here.
 
 secrets = {}
-with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
+with open(Path('/nolcat/nolcat/new_nolcat_secrets.py')) as secrets_file:
     for line in secrets_file.readlines():
         key, value = line.split(" = ")
         value = value.replace("'", "")
@@ -30,10 +30,6 @@ with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
         secrets[key] = value
 
 SQLALCHEMY_DATABASE_URI = f'mysql://{secrets['Username']}:{secrets['Password']}@{secrets['Host']}:{secrets['Port']}/{secrets['Database']}'
-
-from temp_secrets import temp_secrets
-for k, v in temp_secrets.items():
-    secrets[k] = v
 
 def query_database(query):
     try:
