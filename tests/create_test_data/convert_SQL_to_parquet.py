@@ -17,7 +17,6 @@ parser.add_argument(
     help="The flag indicates if the CSVs should be transformed into parquet files; use `True` if only the newly created CSVs should be converted or another file path to combine CSVs with the same name from two folders"
 )
 args = parser.parse_args()
-print("Arguments parsed")  #TEST: temp
 
 #SECTION: Repeated Content
 # Attempts to import `nolcat.nolcat.nolcat_glue_job.py` failed, so the content needed from that file is repeated here.
@@ -29,7 +28,6 @@ with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
         value = value.replace("'", "")
         value = value.replace("\n", "")
         secrets[key] = value
-print("Secrets dict created")  #TEST: temp
 
 SQLALCHEMY_DATABASE_URI = f'mysql://{secrets['Username']}:{secrets['Password']}@{secrets['Host']}:{secrets['Port']}/{secrets['Database']}'
 
@@ -91,7 +89,6 @@ save_location.mkdir(parents=True, exist_ok=True)
 record_of_CSVs = save_location / '__record.txt'
 
 df = query_database("SELECT statistics_source_ID, report_type, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, report_creation_date;")
-print("Query completed")  #TEST: temp
 for record in df.iterrows():
     statistics_source_ID = record[1]['statistics_source_ID']
     report_type = record[1]['report_type']
@@ -119,17 +116,16 @@ for record in df.iterrows():
         save_location / CSV_file_name,
         index=False,
     )
-print("CSVs created")  #TEST: temp
 
 
 #SECTION: Create Parquet Files
 if args.combine is None:
-    print("Program exiting")  #TEST: temp
     sys.exit()
 
 regex = re.compile(r'\d+_\w{2,3}_(\d{4}\-\d{2}\-\d{2})|(NULL)')
 CSV_names_and_paths = {}
 for file in save_location.iterdir():
+    print(file.stem)  #TEST: temp
     if regex.fullmatch(file.stem):
         CSV_names_and_paths[file.stem] = [file]
 
