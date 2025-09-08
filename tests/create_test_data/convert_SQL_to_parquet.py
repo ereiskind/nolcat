@@ -122,7 +122,7 @@ for record in df.iterrows():
 if args.combine is None:
     sys.exit()
 
-regex = re.compile(r'\d+_\w{2,3}_(\d{4}\-\d{2}\-\d{2})|(NULL)')
+regex = re.compile(r'\d+_\w{2}\d?_((\d{4}\-\d{2}\-\d{2})|(NULL))')
 CSV_names_and_paths = {}
 for file in save_location.iterdir():
     print(file.stem)  #TEST: temp
