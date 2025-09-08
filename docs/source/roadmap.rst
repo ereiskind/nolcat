@@ -24,8 +24,6 @@ Move Code to Glue Jobs and Data to Parquet
 * As content is moved, remove items from cascading changes in "nolcat/nolcat_glue_job.py" and "tests/test_nolcat_glue_job.py"
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
-  * Develop method to switch data storage format
-  * Save test data in parquet format
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
 
 * Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
