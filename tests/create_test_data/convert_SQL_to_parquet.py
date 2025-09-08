@@ -288,185 +288,185 @@ for file_name, file_path_list in CSV_names_and_paths.items():
                                             print("Use Key='Secret', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SESSION_TOKEN'")
                                         except Exception as e:
                                             print(f"Key='Secret', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SESSION_TOKEN' raised `{e}`")
-                                            try:
-                                                combined_df.to_parquet(
-                                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                    index=False,
-                                                    storage_options={
-                                                        "key": secrets['Secret'],
-                                                        "secret": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                        "token": secrets['AWS_ACCESS_KEY_ID'],
-                                                    },
-                                                )
-                                                print("Use Key='Secret', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID'")
-                                            except Exception as e:
-                                                print(f"Key='Secret', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
-                                                try:
-                                                    combined_df.to_parquet(
-                                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                        index=False,
-                                                        storage_options={
-                                                            "key": secrets['Secret'],
-                                                            "secret": secrets['AWS_SESSION_TOKEN'],
-                                                            "token": secrets['AWS_ACCESS_KEY_ID'],
-                                                        },
-                                                    )
-                                                    print("Use Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID'")
-                                                except Exception as e:
-                                                    print(f"Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
-                                                    try:
-                                                        combined_df.to_parquet(
-                                                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                            index=False,
-                                                            storage_options={
-                                                                "key": secrets['Secret'],
-                                                                "secret": secrets['AWS_SESSION_TOKEN'],
-                                                                "token": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                            },
-                                                        )
-                                                        print("Use Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY'")
-                                                    except Exception as e:
-                                                        print(f"Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
-                                                        try:
-                                                            combined_df.to_parquet(
-                                                                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                index=False,
-                                                                storage_options={
-                                                                    "key": secrets['AWS_ACCESS_KEY_ID'],
-                                                                    "secret": secrets['AWS_SESSION_TOKEN'],
-                                                                    "token": secrets['Secret'],
-                                                                },
-                                                            )
-                                                            print("Use Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='Secret'")
-                                                        except Exception as e:
-                                                            print(f"Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='Secret' raised `{e}`")
-                                                            try:
-                                                                combined_df.to_parquet(
-                                                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                    index=False,
-                                                                    storage_options={
-                                                                        "key": secrets['AWS_ACCESS_KEY_ID'],
-                                                                        "secret": secrets['AWS_SESSION_TOKEN'],
-                                                                        "token": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                    },
-                                                                )
-                                                                print("Use Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY'")
-                                                            except Exception as e:
-                                                                print(f"Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
-                                                                try:
-                                                                    combined_df.to_parquet(
-                                                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                        index=False,
-                                                                        storage_options={
-                                                                            "key": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                            "secret": secrets['AWS_ACCESS_KEY_ID'],
-                                                                            "token": secrets['Secret'],
-                                                                        },
-                                                                    )
-                                                                    print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_ACCESS_KEY_ID', Token='Secret'")
-                                                                except Exception as e:
-                                                                    print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_ACCESS_KEY_ID', Token='Secret' raised `{e}`")
-                                                                    try:
-                                                                        combined_df.to_parquet(
-                                                                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                            index=False,
-                                                                            storage_options={
-                                                                                "key": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                "secret": secrets['AWS_SESSION_TOKEN'],
-                                                                                "token": secrets['Secret'],
-                                                                            },
-                                                                        )
-                                                                        print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='Secret'")
-                                                                    except Exception as e:
-                                                                        print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='Secret' raised `{e}`")
-                                                                        try:
-                                                                            combined_df.to_parquet(
-                                                                                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                index=False,
-                                                                                storage_options={
-                                                                                    "key": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                    "secret": secrets['AWS_SESSION_TOKEN'],
-                                                                                    "token": secrets['AWS_ACCESS_KEY_ID'],
-                                                                                },
-                                                                            )
-                                                                            print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID'")
-                                                                        except Exception as e:
-                                                                            print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
-                                                                            try:
-                                                                                combined_df.to_parquet(
-                                                                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                    index=False,
-                                                                                    storage_options={
-                                                                                        "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                        "secret": secrets['Secret'],
-                                                                                        "token": secrets['AWS_ACCESS_KEY_ID'],
-                                                                                    },
-                                                                                )
-                                                                                print("Use Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_ACCESS_KEY_ID'")
-                                                                            except Exception as e:
-                                                                                print(f"Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
-                                                                                try:
-                                                                                    combined_df.to_parquet(
-                                                                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                        index=False,
-                                                                                        storage_options={
-                                                                                            "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                            "secret": secrets['Secret'],
-                                                                                            "token": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                        },
-                                                                                    )
-                                                                                    print("Use Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_SECRET_ACCESS_KEY'")
-                                                                                except Exception as e:
-                                                                                    print(f"Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
-                                                                                    try:
-                                                                                        combined_df.to_parquet(
-                                                                                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                            index=False,
-                                                                                            storage_options={
-                                                                                                "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                                "secret": secrets['AWS_ACCESS_KEY_ID'],
-                                                                                                "token": secrets['Secret'],
-                                                                                            },
-                                                                                        )
-                                                                                        print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='Secret'")
-                                                                                    except Exception as e:
-                                                                                        print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='Secret' raised `{e}`")
-                                                                                        try:
-                                                                                            combined_df.to_parquet(
-                                                                                                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                                index=False,
-                                                                                                storage_options={
-                                                                                                    "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                                    "secret": secrets['AWS_ACCESS_KEY_ID'],
-                                                                                                    "token": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                                },
-                                                                                            )
-                                                                                            print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SECRET_ACCESS_KEY'")
-                                                                                        except Exception as e:
-                                                                                            print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
-                                                                                            try:
-                                                                                                combined_df.to_parquet(
-                                                                                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                                    index=False,
-                                                                                                    storage_options={
-                                                                                                        "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                                        "secret": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                                        "token": secrets['Secret'],
-                                                                                                    },
-                                                                                                )
-                                                                                                print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='Secret'")
-                                                                                            except Exception as e:
-                                                                                                print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='Secret' raised `{e}`")
-                                                                                                try:
-                                                                                                    combined_df.to_parquet(
-                                                                                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
-                                                                                                        index=False,
-                                                                                                        storage_options={
-                                                                                                            "key": secrets['AWS_SESSION_TOKEN'],
-                                                                                                            "secret": secrets['AWS_SECRET_ACCESS_KEY'],
-                                                                                                            "token": secrets['AWS_ACCESS_KEY_ID'],
-                                                                                                        },
-                                                                                                    )
-                                                                                                    print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID'")
-                                                                                                except Exception as e:
-                                                                                                    print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
+                                            #try:
+                                            #    combined_df.to_parquet(
+                                            #        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #        index=False,
+                                            #        storage_options={
+                                            #            "key": secrets['Secret'],
+                                            #            "secret": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #            "token": secrets['AWS_ACCESS_KEY_ID'],
+                                            #        },
+                                            #    )
+                                            #    print("Use Key='Secret', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID'")
+                                            #except Exception as e:
+                                            #    print(f"Key='Secret', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
+                                            #    try:
+                                            #        combined_df.to_parquet(
+                                            #            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #            index=False,
+                                            #            storage_options={
+                                            #                "key": secrets['Secret'],
+                                            #                "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                "token": secrets['AWS_ACCESS_KEY_ID'],
+                                            #            },
+                                            #        )
+                                            #        print("Use Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID'")
+                                            #    except Exception as e:
+                                            #        print(f"Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
+                                            #        try:
+                                            #            combined_df.to_parquet(
+                                            #                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                index=False,
+                                            #                storage_options={
+                                            #                    "key": secrets['Secret'],
+                                            #                    "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                    "token": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                },
+                                            #            )
+                                            #            print("Use Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY'")
+                                            #        except Exception as e:
+                                            #            print(f"Key='Secret', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
+                                            #            try:
+                                            #                combined_df.to_parquet(
+                                            #                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                    index=False,
+                                            #                    storage_options={
+                                            #                        "key": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                        "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                        "token": secrets['Secret'],
+                                            #                    },
+                                            #                )
+                                            #                print("Use Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='Secret'")
+                                            #            except Exception as e:
+                                            #                print(f"Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='Secret' raised `{e}`")
+                                            #                try:
+                                            #                    combined_df.to_parquet(
+                                            #                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                        index=False,
+                                            #                        storage_options={
+                                            #                            "key": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                            "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                            "token": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                        },
+                                            #                    )
+                                            #                    print("Use Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY'")
+                                            #                except Exception as e:
+                                            #                    print(f"Key='AWS_ACCESS_KEY_ID', Secret='AWS_SESSION_TOKEN', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
+                                            #                    try:
+                                            #                        combined_df.to_parquet(
+                                            #                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                            index=False,
+                                            #                            storage_options={
+                                            #                                "key": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                "secret": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                "token": secrets['Secret'],
+                                            #                            },
+                                            #                        )
+                                            #                        print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_ACCESS_KEY_ID', Token='Secret'")
+                                            #                    except Exception as e:
+                                            #                        print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_ACCESS_KEY_ID', Token='Secret' raised `{e}`")
+                                            #                        try:
+                                            #                            combined_df.to_parquet(
+                                            #                                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                index=False,
+                                            #                                storage_options={
+                                            #                                    "key": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                    "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                                    "token": secrets['Secret'],
+                                            #                                },
+                                            #                            )
+                                            #                            print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='Secret'")
+                                            #                        except Exception as e:
+                                            #                            print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='Secret' raised `{e}`")
+                                            #                            try:
+                                            #                                combined_df.to_parquet(
+                                            #                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                    index=False,
+                                            #                                    storage_options={
+                                            #                                        "key": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                        "secret": secrets['AWS_SESSION_TOKEN'],
+                                            #                                        "token": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                    },
+                                            #                                )
+                                            #                                print("Use Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID'")
+                                            #                            except Exception as e:
+                                            #                                print(f"Key='AWS_SECRET_ACCESS_KEY', Secret='AWS_SESSION_TOKEN', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
+                                            #                                try:
+                                            #                                    combined_df.to_parquet(
+                                            #                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                        index=False,
+                                            #                                        storage_options={
+                                            #                                            "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                            "secret": secrets['Secret'],
+                                            #                                            "token": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                        },
+                                            #                                    )
+                                            #                                    print("Use Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_ACCESS_KEY_ID'")
+                                            #                                except Exception as e:
+                                            #                                    print(f"Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
+                                            #                                    try:
+                                            #                                        combined_df.to_parquet(
+                                            #                                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                            index=False,
+                                            #                                            storage_options={
+                                            #                                                "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                                "secret": secrets['Secret'],
+                                            #                                                "token": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                            },
+                                            #                                        )
+                                            #                                        print("Use Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_SECRET_ACCESS_KEY'")
+                                            #                                    except Exception as e:
+                                            #                                        print(f"Key='AWS_SESSION_TOKEN', Secret='Secret', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
+                                            #                                        try:
+                                            #                                            combined_df.to_parquet(
+                                            #                                                f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                                index=False,
+                                            #                                                storage_options={
+                                            #                                                    "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                                    "secret": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                                    "token": secrets['Secret'],
+                                            #                                                },
+                                            #                                            )
+                                            #                                            print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='Secret'")
+                                            #                                        except Exception as e:
+                                            #                                            print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='Secret' raised `{e}`")
+                                            #                                            try:
+                                            #                                                combined_df.to_parquet(
+                                            #                                                    f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                                    index=False,
+                                            #                                                    storage_options={
+                                            #                                                        "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                                        "secret": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                                        "token": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                                    },
+                                            #                                                )
+                                            #                                                print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SECRET_ACCESS_KEY'")
+                                            #                                            except Exception as e:
+                                            #                                                print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_ACCESS_KEY_ID', Token='AWS_SECRET_ACCESS_KEY' raised `{e}`")
+                                            #                                                try:
+                                            #                                                    combined_df.to_parquet(
+                                            #                                                        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                                        index=False,
+                                            #                                                        storage_options={
+                                            #                                                            "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                                            "secret": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                                            "token": secrets['Secret'],
+                                            #                                                        },
+                                            #                                                    )
+                                            #                                                    print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='Secret'")
+                                            #                                                except Exception as e:
+                                            #                                                    print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='Secret' raised `{e}`")
+                                            #                                                    try:
+                                            #                                                        combined_df.to_parquet(
+                                            #                                                            f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+                                            #                                                            index=False,
+                                            #                                                            storage_options={
+                                            #                                                                "key": secrets['AWS_SESSION_TOKEN'],
+                                            #                                                                "secret": secrets['AWS_SECRET_ACCESS_KEY'],
+                                            #                                                                "token": secrets['AWS_ACCESS_KEY_ID'],
+                                            #                                                            },
+                                            #                                                        )
+                                            #                                                        print("Use Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID'")
+                                            #                                                    except Exception as e:
+                                            #                                                        print(f"Key='AWS_SESSION_TOKEN', Secret='AWS_SECRET_ACCESS_KEY', Token='AWS_ACCESS_KEY_ID' raised `{e}`")
