@@ -127,8 +127,10 @@ CSV_names_and_paths = {}
 for file in save_location.iterdir():
     if regex.fullmatch(file.stem):
         CSV_names_and_paths[file.stem] = [file]
-if isinstance(args.combine, str):
-    for file in Path(args.combine).iterdir():
+
+second_folder_location = Path(args.combine)
+if second_folder_location.exists():
+    for file in second_folder_location.iterdir():
         if regex.fullmatch(file.stem):
             if CSV_names_and_paths.get(file.stem):
                 CSV_names_and_paths[file.stem].append(file)
