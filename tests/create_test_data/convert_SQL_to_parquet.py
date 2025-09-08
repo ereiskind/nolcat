@@ -137,23 +137,24 @@ if second_folder_location.exists():
             else:
                 CSV_names_and_paths[file.stem] = [file]
 
-#for file_name, file_path_list in CSV_names_and_paths.items():
-#    data_from_CSVs = []
-#    for file_path in file_path_list:
-#        df_from_CSV = pd.read_csv(
-#            file_path,
-#            index_col=None,
-#            parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
-#            date_format='ISO8601',
-#            encoding='utf-8',
-#            encoding_errors='backslashreplace',
-#        )
-#        df_from_CSV = df_from_CSV.astype({k: v for (k, v) in COUNTERData_data_types().items() if k in df_from_CSV.columns})
-#        data_from_CSVs.append(df_from_CSV)
-#    combined_df = pd.concat(
-#        data_from_CSVs,
-#        ignore_index=True,
-#    )
+for file_name, file_path_list in CSV_names_and_paths.items():
+    data_from_CSVs = []
+    for file_path in file_path_list:
+        df_from_CSV = pd.read_csv(
+            file_path,
+            index_col=None,
+            parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
+            date_format='ISO8601',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        df_from_CSV = df_from_CSV.astype({k: v for (k, v) in COUNTERData_data_types().items() if k in df_from_CSV.columns})
+        data_from_CSVs.append(df_from_CSV)
+    combined_df = pd.concat(
+        data_from_CSVs,
+        ignore_index=True,
+    )
+    print(f"Dataframe for {file_name}:\n{combined_df.head()}\n{combined_df.info()}\n")  #TEST: temp
 #    combined_df.to_parquet(
 #        f"{secrets['Bucket']}/nolcat/{rest of folders}/{file_name}.parquet",
 #        index=False,
