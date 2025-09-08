@@ -31,6 +31,10 @@ with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
 
 SQLALCHEMY_DATABASE_URI = f'mysql://{secrets['Username']}:{secrets['Password']}@{secrets['Host']}:{secrets['Port']}/{secrets['Database']}'
 
+from temp_secrets import temp_secrets
+for k, v in temp_secrets.items():
+    secrets[k] = v
+
 def query_database(query):
     try:
         df = pd.read_sql(
