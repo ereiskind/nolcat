@@ -125,7 +125,6 @@ if args.combine is None:
 regex = re.compile(r'\d+_\w{2}\d?_((\d{4}\-\d{2}\-\d{2})|(NULL))')
 CSV_names_and_paths = {}
 for file in save_location.iterdir():
-    print(file.stem)  #TEST: temp
     if regex.fullmatch(file.stem):
         CSV_names_and_paths[file.stem] = [file]
 
@@ -137,7 +136,6 @@ if second_folder_location.exists():
                 CSV_names_and_paths[file.stem].append(file)
             else:
                 CSV_names_and_paths[file.stem] = [file]
-print(CSV_names_and_paths)  #TEST: temp
 
 #for file_name, file_path_list in CSV_names_and_paths.items():
 #    data_from_CSVs = []
