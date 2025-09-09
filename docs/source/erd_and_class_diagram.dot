@@ -319,14 +319,6 @@ digraph erd_and_classes {
         label="CLASS: ConvertJSONDictToDataframe"
 
         // Attributes
-        RESOURCE_NAME_LENGTH
-        PUBLISHER_LENGTH
-        PUBLISHER_ID_LENGTH
-        PLATFORM_LENGTH
-        AUTHORS_LENGTH
-        DOI_LENGTH
-        PROPRIETARY_ID_LENGTH
-        URI_LENGTH
         proprietary_ID_regex
         author_regex
         SUSHI_JSON_dictionary

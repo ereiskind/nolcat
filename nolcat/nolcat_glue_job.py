@@ -41,6 +41,15 @@ SECRET_KEY = secrets.Secret
 BUCKET_NAME = secrets.Bucket
 TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
 
+RESOURCE_NAME_LENGTH = 3600
+PUBLISHER_LENGTH = 425
+PUBLISHER_ID_LENGTH = 150
+PLATFORM_LENGTH = 135
+AUTHORS_LENGTH = 4400
+DOI_LENGTH = 110
+PROPRIETARY_ID_LENGTH = 100
+URI_LENGTH = 450
+
 PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
 PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
 TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
