@@ -26,11 +26,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
 
-* Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
-
-  * Pull file into Glue job
-  * Confirm configs still set properly
-
 * Save `nolcat.ConvertJSONDictsToDataframe` output as parquet in S3
 
   * Confirm all methods of `nolcat.ConvertJSONDictsToDataframe` except `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` are private

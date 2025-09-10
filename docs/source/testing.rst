@@ -163,7 +163,6 @@ The preferred setup for testing database interactions involves performing all te
   * `test_bp_login`
   * `test_bp_view_lists`
   * `test_bp_view_usage`
-  * `test_ConvertJSONDictToDataframe`
   * `test_FiscalYears`
   * `test_ResourceSources`
   * `test_StatisticsSources`
