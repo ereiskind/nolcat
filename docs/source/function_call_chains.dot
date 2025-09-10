@@ -1281,6 +1281,102 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        sample_SUSHI_PR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_PR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_PR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_PR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5b1_dataframe [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_IR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_IR [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1342,6 +1438,38 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    sample_SUSHI_PR_response_R5_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_R5_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_R5_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_R5_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_PR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_DR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_TR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
+    sample_SUSHI_IR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
+    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_dataframe
+    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_dataframe
+    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_dataframe
+    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_dataframe
+    test_create_dataframe_from_R5b1_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_dataframe
+    test_create_dataframe_from_R5b1_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_dataframe
+    test_create_dataframe_from_R5b1_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_dataframe
+    test_create_dataframe_from_R5b1_IR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_dataframe
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -2009,142 +2137,6 @@ digraph function_call_chains {
     test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload
     test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3
     test_download_non_COUNTER_usage -> header_value
-
-
-    subgraph cluster_test_ConvertJSONDictToDataframe {
-        label="tests.test_ConvertJSONDictToDataframe"
-        penwidth=5
-        style="dashed"
-
-        sample_SUSHI_PR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_PR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_DR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_TR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_IR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_PR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_DR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_TR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_IR [
-            style="dashed"
-            shape="box"
-        ]
-    }
-    sample_SUSHI_PR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_DR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_TR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_IR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_PR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_DR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_TR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_IR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_dataframe
-    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_dataframe
-    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_dataframe
-    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_dataframe
-    test_create_dataframe_from_R5b1_PR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_DR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_TR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_IR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_dataframe
 
 
     subgraph cluster_test_FiscalYears {

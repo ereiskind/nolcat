@@ -28,11 +28,6 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
 
-  * Move test functions corresponding to the class, along with all necessary fixtures, to "test_nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
-  * For all tests, get call chains and adjust conftest calls
-  * Delete files with all content moved elsewhere
-  * Confirm all tests still pass
   * Pull file into Glue job
   * Confirm configs still set properly
 
@@ -48,6 +43,8 @@ Move Code to Glue Jobs and Data to Parquet
   * List all functions in function call chains ending in a call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
+  * For all tests, get call chains and adjust caplog calls
+  * Confirm all tests still pass
 
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
 * Create function to check S3 file existence and type with fuzzy matching
@@ -74,7 +71,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Copy existing `nolcat.UploadCOUNTERReports` test functions and their relevant fixtures to "test_nolcat_glue_job.py"
   * Rename existing test function file for `nolcat.UploadCOUNTERReports` and update the test functions to match the revised class
   * Update function call chain diagram to reflect above changes
-  * For all tests, get call chains and adjust conftest calls
+  * For all tests, get call chains and adjust caplog calls
   * Confirm all tests still pass
   * Pull file into Glue job
   * Confirm configs still set properly
