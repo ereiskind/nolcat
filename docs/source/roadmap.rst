@@ -28,8 +28,6 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
 
-  * Move class `nolcat.ConvertJSONDictsToDataframe` into "nolcat/nolcat/nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
   * Move test functions corresponding to the class, along with all necessary fixtures, to "test_nolcat_glue_job.py"
   * Update function call chain diagram to reflect above changes
   * For all tests, get call chains and adjust conftest calls

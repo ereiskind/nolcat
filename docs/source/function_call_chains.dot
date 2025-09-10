@@ -389,31 +389,6 @@ digraph function_call_chains {
     create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
 
-    subgraph cluster_ConvertJSONDictToDataframe {
-        label="nolcat.ConvertJSONDictToDataframe"
-        penwidth=5
-        style="rounded"
-
-        create_dataframe_in_ConvertJSONDictToDataframe [
-            label="create_dataframe"
-            shape="box"
-        ]
-        _transform_R5_JSON [shape="box"]
-        _transform_R5b1_JSON [shape="box"]
-        _serialize_dates [shape="box"]
-    }
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
-    _transform_R5_JSON -> _serialize_dates
-    _transform_R5_JSON -> return_string_of_dataframe_info
-    _transform_R5_JSON -> ISSN_regex
-    _transform_R5_JSON -> empty_string_regex
-    _transform_R5b1_JSON -> _serialize_dates
-    _transform_R5b1_JSON -> return_string_of_dataframe_info
-    _transform_R5b1_JSON -> ISSN_regex
-    _transform_R5b1_JSON -> empty_string_regex
-
-
     subgraph cluster_annual_stats {
         label="nolcat.annual_stats"
         penwidth=5
@@ -715,6 +690,22 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="box"]
+        subgraph cluster_ConvertJSONDictToDataframe {
+            label="nolcat.nolcat_glue_job.ConvertJSONDictToDataframe"
+            penwidth=5
+            style="rounded"
+
+            create_dataframe_in_ConvertJSONDictToDataframe [
+                label="create_dataframe"
+                shape="box"
+            ]
+            _transform_R5_JSON [shape="box"]
+            _transform_R5b1_JSON [shape="box"]
+            _serialize_dates [shape="box"]
+            _extraction_start_logging_statement [shape="box"]
+            _extraction_complete_logging_statement [shape="box"]
+            _increase_field_length_logging_statement [shape="box"]
+        }
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
     list_folder_contents_statement -> format_list_for_stdout
@@ -738,6 +729,16 @@ digraph function_call_chains {
     update_database -> database_query_fail_statement
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
     save_unconverted_data_via_upload -> format_list_for_stdout
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
+    _transform_R5_JSON -> empty_string_regex
+    _transform_R5b1_JSON -> _serialize_dates
+    _transform_R5b1_JSON -> return_string_of_dataframe_info
+    _transform_R5b1_JSON -> ISSN_regex
+    _transform_R5b1_JSON -> empty_string_regex
 
 
     subgraph cluster_app {
