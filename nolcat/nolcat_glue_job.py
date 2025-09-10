@@ -195,6 +195,51 @@ def ISBN_regex():
     return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
 
 
+def non_COUNTER_file_name_regex():
+    """A regex for the naming convention of non-COUNTER usage files saved in S3.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
+
+
+def parquet_file_name_regex():
+    """A regex for the naming convention of parquet usage files containing COUNTER data in S3.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2})|(NULL))\.parquet")
+
+
+def empty_string_regex():
+    """A regex for matching empty strings and whitespace-only strings.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"^\s*$")
+
+
+def proprietary_ID_regex():
+    """A regex for matching the proprietary ID label in a SUSHI JSON.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"[Pp]roprietary(_ID)?")
+
+
+def author_regex():
+    """A regex for matching the author label in a SUSHI JSON.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile("[Aa]uthor")
+
+
 def AWS_timestamp_format():
     """The `strftime()` format code to use with AWS names.
 
@@ -241,33 +286,6 @@ Called in `nolcat.models.StatisticsSources._harvest_single_report()` after calls
         test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
 Called in fixture `tests.test_app.file_name_stem_and_data()` which is for `tests.test_app.test_save_unconverted_data_via_upload()`
 '''
-
-
-def non_COUNTER_file_name_regex():
-    """A regex for the naming convention of non-COUNTER usage files saved in S3.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
-
-
-def parquet_file_name_regex():
-    """A regex for the naming convention of parquet usage files containing COUNTER data in S3.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2})|(NULL))\.parquet")
-
-
-def empty_string_regex():
-    """A regex for matching empty strings and whitespace-only strings.
-
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"^\s*$")
 
 
 #SUBSECTION: Formatting Changes

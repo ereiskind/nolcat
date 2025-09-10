@@ -40,13 +40,6 @@ def test_ISBN_regex():
     assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
 
 
-def test_AWS_timestamp_format():
-    """Tests formatting a datetime value with the given format code."""
-    assert datetime(2022, 1, 12, 23, 59, 59).strftime(AWS_timestamp_format()) == "2022-01-12T23-59-59"
-    assert datetime(2024, 7, 4, 2, 45, 8).strftime(AWS_timestamp_format()) == "2024-07-04T02-45-08"
-    assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
-
-
 def test_non_COUNTER_file_name_regex():
     """Tests matching the regex object to file names."""
     assert non_COUNTER_file_name_regex().fullmatch("1_2020.csv") is not None
@@ -69,6 +62,13 @@ def test_empty_string_regex():
     assert empty_string_regex().fullmatch("") is not None
     assert empty_string_regex().fullmatch(" ") is not None
     assert empty_string_regex().fullmatch("\n") is not None
+
+
+def test_AWS_timestamp_format():
+    """Tests formatting a datetime value with the given format code."""
+    assert datetime(2022, 1, 12, 23, 59, 59).strftime(AWS_timestamp_format()) == "2022-01-12T23-59-59"
+    assert datetime(2024, 7, 4, 2, 45, 8).strftime(AWS_timestamp_format()) == "2024-07-04T02-45-08"
+    assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
 
 
 def test_return_string_of_dataframe_info():

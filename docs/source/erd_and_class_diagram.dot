@@ -319,8 +319,6 @@ digraph erd_and_classes {
         label="CLASS: ConvertJSONDictToDataframe"
 
         // Attributes
-        proprietary_ID_regex
-        author_regex
         SUSHI_JSON_dictionary
 
         // Methods

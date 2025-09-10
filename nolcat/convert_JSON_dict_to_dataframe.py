@@ -20,8 +20,6 @@ class ConvertJSONDictToDataframe:
     SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a dataframe, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into dataframes that can be loaded into the `COUNTERData` relation; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the dictionary as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `ConvertJSONDictToDataframe` type are never instantiated.
 
     Attributes:
-        proprietary_ID_regex (re.Pattern): A class variable for a regex to match a proprietary ID label.
-        author_regex (re.Pattern): A class variable for a regex to match an author label.
         self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
     Methods:
@@ -33,10 +31,6 @@ class ConvertJSONDictToDataframe:
         _extraction_complete_logging_statement: This method creates the logging statement indicating a successful attribute value extraction.
         _increase_field_length_logging_statement: This method creates the logging statement indicating a field length needs to be increased.
     """
-    # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
-    proprietary_ID_regex = re.compile(r"[Pp]roprietary(_ID)?")
-    author_regex = re.compile("[Aa]uthor")
-
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
