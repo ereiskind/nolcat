@@ -123,4 +123,4 @@ The parquet files are divided into folders based on the four base R5 report type
 * **TR**: TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
 * **IR**: IR
 
-The file names will contain the statistics source ID, the exact report type, and the harvest date in ISO format, all separated by an underscore. If the harvest date wasn't recorded, `NULL` appears instead of the date value. (the date is used in the event that some data needs revising, in which case keeping harvest date makes remove and replace easier to do; at the time of the SQL to parquet convention, any data without a harvest date is old enough to not need revision.)
+The file names will contain the statistics source ID, the exact report type, and the harvest date in ISO format, all separated by an underscore. If the harvest date wasn't recorded, `NULL` appears instead of the date value. (The date is used in the event that some data needs revising, in which case keeping harvest date makes remove and replace easier to do; at the time of the SQL to parquet convention, any data without a harvest date is old enough to not need revision.)
