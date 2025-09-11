@@ -1174,7 +1174,7 @@ class StatisticsSources(db.Model):
             usage_end_date,
             report_to_harvest,
             bucket_path,
-            )
+        )
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
