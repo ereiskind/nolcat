@@ -2445,7 +2445,6 @@ digraph function_call_chains {
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
-    test_collect_usage_statistics -> _harvest_R5_SUSHI
     test_collect_usage_statistics -> collect_usage_statistics
     test_collect_usage_statistics -> load_data_into_database_success_regex
     test_collect_usage_statistics -> engine
