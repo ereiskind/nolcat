@@ -735,10 +735,16 @@ digraph function_call_chains {
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
     _transform_R5_JSON -> empty_string_regex
+    _transform_R5_JSON -> _extraction_start_logging_statement
+    _transform_R5_JSON -> _extraction_complete_logging_statement
+    _transform_R5_JSON -> _increase_field_length_logging_statement
     _transform_R5b1_JSON -> _serialize_dates
     _transform_R5b1_JSON -> return_string_of_dataframe_info
     _transform_R5b1_JSON -> ISSN_regex
     _transform_R5b1_JSON -> empty_string_regex
+    _transform_R5b1_JSON -> _extraction_start_logging_statement
+    _transform_R5b1_JSON -> _extraction_complete_logging_statement
+    _transform_R5b1_JSON -> _increase_field_length_logging_statement
 
 
     subgraph cluster_app {

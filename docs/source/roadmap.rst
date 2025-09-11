@@ -28,7 +28,6 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * Confirm all methods of `nolcat.ConvertJSONDictsToDataframe` except `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` are private
   * Get list of all calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
   * Add `statistics_source_ID` and `report_type` to class inputs
   * End `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
