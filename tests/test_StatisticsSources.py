@@ -206,7 +206,6 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     """Tests the method making the API call and turing the result into a dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     with client:
@@ -237,7 +236,6 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     with client:
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
@@ -266,7 +264,6 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     with client:
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
             most_recent_month_with_usage[0],
@@ -285,7 +282,6 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
@@ -355,7 +351,6 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     yield StatisticsSources_fixture._harvest_R5_SUSHI(
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
@@ -372,7 +367,6 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
         month_before_month_like_most_recent_month_with_usage[0],

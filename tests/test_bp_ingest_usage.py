@@ -175,7 +175,6 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     page = client.get(
@@ -217,7 +216,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     df = query_database(

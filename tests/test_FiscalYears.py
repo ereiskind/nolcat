@@ -350,7 +350,6 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
 
     #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
     # A random value is added at this point for greater variability in the testing

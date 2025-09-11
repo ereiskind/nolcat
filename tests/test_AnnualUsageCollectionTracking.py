@@ -64,7 +64,6 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
 
     record = query_database(
         query=f"""
@@ -126,7 +125,6 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')
 
     with client:
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
