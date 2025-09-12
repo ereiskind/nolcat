@@ -138,6 +138,10 @@ Create `ConvertJSONDictToDataframe` Test Fixtures
 2. Use "tests\\create_test_data\\R5.1_JSON_to_dataframe.ipynb" to create the OpenRefine instructions JSON, then apply it to the OpenRefine project.
 3. Download each project in Excel, then use the `df` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py"; remember to remove the statistics source ID and report type fields from the beginning and add the report creation date at the end.
 
+Test Data Parquet Files
+-----------------------
+With the transition to AWS and using parquet to store COUNTER usage data, the ETL flow was changed so once the transformation was complete, the resulting dataframe was loaded/saved as a parquet file to S3. The tests needed to change accordingly. The parquet files themselves needed for tests are saved in "\\tests\\data\\COUNTER_parquet_files_for_tests", they will need to be moved to the S3 location identified by the `TEST_COUNTER_FILE_PATH` constant for the tests to run properly.
+
 Transaction Rollbacks
 =====================
 The preferred setup for testing database interactions involves performing all tests as transactions which are rolled back before the completion of the test suite; ideally, this configuration could also be used to accommodate the fact that certain test modules have preconditions involving data in some or all of the relations. To minimize the frequency of database resets during testing, the following order is recommended for running tests:
