@@ -138,45 +138,6 @@ def last_day_of_month(original_date):
     elif isinstance(original_date, pd.Timestamp):
         year_and_month_string = original_date.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
         return year_and_month_string + str(original_date.days_in_month)
-'''
-Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` via `nolcat.models.StatisticsSources._harvest_single_report()` after calls to `SUSHICallAndResponse`
-    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI()`
-    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`
-    Called in test `tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`  
-    Called in `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`
-        Called in test `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
-            Called in fixture `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()` for `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
-    Called in `nolcat.models.StatisticsSources.collect_usage_statistics()`
-        Called in test `tests.test_StatisticsSources.test_collect_usage_statistics()`
-            Called in fixture `tests.test_StatisticsSources.harvest_R5_SUSHI_result()` for `tests.test_StatisticsSources.test_collect_usage_statistics()`
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
-        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> last_day_of_month
-Called in `SUSHICallAndResponse` in non-fixture `tests.conftest.COUNTER_reports_offered_by_statistics_source()` via `tests.test_StatisticsSources.reports_offered_by_StatisticsSource_fixture()` via both `tests.test_StatisticsSources.StatisticsSources_fixture()` and `tests.test_StatisticsSources.SUSHI_credentials_fixture_in_test_StatisticsSources()` via `tests.test_StatisticsSources.most_recent_month_with_usage()`
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> most_recent_month_with_usage -> last_day_of_month
-Called in `nolcat.models.StatisticsSources._harvest_single_report()` in loop designed to combine the output of multiple calls to `SUSHICallAndResponse`
-    test_harvest_single_report -> _harvest_single_report -> last_day_of_month
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> last_day_of_month
-Called in `SUSHICallAndResponse` in non-fixture `tests.conftest.COUNTER_reports_offered_by_statistics_source()` via `tests.test_SUSHICallAndResponse.list_of_reports()` via `tests.test_SUSHICallAndResponse.SUSHI_credentials_fixture()`
-    test_PR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
-    test_DR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
-    test_TR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
-    test_IR_call_validity -> list_of_reports -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
-Called in `tests.test_bp_view_usage.start_query_wizard_form_data()` after a SQL query on relation `COUNTERData`
-    test_start_query_wizard -> start_query_wizard_form_data -> last_day_of_month
-    test_GET_query_wizard_sort_redirect -> start_query_wizard_form_data -> last_day_of_month
-
-Make call function with call to database including or after `last_day_of_month`; check if `COUNTERData` relation is referenced
-    test_harvest_R5_SUSHI -> most_recent_month_with_usage -> last_day_of_month
-    test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage -> last_day_of_month
-    test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage -> last_day_of_month
-'''
 
 
 def ISSN_regex():
@@ -253,43 +214,6 @@ def AWS_timestamp_format():
         str: Python datetime format code
     """
     return '%Y-%m-%dT%H-%M-%S'
-'''
-Called in `nolcat.models.StatisticsSources._harvest_single_report()` after calls to both `SUSHICallAndResponse` and `ConvertJSONDictToDataframe`
-    test_harvest_single_report -> _harvest_single_report -> AWS_timestamp_format | test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> AWS_timestamp_format | test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> AWS_timestamp_format | test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format | test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-        test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> AWS_timestamp_format
-Called in fixture `tests.test_app.file_name_stem_and_data()` which is for `tests.test_app.test_save_unconverted_data_via_upload()`
-'''
 
 
 #SUBSECTION: Formatting Changes
@@ -324,54 +248,6 @@ def format_list_for_stdout(stdout_list):
         return '\n'.join([f"{k}: {v}" for k, v in stdout_list.items()])
     else:
         return '\n'.join([str(file_path) for file_path in stdout_list])
-'''
-Called in `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()` in the return value
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> format_list_for_stdout
-'''
 
 
 def remove_IDE_spacing_from_statement(statement):
@@ -388,333 +264,6 @@ def remove_IDE_spacing_from_statement(statement):
     statement = " ".join(re.split(r"\n\s+", statement)).strip()
     statement = " AND ".join(statement.split("\nAND ")).strip()
     return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
-'''
-Called in `nolcat.app.query_database()` and in return value if query fails
-    add_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        add_access_stop_date -> update_database -> remove_IDE_spacing_from_statement
-    remove_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        remove_access_stop_date -> update_database -> remove_IDE_spacing_from_statement
-    change_StatisticsSource -> query_database -> remove_IDE_spacing_from_statement
-        change_StatisticsSource -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        change_StatisticsSource -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_query_database -> query_database -> remove_IDE_spacing_from_statement
-    test_loading_connected_data_into_other_relation -> query_database -> remove_IDE_spacing_from_statement
-    test_first_new_PK_value -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_update_database -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_update_database -> update_database -> remove_IDE_spacing_from_statement
-        test_update_database_with_insert_statement -> query_database -> remove_IDE_spacing_from_statement
-            test_update_database_with_insert_statement -> update_database -> query_database -> remove_IDE_spacing_from_statement
-                test_update_database_with_insert_statement -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> show_fiscal_year_details -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement
-    test_run_custom_SQL_query -> run_custom_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_use_predefined_SQL_query -> use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_start_query_wizard -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_query_wizard_sort_redirect -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61a -> calculate_ACRL_61a -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61a -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61b -> calculate_ACRL_61b -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_18 -> calculate_ARL_18 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_18 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_19 -> calculate_ARL_19 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_19 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_20 -> calculate_ARL_20 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_20 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
-    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_fiscal_year_usage_statistics -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.statements.database_update_fail_statement()` in return value
-    add_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    remove_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    change_StatisticsSource -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-'''
 
 
 def truncate_longer_lines(line):
@@ -731,35 +280,6 @@ def truncate_longer_lines(line):
         return line[:147] + "..."
     else:
         return line
-'''
-Called in `nolcat.app.update_database()` in return value if there was a problem with the update
-    add_access_stop_date -> update_database -> truncate_longer_lines
-    remove_access_stop_date -> update_database -> truncate_longer_lines
-    change_StatisticsSource -> update_database -> truncate_longer_lines
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> truncate_longer_lines
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> truncate_longer_lines
-    test_update_database -> update_database -> truncate_longer_lines
-        test_update_database_with_insert_statement -> update_database -> truncate_longer_lines
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> truncate_longer_lines
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> truncate_longer_lines
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> truncate_longer_lines
-    test_collect_fiscal_year_usage_statistics -> update_database -> truncate_longer_lines
-        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> truncate_longer_lines
-'''
 
 
 #SUBSECTION: SUSHI Statements and Regexes
@@ -778,22 +298,6 @@ def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_ty
         return f"Changing the JSON-like dictionary of {report_type} for {statistics_source_name} into a dataframe raised the error {error_message}."
     else:
         return f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error_message}."
-'''
-Called in `nolcat.models.StatisticsSources._harvest_single_report()` in return value
-    test_harvest_single_report -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
-'''
 
 
 def successful_SUSHI_call_statement(call_path, statistics_source_name):
@@ -856,86 +360,6 @@ def failed_SUSHI_call_statement(call_path, statistics_source_name, error_message
         return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
     else:
         return main_value[:-1]  # Removing the whitespace character at the end
-'''
-Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` in return value
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-            test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-            test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> failed_SUSHI_call_statement
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return value via `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> failed_SUSHI_call_statement
-Called in `nolcat.SUSHICallAndResponse._convert_Response_to_JSON()` in return value in `nolcat.SUSHICallAndResponse.make_SUSHI_call()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_status_call -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_status_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_reports_call -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_reports_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_PR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_DR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_TR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_IR_call_validity -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _convert_Response_to_JSON -> failed_SUSHI_call_statement
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return value
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_status_call -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_status_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_reports_call -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_reports_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_PR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_DR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_TR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_IR_call_validity -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> failed_SUSHI_call_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> failed_SUSHI_call_statement
-'''
 
 
 def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_empty_string=False, has_Report_Items=True):
@@ -972,22 +396,6 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
         str: the statement for outputting the arguments to logging
     """
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
-'''
-Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` in return value
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> attempted_SUSHI_call_with_invalid_dates_statement
-Called in `assert` statement in test
-    test_harvest_R5_SUSHI_with_invalid_dates -> attempted_SUSHI_call_with_invalid_dates_statement
-'''
 
 
 def reports_with_no_usage_regex():
@@ -999,43 +407,6 @@ def reports_with_no_usage_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
     return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
-'''
-Called in `nolcat.models.StatisticsSources._harvest_single_report()`
-    test_harvest_single_report -> _harvest_single_report -> reports_with_no_usage_regex
-        test_harvest_single_report -> reports_with_no_usage_regex
-        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> reports_with_no_usage_regex
-            test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> reports_with_no_usage_regex
-Called in `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> reports_with_no_usage_regex
-Called in `tests/test_SUSHICallAndResponse`
-    test_status_call -> reports_with_no_usage_regex
-    test_reports_call -> reports_with_no_usage_regex
-    test_PR_call_validity -> reports_with_no_usage_regex
-    test_DR_call_validity -> reports_with_no_usage_regex
-    test_TR_call_validity -> reports_with_no_usage_regex
-    test_IR_call_validity -> reports_with_no_usage_regex
-'''
 
 
 def skip_test_due_to_SUSHI_error_regex():
@@ -1047,17 +418,6 @@ def skip_test_due_to_SUSHI_error_regex():
         re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`
     """
     return re.compile(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?")
-'''
-Called in `tests/test_SUSHICallAndResponse` to compare to `SUSHICallAndResponse.make_SUSHI_call()` return value
-    test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
-    test_harvest_single_report_with_partial_date_range -> skip_test_due_to_SUSHI_error_regex
-    test_status_call -> skip_test_due_to_SUSHI_error_regex
-    test_reports_call -> skip_test_due_to_SUSHI_error_regex
-    test_PR_call_validity -> skip_test_due_to_SUSHI_error_regex
-    test_DR_call_validity -> skip_test_due_to_SUSHI_error_regex
-    test_TR_call_validity -> skip_test_due_to_SUSHI_error_regex
-    test_IR_call_validity -> skip_test_due_to_SUSHI_error_regex
-'''
 
 
 #SUBSECTION: Testing and Error Statements
@@ -1185,137 +545,6 @@ def database_query_fail_statement(error_message, value_type="load requested page
         return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:].replace(' raised', ', which raised')}"
     else:
         return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
-'''
-Called in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` via `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> database_query_fail_statement
-Called in `nolcat.SUSHICallAndResponse._evaluate_individual_SUSHI_exception()` via `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()`via `nolcat.SUSHICallAndResponse.make_SUSHI_call()` in return statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> database_query_fail_statement
-Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` in return statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_check_if_data_in_database_no -> _check_if_data_in_database -> database_query_fail_statement
-    test_check_if_data_in_database_yes -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> database_query_fail_statement
-Called in `nolcat.app.check_if_data_already_in_COUNTERData()` in return value
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> database_query_fail_statement
-Called in return statements with minimal cascading changes
-    change_StatisticsSource -> database_query_fail_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> database_query_fail_statement
-    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> database_query_fail_statement
-    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> database_query_fail_statement
-    test_calculate_ACRL_61a -> calculate_ACRL_61a -> database_query_fail_statement
-    test_calculate_ACRL_61b -> calculate_ACRL_61b -> database_query_fail_statement
-    test_calculate_ARL_18 -> calculate_ARL_18 -> database_query_fail_statement
-    test_calculate_ARL_19 -> calculate_ARL_19 -> database_query_fail_statement
-    test_calculate_ARL_20 -> calculate_ARL_20 -> database_query_fail_statement
-    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> database_query_fail_statement
-'''
 
 
 def return_value_from_query_statement(return_value, type_of_query=None):
@@ -1369,14 +598,6 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
         str: the statement for outputting the arguments to logging
     """
     return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
-'''
-Called in return statements for SUSHI collection
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-'''
 
 
 def return_dataframe_from_query_statement(query_subject, df):
@@ -1409,26 +630,6 @@ def database_update_fail_statement(update_statement):
     message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
     print(message)
     return message
-'''
-Called in `nolcat.statements.add_data_success_and_update_database_fail_statement()` in return statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-Called in return statements with minimal cascading changes
-    add_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    remove_access_stop_date -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    change_StatisticsSource -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-'''
 
 
 def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
@@ -1443,23 +644,6 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     """
     update_statement = database_update_fail_statement(update_statement)
     return f"{load_data_response[:-1]}, but {update_statement[0].lower()}{update_statement[1:]}"
-'''
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` in return statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-                        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-Called in mass SUSHI harvest functions in return statements
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement -> database_update_fail_statement -> remove_IDE_spacing_from_statement
-'''
 
 
 #SUBSECTION: Result Statement Regexes
@@ -1472,33 +656,6 @@ def load_data_into_database_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
     return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
-'''
-Called in SUSHI calling functions in `nolcat.models`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> load_data_into_database_success_regex
-        test_collect_annual_usage_statistics -> load_data_into_database_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
-        test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
-    test_collect_usage_statistics -> load_data_into_database_success_regex
-Called in `nolcat.initialization.collect_FY_and_vendor_data()` and return value changed if matched
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database_success_regex
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database_success_regex
-Called in `nolcat.initialization.collect_sources_data()` and return value changed if matched
-    test_collect_sources_data -> collect_sources_data -> load_data_into_database_success_regex
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> load_data_into_database_success_regex
-            test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> load_data_into_database_success_regex
-Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` and return value changed if matched
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-            test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-            test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-Called in tests
-    test_load_data_into_database -> load_data_into_database_success_regex
-    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
-    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
-    test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
-        load_new_record_into_fiscalYears -> load_data_into_database_success_regex
-'''
 
 
 def update_database_success_regex():
@@ -1510,38 +667,6 @@ def update_database_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
     """
     return re.compile(r"[Ss]uccessfully performed the update .+\.", flags=re.DOTALL)
-'''
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` and return value changed if matched
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database_success_regex
-        test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database_success_regex
-        test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-            test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-                test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database_success_regex
-Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` and return value changed if matched
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
-Called in `nolcat.models.ResourceSources` methods and return value changed if matched
-    add_access_stop_date -> update_database_success_regex
-    remove_access_stop_date -> update_database_success_regex
-    change_StatisticsSource -> update_database_success_regex
-Called in looping SUSHI calling functions in `nolcat.models` and return value changed if matched
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database_success_regex
-        test_collect_annual_usage_statistics -> update_database_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database_success_regex
-        test_collect_fiscal_year_usage_statistics -> update_database_success_regex
-Called in test assert statements
-    test_update_database -> update_database_success_regex
-    test_update_database_with_insert_statement -> update_database_success_regex
-'''
 
 
 #SUBSECTION: Common Dataframe Adjustments
@@ -1562,29 +687,6 @@ def change_single_field_dataframe_into_series(df):
         dtype=df[df.columns[0]].dtype,
         name=df.columns[0],
     )
-'''
-Called in `nolcat.app.create_AUCT_SelectField_options()` in return value
-    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-            test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-            test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-            test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-            test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-                test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-                    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-                    test_collect_FY_and_vendor_data -> change_single_field_dataframe_into_series
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-Called in tests
-    test_harvest_SUSHI_statistics -> change_single_field_dataframe_into_series
-    test_collect_sources_data -> change_single_field_dataframe_into_series
-'''
 
 
 def restore_boolean_values_to_boolean_field(series):
@@ -1599,13 +701,6 @@ def restore_boolean_values_to_boolean_field(series):
         pd.Series: a series object with the same information as the initial series but with Boolean values and a `boolean` dtype
     """
     return series.astype('boolean')
-'''
-Called in tests
-    test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
-Called to create `nolcat.models.AnnualUsageCollectionTracking` object
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
-        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> restore_boolean_values_to_boolean_field
-'''
 
 
 def create_AUCT_SelectField_options(df):
@@ -1626,21 +721,6 @@ def create_AUCT_SelectField_options(df):
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
     return list(s.items())
-'''
-Called in `nolcat.initialization.upload_historical_non_COUNTER_usage()` for form creation
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-Called in `nolcat.ingest_usage.upload_non_COUNTER_reports()` for form creation
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-Called in `nolcat.view_usage.download_non_COUNTER_usage()` for form creation
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-        test_GET_request_for_download_non_COUNTER_usage -> create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-'''
 
 
 def extract_value_from_single_value_df(df, expect_int=True):
@@ -1662,174 +742,6 @@ def extract_value_from_single_value_df(df, expect_int=True):
         elif isinstance(return_value, float):
             return_value = int(return_value)
     return return_value
-'''
-Called in `nolcat.app.update_database()` impacting return value
-    add_access_stop_date -> update_database -> extract_value_from_single_value_df
-    remove_access_stop_date -> update_database -> extract_value_from_single_value_df
-    change_StatisticsSource -> update_database -> extract_value_from_single_value_df
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> extract_value_from_single_value_df
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_update_database_with_insert_statement -> update_database -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df
-        test_collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df
-Called in `nolcat.app.first_new_PK_value()` in return value
-    test_first_new_PK_value -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
-    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._save_raw_Response_text()` to get value passed to `nolcat.app.save_unconverted_data_via_upload()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-            test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-            test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_TR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-        test_IR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> extract_value_from_single_value_df
-Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` impacting return value
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_check_if_data_in_database_no -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_check_if_data_in_database_yes -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> extract_value_from_single_value_df
-Called in `nolcat.app.check_if_data_already_in_COUNTERData()` impacting return value
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-        test_check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-Called in `tests.test_StatisticsSources.StatisticsSources_fixture()` yield object
-    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_check_if_data_in_database_no -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_check_if_data_in_database_yes -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_harvest_single_report -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_harvest_R5_SUSHI -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-                test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture -> extract_value_from_single_value_df
-            test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> extract_value_from_single_value_df
-                test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-    test_collect_usage_statistics -> StatisticsSources_fixture -> extract_value_from_single_value_df
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture -> extract_value_from_single_value_df
-Other calls
-    test_collect_annual_usage_statistics -> extract_value_from_single_value_df
-    test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
-    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    test_upload_COUNTER_data_via_SQL_insert -> extract_value_from_single_value_df
-    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
-    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
-    test_calculate_ACRL_61a -> calculate_ACRL_61a -> extract_value_from_single_value_df
-    test_calculate_ACRL_61b -> calculate_ACRL_61b -> extract_value_from_single_value_df
-    test_calculate_ARL_18 -> calculate_ARL_18 -> extract_value_from_single_value_df
-    test_calculate_ARL_19 -> calculate_ARL_19 -> extract_value_from_single_value_df
-    test_calculate_ARL_20 -> calculate_ARL_20 -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
-    test_status_call -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_status_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_reports_call -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_reports_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_PR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_DR_call_validity -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-    test_call_with_invalid_credentials -> StatisticsSource_instance_name -> extract_value_from_single_value_df
-'''
 
 
 #SUBSECTION: MySQL Interaction
@@ -1863,29 +775,6 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
         message = f"Loading data into the {relation} relation raised the error {error}."
         log.error(message)
         return message
-'''
-Called in methods calling `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` to add data to database
-    test_collect_usage_statistics -> collect_usage_statistics -> load_data_into_database
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> load_data_into_database
-            test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> load_data_into_database
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> load_data_into_database
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> load_data_into_database
-Called in initialization blueprint route functions
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> load_data_into_database
-    test_collect_sources_data -> collect_sources_data -> load_data_into_database
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> load_data_into_database
-Called in `nolcat.ingest_usage.upload_COUNTER_data()` to add data to database
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> load_data_into_database
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> load_data_into_database
-Called in other functions to add data to database
-    change_StatisticsSource -> load_data_into_database
-    test_load_data_into_database -> load_data_into_database
-    test_loading_connected_data_into_other_relation -> load_data_into_database
-    load_new_record_into_fiscalYears -> load_data_into_database
-    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> load_data_into_database
-'''
 
 
 def query_database(query, engine, index=None):
@@ -1917,296 +806,6 @@ def query_database(query, engine, index=None):
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
-'''
-Called in `nolcat.app.update_database()`
-    add_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    remove_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    change_StatisticsSource -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_update_database -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_update_database_with_insert_statement -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.app.first_new_PK_value()`
-    test_first_new_PK_value -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.models.StatisticsSources._check_if_data_in_database()` to determine return value
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> _check_if_data_in_database -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()` via `nolcat.SUSHICallAndResponse._handle_SUSHI_exceptions()` via `nolcat.SUSHICallAndResponse._handle_individual_SUSHI_exception()` impacting return value and used to create `nolcat.models.StatisticsSources` object for the `nolcat.models.StatisticsSources.add_note()` method
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-        test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.app.check_if_data_already_in_COUNTERData()` to determine return value
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_already_in_COUNTERData -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-Called in `tests.test_FiscalYears.FY2020_FiscalYears_object()` to create object yielded by fixture
-    test_calculate_depreciated_ACRL_60b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_63 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61a -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61b -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_18 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_19 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_20 -> FY2020_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-Called in `tests.stest_StatisticsSources.StatisticsSources_fixture()` impacting returned yield value
-    test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_no -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_in_database_yes -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture -> query_database -> remove_IDE_spacing_from_statement
-Called in `tests.test_SUSHICallAndResponse.StatisticsSource_instance_name()` to get yielded value
-    test_status_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_status_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_reports_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_PR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_DR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_TR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_IR_call_validity -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-    test_call_with_invalid_credentials -> StatisticsSource_instance_name -> query_database -> remove_IDE_spacing_from_statement
-Other Calls
-    change_StatisticsSource -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_usage_statistics -> match_direct_SUSHI_harvest_result -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_nonstandard_usage_file -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_download_nonstandard_usage_file -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-        test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_download_non_COUNTER_usage -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-        test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload -> query_database -> remove_IDE_spacing_from_statement
-    test_loading_connected_data_into_other_relation -> query_database -> remove_IDE_spacing_from_statement
-    test_update_database_with_insert_statement -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_annual_stats_homepage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_annual_stats_homepage -> annual_stats_homepage -> show_fiscal_year_details -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_Excel -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-        test_harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_FY_and_vendor_data -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> query_database -> remove_IDE_spacing_from_statement
-    test_run_custom_SQL_query -> run_custom_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_use_predefined_SQL_query -> use_predefined_SQL_query -> query_database -> remove_IDE_spacing_from_statement
-    test_start_query_wizard -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_query_wizard_sort_redirect -> start_query_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_60b -> calculate_depreciated_ACRL_60b -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_depreciated_ACRL_63 -> calculate_depreciated_ACRL_63 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61a -> calculate_ACRL_61a -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ACRL_61b -> calculate_ACRL_61b -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_18 -> calculate_ARL_18 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_19 -> calculate_ARL_19 -> query_database -> remove_IDE_spacing_from_statement
-    test_calculate_ARL_20 -> calculate_ARL_20 -> query_database -> remove_IDE_spacing_from_statement
-    test_create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
-    test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object -> query_database -> remove_IDE_spacing_from_statement
-    test_check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-'''
 
 
 def first_new_PK_value(relation):
@@ -2257,24 +856,6 @@ def first_new_PK_value(relation):
         largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
         log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
-'''
-Called in `nolcat.models.StatisticsSources.collect_usage_statistics()` impacting loaded data and return statement
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_usage_statistics -> collect_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-Called in other methods for calling `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.ingest_usage.upload_COUNTER_data()` impacting loaded data
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-Called in initialization blueprint
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_sources_data -> collect_sources_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> extract_value_from_single_value_df | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> first_new_PK_value -> query_database -> remove_IDE_spacing_from_statement
-'''
 
 
 def check_if_data_already_in_COUNTERData(df):
@@ -2370,16 +951,7 @@ def check_if_data_already_in_COUNTERData(df):
         log.info(message)
         return (records_to_keep, message)
     else:
-        return (df, None)
-'''
-**Calls impact second value of returned tuple**
-Called in `nolcat.ingest_usage.upload_COUNTER_data()` impacting return value and uploaded data
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> format_list_for_stdout | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> format_list_for_stdout |     test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` impacting return value and uploaded data
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> format_list_for_stdout | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> format_list_for_stdout | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> database_query_fail_statement | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData -> query_database -> remove_IDE_spacing_from_statement
-'''
+        return (df, None)  #ToDo: Calls impact second value of returned tuple--function will need to be redone to handle data movement from MySQL to S3
 
 
 def update_database(update_statement, engine):
@@ -2486,29 +1058,6 @@ def update_database(update_statement, engine):
     message = f"Successfully performed the update {display_update_statement}."
     log.info(message)
     return message
-'''
-Called in `nolcat.models.ResourceSources` methods
-    add_access_stop_date -> update_database -> extract_value_from_single_value_df | add_access_stop_date -> update_database -> remove_IDE_spacing_from_statement | add_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    remove_access_stop_date -> update_database -> extract_value_from_single_value_df | remove_access_stop_date -> update_database -> remove_IDE_spacing_from_statement | remove_access_stop_date -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    change_StatisticsSource -> update_database -> extract_value_from_single_value_df | change_StatisticsSource -> update_database -> remove_IDE_spacing_from_statement | change_StatisticsSource -> update_database -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.ingest_usage.upload_COUNTER_data()`
-    test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement | test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> extract_value_from_single_value_df | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement | test_upload_COUNTER_data_via_SQL_insert -> upload_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> extract_value_from_single_value_df | test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> remove_IDE_spacing_from_statement | test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> update_database -> query_database -> remove_IDE_spacing_from_statement
-Called in `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()`
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement | test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> extract_value_from_single_value_df | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> remove_IDE_spacing_from_statement | test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> update_database -> query_database -> remove_IDE_spacing_from_statement
-Called in other methods for calling `nolcat.models.StatisticsSources._harvest_R5_SUSHI()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> extract_value_from_single_value_df | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> remove_IDE_spacing_from_statement | test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> remove_IDE_spacing_from_statement | test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-        test_collect_fiscal_year_usage_statistics -> update_database -> extract_value_from_single_value_df | test_collect_fiscal_year_usage_statistics -> update_database -> remove_IDE_spacing_from_statement | test_collect_fiscal_year_usage_statistics -> update_database -> query_database -> remove_IDE_spacing_from_statement
-'''
 
 
 #SECTION: S3 Interaction
@@ -2524,15 +1073,6 @@ def failed_upload_to_S3_statement(file_name, error_message):
         str: the statement for outputting the arguments to logging
     """
     return f"Uploading the file {file_name} to S3 failed because {error_message[0].lower()}{error_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-'''
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` as possible return value
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-        test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-'''
 
 
 def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
@@ -2555,132 +1095,6 @@ def upload_file_to_S3_bucket_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
     return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
-'''
-Called in way that impacts flashed statements only
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> upload_file_to_S3_bucket_success_regex
-Called once
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
-    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
-    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
-Called in `nolcat.SUSHICallAndResponse.make_SUSHI_call()`
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_status_call -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_status_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_reports_call -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_reports_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_PR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_DR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_TR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_IR_call_validity -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-    test_call_with_invalid_credentials -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-Called in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` in return statement
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` impacting return statement
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-Called in `tests.conftest.non_COUNTER_file_to_download_from_S3()` indicating if fixture was created successfully
-    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
-    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
-'''
 
 
 def upload_nonstandard_usage_file_success_regex():
@@ -2692,20 +1106,6 @@ def upload_nonstandard_usage_file_success_regex():
         re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     """
     return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
-'''
-Called in `nolcat.initialization` route functions
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-        test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-        test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-        test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-        test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
-Called only one time
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file_success_regex
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
-'''
 
 
 #SUBSECTION: S3 Interaction Functions
@@ -2735,31 +1135,6 @@ def file_extensions_and_mimetypes():
         ".xml": "text/xml",
         ".zip": "application/zip",
     }
-'''
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` impacting return value
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-Called in `nolcat.view_usage.download_non_COUNTER_usage()` in return value
-    test_GET_request_for_download_non_COUNTER_usage -> download_non_COUNTER_usage -> file_extensions_and_mimetypes
-    test_download_non_COUNTER_usage -> download_non_COUNTER_usage -> file_extensions_and_mimetypes
-Called once
-    test_download_file -> file_extensions_and_mimetypes
-    test_run_custom_SQL_query -> run_custom_SQL_query -> file_extensions_and_mimetypes
-    test_use_predefined_SQL_query -> use_predefined_SQL_query -> file_extensions_and_mimetypes
-    test_construct_PR_query_with_wizard -> construct_PR_query_with_wizard -> file_extensions_and_mimetypes
-    test_construct_DR_query_with_wizard -> construct_DR_query_with_wizard -> file_extensions_and_mimetypes
-    test_construct_TR_query_with_wizard -> construct_TR_query_with_wizard -> file_extensions_and_mimetypes
-    test_construct_IR_query_with_wizard -> construct_IR_query_with_wizard -> file_extensions_and_mimetypes
-'''
 
 
 def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
@@ -2832,83 +1207,6 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
-'''
-Called in `nolcat.app.save_unconverted_data_via_upload()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-Called in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()`
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_upload_non_COUNTER_reports -> upload_non_COUNTER_reports -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_GET_request_for_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_collect_FY_and_vendor_data -> collect_FY_and_vendor_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_collect_sources_data -> collect_sources_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_GET_request_for_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_collect_AUCT_and_historical_COUNTER_data -> collect_AUCT_and_historical_COUNTER_data -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_GET_request_for_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-    test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage -> upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file -> upload_file_to_S3_bucket
-Called only once
-    test_download_nonstandard_usage_file -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
-    test_download_non_COUNTER_usage -> non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
-'''
 
 
 def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
@@ -2984,70 +1282,6 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITH
         message = logging_message
         log.debug(message)
     return message
-'''
-Called in `nolcat.models.StatisticsSources._harvest_single_report()`
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-Called in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> collect_annual_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_SUSHI_statistics -> harvest_SUSHI_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> collect_usage_statistics -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI -> _harvest_single_report -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_status_call -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_status_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_reports_call -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_reports_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_PR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_PR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_DR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_DR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_TR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_TR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_IR_call_validity -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_IR_call_validity -> list_of_reports -> COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    test_call_with_invalid_credentials -> make_SUSHI_call -> _save_raw_Response_text -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-Called once
-    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-'''
 
 
 class ConvertJSONDictToDataframe:
