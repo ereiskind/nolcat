@@ -320,6 +320,8 @@ digraph erd_and_classes {
 
         // Attributes
         SUSHI_JSON_dictionary
+        report_type
+        statistics_source_ID
 
         // Methods
         create_dataframe_in_ConvertJSONDictToDataframe [

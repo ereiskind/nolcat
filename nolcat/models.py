@@ -1043,7 +1043,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
                     if isinstance(df, str):
                         message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                         log.warning(message)
@@ -1084,7 +1084,7 @@ class StatisticsSources(db.Model):
             if isinstance(SUSHI_data_response, str):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)

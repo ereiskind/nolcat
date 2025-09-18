@@ -1290,7 +1290,9 @@ class ConvertJSONDictToDataframe:
     SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a dataframe, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into dataframes that can be loaded into the `COUNTERData` relation; since the desired behavior is more that of a function than a class, the would-be function becomes a class by separating the traditional `__init__` method, which instantiates the dictionary as a class attribute, from the methods which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `ConvertJSONDictToDataframe` type are never instantiated.
 
     Attributes:
-        self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
+        self.SUSHI_JSON_dictionary (dict): the dictionary created by converting the JSON returned by the SUSHI API call into Python data types
+        self.report_type (str): the two-letter abbreviation for the report being called
+        self.statistics_source_ID (int): the primary key value of the statistics source the SUSHI API call is from (the `StatisticsSources.statistics_source_ID` attribute)
 
     Methods:
         create_dataframe: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
@@ -1301,15 +1303,19 @@ class ConvertJSONDictToDataframe:
         _extraction_complete_logging_statement: This method creates the logging statement indicating a successful attribute value extraction.
         _increase_field_length_logging_statement: This method creates the logging statement indicating a field length needs to be increased.
     """
-    def __init__(self, SUSHI_JSON_dictionary):
-        """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
+    def __init__(self, SUSHI_JSON_dictionary, report_type, statistics_source_ID):
+        """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object and two additional variables.
 
         This constructor is not meant to be used alone; all class instantiations should have a `create_dataframe()` method call appended to it.
 
         Args:
-            SUSHI_JSON_dictionary (dict): The dictionary created by converting the JSON returned by the SUSHI API call into Python data types
+            SUSHI_JSON_dictionary (dict): the dictionary created by converting the JSON returned by the SUSHI API call into Python data types
+            report_type (str): the two-letter abbreviation for the report being called
+            statistics_source_ID (int): the primary key value of the statistics source the SUSHI API call is from (the `StatisticsSources.statistics_source_ID` attribute)
         """
         self.SUSHI_JSON_dictionary = SUSHI_JSON_dictionary
+        self.report_type = report_type
+        self.statistics_source_ID = statistics_source_ID
     
 
     def create_dataframe(self):
