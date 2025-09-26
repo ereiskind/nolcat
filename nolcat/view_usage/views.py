@@ -668,8 +668,14 @@ def construct_TR_query_with_wizard():
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
             if "," in form.ISSN_filter.data:
-                #ToDo: Multiple ISSNs
-                pass
+                REGEXP_LIKE_statements = []
+                for ISSN_value in form.ISSN_filter.data.split(","):
+                    if ISBN_regex().fullmatch(ISSN_value) is None:
+                        ISSN_value = str(ISSN_value)[:5] + "-" + str(ISSN_value).strip()[-4:]
+                    REGEXP_LIKE_statements.append(f"print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}'")
+                ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
             else:
                 if ISSN_regex().fullmatch(form.ISSN_filter.data):
                     ISSN_value = form.ISSN_filter.data
@@ -852,8 +858,14 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
             if "," in form.ISSN_filter.data:
-                #ToDo: Multiple ISSNs
-                pass
+                REGEXP_LIKE_statements = []
+                for ISSN_value in form.ISSN_filter.data.split(","):
+                    if ISBN_regex().fullmatch(ISSN_value) is None:
+                        ISSN_value = str(ISSN_value)[:5] + "-" + str(ISSN_value).strip()[-4:]
+                    REGEXP_LIKE_statements.append(f"print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}'")
+                ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
             else:
                 if ISSN_regex().fullmatch(form.ISSN_filter.data):
                     ISSN_value = form.ISSN_filter.data
@@ -889,8 +901,14 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `parent_ISSN` as Filter or Groupby Groups
         if form.parent_ISSN_filter.data:
             if "," in form.parent_ISSN_filter.data:
-                #ToDo: Multiple ISSNs
-                pass
+                REGEXP_LIKE_statements = []
+                for parent_ISSN_value in form.parent_ISSN_filter.data.split(","):
+                    if ISBN_regex().fullmatch(parent_ISSN_value) is None:
+                        parent_ISSN_value = str(parent_ISSN_value)[:5] + "-" + str(parent_ISSN_value).strip()[-4:]
+                    REGEXP_LIKE_statements.append(f"print_ISSN='{parent_ISSN_value}' OR online_ISSN='{parent_ISSN_value}'")
+                parent_ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
+                query = query + parent_ISSN_filter_option_statement
             else:
                 if ISSN_regex().fullmatch(form.parent_ISSN_filter.data):
                     parent_ISSN_value = form.parent_ISSN_filter.data
