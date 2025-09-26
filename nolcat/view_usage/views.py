@@ -645,8 +645,16 @@ def construct_TR_query_with_wizard():
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
             if "," in form.ISBN_filter.data:
-                #ToDo: Multiple ISBNs
-                pass
+                REGEXP_LIKE_statements = []
+                for ISBN_value in form.ISBN_filter.data.split(","):
+                    ISBN_regex = ""
+                    for char in ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            ISBN_regex = ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(ISBN, '{ISBN_regex[:-2]}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex[:-2]}')")
+                ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
             else:
                 ISBN_regex = ""
                 for char in form.ISBN_filter.data:
@@ -821,8 +829,16 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
             if "," in form.ISBN_filter.data:
-                #ToDo: Multiple ISBNs
-                pass
+                REGEXP_LIKE_statements = []
+                for ISBN_value in form.ISBN_filter.data.split(","):
+                    ISBN_regex = ""
+                    for char in ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            ISBN_regex = ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(ISBN, '{ISBN_regex[:-2]}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex[:-2]}')")
+                ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
             else:
                 ISBN_regex = ""
                 for char in form.ISBN_filter.data:
@@ -850,8 +866,16 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `parent_ISBN` as Filter or Groupby Group
         if form.parent_ISBN_filter.data:
             if "," in form.parent_ISBN_filter.data:
-                #ToDo: Multiple ISBNs
-                pass
+                REGEXP_LIKE_statements = []
+                for parent_ISBN_value in form.parent_ISBN_filter.data.split(","):
+                    parent_ISBN_regex = ""
+                    for char in parent_ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            parent_ISBN_regex = parent_ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(parent_ISBN, '{ISBN_regex[:-2]}')")
+                parent_ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
+                query = query + parent_ISBN_filter_option_statement
             else:
                 parent_ISBN_regex = ""
                 for char in form.parent_ISBN_filter.data:
