@@ -648,7 +648,12 @@ def construct_TR_query_with_wizard():
                 #ToDo: Multiple ISBNs
                 pass
             else:
-                ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
+                ISBN_regex = ""
+                for char in form.ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        ISBN_regex = ISBN_regex + f"{char}-?"
+                ISBN_regex = ISBN_regex[:-2]
+                ISBN_filter_option_statement = f"AND (REGEXP_LIKE(ISBN, '{ISBN_regex}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex}'))\n"
                 log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
                 query = query + ISBN_filter_option_statement
         
@@ -815,7 +820,12 @@ def construct_IR_query_with_wizard():
                 #ToDo: Multiple ISBNs
                 pass
             else:
-                ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
+                ISBN_regex = ""
+                for char in form.ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        ISBN_regex = ISBN_regex + f"{char}-?"
+                ISBN_regex = ISBN_regex[:-2]
+                ISBN_filter_option_statement = f"AND (REGEXP_LIKE(ISBN, '{ISBN_regex}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex}'))\n"
                 log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
                 query = query + ISBN_filter_option_statement
         
@@ -835,7 +845,12 @@ def construct_IR_query_with_wizard():
                 #ToDo: Multiple ISBNs
                 pass
             else:
-                parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
+                parent_ISBN_regex = ""
+                for char in form.parent_ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        parent_ISBN_regex = parent_ISBN_regex + f"{char}-?"
+                parent_ISBN_regex = parent_ISBN_regex[:-2]
+                parent_ISBN_filter_option_statement = f"AND REGEXP_LIKE(parent_ISBN, '{parent_ISBN_regex}')\n"
                 log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
                 query = query + parent_ISBN_filter_option_statement
         
