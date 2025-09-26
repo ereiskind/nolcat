@@ -801,17 +801,6 @@ def ISSN_regex():
     return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
 
 
-def ISBN_regex():
-    """A regex object matching an ISBN.
-
-    Regex copied from https://stackoverflow.com/a/53482655.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
-
-
 def extract_value_from_single_value_df(df, expect_int=True):
     """The value in a dataframe containing a single value.
 
