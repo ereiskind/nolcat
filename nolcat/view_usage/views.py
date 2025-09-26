@@ -644,15 +644,23 @@ def construct_TR_query_with_wizard():
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
-            log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-            query = query + ISBN_filter_option_statement
+            if "," in form.ISBN_filter.data:
+                #ToDo: Multiple ISBNs
+                pass
+            else:
+                ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
-            log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-            query = query + ISSN_filter_option_statement
+            if "," in form.ISSN_filter.data:
+                #ToDo: Multiple ISSNs
+                pass
+            else:
+                ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -803,27 +811,43 @@ def construct_IR_query_with_wizard():
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
-            log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-            query = query + ISBN_filter_option_statement
+            if "," in form.ISBN_filter.data:
+                #ToDo: Multiple ISBNs
+                pass
+            else:
+                ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
-            log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-            query = query + ISSN_filter_option_statement
+            if "," in form.ISSN_filter.data:
+                #ToDo: Multiple ISSNs
+                pass
+            else:
+                ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
         
         #Subsection: Add `parent_ISBN` as Filter or Groupby Group
         if form.parent_ISBN_filter.data:
-            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
-            log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
-            query = query + parent_ISBN_filter_option_statement
+            if "," in form.parent_ISBN_filter.data:
+                #ToDo: Multiple ISBNs
+                pass
+            else:
+                parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
+                log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
+                query = query + parent_ISBN_filter_option_statement
         
         #Subsection: Add `parent_ISSN` as Filter or Groupby Groups
         if form.parent_ISSN_filter.data:
-            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
-            log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
-            query = query + parent_ISSN_filter_option_statement
+            if "," in form.parent_ISSN_filter.data:
+                #ToDo: Multiple ISSNs
+                pass
+            else:
+                parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
+                log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
+                query = query + parent_ISSN_filter_option_statement
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
