@@ -579,7 +579,7 @@ def TR_parameters(request):
             'ISBN_filter': "9781281430403",
             'ISSN_filter': "",
             'data_type_filter': forms.data_type_values['Book'][0],
-            'section_type_filter': '',
+            'section_type_filter': "",
             'YOP_start_filter': "",
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
