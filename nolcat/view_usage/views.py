@@ -670,7 +670,7 @@ def construct_TR_query_with_wizard():
             if "," in form.ISSN_filter.data:
                 REGEXP_LIKE_statements = []
                 for ISSN_value in form.ISSN_filter.data.split(","):
-                    if ISBN_regex().fullmatch(ISSN_value) is None:
+                    if ISSN_regex().fullmatch(ISSN_value) is None:
                         ISSN_value = str(ISSN_value)[:5] + "-" + str(ISSN_value).strip()[-4:]
                     REGEXP_LIKE_statements.append(f"print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}'")
                 ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
@@ -884,7 +884,7 @@ def construct_IR_query_with_wizard():
                     for char in parent_ISBN_value:
                         if re.fullmatch(r'\d', char):
                             parent_ISBN_regex = parent_ISBN_regex + f"{char}-?"
-                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(parent_ISBN, '{ISBN_regex[:-2]}')")
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(parent_ISBN, '{parent_ISBN_regex[:-2]}')")
                 parent_ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
                 log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
                 query = query + parent_ISBN_filter_option_statement
@@ -903,7 +903,7 @@ def construct_IR_query_with_wizard():
             if "," in form.parent_ISSN_filter.data:
                 REGEXP_LIKE_statements = []
                 for parent_ISSN_value in form.parent_ISSN_filter.data.split(","):
-                    if ISBN_regex().fullmatch(parent_ISSN_value) is None:
+                    if ISSN_regex().fullmatch(parent_ISSN_value) is None:
                         parent_ISSN_value = str(parent_ISSN_value)[:5] + "-" + str(parent_ISSN_value).strip()[-4:]
                     REGEXP_LIKE_statements.append(f"print_ISSN='{parent_ISSN_value}' OR online_ISSN='{parent_ISSN_value}'")
                 parent_ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
