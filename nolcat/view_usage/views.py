@@ -905,7 +905,7 @@ def construct_IR_query_with_wizard():
                 for parent_ISSN_value in form.parent_ISSN_filter.data.split(","):
                     if ISSN_regex().fullmatch(parent_ISSN_value) is None:
                         parent_ISSN_value = str(parent_ISSN_value)[:5] + "-" + str(parent_ISSN_value).strip()[-4:]
-                    REGEXP_LIKE_statements.append(f"print_ISSN='{parent_ISSN_value}' OR online_ISSN='{parent_ISSN_value}'")
+                    REGEXP_LIKE_statements.append(f"parent_print_ISSN='{parent_ISSN_value}' OR parent_online_ISSN='{parent_ISSN_value}'")
                 parent_ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
                 log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
                 query = query + parent_ISSN_filter_option_statement
@@ -914,7 +914,7 @@ def construct_IR_query_with_wizard():
                     parent_ISSN_value = form.parent_ISSN_filter.data
                 else:
                     parent_ISSN_value = str(form.parent_ISSN_filter.data)[:5] + "-" + str(form.parent_ISSN_filter.data).strip()[-4:]
-                parent_ISSN_filter_option_statement = f"AND (print_ISSN='{parent_ISSN_value}' OR online_ISSN='{parent_ISSN_value}')\n"
+                parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{parent_ISSN_value}' OR parent_online_ISSN='{parent_ISSN_value}')\n"
                 log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
                 query = query + parent_ISSN_filter_option_statement
         
