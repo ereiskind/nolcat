@@ -637,7 +637,7 @@ def TR_parameters(request):
     elif request.param == "Filter by ISSN":
         form_input = {
             'begin_date': date.fromisoformat('2017-01-01'),
-            'end_date': date.fromisoformat('2019-06-30'),
+            'end_date': date.fromisoformat('2020-06-30'),
             'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
@@ -650,7 +650,7 @@ def TR_parameters(request):
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            'metric_type_filter': forms.metric_type_values['Unique_Item_Requests'][0],
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
             'open_in_Excel': False,
         }
         query = """
@@ -658,13 +658,13 @@ def TR_parameters(request):
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND usage_date>='2019-01-01' AND usage_date<='2020-12-31'
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
                 AND (data_type='Journal')
                 AND (section_type='Article' OR section_type IS NULL)
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Unique_Item_Requests')
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
             GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
