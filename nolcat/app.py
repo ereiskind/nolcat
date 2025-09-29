@@ -849,3 +849,20 @@ def empty_string_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"^\s*$")
+
+
+def format_ISSN(unformatted_ISSN):
+    """Creates an ISSN matching `ISSN_regex()` from an unformatted ISSN string.
+
+    Args:
+        unformatted_ISSN (str or int): an ISSN without formatting
+    
+    Returns:
+        str: the formatted ISSN
+    """
+    trimmed_ISSN = str(unformatted_ISSN).strip()
+    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+        return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
+    else:
+        log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
+        return unformatted_ISSN

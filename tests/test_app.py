@@ -511,3 +511,10 @@ def test_empty_string_regex():
     assert empty_string_regex().fullmatch("") is not None
     assert empty_string_regex().fullmatch(" ") is not None
     assert empty_string_regex().fullmatch("\n") is not None
+
+
+def test_format_ISSN():
+    """Tests formatting an unformatted ISSN."""
+    assert format_ISSN("12345678") == "1234-5678"
+    assert format_ISSN(" 1234567x ") == "1234-567x"
+    assert format_ISSN("x2345678") == "x2345678"
