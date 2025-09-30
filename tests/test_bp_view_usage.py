@@ -218,7 +218,7 @@ def PR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2018-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': 'platform',
+            'display_fields': ['platform', 'data_type'],
             'platform_filter': "",
             'data_type_filter': forms.data_type_values['Platform'][0],
             'access_method_filter': 'Regular',
@@ -226,7 +226,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, data_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
