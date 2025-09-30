@@ -993,7 +993,7 @@ def IR_parameters(request):
             'ISSN_filter': "",
             'parent_title_filter': "",
             'parent_ISBN_filter': '978-0-8223-9057-2,9780822392859',
-            'parent_ISSN_filter': '',
+            'parent_ISSN_filter': "",
             'data_type_filter': forms.data_type_values['Book'][0],
             'YOP_start_filter': "",
             'YOP_end_filter': "",
