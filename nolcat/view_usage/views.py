@@ -694,6 +694,8 @@ def construct_TR_query_with_wizard():
             query = query + f"AND ({data_type_filter_statement})\n"
         
         #Subsection: Add `section_type` as Filter or Groupby Group
+        log.warning(f"`type(form.section_type_filter.data)`: {type(form.section_type_filter.data)}") #TEST: temp
+        log.warning(f"`form.section_type_filter.data.__len__()`: {form.section_type_filter.data.__len__()}") #TEST: temp
         if form.section_type_filter.data:
             section_type_filter_list = create_COUNTER_fixed_vocab_list(form.section_type_filter.data)
             section_type_filter_statement = ' OR '.join([f"section_type='{value}'" for value in section_type_filter_list])
@@ -920,6 +922,8 @@ def construct_IR_query_with_wizard():
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
+        log.warning(f"`type(form.data_type_filter.data)`: {type(form.data_type_filter.data)}") #TEST: temp
+        log.warning(f"`form.data_type_filter.data.__len__()`: {form.data_type_filter.data.__len__()}") #TEST: temp
         if form.data_type_filter.data:
             data_type_filter_list = create_COUNTER_fixed_vocab_list(form.data_type_filter.data)
             data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
