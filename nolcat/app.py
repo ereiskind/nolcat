@@ -801,17 +801,6 @@ def ISSN_regex():
     return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
 
 
-def ISBN_regex():
-    """A regex object matching an ISBN.
-
-    Regex copied from https://stackoverflow.com/a/53482655.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
-
-
 def extract_value_from_single_value_df(df, expect_int=True):
     """The value in a dataframe containing a single value.
 
@@ -860,3 +849,20 @@ def empty_string_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"^\s*$")
+
+
+def format_ISSN(unformatted_ISSN):
+    """Creates an ISSN matching `ISSN_regex()` from an unformatted ISSN string.
+
+    Args:
+        unformatted_ISSN (str or int): an ISSN without formatting
+    
+    Returns:
+        str: the formatted ISSN
+    """
+    trimmed_ISSN = str(unformatted_ISSN).strip()
+    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+        return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
+    else:
+        log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
+        return unformatted_ISSN

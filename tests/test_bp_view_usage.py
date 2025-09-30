@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-09-30 ##########
 
 import pytest
 import logging
@@ -218,7 +218,7 @@ def PR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2018-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': 'platform',
+            'display_fields': ['platform', 'data_type'],
             'platform_filter': "",
             'data_type_filter': forms.data_type_values['Platform'][0],
             'access_method_filter': 'Regular',
@@ -226,7 +226,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, data_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
@@ -449,7 +449,11 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     "Filter by fixed vocabulary fields",
     "Filter by resource name with apostrophe and non-ASCII character",
     "Filter by ISBN",
+    "Filter by unformatted ISBN",
+    "Filter by multiple ISBN",
     "Filter by ISSN",
+    "Filter by unformatted ISSN",
+    "Filter by multiple ISSN",
     "Filter by year of publication",
 ])
 def TR_parameters(request):
@@ -564,10 +568,76 @@ def TR_parameters(request):
             GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
+    elif request.param == "Filter by unformatted ISBN":
+        form_input = {
+            'begin_date': date.fromisoformat('2017-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "9781281430403",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': [],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Title_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2017-01-01' AND usage_date<='2019-12-31'
+                AND (ISBN ='978-1-281-43040-3')
+                AND (data_type='Book')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Requests' OR metric_type='Successful Title Requests')
+            GROUP BY resource_name, metric_type, usage_date;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by multiple ISBN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-10-01'),
+            'end_date': date.fromisoformat('2020-03-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "978-0-7914-0625-0,978-0-8223-8581-3",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': [],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-10-01' AND usage_date<='2020-03-31'
+                AND (data_type='Book')
+                AND (ISBN ='978-0-7914-0625-0' OR ISBN ='978-0-8223-8581-3')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Investigations')
+            GROUP BY resource_name, metric_type, usage_date;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by ISSN":
         form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
+            'begin_date': date.fromisoformat('2017-01-01'),
+            'end_date': date.fromisoformat('2020-12-31'),
             'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
@@ -580,7 +650,7 @@ def TR_parameters(request):
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            'metric_type_filter': forms.metric_type_values['Unique_Item_Requests'][0],
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
             'open_in_Excel': False,
         }
         query = """
@@ -588,13 +658,78 @@ def TR_parameters(request):
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND usage_date>='2017-01-01' AND usage_date<='2020-12-31'
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
                 AND (data_type='Journal')
                 AND (section_type='Article' OR section_type IS NULL)
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Unique_Item_Requests')
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY resource_name, metric_type, usage_date;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by unformatted ISSN":
+        form_input = {
+            'begin_date': date.fromisoformat('2018-01-01'),
+            'end_date': date.fromisoformat('2021-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "02624079",
+            'data_type_filter': forms.data_type_values['Journal'][0],
+            'section_type_filter': [],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2018-01-01' AND usage_date<='2021-12-31'
+                AND (print_ISSN='0262-4079' OR online_ISSN='0262-4079')
+                AND (data_type='Journal')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests')
+            GROUP BY resource_name, metric_type, usage_date;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by multiple ISSN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "8755-4550,1097-5322",
+            'data_type_filter': [],
+            'section_type_filter': [],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2020-06-30'
+                AND (print_ISSN='8755-4550' OR online_ISSN='8755-4550' OR print_ISSN='1097-5322' OR online_ISSN='1097-5322')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests')
             GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
@@ -682,7 +817,9 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     "Filter by publication date",
     "Filter by parent title",
     "Filter by parent ISBN",
+    "Filter by multiple parent ISBN",
     "Filter by parent ISSN",
+    "Filter by multiple parent ISSN",
 ])
 def IR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -842,6 +979,43 @@ def IR_parameters(request):
             GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
+    elif request.param == "Filter by multiple parent ISBN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-09-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': '978-0-8223-9057-2,9780822392859',
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-09-01' AND usage_date<='2020-06-30'
+                AND (parent_ISBN='978-0-8223-9057-2' OR parent_ISBN='978-0-8223-9285-9')
+                AND (data_type='Book')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Investigations')
+            GROUP BY resource_name, metric_type, usage_date;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
@@ -877,6 +1051,42 @@ def IR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY parent_title, metric_type, usage_date;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by multiple parent ISSN": 
+        form_input = {
+            'begin_date': date.fromisoformat('2019-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': '2059-5387,2201-1919',
+            'data_type_filter': [],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
+                AND (parent_print_ISSN='2059-5387' OR parent_online_ISSN='2059-5387' OR parent_print_ISSN='2201-1919' OR parent_online_ISSN='2201-1919')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Requests')
+            GROUP BY resource_name, metric_type, usage_date;
         """
         yield (form_input, query)
 

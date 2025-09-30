@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2025-03-14 ##########
+########## Passing 2025-09-29 ##########
 
 import pytest
 import logging
@@ -476,15 +476,6 @@ def test_ISSN_regex():
     assert ISSN_regex().fullmatch("0987-6543 ") is not None
 
 
-def test_ISBN_regex():
-    """Tests matching the regex object to ISBN strings."""
-    assert ISBN_regex().fullmatch("978-1-56619-909-4") is not None
-    assert ISBN_regex().fullmatch("1-56619-909-3") is not None
-    assert ISBN_regex().fullmatch("1257561035") is not None
-    assert ISBN_regex().fullmatch("9781566199094") is not None
-    assert ISBN_regex().fullmatch("1-56619-909-3 ") is not None
-
-
 def test_last_day_of_month():
     """Tests returning the last day of the given month."""
     assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
@@ -520,3 +511,10 @@ def test_empty_string_regex():
     assert empty_string_regex().fullmatch("") is not None
     assert empty_string_regex().fullmatch(" ") is not None
     assert empty_string_regex().fullmatch("\n") is not None
+
+
+def test_format_ISSN():
+    """Tests formatting an unformatted ISSN."""
+    assert format_ISSN("12345678") == "1234-5678"
+    assert format_ISSN(" 1234567x ") == "1234-567x"
+    assert format_ISSN("x2345678") == "x2345678"

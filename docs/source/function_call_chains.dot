@@ -677,10 +677,10 @@ digraph function_call_chains {
         update_database [shape="cylinder"]
         save_unconverted_data_via_upload [shape="box"]
         ISSN_regex [shape="box"]
-        ISBN_regex [shape="box"]
         extract_value_from_single_value_df [shape="box"]
         S3_file_name_timestamp [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
+        format_ISSN [shape="box"]
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
     configure_logging -> filter_empty_parentheses
@@ -705,6 +705,7 @@ digraph function_call_chains {
     update_database -> database_query_fail_statement
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
     save_unconverted_data_via_upload -> format_list_for_stdout
+    format_ISSN -> test_format_ISSN
 
 
     subgraph cluster_statements {
@@ -1334,10 +1335,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_ISBN_regex [
-            style="dashed"
-            shape="box"
-        ]
         test_last_day_of_month [
             style="dashed"
             shape="box"
@@ -1351,6 +1348,10 @@ digraph function_call_chains {
             shape="box"
         ]
         test_non_COUNTER_file_name_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_format_ISSN [
             style="dashed"
             shape="box"
         ]
@@ -1409,7 +1410,6 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_ISSN_regex -> ISSN_regex
-    test_ISBN_regex -> ISBN_regex
     test_last_day_of_month -> last_day_of_month
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
     test_S3_file_name_timestamp -> S3_file_name_timestamp
