@@ -637,7 +637,7 @@ def TR_parameters(request):
     elif request.param == "Filter by ISSN":
         form_input = {
             'begin_date': date.fromisoformat('2017-01-01'),
-            'end_date': date.fromisoformat('2020-06-30'),
+            'end_date': date.fromisoformat('2020-12-31'),
             'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
@@ -658,7 +658,7 @@ def TR_parameters(request):
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2020-12-31'
+                AND usage_date>='2017-01-01' AND usage_date<='2020-12-31'
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
                 AND (data_type='Journal')
                 AND (section_type='Article' OR section_type IS NULL)
