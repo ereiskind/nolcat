@@ -570,7 +570,7 @@ def TR_parameters(request):
         yield (form_input, query)
     elif request.param == "Filter by unformatted ISBN":
         form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
+            'begin_date': date.fromisoformat('2017-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': 'resource_name',
             'resource_name_filter': "",
@@ -592,7 +592,7 @@ def TR_parameters(request):
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2017-01-01' AND usage_date<='2019-06-30'
+                AND usage_date>='2017-01-01' AND usage_date<='2019-12-31'
                 AND (ISBN ='978-1-281-43040-3')
                 AND (data_type='Book')
                 AND (access_type='Controlled' OR access_type IS NULL)
