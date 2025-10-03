@@ -627,18 +627,21 @@ def sample_SUSHI_IR_response_R5b1_JSON_dict():
 #SUBSECTION: Tests
 def test_create_dataframe_from_R5_PR(sample_SUSHI_PR_response_R5_JSON_dict, sample_SUSHI_PR_response_R5_dataframe):
     """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5_JSON_dict, "PR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_PR_response_R5_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5_DR(sample_SUSHI_DR_response_R5_JSON_dict, sample_SUSHI_DR_response_R5_dataframe):
     """Tests transforming dictionaries derived from R5 SUSHI DR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5_JSON_dict, "DR", 0).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_DR_response_R5_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5_TR(sample_SUSHI_TR_response_R5_JSON_dict, sample_SUSHI_TR_response_R5_dataframe):
     """Tests transforming dictionaries derived from R5 SUSHI TR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5_JSON_dict, "TR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_TR_response_R5_dataframe[df.columns.tolist()])
 
@@ -646,24 +649,28 @@ def test_create_dataframe_from_R5_TR(sample_SUSHI_TR_response_R5_JSON_dict, samp
 @pytest.mark.slow
 def test_create_dataframe_from_R5_IR(sample_SUSHI_IR_response_R5_JSON_dict, sample_SUSHI_IR_response_R5_dataframe):
     """Tests transforming dictionaries derived from R5 SUSHI IR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5_JSON_dict, "IR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_IR_response_R5_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_PR(sample_SUSHI_PR_response_R5b1_JSON_dict, sample_SUSHI_PR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI PR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5b1_JSON_dict, "PR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_PR_response_R5b1_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_DR(sample_SUSHI_DR_response_R5b1_JSON_dict, sample_SUSHI_DR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI DR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5b1_JSON_dict, "DR", 0).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_DR_response_R5b1_dataframe[df.columns.tolist()])
 
 
 def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, sample_SUSHI_TR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI TR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5b1_JSON_dict, "TR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_TR_response_R5b1_dataframe[df.columns.tolist()])
 
@@ -671,5 +678,6 @@ def test_create_dataframe_from_R5b1_TR(sample_SUSHI_TR_response_R5b1_JSON_dict, 
 @pytest.mark.slow
 def test_create_dataframe_from_R5b1_IR(sample_SUSHI_IR_response_R5b1_JSON_dict, sample_SUSHI_IR_response_R5b1_dataframe):
     """Tests transforming dictionaries derived from R5.1 SUSHI IR JSONs into dataframes."""
+    #ToDo: PARQUET IN S3--df fixtures to parquet files, assert_frame_equal on `read_parquet()` from S3 results
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5b1_JSON_dict, "IR", 3).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_IR_response_R5b1_dataframe[df.columns.tolist()])

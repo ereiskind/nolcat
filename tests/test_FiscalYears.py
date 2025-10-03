@@ -370,26 +370,27 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
     
     #Section: Make Function Call
-    before_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(before_count, str):
-        pytest.skip(database_function_skip_statements(before_count, False))
-    before_count = extract_value_from_single_value_df(before_count)
-    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    #ToDo: PARQUET IN S3--Remove `before_count = query_database(`
+    #ToDo: PARQUET IN S3--Remove `    query=f"SELECT COUNT(*) FROM COUNTERData;",`
+    #ToDo: PARQUET IN S3--Remove `    engine=engine,`
+    #ToDo: PARQUET IN S3--Remove `)`
+    #ToDo: PARQUET IN S3--Remove `if isinstance(before_count, str):`
+    #ToDo: PARQUET IN S3--Remove `    pytest.skip(database_function_skip_statements(before_count, False))`
+    #ToDo: PARQUET IN S3--Remove `before_count = extract_value_from_single_value_df(before_count)`
+    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()  #ToDo: PARQUET IN S3--no more `logging_statement`
     if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
         pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
-    after_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(after_count, str):
-        pytest.skip(database_function_skip_statements(after_count, False))
-    after_count = extract_value_from_single_value_df(after_count)
+    #ToDo: PARQUET IN S3--Remove `after_count = query_database(`
+    #ToDo: PARQUET IN S3--Remove `    query=f"SELECT COUNT(*) FROM COUNTERData;",`
+    #ToDo: PARQUET IN S3--Remove `    engine=engine,`
+    #ToDo: PARQUET IN S3--Remove `)`
+    #ToDo: PARQUET IN S3--Remove `if isinstance(after_count, str):`
+    #ToDo: PARQUET IN S3--Remove `    pytest.skip(database_function_skip_statements(after_count, False))`
+    #ToDo: PARQUET IN S3--Remove `after_count = extract_value_from_single_value_df(after_count)`
 
     #Section: Assert Statements
-    assert before_count < after_count
-    assert load_data_into_database_success_regex().match(logging_statement)
-    assert update_database_success_regex().search(logging_statement)
+    #ToDo: PARQUET IN S3--Remove `assert before_count < after_count`
+    #ToDo: PARQUET IN S3--Check S3 for parquet file of expected name; file will also need to be removed
+    assert load_data_into_database_success_regex().match(logging_statement)  #ToDo: PARQUET IN S3--Remove statements or edit regexes as necessary
+    assert update_database_success_regex().search(logging_statement)  #ToDo: PARQUET IN S3--Remove statements or edit regexes as necessary
     assert isinstance(flash_messages, dict)

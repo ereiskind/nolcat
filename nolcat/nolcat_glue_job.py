@@ -1324,7 +1324,7 @@ class ConvertJSONDictToDataframe:
         This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToDataframe._transform_R5_JSON()` or the `ConvertJSONDictToDataframe._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
 
         Returns:
-            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation  #ToDo: PARQUET IN S3--`to_parquet()` returns `None`
             str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
@@ -1353,6 +1353,11 @@ class ConvertJSONDictToDataframe:
             message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
             log.error(message)
             return message
+        #ToDo: PARQUET IN S3--save `df` as parquet in S3 with file name "The file names will contain the statistics source ID, the exact report type, and the harvest date in ISO format, all separated by an underscore. If the harvest date wasn't recorded, `NULL` appears instead of the date value." matching regex `parquet_file_name_regex()`
+        #ToDo: PARQUET IN S3--Add `df['statistics_source_ID'] = self.statistics_source_ID`
+        #ToDo: PARQUET IN S3--Add `df['report_type'] = self.report_type`
+        #ToDo: PARQUET IN S3--`df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])`--Add way to get above field to be string
+        #ToDo: PARQUET IN S3--Data can be requested from a given source for a given report multiple times in a day (i.e. looping through one month at a time if given date range is partially in captured data)--how can data be added to existing parquet files?
         return df  # The method will only get here if one of the private harvest methods was successful
     
 

@@ -235,7 +235,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )
+    )  #ToDo: PARQUET IN S3--This creates a parquet file in S3; the file needs to be checked for and then removed
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')

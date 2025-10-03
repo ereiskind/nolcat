@@ -184,7 +184,7 @@ def harvest_SUSHI_statistics(testing):
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(
+            result_message, flash_messages = statistics_source.collect_usage_statistics(  #ToDo: PARQUET IN S3--if a problem that stops harvest happens, dict will have key 'STOP' with value describing problem
                 begin_date,
                 end_date,
                 report_to_harvest,

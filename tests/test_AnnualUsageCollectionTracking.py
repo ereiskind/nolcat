@@ -99,8 +99,9 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         start_date,
         end_date,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
-    )[0]
+    )[0]  #ToDo: PARQUET IN S3--This is df, which is now in S3
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
+    #ToDo: PARQUET IN S3--Set fixture to create parquet file in S3; determine how to keep it from combining with the file it should be compared to when both should have the same name
     if isinstance(yield_object, str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
@@ -127,7 +128,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     with client:
-        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)  #ToDo: PARQUET IN S3--no more `logging_statement`
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
@@ -145,7 +146,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
-    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
+    #ToDo: PARQUET IN S3--Replace `assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])` with comparison of parquet file in S3 and file in S3 from fixture above
 
 
 #Section: Upload and Download Nonstandard Usage File
