@@ -15,6 +15,7 @@ from math import ceil
 from sqlalchemy import log as SQLAlchemy_log
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
+import s3fs
 import boto3
 import pandas as pd
 from numpy import squeeze
@@ -111,9 +112,15 @@ def configure_logging(app):
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
-s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
+# AWS authentication managed through IAM roles and a CloudFormation init file
+s3_client = boto3.client('s3')
+#ToDo: `s3fs.S3FileSystem(profile='PROFILE')` goes here
 
 log = logging.getLogger(__name__)
+#TEST: temp
+log.error(f"`s3fs.S3FileSystem(profile='PROFILE')` (type {type(s3fs.S3FileSystem(profile='PROFILE'))}): {s3fs.S3FileSystem(profile='PROFILE')}")
+s3fs.S3FileSystem(profile='PROFILE')
+#TEST: end temp
 
 
 #SECTION: Basic Helper Functions
