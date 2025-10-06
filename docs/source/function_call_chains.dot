@@ -688,6 +688,7 @@ digraph function_call_chains {
         upload_file_to_S3_bucket_success_regex [shape="box"]
         upload_nonstandard_usage_file_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
+        save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="box"]
         subgraph cluster_ConvertJSONDictToDataframe {
@@ -1274,6 +1275,10 @@ digraph function_call_chains {
         test_update_database_with_insert_statement [
             style="dashed"
             shape="box"
+        ]
+        test_save_dataframe_to_S3_bucket [
+            style="dashed"
+            shape="folder"
         ]
         test_upload_file_to_S3_bucket [
             style="dashed"

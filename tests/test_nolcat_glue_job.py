@@ -441,6 +441,19 @@ def test_update_database_with_insert_statement(engine, client, vendors_relation_
 
 
 #SECTION: S3 Interaction Tests
+def test_save_dataframe_to_S3_bucket():
+    """Tests saving a dataframe as a parquet file in a S3 bucket."""
+    #ToDo: Spoof df, stats_source_ID, report_type
+    #ToDo: Get `datetime.now()`
+    #ToDo: Execute `save_dataframe_to_S3_bucket()`
+    #ToDo: Get `datetime.now()`
+    #ToDo: Generate list of file names with stats_source_ID, report_type, and times between the two `now()` calls
+    #ToDo: Check if a parquet file in the designated location has a name matching one in the above list
+    #ToDo: Confirm contents of above file are same as df used to create file
+    # Can `remove_file_from_S3` be used to clear the file after test completion?
+    pass
+
+
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
