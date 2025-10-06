@@ -175,7 +175,7 @@ def parquet_file_name_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2})|(NULL))\.parquet")
+    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2}T\d{2}\-\d{2}\-\d{2})|(NULL))\.parquet")
 
 
 def empty_string_regex():
