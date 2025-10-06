@@ -96,9 +96,36 @@ Move Code to Glue Jobs and Data to Parquet
 * Delete any statement functions no longer in use
 * Change functions querying only the `nolcat.models.COUNTERData` relation to querying the parquet files in S3 with Athena
 
-  * Look out for fuzzy matching methods for strings in parquet files--current `(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
+  * Functions with queries getting data from the `nolcat.models.COUNTERData` relation
 
-* Figure out how to have Athena execute queries requesting data from both the relational database and parquet files in S3
+    * `nolcat.models.FiscalYears.calculate_depreciated_ACRL_60b()`
+    * `nolcat.models.FiscalYears.calculate_depreciated_ACRL_63()`
+    * `nolcat.models.FiscalYears.calculate_ACRL_61a()`
+    * `nolcat.models.FiscalYears.calculate_ACRL_61b()`
+    * `nolcat.models.FiscalYears.calculate_ARL_18()`
+    * `nolcat.models.FiscalYears.calculate_ARL_19()`
+    * `nolcat.models.FiscalYears.calculate_ARL_20()`
+    * `nolcat.models.StatisticsSources._check_if_data_in_database()`
+    * `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()`
+    * `nolcat.view_usage.use_predefined_SQL_query()`
+    * `nolcat.view_usage.construct_PR_query_with_wizard()`
+    * `nolcat.view_usage.construct_DR_query_with_wizard()`
+    * `nolcat.view_usage.construct_TR_query_with_wizard()`
+    * `nolcat.view_usage.construct_IR_query_with_wizard()`
+    * `tests.conftest.match_direct_SUSHI_harvest_result()`
+    * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()`
+    * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_SQL_insert()`
+    * `tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`
+    * `tests.test_bp_view_usage.test_run_custom_SQL_query()`
+    * `tests.test_bp_view_usage.test_use_predefined_SQL_query()`
+    * `tests.test_bp_view_usage.start_query_wizard_form_data()`
+    * `tests.test_bp_view_usage.PR_parameters()`
+    * `tests.test_bp_view_usage.DR_parameters()`
+    * `tests.test_bp_view_usage.TR_parameters()`
+    * `tests.test_bp_view_usage.IR_parameters()`
+    * `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
+
+  * Look out for fuzzy matching methods for strings in parquet files--current `(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
 
 Iteration 3: Minimum Viable Product
 ===================================
