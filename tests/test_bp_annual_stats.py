@@ -1,13 +1,11 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2025-06-12 ##########
+########## Passing 2025-07-22 ##########
 
 import pytest
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.logging_config import *
-from nolcat.app import *
-from nolcat.statements import *
+from nolcat.nolcat_glue_job import *
 from nolcat.annual_stats import *
 
 log = logging.getLogger(__name__)
@@ -15,7 +13,7 @@ log = logging.getLogger(__name__)
 
 def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     page = client.get('/annual_stats/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
@@ -54,7 +52,6 @@ def test_GET_request_for_show_fiscal_year_details():
 
 def test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm():
     """Tests requesting an annual report."""
-    # caplog.set_level(logging.INFO, logger='nolcat.app')  # For annual statistics calculation methods
     #ToDo: Write test
     pass
 

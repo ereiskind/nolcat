@@ -21,57 +21,23 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Create main Glue job file
-
-  * Create Glue job named `nolcat_glue_job`
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
-  * Connect above job to this repo, placing file in "nolcat" folder
-  * Push Glue job to repo
-  * Create Glue job named `test_nolcat_glue_job`
-  * Make necessary Glue config changes--logging config URI added, analytics libraries not being loaded, ect.
-  * Connect above job to this repo, placing file in "tests" folder
-  * Push Glue job to repo
-  * Pull repo into IDE, which will create "nolcat/nolcat/nolcat_glue_job.py" and "nolcat/tests/test_nolcat_glue_job.py" files
-  * Move functions in "nolcat/statements.py" and non-Flask functions in "nolcat/app.py" to "nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
-  * Move test functions corresponding to the functions above, along with all necessary fixtures, to "test_nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
-  * For all tests, get call chains and adjust conftest calls
-  * Push changes to repo, then pull changes into Glue
-  * Confirm all tests still pass
-
 * Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
 
-  * Develop method to switch data storage format
-  * Save test data in parquet format
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
-  * Determine how files with production data lacking timestamps should be named (null? get dates from shared files?)
-
-* Move `nolcat.ConvertJSONDictsToDataframe` to Glue job
-
-  * Move class `nolcat.ConvertJSONDictsToDataframe` into "nolcat/nolcat/nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
-  * Move length constants out of class, then update reference to them in "nolcat/nolcat/models.py"
-  * Move test functions corresponding to the class, along with all necessary fixtures, to "test_nolcat_glue_job.py"
-  * Update function call chain diagram to reflect above changes
-  * For all tests, get call chains and adjust conftest calls
-  * Delete files with all content moved elsewhere
-  * Confirm all tests still pass
-  * Pull file into Glue job
-  * Confirm configs still set properly
 
 * Save `nolcat.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * Confirm all methods of `nolcat.ConvertJSONDictsToDataframe` except `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` are private
-  * Get list of all calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
-  * Add `statistics_source_ID` and `report_type` to class inputs
-  * End `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
-  * Adjust calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values
+  * Create helper function for saving dataframe to S3 as parquet
+  * End `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3
+  * Adjust `PATH_WITHIN_BUCKET` calls and its location in docstrings
+  * Adjust calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--)
   * Adjust tests and function call chain diagram to correspond with above changes
   * Add check for saved parquet or error file after call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
   * List all functions in function call chains ending in a call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
+  * For all tests, get call chains and adjust caplog calls
+  * Confirm all tests still pass
 
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
 * Create function to check S3 file existence and type with fuzzy matching
@@ -98,7 +64,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Copy existing `nolcat.UploadCOUNTERReports` test functions and their relevant fixtures to "test_nolcat_glue_job.py"
   * Rename existing test function file for `nolcat.UploadCOUNTERReports` and update the test functions to match the revised class
   * Update function call chain diagram to reflect above changes
-  * For all tests, get call chains and adjust conftest calls
+  * For all tests, get call chains and adjust caplog calls
   * Confirm all tests still pass
   * Pull file into Glue job
   * Confirm configs still set properly

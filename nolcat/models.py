@@ -11,9 +11,7 @@ import pandas as pd
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
-from .logging_config import *
-from .app import *
-from .statements import *
+from .nolcat_glue_job import *  # Through this import, any file which imports `nolcat.models` doesn't need a separate import for `nolcat.nolcat_glue_job`
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -1045,7 +1043,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
                     if isinstance(df, str):
                         message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                         log.warning(message)
@@ -1086,7 +1084,7 @@ class StatisticsSources(db.Model):
             if isinstance(SUSHI_data_response, str):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)
@@ -1176,7 +1174,7 @@ class StatisticsSources(db.Model):
             usage_end_date,
             report_to_harvest,
             bucket_path,
-            )
+        )
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)

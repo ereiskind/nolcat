@@ -113,3 +113,14 @@ Parquet is a columnar data format designed to handle large volumes of data. Unli
 Parquet Files
 =============
 Parquet files inherently contain schema/structure metadata in addition to the data (unlike relational databases, where a `CREATE TABLE` statement has the schema metadata and `INSERT INTO` statement(s) contain the data). As a result, parquet data can be read from and written to files directly, without an intermediary program like a RDBMS.
+
+Parquet File Name Convention
+============================
+The parquet files are divided into folders based on the four base R5 report types, since any given SUSHI call getting data or query requesting data will only be working with one report type.
+
+* **PR**: PR, PR1
+* **DR**: DR, DB1, DB2
+* **TR**: TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
+* **IR**: IR
+
+The file names will contain the statistics source ID, the exact report type, and the harvest date in ISO format, all separated by an underscore. If the harvest date wasn't recorded, `NULL` appears instead of the date value. (The date is used in the event that some data needs revising, in which case keeping harvest date makes remove and replace easier to do; at the time of the SQL to parquet convention, any data without a harvest date is old enough to not need revision.)

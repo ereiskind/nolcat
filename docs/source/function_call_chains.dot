@@ -389,31 +389,6 @@ digraph function_call_chains {
     create_dataframe_in_UploadCOUNTERReports -> ISSN_regex
 
 
-    subgraph cluster_ConvertJSONDictToDataframe {
-        label="nolcat.ConvertJSONDictToDataframe"
-        penwidth=5
-        style="rounded"
-
-        create_dataframe_in_ConvertJSONDictToDataframe [
-            label="create_dataframe"
-            shape="box"
-        ]
-        _transform_R5_JSON [shape="box"]
-        _transform_R5b1_JSON [shape="box"]
-        _serialize_dates [shape="box"]
-    }
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
-    _transform_R5_JSON -> _serialize_dates
-    _transform_R5_JSON -> return_string_of_dataframe_info
-    _transform_R5_JSON -> ISSN_regex
-    _transform_R5_JSON -> empty_string_regex
-    _transform_R5b1_JSON -> _serialize_dates
-    _transform_R5b1_JSON -> return_string_of_dataframe_info
-    _transform_R5b1_JSON -> ISSN_regex
-    _transform_R5b1_JSON -> empty_string_regex
-
-
     subgraph cluster_annual_stats {
         label="nolcat.annual_stats"
         penwidth=5
@@ -656,15 +631,120 @@ digraph function_call_chains {
     download_non_COUNTER_usage -> database_query_fail_statement
 
 
-    subgraph cluster_logging_config {
-        label="nolcat.logging_config"
+    subgraph cluster_nolcat_glue_job {
+        label="nolcat.nolcat_glue_job"
         penwidth=5
         color="#5cb8b2"
 
         filter_empty_parentheses [shape="box"]
         configure_logging [shape="box"]
+        last_day_of_month [shape="box"]
+        ISSN_regex [shape="box"]
+        ISBN_regex [shape="box"]
+        non_COUNTER_file_name_regex [shape="box"]
+        parquet_file_name_regex [shape="box"]
+        empty_string_regex [shape="box"]
+        proprietary_ID_regex [shape="box"]
+        author_regex [shape="box"]
+        AWS_timestamp_format [shape="box"]
+        return_string_of_dataframe_info [shape="box"]
+        format_list_for_stdout [shape="box"]
+        remove_IDE_spacing_from_statement [shape="box"]
+        truncate_longer_lines [shape="box"]
+        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
+        successful_SUSHI_call_statement [shape="box"]
+        harvest_R5_SUSHI_success_statement [shape="box"]
+        failed_SUSHI_call_statement [shape="box"]
+        no_data_returned_by_SUSHI_statement [shape="box"]
+        attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
+        reports_with_no_usage_regex [shape="box"]
+        skip_test_due_to_SUSHI_error_regex [shape="box"]
+        fixture_variable_value_declaration_statement [shape="box"]
+        Flask_error_statement [shape="box"]
+        database_function_skip_statements [shape="box"]
+        file_IO_statement [shape="box"]
+        list_folder_contents_statement [shape="box"]
+        check_if_file_exists_statement [shape="box"]
+        database_query_fail_statement [shape="box"]
+        return_value_from_query_statement [shape="box"]
+        initialize_relation_class_object_statement [shape="box"]
+        unable_to_get_updated_primary_key_values_statement [shape="box"]
+        return_dataframe_from_query_statement [shape="box"]
+        database_update_fail_statement [shape="box"]
+        add_data_success_and_update_database_fail_statement [shape="box"]
+        load_data_into_database_success_regex [shape="box"]
+        update_database_success_regex [shape="box"]
+        change_single_field_dataframe_into_series [shape="box"]
+        restore_boolean_values_to_boolean_field [shape="box"]
+        create_AUCT_SelectField_options [shape="box"]
+        extract_value_from_single_value_df [shape="box"]
+        load_data_into_database [shape="cylinder"]
+        query_database [shape="cylinder"]
+        first_new_PK_value [shape="box"]
+        check_if_data_already_in_COUNTERData [shape="box"]
+        update_database [shape="cylinder"]
+        failed_upload_to_S3_statement [shape="box"]
+        unable_to_delete_test_file_in_S3_statement [shape="box"]
+        upload_file_to_S3_bucket_success_regex [shape="box"]
+        upload_nonstandard_usage_file_success_regex [shape="box"]
+        file_extensions_and_mimetypes [shape="box"]
+        upload_file_to_S3_bucket [shape="folder"]
+        save_unconverted_data_via_upload [shape="box"]
+        subgraph cluster_ConvertJSONDictToDataframe {
+            label="nolcat.nolcat_glue_job.ConvertJSONDictToDataframe"
+            penwidth=5
+            style="rounded"
+
+            create_dataframe_in_ConvertJSONDictToDataframe [
+                label="create_dataframe"
+                shape="box"
+            ]
+            _transform_R5_JSON [shape="box"]
+            _transform_R5b1_JSON [shape="box"]
+            _serialize_dates [shape="box"]
+            _extraction_start_logging_statement [shape="box"]
+            _extraction_complete_logging_statement [shape="box"]
+            _increase_field_length_logging_statement [shape="box"]
+        }
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
+    list_folder_contents_statement -> format_list_for_stdout
+    database_update_fail_statement -> remove_IDE_spacing_from_statement
+    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
+    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
+    query_database -> remove_IDE_spacing_from_statement
+    first_new_PK_value -> query_database
+    first_new_PK_value -> extract_value_from_single_value_df
+    first_new_PK_value -> return_value_from_query_statement
+    first_new_PK_value -> database_query_fail_statement
+    check_if_data_already_in_COUNTERData -> query_database
+    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
+    check_if_data_already_in_COUNTERData -> format_list_for_stdout
+    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
+    check_if_data_already_in_COUNTERData -> database_query_fail_statement
+    update_database -> query_database
+    update_database -> truncate_longer_lines
+    update_database -> extract_value_from_single_value_df
+    update_database -> remove_IDE_spacing_from_statement
+    update_database -> database_query_fail_statement
+    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
+    save_unconverted_data_via_upload -> format_list_for_stdout
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    _transform_R5_JSON -> _serialize_dates
+    _transform_R5_JSON -> return_string_of_dataframe_info
+    _transform_R5_JSON -> ISSN_regex
+    _transform_R5_JSON -> empty_string_regex
+    _transform_R5_JSON -> _extraction_start_logging_statement
+    _transform_R5_JSON -> _extraction_complete_logging_statement
+    _transform_R5_JSON -> _increase_field_length_logging_statement
+    _transform_R5b1_JSON -> _serialize_dates
+    _transform_R5b1_JSON -> return_string_of_dataframe_info
+    _transform_R5b1_JSON -> ISSN_regex
+    _transform_R5b1_JSON -> empty_string_regex
+    _transform_R5b1_JSON -> _extraction_start_logging_statement
+    _transform_R5b1_JSON -> _extraction_complete_logging_statement
+    _transform_R5b1_JSON -> _increase_field_length_logging_statement
 
 
     subgraph cluster_app {
@@ -678,25 +758,6 @@ digraph function_call_chains {
         "create_app.create_db" [shape="box"]
         "create_app.homepage" [shape="cds"]
         "create_app.download_file" [shape="cds"]
-        last_day_of_month [shape="box"]
-        first_new_PK_value [shape="box"]
-        return_string_of_dataframe_info [shape="box"]
-        change_single_field_dataframe_into_series [shape="box"]
-        restore_boolean_values_to_boolean_field [shape="box"]
-        upload_file_to_S3_bucket [shape="folder"]
-        create_AUCT_SelectField_options [shape="box"]
-        load_data_into_database [shape="cylinder"]
-        query_database [shape="cylinder"]
-        check_if_data_already_in_COUNTERData [shape="box"]
-        truncate_longer_lines [shape="box"]
-        update_database [shape="cylinder"]
-        save_unconverted_data_via_upload [shape="box"]
-        ISSN_regex [shape="box"]
-        ISBN_regex [shape="box"]
-        extract_value_from_single_value_df [shape="box"]
-        AWS_timestamp_format [shape="box"]
-        non_COUNTER_file_name_regex [shape="box"]
-        empty_string_regex [shape="box"]
     }
     configure_logging -> filter_empty_parentheses
     create_app -> configure_logging
@@ -704,65 +765,6 @@ digraph function_call_chains {
     create_app -> internal_server_error
     "create_app.create_db" -> create_app
     "create_app.download_file" -> file_extensions_and_mimetypes
-    first_new_PK_value -> query_database
-    first_new_PK_value -> extract_value_from_single_value_df
-    first_new_PK_value -> return_value_from_query_statement
-    first_new_PK_value -> database_query_fail_statement
-    create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
-    query_database -> remove_IDE_spacing_from_statement
-    check_if_data_already_in_COUNTERData -> query_database
-    check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
-    check_if_data_already_in_COUNTERData -> format_list_for_stdout
-    check_if_data_already_in_COUNTERData -> return_value_from_query_statement
-    check_if_data_already_in_COUNTERData -> database_query_fail_statement
-    update_database -> query_database
-    update_database -> truncate_longer_lines
-    update_database -> extract_value_from_single_value_df
-    update_database -> remove_IDE_spacing_from_statement
-    update_database -> database_query_fail_statement
-    save_unconverted_data_via_upload -> upload_file_to_S3_bucket
-    save_unconverted_data_via_upload -> format_list_for_stdout
-
-
-    subgraph cluster_statements {
-        label="nolcat.statements"
-        penwidth=5
-        color="#5cb8b2"
-
-        file_extensions_and_mimetypes [shape="box"]
-        format_list_for_stdout [shape="box"]
-        remove_IDE_spacing_from_statement [shape="box"]
-        initialize_relation_class_object_statement [shape="box"]
-        fixture_variable_value_declaration_statement [shape="box"]
-        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
-        unable_to_get_updated_primary_key_values_statement [shape="box"]
-        Flask_error_statement [shape="box"]
-        file_IO_statement [shape="box"]
-        list_folder_contents_statement [shape="box"]
-        check_if_file_exists_statement [shape="box"]
-        failed_upload_to_S3_statement [shape="box"]
-        unable_to_delete_test_file_in_S3_statement [shape="box"]
-        upload_file_to_S3_bucket_success_regex [shape="box"]
-        upload_nonstandard_usage_file_success_regex [shape="box"]
-        return_value_from_query_statement [shape="box"]
-        return_dataframe_from_query_statement [shape="box"]
-        database_query_fail_statement [shape="box"]
-        database_update_fail_statement [shape="box"]
-        add_data_success_and_update_database_fail_statement [shape="box"]
-        database_function_skip_statements [shape="box"]
-        load_data_into_database_success_regex [shape="box"]
-        update_database_success_regex [shape="box"]
-        successful_SUSHI_call_statement [shape="box"]
-        harvest_R5_SUSHI_success_statement [shape="box"]
-        failed_SUSHI_call_statement [shape="box"]
-        no_data_returned_by_SUSHI_statement [shape="box"]
-        attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
-        reports_with_no_usage_regex [shape="box"]
-        skip_test_due_to_SUSHI_error_regex [shape="box"]
-    }
-    list_folder_contents_statement -> format_list_for_stdout
-    database_update_fail_statement -> remove_IDE_spacing_from_statement
-    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
 
 
     subgraph cluster_relations {
@@ -1171,6 +1173,263 @@ digraph function_call_chains {
     COUNTER_reports_offered_by_statistics_source -> successful_SUSHI_call_statement
 
 
+    subgraph cluster_test_nolcat_glue_job {
+        label="tests.test_nolcat_glue_job"
+        penwidth=5
+        style="dashed"
+        color="#5cb8b2"
+
+        test_last_day_of_month [
+            style="dashed"
+            shape="box"
+        ]
+        test_ISSN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_ISBN_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_AWS_timestamp_format [
+            style="dashed"
+            shape="box"
+        ]
+        test_non_COUNTER_file_name_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_empty_string_regex [
+            style="dashed"
+            shape="box"
+        ]
+        test_return_string_of_dataframe_info [
+            style="dashed"
+            shape="box"
+        ]
+        test_format_list_for_stdout_with_list [
+            style="dashed"
+            shape="box"
+        ]
+        test_format_list_for_stdout_with_generator [
+            style="dashed"
+            shape="box"
+        ]
+        test_remove_IDE_spacing_from_statement [
+            style="dashed"
+            shape="box"
+        ]
+        test_truncate_longer_lines [
+            style="dashed"
+            shape="box"
+        ]
+        test_prepare_HTML_page_for_comparison [
+            style="dashed"
+            shape="box"
+        ]
+        test_change_single_field_dataframe_into_series [
+            style="dashed"
+            shape="box"
+        ]
+        test_restore_boolean_values_to_boolean_field [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_AUCT_SelectField_options [
+            style="dashed"
+            shape="box"
+        ]
+        test_extract_value_from_single_value_df [
+            style="dashed"
+            shape="box"
+        ]
+        test_load_data_into_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_loading_connected_data_into_other_relation [
+            style="dashed"
+            shape="box"
+        ]
+        test_query_database [
+            style="dashed"
+            shape="box"
+        ]
+        test_first_new_PK_value [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database [
+            style="dashed"
+            shape="box"
+        ]
+        vendors_relation_after_test_update_database_with_insert_statement [
+            style="dotted"
+            shape="box"
+        ]
+        test_update_database_with_insert_statement [
+            style="dashed"
+            shape="box"
+        ]
+        test_upload_file_to_S3_bucket [
+            style="dashed"
+            shape="folder"
+        ]
+        file_name_stem_and_data [
+            style="dotted"
+            shape="folder"
+        ]
+        test_save_unconverted_data_via_upload [
+            style="dashed"
+            shape="folder"
+        ]
+        sample_SUSHI_PR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_PR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_DR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_TR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        sample_SUSHI_IR_response_R5b1_JSON_dict [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5_IR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_PR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_DR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_TR [
+            style="dashed"
+            shape="box"
+        ]
+        test_create_dataframe_from_R5b1_IR [
+            style="dashed"
+            shape="box"
+        ]
+    }
+    test_last_day_of_month -> last_day_of_month
+    test_ISSN_regex -> ISSN_regex
+    test_ISBN_regex -> ISBN_regex
+    test_AWS_timestamp_format -> AWS_timestamp_format
+    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
+    test_empty_string_regex -> empty_string_regex
+    test_return_string_of_dataframe_info -> return_string_of_dataframe_info
+    test_format_list_for_stdout_with_list -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> format_list_for_stdout
+    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
+    test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
+    test_truncate_longer_lines -> truncate_longer_lines
+    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
+    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
+    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
+    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
+    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
+    test_load_data_into_database -> load_data_into_database
+    test_load_data_into_database -> load_data_into_database_success_regex
+    test_load_data_into_database -> engine
+    test_load_data_into_database -> vendors_relation_in_conftest
+    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
+    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
+    test_loading_connected_data_into_other_relation -> load_data_into_database
+    test_loading_connected_data_into_other_relation -> query_database
+    test_loading_connected_data_into_other_relation -> database_function_skip_statements
+    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
+    test_loading_connected_data_into_other_relation -> engine
+    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
+    test_query_database -> state_data_types_in_vendors
+    test_query_database -> query_database
+    test_query_database -> engine
+    test_query_database -> vendors_relation_in_conftest
+    test_first_new_PK_value -> first_new_PK_value
+    vendors_relation_after_test_update_database -> state_data_types_in_vendors
+    test_update_database -> state_data_types_in_vendors
+    test_update_database -> query_database
+    test_update_database -> update_database
+    test_update_database -> database_function_skip_statements
+    test_update_database -> update_database_success_regex
+    test_update_database -> engine
+    test_update_database -> vendors_relation_after_test_update_database
+    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> state_data_types_in_vendors
+    test_update_database_with_insert_statement -> query_database
+    test_update_database_with_insert_statement -> update_database
+    test_update_database_with_insert_statement -> database_function_skip_statements
+    test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> engine
+    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
+    test_upload_file_to_S3_bucket -> format_list_for_stdout
+    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
+    test_upload_file_to_S3_bucket -> path_to_sample_file
+    test_upload_file_to_S3_bucket -> remove_file_from_S3
+    file_name_stem_and_data -> AWS_timestamp_format
+    file_name_stem_and_data -> most_recent_month_with_usage
+    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
+    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_JSON_dict
+    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_JSON_dict
+    test_create_dataframe_from_R5b1_PR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_DR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_TR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_JSON_dict
+    test_create_dataframe_from_R5b1_IR -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_JSON_dict
+
+
     subgraph cluster_test_AnnualStatistics {
         label="tests.test_AnnualStatistics"
         penwidth=5
@@ -1287,99 +1546,7 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_load_data_into_database [
-            style="dashed"
-            shape="box"
-        ]
-        test_query_database [
-            style="dashed"
-            shape="box"
-        ]
-        test_loading_connected_data_into_other_relation [
-            style="dashed"
-            shape="box"
-        ]
         test_download_file [
-            style="dashed"
-            shape="box"
-        ]
-        test_first_new_PK_value [
-            style="dashed"
-            shape="box"
-        ]
-        test_change_single_field_dataframe_into_series [
-            style="dashed"
-            shape="box"
-        ]
-        test_restore_boolean_values_to_boolean_field [
-            style="dashed"
-            shape="box"
-        ]
-        test_upload_file_to_S3_bucket [
-            style="dashed"
-            shape="folder"
-        ]
-        test_create_AUCT_SelectField_options [
-            style="dashed"
-            shape="box"
-        ]
-        test_truncate_longer_lines [
-            style="dashed"
-            shape="box"
-        ]
-        vendors_relation_after_test_update_database [
-            style="dotted"
-            shape="box"
-        ]
-        test_update_database [
-            style="dashed"
-            shape="box"
-        ]
-        vendors_relation_after_test_update_database_with_insert_statement [
-            style="dotted"
-            shape="box"
-        ]
-        test_update_database_with_insert_statement [
-            style="dashed"
-            shape="box"
-        ]
-        test_prepare_HTML_page_for_comparison [
-            style="dashed"
-            shape="box"
-        ]
-        file_name_stem_and_data [
-            style="dotted"
-            shape="folder"
-        ]
-        test_save_unconverted_data_via_upload [
-            style="dashed"
-            shape="folder"
-        ]
-        test_ISSN_regex [
-            style="dashed"
-            shape="box"
-        ]
-        test_ISBN_regex [
-            style="dashed"
-            shape="box"
-        ]
-        test_last_day_of_month [
-            style="dashed"
-            shape="box"
-        ]
-        test_extract_value_from_single_value_df [
-            style="dashed"
-            shape="box"
-        ]
-        test_AWS_timestamp_format [
-            style="dashed"
-            shape="box"
-        ]
-        test_non_COUNTER_file_name_regex [
-            style="dashed"
-            shape="box"
-        ]
-        test_empty_string_regex [
             style="dashed"
             shape="box"
         ]
@@ -1390,65 +1557,10 @@ digraph function_call_chains {
     test_homepage -> "create_app.homepage"
     test_homepage -> client
     test_404_page -> client
-    test_load_data_into_database -> load_data_into_database
-    test_load_data_into_database -> load_data_into_database_success_regex
-    test_load_data_into_database -> engine
-    test_load_data_into_database -> vendors_relation_in_conftest
-    test_query_database -> state_data_types_in_vendors
-    test_query_database -> query_database
-    test_query_database -> engine
-    test_query_database -> vendors_relation_in_conftest
-    test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
-    test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
-    test_loading_connected_data_into_other_relation -> load_data_into_database
-    test_loading_connected_data_into_other_relation -> query_database
-    test_loading_connected_data_into_other_relation -> database_function_skip_statements
-    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
-    test_loading_connected_data_into_other_relation -> engine
-    test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
     test_download_file -> "create_app.download_file"
     test_download_file -> file_extensions_and_mimetypes
     test_download_file -> client
     test_download_file -> path_to_sample_file
-    test_first_new_PK_value -> first_new_PK_value
-    test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
-    test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
-    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
-    test_upload_file_to_S3_bucket -> format_list_for_stdout
-    test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
-    test_upload_file_to_S3_bucket -> path_to_sample_file
-    test_upload_file_to_S3_bucket -> remove_file_from_S3
-    test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
-    test_truncate_longer_lines -> truncate_longer_lines
-    vendors_relation_after_test_update_database -> state_data_types_in_vendors
-    test_update_database -> state_data_types_in_vendors
-    test_update_database -> query_database
-    test_update_database -> update_database
-    test_update_database -> database_function_skip_statements
-    test_update_database -> update_database_success_regex
-    test_update_database -> engine
-    test_update_database -> vendors_relation_after_test_update_database
-    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
-    test_update_database_with_insert_statement -> state_data_types_in_vendors
-    test_update_database_with_insert_statement -> query_database
-    test_update_database_with_insert_statement -> update_database
-    test_update_database_with_insert_statement -> database_function_skip_statements
-    test_update_database_with_insert_statement -> update_database_success_regex
-    test_update_database_with_insert_statement -> engine
-    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
-    test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
-    file_name_stem_and_data -> AWS_timestamp_format
-    file_name_stem_and_data -> most_recent_month_with_usage
-    test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
-    test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
-    test_save_unconverted_data_via_upload -> file_name_stem_and_data
-    test_ISSN_regex -> ISSN_regex
-    test_ISBN_regex -> ISBN_regex
-    test_last_day_of_month -> last_day_of_month
-    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    test_AWS_timestamp_format -> AWS_timestamp_format
-    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
-    test_empty_string_regex -> empty_string_regex
 
 
     subgraph cluster_test_bp_annual_stats {
@@ -1985,142 +2097,6 @@ digraph function_call_chains {
     test_download_non_COUNTER_usage -> header_value
 
 
-    subgraph cluster_test_ConvertJSONDictToDataframe {
-        label="tests.test_ConvertJSONDictToDataframe"
-        penwidth=5
-        style="dashed"
-
-        sample_SUSHI_PR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_PR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_DR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_TR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5b1_JSON_dict [
-            style="dotted"
-            shape="box"
-        ]
-        sample_SUSHI_IR_response_R5b1_dataframe [
-            style="dotted"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_PR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_DR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_TR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5_IR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_PR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_DR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_TR [
-            style="dashed"
-            shape="box"
-        ]
-        test_create_dataframe_from_R5b1_IR [
-            style="dashed"
-            shape="box"
-        ]
-    }
-    sample_SUSHI_PR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_DR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_TR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_IR_response_R5_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_PR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_DR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_TR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    sample_SUSHI_IR_response_R5b1_dataframe -> state_data_types_in_COUNTERData
-    test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_dataframe
-    test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_DR -> sample_SUSHI_DR_response_R5_dataframe
-    test_create_dataframe_from_R5_TR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_TR -> sample_SUSHI_TR_response_R5_dataframe
-    test_create_dataframe_from_R5_IR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_JSON_dict
-    test_create_dataframe_from_R5_IR -> sample_SUSHI_IR_response_R5_dataframe
-    test_create_dataframe_from_R5b1_PR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_PR -> sample_SUSHI_PR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_DR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_DR -> sample_SUSHI_DR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_TR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_TR -> sample_SUSHI_TR_response_R5b1_dataframe
-    test_create_dataframe_from_R5b1_IR -> create_dataframe_in_ConvertJSONDictToDataframe
-    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_JSON_dict
-    test_create_dataframe_from_R5b1_IR -> sample_SUSHI_IR_response_R5b1_dataframe
-
-
     subgraph cluster_test_FiscalYears {
         label="tests.test_FiscalYears"
         penwidth=5
@@ -2263,31 +2239,6 @@ digraph function_call_chains {
     }
 
 
-    subgraph cluster_test_statements {
-        label="tests.test_statements"
-        penwidth=5
-        style="dashed"
-        color="#5cb8b2"
-
-        test_format_list_for_stdout_with_list [
-            style="dashed"
-            shape="box"
-        ]
-        test_format_list_for_stdout_with_generator [
-            style="dashed"
-            shape="box"
-        ]
-        test_remove_IDE_spacing_from_statement [
-            style="dashed"
-            shape="box"
-        ]
-    }
-    test_format_list_for_stdout_with_list -> format_list_for_stdout
-    test_format_list_for_stdout_with_generator -> format_list_for_stdout
-    test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
-    test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
-
-
     subgraph cluster_test_StatisticsSources {
         label="tests.test_StatisticsSources"
         penwidth=5
@@ -2400,7 +2351,6 @@ digraph function_call_chains {
     test_COUNTER_reports_offered_by_statistics_source -> reports_offered_by_StatisticsSource_fixture
     test_check_if_data_in_database_no -> _check_if_data_in_database
     test_check_if_data_in_database_no -> client
-    test_check_if_data_in_database_no -> most_recent_month_with_usage
     test_check_if_data_in_database_no -> current_month_like_most_recent_month_with_usage
     test_check_if_data_in_database_no -> StatisticsSources_fixture
     test_check_if_data_in_database_no -> reports_offered_by_StatisticsSource_fixture
@@ -2447,7 +2397,6 @@ digraph function_call_chains {
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
     harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
-    test_collect_usage_statistics -> _harvest_R5_SUSHI
     test_collect_usage_statistics -> collect_usage_statistics
     test_collect_usage_statistics -> load_data_into_database_success_regex
     test_collect_usage_statistics -> engine

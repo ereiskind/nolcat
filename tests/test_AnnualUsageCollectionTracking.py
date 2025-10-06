@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2025-06-12 ##########
+########## Passing 2025-07-22 ##########
 
 import pytest
 from filecmp import cmp
@@ -8,17 +8,14 @@ from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
-from nolcat.logging_config import *
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine):
+def AUCT_fixture_for_SUSHI(engine, caplog):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
 
     Args:
@@ -28,6 +25,7 @@ def AUCT_fixture_for_SUSHI(engine):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
@@ -64,9 +62,8 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()`, `self._harvest_single_report()`, and for `query_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     record = query_database(
         query=f"""
@@ -102,8 +99,9 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         start_date,
         end_date,
         bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
-    )[0]
+    )[0]  #ToDo: PARQUET IN S3--This is df, which is now in S3
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
+    #ToDo: PARQUET IN S3--Set fixture to create parquet file in S3; determine how to keep it from combining with the file it should be compared to when both should have the same name
     if isinstance(yield_object, str):
         file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
         if file_name_match_object:
@@ -126,12 +124,11 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     with client:
-        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)  #ToDo: PARQUET IN S3--no more `logging_statement`
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
@@ -149,7 +146,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
-    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])
+    #ToDo: PARQUET IN S3--Replace `assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])` with comparison of parquet file in S3 and file in S3 from fixture above
 
 
 #Section: Upload and Download Nonstandard Usage File
@@ -174,10 +171,8 @@ def sample_FileStorage_object(path_to_sample_file):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
+def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` and `query_database()`
-
     #Section: Make Function Call
     with client:
         upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)

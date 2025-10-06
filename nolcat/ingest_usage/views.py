@@ -9,10 +9,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..logging_config import *
-from ..app import *
 from ..models import *
-from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -187,7 +184,7 @@ def harvest_SUSHI_statistics(testing):
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(
+            result_message, flash_messages = statistics_source.collect_usage_statistics(  #ToDo: PARQUET IN S3--if a problem that stops harvest happens, dict will have key 'STOP' with value describing problem
                 begin_date,
                 end_date,
                 report_to_harvest,
