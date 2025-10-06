@@ -1572,7 +1572,7 @@ class ConvertJSONDictToDataframe:
                                 include_in_df_dtypes['print_ISSN'] = 'string'
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("print_ISSN", record_dict['print_ISSN']))
                             else:
-                                record_dict['print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                record_dict['print_ISSN'] = format_ISSN(type_and_value['Value'])
                                 include_in_df_dtypes['print_ISSN'] = 'string'
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("print_ISSN", record_dict['print_ISSN']))
                         
@@ -1583,7 +1583,7 @@ class ConvertJSONDictToDataframe:
                                 include_in_df_dtypes['online_ISSN'] = 'string'
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("online_ISSN", record_dict['online_ISSN']))
                             else:
-                                record_dict['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                record_dict['online_ISSN'] = format_ISSN(type_and_value['Value'])
                                 include_in_df_dtypes['online_ISSN'] = 'string'
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("online_ISSN", record_dict['online_ISSN']))
                         
@@ -1750,7 +1750,7 @@ class ConvertJSONDictToDataframe:
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_print_ISSN", record_dict['parent_print_ISSN']))
                                     else:
-                                        record_dict['parent_print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        record_dict['parent_print_ISSN'] = format_ISSN(type_and_value['Value'])
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_print_ISSN", record_dict['parent_print_ISSN']))
 
@@ -1761,7 +1761,7 @@ class ConvertJSONDictToDataframe:
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_online_ISSN", record_dict['parent_online_ISSN']))
                                     else:
-                                        record_dict['parent_online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        record_dict['parent_online_ISSN'] = format_ISSN(type_and_value['Value'])
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_online_ISSN", record_dict['parent_online_ISSN']))
 
@@ -2055,7 +2055,7 @@ class ConvertJSONDictToDataframe:
                                 report_items_dict[field] = ID_value.strip()
                                 include_in_df_dtypes[field] = 'string'
                             else:
-                                report_items_dict[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                report_items_dict[field] = format_ISSN(ID_value)
                                 include_in_df_dtypes[field] = 'string'
                             log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 

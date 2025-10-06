@@ -637,15 +637,46 @@ def construct_TR_query_with_wizard():
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
-            log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-            query = query + ISBN_filter_option_statement
+            if "," in form.ISBN_filter.data:
+                REGEXP_LIKE_statements = []
+                for ISBN_value in form.ISBN_filter.data.split(","):
+                    ISBN_regex = ""
+                    for char in ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            ISBN_regex = ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(ISBN, '{ISBN_regex[:-2]}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex[:-2]}')")
+                ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
+            else:
+                ISBN_regex = ""
+                for char in form.ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        ISBN_regex = ISBN_regex + f"{char}-?"
+                ISBN_regex = ISBN_regex[:-2]
+                ISBN_filter_option_statement = f"AND (REGEXP_LIKE(ISBN, '{ISBN_regex}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex}'))\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
-            log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-            query = query + ISSN_filter_option_statement
+            if "," in form.ISSN_filter.data:
+                REGEXP_LIKE_statements = []
+                for ISSN_value in form.ISSN_filter.data.split(","):
+                    if ISSN_regex().fullmatch(ISSN_value) is None:
+                        ISSN_value = format_ISSN(ISSN_value)
+                    REGEXP_LIKE_statements.append(f"print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}'")
+                ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
+            else:
+                if ISSN_regex().fullmatch(form.ISSN_filter.data):
+                    ISSN_value = form.ISSN_filter.data
+                else:
+                    ISSN_value = format_ISSN(form.ISSN_filter.data)
+                ISSN_filter_option_statement = f"AND (print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}')\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -796,27 +827,89 @@ def construct_IR_query_with_wizard():
         
         #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
-            log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-            query = query + ISBN_filter_option_statement
+            if "," in form.ISBN_filter.data:
+                REGEXP_LIKE_statements = []
+                for ISBN_value in form.ISBN_filter.data.split(","):
+                    ISBN_regex = ""
+                    for char in ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            ISBN_regex = ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(ISBN, '{ISBN_regex[:-2]}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex[:-2]}')")
+                ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
+            else:
+                ISBN_regex = ""
+                for char in form.ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        ISBN_regex = ISBN_regex + f"{char}-?"
+                ISBN_regex = ISBN_regex[:-2]
+                ISBN_filter_option_statement = f"AND (REGEXP_LIKE(ISBN, '{ISBN_regex}') OR REGEXP_LIKE(online_ISSN, '{ISBN_regex}'))\n"
+                log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+                query = query + ISBN_filter_option_statement
         
         #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
-            log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-            query = query + ISSN_filter_option_statement
+            if "," in form.ISSN_filter.data:
+                REGEXP_LIKE_statements = []
+                for ISSN_value in form.ISSN_filter.data.split(","):
+                    if ISBN_regex().fullmatch(ISSN_value) is None:
+                        ISSN_value = format_ISSN(ISSN_value)
+                    REGEXP_LIKE_statements.append(f"print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}'")
+                ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
+            else:
+                if ISSN_regex().fullmatch(form.ISSN_filter.data):
+                    ISSN_value = form.ISSN_filter.data
+                else:
+                    ISSN_value = format_ISSN(form.ISSN_filter.data)
+                ISSN_filter_option_statement = f"AND (print_ISSN='{ISSN_value}' OR online_ISSN='{ISSN_value}')\n"
+                log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+                query = query + ISSN_filter_option_statement
         
         #Subsection: Add `parent_ISBN` as Filter or Groupby Group
         if form.parent_ISBN_filter.data:
-            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
-            log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
-            query = query + parent_ISBN_filter_option_statement
+            if "," in form.parent_ISBN_filter.data:
+                REGEXP_LIKE_statements = []
+                for parent_ISBN_value in form.parent_ISBN_filter.data.split(","):
+                    parent_ISBN_regex = ""
+                    for char in parent_ISBN_value:
+                        if re.fullmatch(r'\d', char):
+                            parent_ISBN_regex = parent_ISBN_regex + f"{char}-?"
+                    REGEXP_LIKE_statements.append(f"REGEXP_LIKE(parent_ISBN, '{parent_ISBN_regex[:-2]}')")
+                parent_ISBN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
+                query = query + parent_ISBN_filter_option_statement
+            else:
+                parent_ISBN_regex = ""
+                for char in form.parent_ISBN_filter.data:
+                    if re.fullmatch(r'\d', char):
+                        parent_ISBN_regex = parent_ISBN_regex + f"{char}-?"
+                parent_ISBN_regex = parent_ISBN_regex[:-2]
+                parent_ISBN_filter_option_statement = f"AND REGEXP_LIKE(parent_ISBN, '{parent_ISBN_regex}')\n"
+                log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
+                query = query + parent_ISBN_filter_option_statement
         
         #Subsection: Add `parent_ISSN` as Filter or Groupby Groups
         if form.parent_ISSN_filter.data:
-            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
-            log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
-            query = query + parent_ISSN_filter_option_statement
+            if "," in form.parent_ISSN_filter.data:
+                REGEXP_LIKE_statements = []
+                for parent_ISSN_value in form.parent_ISSN_filter.data.split(","):
+                    if ISSN_regex().fullmatch(parent_ISSN_value) is None:
+                        parent_ISSN_value = format_ISSN(parent_ISSN_value)
+                    REGEXP_LIKE_statements.append(f"parent_print_ISSN='{parent_ISSN_value}' OR parent_online_ISSN='{parent_ISSN_value}'")
+                parent_ISSN_filter_option_statement = f"AND ({' OR '.join(REGEXP_LIKE_statements)})\n"
+                log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
+                query = query + parent_ISSN_filter_option_statement
+            else:
+                if ISSN_regex().fullmatch(form.parent_ISSN_filter.data):
+                    parent_ISSN_value = form.parent_ISSN_filter.data
+                else:
+                    parent_ISSN_value = format_ISSN(form.parent_ISSN_filter.data)
+                parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{parent_ISSN_value}' OR parent_online_ISSN='{parent_ISSN_value}')\n"
+                log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
+                query = query + parent_ISSN_filter_option_statement
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group

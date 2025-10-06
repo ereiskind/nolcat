@@ -245,8 +245,8 @@ class TRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional(), Regexp(ISBN_regex())])
-    ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex())])
+    ISBN_filter = StringField("Enter the ISBN of the title(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
+    ISSN_filter = StringField("Enter the ISSN of the title(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Book'],
         data_type_values['Conference'],
@@ -314,11 +314,11 @@ class IRQueryWizardForm(FlaskForm):
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
     publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format (if this is before the previous value, this filter won't be used):", format='%Y-%m-%d', validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex())])
-    ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex())])
+    ISBN_filter = StringField("Enter the ISBN of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
+    ISSN_filter = StringField("Enter the ISSN of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
-    parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex())])
-    parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex())])
+    parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
+    parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=[
         data_type_values['Article'],
         data_type_values['Audiovisual'],
