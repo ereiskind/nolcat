@@ -1154,14 +1154,18 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
-        None  #ToDo: Returns exception if there's a problem; for calls, response should handle as "if not null, then problem"
+        Exception: the error if a problem occurs while saving the data to S3
     """
     log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
-    #ToDo: datetime.now()
-    #ToDo: f"{statistics_source_ID}_{report_type}_{now.year}-{now.month}-{now.day}T{now.hour}-{now.minute}-{now.second}.parquet"
-    #ToDo: `s3fs.S3FileSystem(profile='PROFILE')` uses "boto’s credential resolver (client_kwargs, environment, variables, config files, EC2 IAM server, in that order)"
-    #ToDo: https://pandas.pydata.org/pandas-docs/version/2.2/reference/api/pandas.DataFrame.to_parquet.html with S3 URI as location
-    pass
+    now = datetime.now()
+    try:
+        df.to_parquet(
+            f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month}-{now.day}T{now.hour}-{now.minute}-{now.second}.parquet",
+            index=False,
+        )
+    except Exception as error:
+        log.error(f"")
+        return error  #ToDo: When called, response should be handled as "if not null, then problem"
 
 
 def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
