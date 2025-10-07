@@ -651,6 +651,7 @@ digraph function_call_chains {
         format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
         truncate_longer_lines [shape="box"]
+        format_ISSN [shape="box"]
         unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
         successful_SUSHI_call_statement [shape="box"]
         harvest_R5_SUSHI_success_statement [shape="box"]
@@ -1224,6 +1225,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_format_ISSN [
+            style="dashed"
+            shape="box"
+        ]
         test_prepare_HTML_page_for_comparison [
             style="dashed"
             shape="box"
@@ -1369,6 +1374,7 @@ digraph function_call_chains {
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
     test_truncate_longer_lines -> truncate_longer_lines
+    test_format_ISSN -> format_ISSN
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field

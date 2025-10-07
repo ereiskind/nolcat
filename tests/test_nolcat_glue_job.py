@@ -150,6 +150,13 @@ def test_truncate_longer_lines():
     assert truncate_longer_lines("This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch longer than 50 characters.") == "This is muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuch lon..."
 
 
+def test_format_ISSN():
+    """Tests formatting an unformatted ISSN."""
+    assert format_ISSN("12345678") == "1234-5678"
+    assert format_ISSN(" 1234567x ") == "1234-567x"
+    assert format_ISSN("x2345678") == "x2345678"
+
+
 def test_prepare_HTML_page_for_comparison():
     """Tests creating an Unicode string from HTML page data.
     

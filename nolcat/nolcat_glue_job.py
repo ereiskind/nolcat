@@ -287,6 +287,23 @@ def truncate_longer_lines(line):
         return line
 
 
+def format_ISSN(unformatted_ISSN):
+    """Creates an ISSN matching `ISSN_regex()` from an unformatted ISSN string.
+
+    Args:
+        unformatted_ISSN (str or int): an ISSN without formatting
+    
+    Returns:
+        str: the formatted ISSN
+    """
+    trimmed_ISSN = str(unformatted_ISSN).strip()
+    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+        return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
+    else:
+        log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
+        return unformatted_ISSN
+
+
 #SUBSECTION: SUSHI Statements and Regexes
 def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_type=None, statistics_source_name=None):
     """This statement indicates that the provided COUNTER data couldn't be converted into a dataframe.
