@@ -215,7 +215,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -243,7 +243,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -268,7 +268,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
             most_recent_month_with_usage[0],
             most_recent_month_with_usage[1],
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
@@ -288,7 +288,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         begin_date,
         end_date,
         choice(reports_offered_by_StatisticsSource_fixture),
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
@@ -308,7 +308,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
         begin_date,
         end_date,
         choice(reports_offered_by_StatisticsSource_fixture),
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
@@ -354,7 +354,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     yield StatisticsSources_fixture._harvest_R5_SUSHI(
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
 
 
@@ -371,7 +371,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
         )
     method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)

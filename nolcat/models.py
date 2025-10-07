@@ -809,7 +809,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -818,7 +818,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
             tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -996,7 +996,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date, bucket_path=PATH_WITHIN_BUCKET):
+    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Makes a single API call for a customizable report with all possible attributes.
 
         Args:
@@ -1005,7 +1005,7 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
             start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
             tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -1154,7 +1154,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1163,7 +1163,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -1518,7 +1518,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
         self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; if some but not all usage is, this value is `true`
         self.collection_status (enum): the status of the usage statistics collection
-        self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PATH_WITHIN_BUCKET` section (see note)
+        self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PRODUCTION_NON_COUNTER_FILE_PATH` section (see note)
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
@@ -1528,7 +1528,7 @@ class AnnualUsageCollectionTracking(db.Model):
         download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
     
     Note:
-        Strictly speaking, S3 doesn't use folders, just file names with segments that can be separated by slashes, but the segmentation of the file names allows a file-like structure to be created and used for the S3 GUI. The `PATH_WITHIN_BUCKET` constant is a shared beginning to all usage statistics files loaded into S3 by NoLCAT.
+        Strictly speaking, S3 doesn't use folders, just file names with segments that can be separated by slashes, but the segmentation of the file names allows a file-like structure to be created and used for the S3 GUI. The `PRODUCTION_NON_COUNTER_FILE_PATH` constant is a shared beginning to all non-COUNTER usage statistics files loaded into S3 by NoLCAT.
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
@@ -1576,13 +1576,13 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self, bucket_path=PATH_WITHIN_BUCKET):
+    def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -1660,12 +1660,12 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self, file, bucket_path=PATH_WITHIN_BUCKET):
+    def upload_nonstandard_usage_file(self, file, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
 
         Args:
             file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
@@ -1721,12 +1721,12 @@ class AnnualUsageCollectionTracking(db.Model):
     
 
     @hybrid_method
-    def download_nonstandard_usage_file(self, web_app_download_folder, bucket_path=PATH_WITHIN_BUCKET):
+    def download_nonstandard_usage_file(self, web_app_download_folder, bucket_path=PRODUCTION_NON_COUNTER_FILE_PATH):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
             web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_NON_COUNTER_FILE_PATH`
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file

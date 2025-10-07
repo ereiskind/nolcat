@@ -455,29 +455,32 @@ def test_save_dataframe_to_S3_bucket():
 
 
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
-    """Tests uploading files to a S3 bucket."""
+    """Tests uploading files to a S3 bucket.
+    
+    TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
+    """
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
+        Prefix=TEST_COUNTER_FILE_PATH,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
     download_location = tmp_path / path_to_sample_file.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name,
+        Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
@@ -508,7 +511,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+            Key=TEST_COUNTER_FILE_PATH + file_name
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
@@ -520,18 +523,18 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     logging_message = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=PATH_WITHIN_BUCKET_FOR_TESTS,
+        Prefix=TEST_COUNTER_FILE_PATH,
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET_FOR_TESTS, "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(TEST_COUNTER_FILE_PATH, "") for file_name in bucket_contents]
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:

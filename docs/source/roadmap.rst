@@ -29,7 +29,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Create helper function for saving dataframe to S3 as parquet
   * End `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3
-  * Adjust `PATH_WITHIN_BUCKET` calls and its location in docstrings
   * Adjust calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--)
   * Adjust tests and function call chain diagram to correspond with above changes
   * Add check for saved parquet or error file after call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`

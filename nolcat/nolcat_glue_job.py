@@ -59,8 +59,6 @@ PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
 PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
 TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
 TEST_NON_COUNTER_FILE_PATH = "nolcat/usage/test/raw_vendor_reports/"
-PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
-PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 
 
 def filter_empty_parentheses(log_statement):
@@ -1144,14 +1142,14 @@ def file_extensions_and_mimetypes():
     }
 
 
-def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path=PATH_WITHIN_BUCKET):
+def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
     """The function for saving COUNTER usage data to S3 in parquet format.
 
     Args:
         df (dataframe): the data to save in S3 as a parquet file
         statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
         report_type (str): the two-letter abbreviation for the report the usage data is from
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
     
     Returns:
         Exception: the error if a problem occurs while saving the data to S3
@@ -1168,15 +1166,15 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         return error  #ToDo: When called, response should be handled as "if not null, then problem"
 
 
-def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
+def upload_file_to_S3_bucket(file, file_name, bucket_path):
     """The function for uploading files to a S3 bucket.
 
-    SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
+    This function is wrapped in other functions for uploading both SUSHI pulls that can't be converted into dataframes and non-COUNTER usage files, which use different bucket paths, so the production file path is not set as a default here.
 
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
@@ -1240,15 +1238,15 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         return message
 
 
-def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
+def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
     """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
 
-    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
+    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing. These files use the naming convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}".
 
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
@@ -1269,24 +1267,24 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITH
     if temp_file_name == 'temp.json':
         try:
             with open(temp_file_path, 'wb') as file:
-                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")
                 json.dump(data, file)
             log.debug(f"Data written as bytes JSON to file object {file}.")
         except Exception as TypeError:
             with open(temp_file_path, 'wt') as file:
-                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")
                 file.write(json.dumps(data))
                 log.debug(f"Data written as text JSON to file object {file}.")
     else:
         try:
             with open(temp_file_path, 'wb') as file:
-                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")
                 file.write(data)
                 log.debug(f"Data written as bytes to file object {file}.")
         except Exception as binary_error:
             try:
                 with open(temp_file_path, 'wt', encoding='utf-8', errors='backslashreplace') as file:
-                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
