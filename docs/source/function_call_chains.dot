@@ -1281,6 +1281,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        dataframe_to_save_to_S3 [
+            style="dotted"
+            shape="folder"
+        ]
         test_save_dataframe_to_S3_bucket [
             style="dashed"
             shape="folder"
@@ -1413,6 +1417,7 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> engine
     test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex

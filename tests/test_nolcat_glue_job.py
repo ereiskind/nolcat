@@ -448,7 +448,20 @@ def test_update_database_with_insert_statement(engine, client, vendors_relation_
 
 
 #SECTION: S3 Interaction Tests
-def test_save_dataframe_to_S3_bucket():
+@pytest.fixture
+def dataframe_to_save_to_S3(COUNTERData_relation):
+    """Creates a dataframe for use in `test_save_dataframe_to_S3_bucket()` and deletes it when the test is complete.
+
+    Args:
+        COUNTERData_relation (dataframe): a dataframe of test data
+    
+    Yields:
+        tuple: a dataframe of test data (dataframe); the test data statistics source ID of the data in the dataframe (int); the report type of the data in the dataframe (str)
+    """
+    pass
+
+
+def test_save_dataframe_to_S3_bucket(dataframe_to_save_to_S3):
     """Tests saving a dataframe as a parquet file in a S3 bucket."""
     #ToDo: Spoof df, stats_source_ID, report_type
     #ToDo: Get `datetime.now()`
