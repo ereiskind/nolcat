@@ -497,17 +497,41 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
         log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
 
 
-def test_save_dataframe_to_S3_bucket(dataframe_to_save_to_S3):
+def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     """Tests saving a dataframe as a parquet file in a S3 bucket."""
-    #ToDo: Spoof df, stats_source_ID, report_type
-    #ToDo: Get `datetime.now()`
-    #ToDo: Execute `save_dataframe_to_S3_bucket()`
-    #ToDo: Get `datetime.now()`
-    #ToDo: Generate list of file names with stats_source_ID, report_type, and times between the two `now()` calls
-    #ToDo: Check if a parquet file in the designated location has a name matching one in the above list
-    #ToDo: Confirm contents of above file are same as df used to create file
-    # Can `remove_file_from_S3` be used to clear the file after test completion?
-    pass
+    df, statistics_source_ID, report_type = dataframe_to_save_to_S3
+    before = datetime.now()
+    result = save_dataframe_to_S3_bucket(
+        df,
+        statistics_source_ID,
+        report_type,
+        bucket_path=TEST_COUNTER_FILE_PATH
+    )
+    assert result is None
+    after = datetime.now()
+    possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
+    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=TEST_COUNTER_FILE_PATH,
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
+    file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
+    assert len(file_name_in_bucket) == 1
+    file_name = file_name_in_bucket[0]
+    download_location = tmp_path / file_name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Filename=download_location,
+    )
+    df_from_parquet = pd.read_parquet(download_location)
+    assert_frame_equal(df, df_from_parquet)
 
 
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
