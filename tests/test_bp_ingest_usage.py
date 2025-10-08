@@ -362,8 +362,6 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
         files_in_bucket = [name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for name in files_in_bucket]
-        log.error(f"`files_name`: {file_name}")  #TEST: temp
-        log.error(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")  #TEST: temp
         assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
