@@ -17,17 +17,6 @@ from .SUSHI_call_and_response import SUSHICallAndResponse
 log = logging.getLogger(__name__)
 
 
-# Using field length constants ensures the lengths being checked for in `ConvertJSONDictToDataframe` are the lengths used in the database
-RESOURCE_NAME_LENGTH = ConvertJSONDictToDataframe.RESOURCE_NAME_LENGTH
-PUBLISHER_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_LENGTH
-PUBLISHER_ID_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_ID_LENGTH
-PLATFORM_LENGTH = ConvertJSONDictToDataframe.PLATFORM_LENGTH
-AUTHORS_LENGTH = ConvertJSONDictToDataframe.AUTHORS_LENGTH
-DOI_LENGTH = ConvertJSONDictToDataframe.DOI_LENGTH
-PROPRIETARY_ID_LENGTH = ConvertJSONDictToDataframe.PROPRIETARY_ID_LENGTH
-URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
-
-
 def PATH_TO_CREDENTIALS_FILE():
     """Provides the file path to the SUSHI credentials file as a string.
     
