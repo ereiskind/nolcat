@@ -1083,6 +1083,7 @@ def download_non_COUNTER_usage(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
+        log.error(f"`bucket_path` is {bucket_path}")  #TEST: temp
         file_path = AUCT_object.download_nonstandard_usage_file(
             create_downloads_folder(),
             bucket_path=bucket_path,
