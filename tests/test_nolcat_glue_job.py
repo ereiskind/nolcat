@@ -4,6 +4,7 @@
 import pytest
 from filecmp import cmp
 from random import choice
+from datetime import timedelta
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
@@ -458,7 +459,42 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     Yields:
         tuple: a dataframe of test data (dataframe); the test data statistics source ID of the data in the dataframe (int); the report type of the data in the dataframe (str)
     """
-    pass
+    statistics_source_ID_options = [0, 1, 2, 3]
+    report_type_options = ["PR", "DR", "TR", "IR"]
+    while True:
+        statistics_source_ID = choice(statistics_source_ID_options)
+        report_type = choice(report_type_options)
+        df = COUNTERData_relation[COUNTERData_relation['statistics_source_ID'] == statistics_source_ID and COUNTERData_relation['report_type'] == report_type]
+        if not df.empty:
+            break
+    log.info(f"Using test data from statistics source ID {statistics_source_ID} and report type {report_type} for `test_save_dataframe_to_S3_bucket()`.")
+    before = datetime.now()
+    yield (df, statistics_source_ID, report_type)
+    after = datetime.now()
+    possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
+    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=TEST_COUNTER_FILE_PATH,
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
+    file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
+    if file_name_in_bucket:
+        file_name_in_bucket = file_name_in_bucket[0]
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=TEST_COUNTER_FILE_PATH + file_name_in_bucket,
+            )
+        except botocore.exceptions as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name_in_bucket, error))
+    else:
+        log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
 
 
 def test_save_dataframe_to_S3_bucket(dataframe_to_save_to_S3):
