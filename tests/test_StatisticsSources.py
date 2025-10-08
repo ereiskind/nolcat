@@ -60,6 +60,12 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
                 if "interface_id" in list(statistics_source_dict.keys()):
                         retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
     
+    today = date.today()
+    if today.day < 15:
+        usage_date = today + relativedelta(months=-2)
+    else:
+        usage_date = today + relativedelta(months=-1)
+    usage_date = f"{usage_date.year}-{usage_date.month}-01"
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         query_result = query_database(
@@ -68,7 +74,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
                 FROM statisticsSources
                 JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID
                 WHERE statisticsSources.statistics_source_retrieval_code={interface}
-                AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')};
+                AND COUNTERData.usage_date={usage_date};
             """,
             engine=engine,
         )
