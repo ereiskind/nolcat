@@ -464,7 +464,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     while True:
         statistics_source_ID = choice(statistics_source_ID_options)
         report_type = choice(report_type_options)
-        df = COUNTERData_relation[COUNTERData_relation['statistics_source_ID'] == statistics_source_ID and COUNTERData_relation['report_type'] == report_type]
+        df = COUNTERData_relation[(COUNTERData_relation['statistics_source_ID'] == statistics_source_ID) & (COUNTERData_relation['report_type'] == report_type)]
         if not df.empty:
             break
     log.info(f"Using test data from statistics source ID {statistics_source_ID} and report type {report_type} for `test_save_dataframe_to_S3_bucket()`.")
