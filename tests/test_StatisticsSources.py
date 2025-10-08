@@ -453,7 +453,7 @@ def non_duplicate_COUNTER_data():
     yield df
 
 
-def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data, caplog):
+def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data, caplog):
     """Tests the check for statistics source/report type/usage date combinations already in the database.
     
     While the function being tested here is in `nolcat.app`, the test is in this module because it requires the `COUNTERData` relation to contain data, while the `nolcat.app` test module starts with an empty database and never loads data into that relation.
@@ -467,7 +467,8 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
         pytest.skip(database_function_skip_statements(number_of_records))
     if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
-    df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
+    with client:
+        df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     assert_frame_equal(df.reset_index(drop=True), non_duplicate_COUNTER_data.reset_index(drop=True))  # The `drop` argument handles the fact that `check_if_data_already_in_COUNTERData()` returns the matched records with the index values from the dataframe used as the function argument
     # The order of the statistics source ID, report type, and date combinations that were matched is inconsistent, so the return statement containing them is tested in multiple parts
     assert message.startswith(f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n")
