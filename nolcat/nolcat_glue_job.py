@@ -1491,7 +1491,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Publisher_ID":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
                     if isinstance(value, list) and value != []:
-                        if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
+                        if len(value) == 1 and proprietary_ID_regex().search(value[0]['Type']):
                             if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
                                 log.critical(message)
@@ -1502,7 +1502,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
                         else:
                             for type_and_value in value:
-                                if proprietary_ID_regex.search(type_and_value['Type']):
+                                if proprietary_ID_regex().search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
                                         log.critical(message)
@@ -1530,7 +1530,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.authors`"))
                     for type_and_value in value:
-                        if author_regex.search(type_and_value['Type']):
+                        if author_regex().search(type_and_value['Type']):
                             if record_dict.get('authors'):  # If the author name value is null, this will never be true
                                 if record_dict['authors'].endswith(" et al."):
                                     continue  # The `for type_and_value in value` loop
@@ -1595,7 +1595,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("DOI", record_dict['DOI']))
                         
                         #Subsection: Capture `proprietary_ID` Value
-                        elif proprietary_ID_regex.search(type_and_value['Type']):
+                        elif proprietary_ID_regex().search(type_and_value['Type']):
                             if len(type_and_value['Value']) > PROPRIETARY_ID_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", type_and_value['Value'])
                                 log.critical(message)
@@ -1709,7 +1709,7 @@ class ConvertJSONDictToDataframe:
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value_for_parent, key_for_parent, "`COUNTERData.parent_authors`"))
                             for type_and_value in value_for_parent:
-                                if author_regex.search(type_and_value['Type']):
+                                if author_regex().search(type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
                                             continue  # The `for type_and_value in value_for_parent` loop
@@ -1773,7 +1773,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_DOI", record_dict['parent_DOI']))
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
-                                elif proprietary_ID_regex.search(type_and_value['Type']):
+                                elif proprietary_ID_regex().search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > PROPRIETARY_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_proprietary_ID", type_and_value['Value'])
                                         log.critical(message)
@@ -2066,7 +2066,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
-                        elif proprietary_ID_regex.search(ID_type):
+                        elif proprietary_ID_regex().search(ID_type):
                             if report_type == "IR":
                                 field = "parent_proprietary_ID"
                             else:
@@ -2278,7 +2278,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("DOI", items_dict['DOI']))
 
                                 #Subsection: Capture `proprietary_ID` Value
-                                elif proprietary_ID_regex.search(ID_type):
+                                elif proprietary_ID_regex().search(ID_type):
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
                                     if len(ID_value) > PROPRIETARY_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", ID_value)
