@@ -702,21 +702,17 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     return df
 
 
-def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials, caplog):
+def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
     """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
 
     Args:
         statistics_source_name (str): the name of the statistics source
         URL (str): the base URL for the SUSHI API call
         credentials (dict): the SUSHI credentials for the API call
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Returns:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    caplog.set_level(logging.INFO, logger='nolcat.models')
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     response = SUSHICallAndResponse(
         statistics_source_name,
         URL,
