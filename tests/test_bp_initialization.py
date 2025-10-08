@@ -812,7 +812,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{TEST_NON_COUNTER_FILE_PATH}",
+        Prefix=TEST_NON_COUNTER_FILE_PATH,
     )
     log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
