@@ -624,7 +624,7 @@ def header_value():
     yield {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def most_recent_month_with_usage(caplog):
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
 
