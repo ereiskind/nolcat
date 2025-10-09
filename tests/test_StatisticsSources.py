@@ -131,7 +131,7 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 
 #Section: Fixture Listing Available Reports
-@pytest.fixture(scope='module')
+@pytest.fixture
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI_credentials_fixture, caplog):
     """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
 
