@@ -485,7 +485,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
     file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
     if file_name_in_bucket:
-        file_name_in_bucket = file_name_in_bucket[0]
+        file_name_in_bucket = list(file_name_in_bucket)[0]
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
@@ -526,7 +526,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
     log.error(f"`file_name_in_bucket`:\n{file_name_in_bucket}")  #TEST: temp
     assert len(file_name_in_bucket) == 1
-    file_name = file_name_in_bucket[0]
+    file_name = list(file_name_in_bucket)[0]
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
