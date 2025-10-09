@@ -509,6 +509,8 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert result is None
     after = datetime.now()
+    log.error(f"`before`: {before}")  #TEST: temp
+    log.error(f"`after`: {after}")  #TEST: temp
     possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
     log.error(f"`possible_timestamps`:\n{format_list_for_stdout(possible_timestamps)}")  #TEST: temp
     possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
