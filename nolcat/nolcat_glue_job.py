@@ -112,13 +112,9 @@ csrf = CSRFProtect()
 db = SQLAlchemy()
 # AWS authentication managed through IAM roles and a CloudFormation init file
 s3_client = boto3.client('s3')
-#ToDo: `s3fs.S3FileSystem(profile='PROFILE')` goes here
+s3fs.S3FileSystem(profile='PROFILE')
 
 log = logging.getLogger(__name__)
-#TEST: temp
-log.error(f"`s3fs.S3FileSystem(profile='PROFILE')` (type {type(s3fs.S3FileSystem(profile='PROFILE'))}): {s3fs.S3FileSystem(profile='PROFILE')}")
-s3fs.S3FileSystem(profile='PROFILE')
-#TEST: end temp
 
 
 #SECTION: Basic Helper Functions
