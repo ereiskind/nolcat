@@ -510,7 +510,9 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     assert result is None
     after = datetime.now()
     possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
+    log.error(f"`possible_timestamps`:\n{format_list_for_stdout(possible_timestamps)}")  #TEST: temp
     possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+    log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names)}")  #TEST: temp
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -521,10 +523,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    log.error(f"`bucket_contents`:\n{format_list_for_stdout(bucket_contents)}")  #TEST: temp
-    log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names)}")  #TEST: temp
     file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
-    log.error(f"`file_name_in_bucket`:\n{file_name_in_bucket}")  #TEST: temp
     assert len(file_name_in_bucket) == 1
     file_name = list(file_name_in_bucket)[0]
     download_location = tmp_path / file_name
