@@ -509,21 +509,42 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert result is None
     after = datetime.now()
-    possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
     #TEST: temp
-    if len(possible_timestamps) == 0:
-        try2 = []
-        for n in range((after-before).seconds):
-            try2.append(before+timedelta(seconds=n))
-        if len(try2) == 0:
-            log.error("NEED NEW METHOD")
-        else:
-            log.error("Use standard loop, not list comprehension")
-            log.error(f"`possible_timestamps`:\n{format_list_for_stdout(try2)}")
-    else:
-        log.error(f"`possible_timestamps`:\n{format_list_for_stdout(possible_timestamps)}")
+    # TRY 1
+    possible_timestamps1 = []
+    while before < after:
+        before += timedelta(seconds=1)
+        possible_timestamps1.append(1)
+    if len(possible_timestamps1) > 0:
+        log.error(f"`possible_timestamps1`:\n{format_list_for_stdout(possible_timestamps1)}")
+    
+    # TRY 2
+    possible_timestamps2 = []
+    diff = after - before
+    for n in range(diff.seconds+1):
+        possible_timestamps2.append(before+timedelta(n))
+    if len(possible_timestamps2) > 0:
+        log.error(f"`possible_timestamps2`:\n{format_list_for_stdout(possible_timestamps2)}")
+    
+    # TRY 3
+    possible_timestamps3 = []
+    while True:
+        if before > after:
+            break
+        before += timedelta(seconds=1)
+        possible_timestamps3.append(before)
+    if len(possible_timestamps3) > 0:
+        log.error(f"`possible_timestamps3`:\n{format_list_for_stdout(possible_timestamps3)}")
+    
+    # TRY 4
+    possible_timestamps4 = []
+    seconds = int((after-before).seconds)
+    for n in range(seconds):
+        possible_timestamps4.append(before+timedelta(n))
+    if len(possible_timestamps4) > 0:
+        log.error(f"`possible_timestamps4`:\n{format_list_for_stdout(possible_timestamps4)}")
     #TEST: end temp
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps1]
     log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names)}")  #TEST: temp
 
     list_objects_response = s3_client.list_objects_v2(
