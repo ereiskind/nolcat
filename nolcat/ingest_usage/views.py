@@ -175,9 +175,9 @@ def harvest_SUSHI_statistics(testing):
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         if testing == "":
-            bucket_path = PATH_WITHIN_BUCKET
+            bucket_path = PRODUCTION_COUNTER_FILE_PATH
         elif testing == "test":
-            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+            bucket_path = TEST_COUNTER_FILE_PATH
         else:
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)
@@ -287,9 +287,9 @@ def upload_non_COUNTER_reports(testing):
         )
         log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
         if testing == "":
-            bucket_path = PATH_WITHIN_BUCKET
+            bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
         elif testing == "test":
-            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+            bucket_path = TEST_NON_COUNTER_FILE_PATH
         else:
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)

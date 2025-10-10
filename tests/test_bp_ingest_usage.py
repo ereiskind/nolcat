@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-09 ##########
 
 import pytest
 from random import choice
@@ -353,22 +353,22 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     #Section: Confirm Successful S3 Upload
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+        Prefix=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
     bucket_contents = list_objects_response.get('Contents')
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for name in files_in_bucket]
+        files_in_bucket = [name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for name in files_in_bucket]
         assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Key=TEST_NON_COUNTER_FILE_PATH + file_name,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

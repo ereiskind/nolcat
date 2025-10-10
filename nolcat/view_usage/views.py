@@ -1075,9 +1075,9 @@ def download_non_COUNTER_usage(testing):
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
         if testing == "":
-            bucket_path = PATH_WITHIN_BUCKET
+            bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
         elif testing == "test":
-            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+            bucket_path = TEST_NON_COUNTER_FILE_PATH
         else:
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)

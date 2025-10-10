@@ -651,6 +651,7 @@ digraph function_call_chains {
         format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
         truncate_longer_lines [shape="box"]
+        format_ISSN [shape="box"]
         unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
         successful_SUSHI_call_statement [shape="box"]
         harvest_R5_SUSHI_success_statement [shape="box"]
@@ -688,6 +689,7 @@ digraph function_call_chains {
         upload_file_to_S3_bucket_success_regex [shape="box"]
         upload_nonstandard_usage_file_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
+        save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="box"]
         subgraph cluster_ConvertJSONDictToDataframe {
@@ -1223,6 +1225,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_format_ISSN [
+            style="dashed"
+            shape="box"
+        ]
         test_prepare_HTML_page_for_comparison [
             style="dashed"
             shape="box"
@@ -1274,6 +1280,14 @@ digraph function_call_chains {
         test_update_database_with_insert_statement [
             style="dashed"
             shape="box"
+        ]
+        dataframe_to_save_to_S3 [
+            style="dotted"
+            shape="folder"
+        ]
+        test_save_dataframe_to_S3_bucket [
+            style="dashed"
+            shape="folder"
         ]
         test_upload_file_to_S3_bucket [
             style="dashed"
@@ -1364,6 +1378,7 @@ digraph function_call_chains {
     test_format_list_for_stdout_with_generator -> create_COUNTERData_workbook_iterdir_list
     test_remove_IDE_spacing_from_statement -> remove_IDE_spacing_from_statement
     test_truncate_longer_lines -> truncate_longer_lines
+    test_format_ISSN -> format_ISSN
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
     test_change_single_field_dataframe_into_series -> change_single_field_dataframe_into_series
     test_restore_boolean_values_to_boolean_field -> restore_boolean_values_to_boolean_field
@@ -1402,6 +1417,7 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> engine
     test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
+    test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex

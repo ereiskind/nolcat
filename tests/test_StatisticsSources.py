@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-09 ##########
 
 import pytest
 import json
@@ -39,14 +39,13 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine, most_recent_month_with_usage):
+def StatisticsSources_fixture(engine):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
@@ -60,6 +59,12 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
                 if "interface_id" in list(statistics_source_dict.keys()):
                         retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
     
+    today = date.today()
+    if today.day < 15:
+        usage_date = today + relativedelta(months=-2)
+    else:
+        usage_date = today + relativedelta(months=-1)
+    usage_date = f"{usage_date.year}-{usage_date.month}-01"
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         query_result = query_database(
@@ -68,7 +73,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
                 FROM statisticsSources
                 JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID
                 WHERE statisticsSources.statistics_source_retrieval_code={interface}
-                AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')};
+                AND COUNTERData.usage_date={usage_date};
             """,
             engine=engine,
         )
@@ -126,7 +131,7 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 
 #Section: Fixture Listing Available Reports
-@pytest.fixture(scope='module')
+@pytest.fixture
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI_credentials_fixture, caplog):
     """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
 
@@ -215,7 +220,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -243,7 +248,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
@@ -268,7 +273,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
             most_recent_month_with_usage[0],
             most_recent_month_with_usage[1],
-            bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+            bucket_path=TEST_COUNTER_FILE_PATH,
         )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
@@ -288,7 +293,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         begin_date,
         end_date,
         choice(reports_offered_by_StatisticsSource_fixture),
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
@@ -308,7 +313,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
         begin_date,
         end_date,
         choice(reports_offered_by_StatisticsSource_fixture),
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
@@ -354,7 +359,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     yield StatisticsSources_fixture._harvest_R5_SUSHI(
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
 
 
@@ -371,7 +376,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_COUNTER_FILE_PATH,
         )
     method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)
@@ -453,7 +458,7 @@ def non_duplicate_COUNTER_data():
     yield df
 
 
-def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data, caplog):
+def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data, caplog):
     """Tests the check for statistics source/report type/usage date combinations already in the database.
     
     While the function being tested here is in `nolcat.app`, the test is in this module because it requires the `COUNTERData` relation to contain data, while the `nolcat.app` test module starts with an empty database and never loads data into that relation.
@@ -467,7 +472,8 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
         pytest.skip(database_function_skip_statements(number_of_records))
     if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
-    df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
+    with client:
+        df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     assert_frame_equal(df.reset_index(drop=True), non_duplicate_COUNTER_data.reset_index(drop=True))  # The `drop` argument handles the fact that `check_if_data_already_in_COUNTERData()` returns the matched records with the index values from the dataframe used as the function argument
     # The order of the statistics source ID, report type, and date combinations that were matched is inconsistent, so the return statement containing them is tested in multiple parts
     assert message.startswith(f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n")

@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-08 ##########
 
 import pytest
 from pathlib import Path
@@ -710,7 +710,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file
+                Key=TEST_NON_COUNTER_FILE_PATH + file
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
@@ -812,15 +812,15 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
+        Prefix=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
     bucket_contents = list_objects_response.get('Contents')
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
+        files_in_bucket = [file_name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for file_name in files_in_bucket]
         assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
         assert False  # Nothing in bucket

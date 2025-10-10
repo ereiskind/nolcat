@@ -15,6 +15,7 @@ from math import ceil
 from sqlalchemy import log as SQLAlchemy_log
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
+import s3fs
 import boto3
 import pandas as pd
 from numpy import squeeze
@@ -58,8 +59,6 @@ PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
 PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
 TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
 TEST_NON_COUNTER_FILE_PATH = "nolcat/usage/test/raw_vendor_reports/"
-PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
-PATH_WITHIN_BUCKET_FOR_TESTS = PATH_WITHIN_BUCKET + "tests/"
 
 
 def filter_empty_parentheses(log_statement):
@@ -111,7 +110,9 @@ def configure_logging(app):
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
-s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
+# AWS authentication managed through IAM roles and a CloudFormation init file
+s3_client = boto3.client('s3')
+s3fs.S3FileSystem(profile='PROFILE')
 
 log = logging.getLogger(__name__)
 
@@ -175,7 +176,7 @@ def parquet_file_name_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2})|(NULL))\.parquet")
+    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2}T\d{2}\-\d{2}\-\d{2})|(NULL))\.parquet")
 
 
 def empty_string_regex():
@@ -280,6 +281,23 @@ def truncate_longer_lines(line):
         return line[:147] + "..."
     else:
         return line
+
+
+def format_ISSN(unformatted_ISSN):
+    """Creates an ISSN matching `ISSN_regex()` from an unformatted ISSN string.
+
+    Args:
+        unformatted_ISSN (str or int): an ISSN without formatting
+    
+    Returns:
+        str: the formatted ISSN
+    """
+    trimmed_ISSN = str(unformatted_ISSN).strip()
+    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+        return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
+    else:
+        log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
+        return unformatted_ISSN
 
 
 #SUBSECTION: SUSHI Statements and Regexes
@@ -1137,15 +1155,39 @@ def file_extensions_and_mimetypes():
     }
 
 
-def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
+def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+    """The function for saving COUNTER usage data to S3 in parquet format.
+
+    Args:
+        df (dataframe): the data to save in S3 as a parquet file
+        statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
+        report_type (str): the two-letter abbreviation for the report the usage data is from
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+    
+    Returns:
+        Exception: the error if a problem occurs while saving the data to S3
+    """
+    log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    now = datetime.now()
+    try:
+        df.to_parquet(
+            f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month}-{now.day}T{now.hour}-{now.minute}-{now.second}.parquet",
+            index=False,
+        )
+    except Exception as error:
+        log.error(f"")
+        return error  #ToDo: When called, response should be handled as "if not null, then problem"
+
+
+def upload_file_to_S3_bucket(file, file_name, bucket_path):
     """The function for uploading files to a S3 bucket.
 
-    SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
+    This function is wrapped in other functions for uploading both SUSHI pulls that can't be converted into dataframes and non-COUNTER usage files, which use different bucket paths, so the production file path is not set as a default here.
 
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
@@ -1209,15 +1251,15 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path=PATH_WITHIN_BUCKET):
         return message
 
 
-def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITHIN_BUCKET):
+def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
     """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
 
-    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
+    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing. These files use the naming convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}".
 
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to load the data
@@ -1238,24 +1280,24 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PATH_WITH
     if temp_file_name == 'temp.json':
         try:
             with open(temp_file_path, 'wb') as file:
-                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")
                 json.dump(data, file)
             log.debug(f"Data written as bytes JSON to file object {file}.")
         except Exception as TypeError:
             with open(temp_file_path, 'wt') as file:
-                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")
                 file.write(json.dumps(data))
                 log.debug(f"Data written as text JSON to file object {file}.")
     else:
         try:
             with open(temp_file_path, 'wb') as file:
-                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")
                 file.write(data)
                 log.debug(f"Data written as bytes to file object {file}.")
         except Exception as binary_error:
             try:
                 with open(temp_file_path, 'wt', encoding='utf-8', errors='backslashreplace') as file:
-                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
@@ -1445,7 +1487,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Publisher_ID":
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
                     if isinstance(value, list) and value != []:
-                        if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
+                        if len(value) == 1 and proprietary_ID_regex().search(value[0]['Type']):
                             if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
                                 log.critical(message)
@@ -1456,7 +1498,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("publisher_ID", record_dict['publisher_ID']))
                         else:
                             for type_and_value in value:
-                                if proprietary_ID_regex.search(type_and_value['Type']):
+                                if proprietary_ID_regex().search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
                                         log.critical(message)
@@ -1484,7 +1526,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value, key, "`COUNTERData.authors`"))
                     for type_and_value in value:
-                        if author_regex.search(type_and_value['Type']):
+                        if author_regex().search(type_and_value['Type']):
                             if record_dict.get('authors'):  # If the author name value is null, this will never be true
                                 if record_dict['authors'].endswith(" et al."):
                                     continue  # The `for type_and_value in value` loop
@@ -1549,7 +1591,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("DOI", record_dict['DOI']))
                         
                         #Subsection: Capture `proprietary_ID` Value
-                        elif proprietary_ID_regex.search(type_and_value['Type']):
+                        elif proprietary_ID_regex().search(type_and_value['Type']):
                             if len(type_and_value['Value']) > PROPRIETARY_ID_LENGTH:
                                 message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", type_and_value['Value'])
                                 log.critical(message)
@@ -1663,7 +1705,7 @@ class ConvertJSONDictToDataframe:
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                             log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(value_for_parent, key_for_parent, "`COUNTERData.parent_authors`"))
                             for type_and_value in value_for_parent:
-                                if author_regex.search(type_and_value['Type']):
+                                if author_regex().search(type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
                                             continue  # The `for type_and_value in value_for_parent` loop
@@ -1727,7 +1769,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("parent_DOI", record_dict['parent_DOI']))
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
-                                elif proprietary_ID_regex.search(type_and_value['Type']):
+                                elif proprietary_ID_regex().search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > PROPRIETARY_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("parent_proprietary_ID", type_and_value['Value'])
                                         log.critical(message)
@@ -2020,7 +2062,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement(field, report_items_dict[field]))
 
                         #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
-                        elif proprietary_ID_regex.search(ID_type):
+                        elif proprietary_ID_regex().search(ID_type):
                             if report_type == "IR":
                                 field = "parent_proprietary_ID"
                             else:
@@ -2232,7 +2274,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(ConvertJSONDictToDataframe._extraction_complete_logging_statement("DOI", items_dict['DOI']))
 
                                 #Subsection: Capture `proprietary_ID` Value
-                                elif proprietary_ID_regex.search(ID_type):
+                                elif proprietary_ID_regex().search(ID_type):
                                     log.debug(ConvertJSONDictToDataframe._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.proprietary_ID`"))
                                     if len(ID_value) > PROPRIETARY_ID_LENGTH:
                                         message = ConvertJSONDictToDataframe._increase_field_length_logging_statement("proprietary_ID", ID_value)

@@ -486,7 +486,7 @@ def remove_file_from_S3(path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
+            Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
@@ -538,7 +538,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+            Key=TEST_NON_COUNTER_FILE_PATH + file_name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
@@ -593,11 +593,11 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
-    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}`"))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}`"))
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_NON_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
@@ -606,7 +606,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=TEST_NON_COUNTER_FILE_PATH + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
@@ -624,7 +624,7 @@ def header_value():
     yield {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def most_recent_month_with_usage(caplog):
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
 
@@ -702,27 +702,23 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     return df
 
 
-def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials, caplog):
+def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
     """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
 
     Args:
         statistics_source_name (str): the name of the statistics source
         URL (str): the base URL for the SUSHI API call
         credentials (dict): the SUSHI credentials for the API call
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Returns:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    caplog.set_level(logging.INFO, logger='nolcat.models')
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     response = SUSHICallAndResponse(
         statistics_source_name,
         URL,
         "reports",
         credentials,
-    ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+    ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     if isinstance(response[0], str):
         pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
