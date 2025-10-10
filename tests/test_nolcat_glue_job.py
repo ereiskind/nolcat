@@ -537,7 +537,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     df_from_parquet = pd.read_parquet(download_location)
     #TEST: temp
     try:
-        log.error(f"Dataframe differences:\n{df.compare(df_from_parquet)}")
+        log.error(f"Dataframe differences:\n{df.reset_index().compare(df_from_parquet)}")
     except:
         log.error(f"`df` columns:\n{df.columns}")
         log.error(f"`df_from_parquet` columns:\n{df_from_parquet.columns}")
