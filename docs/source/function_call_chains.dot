@@ -733,6 +733,7 @@ digraph function_call_chains {
     save_unconverted_data_via_upload -> format_list_for_stdout
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
     create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
+    create_dataframe_in_ConvertJSONDictToDataframe -> save_dataframe_to_S3_bucket
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
