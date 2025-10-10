@@ -25,13 +25,13 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
 
-* Save `nolcat.ConvertJSONDictsToDataframe` output as parquet in S3
+* Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * End `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3
-  * Adjust calls to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--)
+  * End `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` by saving a parquet file to S3
+  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--)
   * Adjust tests and function call chain diagram to correspond with above changes
-  * Add check for saved parquet or error file after call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
-  * List all functions in function call chains ending in a call to `nolcat.ConvertJSONDictsToDataframe.create_dataframe()`
+  * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
+  * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
   * For all tests, get call chains and adjust caplog calls
