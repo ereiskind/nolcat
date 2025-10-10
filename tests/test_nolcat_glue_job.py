@@ -542,10 +542,10 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     for n in range(seconds):
         possible_timestamps4.append(before+timedelta(n))
     if len(possible_timestamps4) > 0:
-        log.error(f"`possible_timestamps4`:\n{format_list_for_stdout(possible_timestamps4)}")
+        log.error(f"`possible_timestamps4`:\n{format_list_for_stdout(possible_timestamps4[:10])}")
     #TEST: end temp
     possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps1]
-    log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names)}")  #TEST: temp
+    log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")  #TEST: temp
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
