@@ -31,7 +31,7 @@
   "sourceControlDetails" : {
     "provider" : "GITHUB",
     "repository" : "nolcat",
-    "branch" : "main_glue_job",
+    "branch" : "parquet",
     "folder" : "tests"
   }
 }
