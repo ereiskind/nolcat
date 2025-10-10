@@ -516,7 +516,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         before += timedelta(seconds=1)
         possible_timestamps1.append(1)
     if len(possible_timestamps1) > 0:
-        log.error(f"`possible_timestamps1`:\n{format_list_for_stdout(possible_timestamps1)}")
+        log.error(f"`possible_timestamps1`:\n{format_list_for_stdout(possible_timestamps1[:10])}")
     
     # TRY 2
     possible_timestamps2 = []
@@ -524,7 +524,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     for n in range(diff.seconds+1):
         possible_timestamps2.append(before+timedelta(n))
     if len(possible_timestamps2) > 0:
-        log.error(f"`possible_timestamps2`:\n{format_list_for_stdout(possible_timestamps2)}")
+        log.error(f"`possible_timestamps2`:\n{format_list_for_stdout(possible_timestamps2[:10])}")
     
     # TRY 3
     possible_timestamps3 = []
@@ -534,7 +534,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         before += timedelta(seconds=1)
         possible_timestamps3.append(before)
     if len(possible_timestamps3) > 0:
-        log.error(f"`possible_timestamps3`:\n{format_list_for_stdout(possible_timestamps3)}")
+        log.error(f"`possible_timestamps3`:\n{format_list_for_stdout(possible_timestamps3[:10])}")
     
     # TRY 4
     possible_timestamps4 = []
