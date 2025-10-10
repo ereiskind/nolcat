@@ -535,13 +535,6 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
-    #TEST: temp
-    try:
-        log.error(f"`df.reset_index(drop=True).compare(df_from_parquet)`:\n{df.reset_index(drop=True).compare(df_from_parquet)}")
-    except Exception as error:
-        log.error(f"`compare()` failed because `{error}`")
-        log.error(f"`df.reset_index(drop=True).columns.difference(df_from_parquet.columns)`: {df.reset_index(drop=True).columns.difference(df_from_parquet.columns)}")
-    #TEST: end temp
     assert_frame_equal(df.reset_index(drop=True), df_from_parquet)
 
 
