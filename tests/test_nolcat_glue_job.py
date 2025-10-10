@@ -509,34 +509,12 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert result is None
     after = datetime.now()
-    #TEST: temp
-    log.error(f"`before`: {before}")
-    log.error(f"`after`: {after}")
-    
-    # TRY 2
-    possible_timestamps2 = []
+    possible_timestamps = []
     diff = after - before
-    log.error(f"`diff` (type {type(diff)}): {diff}")
-    log.error(f"`range(diff.seconds+1)` (type {type(range(diff.seconds+1))}): {range(diff.seconds+1)}")
     for n in range(diff.seconds+1):
-        possible_timestamps2.append(before+timedelta(n))
-    if len(possible_timestamps2) > 0:
-        log.error(f"`possible_timestamps2`:\n{format_list_for_stdout(possible_timestamps2[:10])}")
-    
-    # TRY 4
-    possible_timestamps4 = []
-    seconds = int((after-before).seconds)
-    log.error(f"`seconds` (type {type(seconds)}): {seconds}")
-    log.error(f"`range(seconds)` (type {type(range(seconds))}): {range(seconds)}")
-    for n in range(seconds):
-        possible_timestamps4.append(before+timedelta(n))
-    if len(possible_timestamps4) > 0:
-        log.error(f"`possible_timestamps4`:\n{format_list_for_stdout(possible_timestamps4[:10])}")
-    
-    possible_timestamps = possible_timestamps2
-    #TEST: end temp
+        possible_timestamps.append(before+timedelta(n))
     possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
-    log.error(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")  #TEST: temp
+    log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
