@@ -539,9 +539,8 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     try:
         log.error(f"Dataframe differences:\n{df.compare(df_from_parquet)}")
     except:
-        log.error(f"`df` columns:\n{df.columns}")
-        log.error(f"`df_from_parquet` columns:\n{df_from_parquet.columns}")
         log.error(f"`df` index:\n{df.index}")
+        log.error(f"`df.reset_index()` index:\n{df.reset_index().index}")
         log.error(f"`df_from_parquet` index:\n{df_from_parquet.index}")
     #TEST: end temp
     assert_frame_equal(df, df_from_parquet)
