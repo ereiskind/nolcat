@@ -535,15 +535,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
-    #TEST: temp
-    try:
-        log.error(f"Dataframe differences:\n{df.compare(df_from_parquet)}")
-    except:
-        log.error(f"`df` index:\n{df.index}")
-        log.error(f"`df.reset_index()` index:\n{df.reset_index().index}")
-        log.error(f"`df_from_parquet` index:\n{df_from_parquet.index}")
-    #TEST: end temp
-    assert_frame_equal(df, df_from_parquet)
+    assert_frame_equal(df.reset_index(), df_from_parquet)
 
 
 def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
