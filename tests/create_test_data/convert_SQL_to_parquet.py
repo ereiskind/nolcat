@@ -4,6 +4,8 @@ import argparse
 from pathlib import Path
 import sys
 import re
+import boto3
+import s3fs
 import pandas as pd
 
 parser = argparse.ArgumentParser()
@@ -20,9 +22,11 @@ args = parser.parse_args()
 
 #SECTION: Repeated Content
 # Attempts to import `nolcat.nolcat.nolcat_glue_job.py` failed, so the content needed from that file is repeated here.
+s3_client = boto3.client('s3')
+s3fs.S3FileSystem(profile='PROFILE')
 
 secrets = {}
-with open(Path('/nolcat/nolcat/new_nolcat_secrets.py')) as secrets_file:
+with open(Path('/nolcat/nolcat/nolcat_secrets.py')) as secrets_file:
     for line in secrets_file.readlines():
         key, value = line.split(" = ")
         value = value.replace("'", "")
@@ -154,9 +158,4 @@ for file_name, file_path_list in CSV_names_and_paths.items():
     combined_df.to_parquet(
         f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
         index=False,
-        storage_options={  #ALERT: These values aren't in the secrets file at present and change with each login; how cna they be added to the container?
-            "key": secrets['AWS_ACCESS_KEY_ID'],
-            "secret": secrets['AWS_SECRET_ACCESS_KEY'],
-            "token": secrets['AWS_SESSION_TOKEN'],
-        },
     )
