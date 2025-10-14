@@ -110,10 +110,8 @@ for record in df.iterrows():
 
     CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}.csv"
     with open(record_of_CSVs, 'a+', encoding='utf-8') as file:
-        file.write(f"{CSV_file_name}\n")
-        file.write("\tPlatform\n")
         for platform in df_to_save['platform'].unique():
-            file.write(f"\t\t{platform}\n")
+            file.write(f"{CSV_file_name}::{platform}")
     df_to_save.to_csv(
         save_location / CSV_file_name,
         index=False,
