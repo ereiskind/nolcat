@@ -157,6 +157,6 @@ for file_name, file_path_list in CSV_names_and_paths.items():
         ignore_index=True,
     )
     combined_df.to_parquet(
-        f"s3://{secrets['Bucket']}/nolcat/usage/test/{file_name}.parquet",
+        f"s3://{secrets['Bucket']}/nolcat/usage/{file_name}.parquet",
         index=False,
     )
