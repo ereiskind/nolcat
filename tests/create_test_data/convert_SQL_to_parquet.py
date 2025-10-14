@@ -97,16 +97,15 @@ for record in df.iterrows():
     statistics_source_ID = record[1]['statistics_source_ID']
     report_type = record[1]['report_type']
     if isinstance(record[1]['report_creation_date'], pd._libs.tslibs.timestamps.Timestamp):
-        report_creation_date = str(record[1]['report_creation_date'].isoformat())#[:10]
-        print(f"`report_creation_date`: {report_creation_date}")  #TEST: temp
-        print(f"`report_creation_date[:10]`: {report_creation_date[:10]}")  #TEST: temp
+        report_creation_date = str(record[1]['report_creation_date'].isoformat())
+        report_creation_date = report_creation_date.replace(":", "-")
     else:
         report_creation_date = "NULL"
 
     if report_creation_date == "NULL":
         query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date IS NULL;"
     else:
-        query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date='{report_creation_date[:10]}';"  #TEST: `[:10]` moved from above
+        query = f"SELECT * FROM COUNTERData WHERE statistics_source_ID={statistics_source_ID} AND report_type='{report_type}' AND report_creation_date='{report_creation_date[:10]}';"
     df_to_save = query_database(query)
 
     CSV_file_name = f"{statistics_source_ID}_{report_type}_{report_creation_date}.csv"
