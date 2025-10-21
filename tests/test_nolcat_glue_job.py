@@ -699,22 +699,12 @@ def JSON_dicts_with_metadata(request):
 def test_create_dataframe(JSON_dicts_with_metadata):
     """Tests converting JSONs as Python dicts to dataframes."""
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
+    with open(JSON_report_path) as JSON_file:
+        dict_from_JSON = json.load(JSON_file)
     pass
 
 
 #SUBSECTION: R5 Fixtures
-@pytest.fixture(scope='session')
-def sample_SUSHI_PR_response_R5_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI PR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_PR.json`
-    """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
-
-
 @pytest.fixture(scope='session')
 def sample_SUSHI_PR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_R5_JSON_dict` fixture into a dataframe.
@@ -827,18 +817,6 @@ def sample_SUSHI_PR_response_R5_dataframe():
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
-
-
-@pytest.fixture(scope='session')
-def sample_SUSHI_DR_response_R5_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI DR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\0_DR.json`
-    """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
@@ -1270,18 +1248,6 @@ def sample_SUSHI_DR_response_R5_dataframe():
 
 
 @pytest.fixture(scope='session')
-def sample_SUSHI_TR_response_R5_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI TR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_TR.json`
-    """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
-
-
-@pytest.fixture(scope='session')
 def sample_SUSHI_TR_response_R5_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_R5_JSON_dict` fixture into a dataframe.
     
@@ -1327,18 +1293,6 @@ def sample_SUSHI_TR_response_R5_dataframe():
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
-
-
-@pytest.fixture(scope='session')
-def sample_SUSHI_IR_response_R5_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI IR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5_COUNTER_JSONs_for_tests\\3_IR.json`
-    """
-    with open(TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'R5_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
@@ -5187,18 +5141,6 @@ def sample_SUSHI_IR_response_R5_dataframe():
 
 #SUBSECTION: R5.1 Fixtures
 @pytest.fixture(scope='session')
-def sample_SUSHI_PR_response_R5b1_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI PR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_PR.json`
-    """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
-
-
-@pytest.fixture(scope='session')
 def sample_SUSHI_PR_response_R5b1_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_R5b1_JSON_dict` fixture into a dataframe.
     
@@ -5242,18 +5184,6 @@ def sample_SUSHI_PR_response_R5b1_dataframe():
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
-
-
-@pytest.fixture(scope='session')
-def sample_SUSHI_DR_response_R5b1_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI DR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\0_DR.json`
-    """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
@@ -5393,18 +5323,6 @@ def sample_SUSHI_DR_response_R5b1_dataframe():
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
-
-
-@pytest.fixture(scope='session')
-def sample_SUSHI_TR_response_R5b1_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI TR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_TR.json`
-    """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
@@ -5690,18 +5608,6 @@ def sample_SUSHI_TR_response_R5b1_dataframe():
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
-
-
-@pytest.fixture(scope='session')
-def sample_SUSHI_IR_response_R5b1_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to R5.1 SUSHI IR API calls.
-    
-    Yields:
-        dict: the data in `tests\\data\\R5.1_COUNTER_JSONs_for_tests\\3_IR.json`
-    """
-    with open(Path(__file__).parent / 'data' / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
-        dict_from_JSON = json.load(JSON_file)
-        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
