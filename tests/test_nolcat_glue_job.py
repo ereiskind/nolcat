@@ -626,6 +626,82 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
 
 
 #SECTION: `ConvertJSONDictToDataframe()` Tests
+@pytest.fixture(params=[
+    "R5_PR",
+    "R5_DR",
+    "R5_TR",
+    "R5_IR",
+    "R5b1_PR",
+    "R5b1_DR",
+    "R5b1_TR",
+    "R5b1_IR",
+])
+def JSON_dicts_with_metadata(request):
+    """A parameterized fixture function with the data for testing `ConvertJSONDictToDataframe().create_dataframe()` for all COUNTER R5 report types and minor releases.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the location of the JSON being converted to a dataframe (pathlib.Path); the report type of the JSON being converted to a dataframe (str); the statistics source ID of the JSON being converted to a dataframe (int); the dataframe resulting from the conversion (dataframe)
+    """
+    JSON_report_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data'
+    if request.param == "R5_PR":
+        JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json'
+        report_type = "PR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5_DR":
+        JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '0_DR.json'
+        report_type = "DR"
+        statistics_source_ID = 0
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5_TR":
+        JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_TR.json'
+        report_type = "TR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5_IR":
+        JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_IR.json'
+        report_type = "IR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5b1_PR":
+        JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_PR.json'
+        report_type = "PR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5b1_DR":
+        JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '0_DR.json'
+        report_type = "DR"
+        statistics_source_ID = 0
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5b1_TR":
+        JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json'
+        report_type = "TR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+    elif request.param == "R5b1_IR":
+        JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json'
+        report_type = "IR"
+        statistics_source_ID = 3
+        #ToDo: df =
+        yield (JSON_report_path, report_type, statistics_source_ID, df)
+
+
+def test_create_dataframe(JSON_dicts_with_metadata):
+    """Tests converting JSONs as Python dicts to dataframes."""
+    JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
+    pass
+
+
 #SUBSECTION: R5 Fixtures
 @pytest.fixture(scope='session')
 def sample_SUSHI_PR_response_R5_JSON_dict():

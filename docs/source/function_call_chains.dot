@@ -1302,6 +1302,15 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        JSON_dicts_with_metadata [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe_from_JSON [
+            label="test_create_dataframe"
+            style="dashed"
+            shape="box"
+        ]
         sample_SUSHI_PR_response_R5_JSON_dict [
             style="dotted"
             shape="box"
@@ -1429,6 +1438,7 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_create_dataframe_from_JSON -> JSON_dicts_with_metadata
     test_create_dataframe_from_R5_PR -> create_dataframe_in_ConvertJSONDictToDataframe
     test_create_dataframe_from_R5_PR -> sample_SUSHI_PR_response_R5_JSON_dict
     test_create_dataframe_from_R5_DR -> create_dataframe_in_ConvertJSONDictToDataframe
