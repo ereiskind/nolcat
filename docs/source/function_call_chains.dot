@@ -1091,6 +1091,7 @@ digraph function_call_chains {
         match_direct_SUSHI_harvest_result [shape="box"]
         COUNTER_reports_offered_by_statistics_source [shape="box"]
         prepare_HTML_page_for_comparison [shape="box"]
+        get_name_of_parquet_file_saved_to_S3 [shape="folder"]
     }
     app -> configure_logging
     app -> create_app
