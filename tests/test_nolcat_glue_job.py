@@ -5947,19 +5947,21 @@ def JSON_dicts_with_metadata(request):
 
 
 @pytest.mark.slow  # For IR tests
-def test_create_dataframe(JSON_dicts_with_metadata):
+def test_create_dataframe(tmp_path, JSON_dicts_with_metadata):
     """Tests converting JSONs as Python dicts to dataframes."""
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
+    before = datetime.now()
     df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe()
-    #TEST: temp
-    log.error(f"`JSON_dicts_with_metadata` (type {type(JSON_dicts_with_metadata)}): {JSON_dicts_with_metadata}")
-    log.error(f"`JSON_report_path` (type {type(JSON_report_path)}): {JSON_report_path}")
-    log.error(f"`report_type` (type {type(report_type)}): {report_type}")
-    log.error(f"`statistics_source_ID` (type {type(statistics_source_ID)}): {statistics_source_ID}")
-    log.error(f"`Jdf_from_fixture` (type {type(df_from_fixture)}): {df_from_fixture}")
-    #TEST: end temp
-    assert_frame_equal(df, df_from_fixture)
-    #ToDo: PARQUET IN S3--assert df is None
-    #ToDo: PARQUET IN S3--assert_frame_equal on `read_parquet()` from S3 results
+    after = datetime.now()
+    assert df is None
+    file_name = #ToDo: Make function for getting name of parquet file saved to S3 by `df`
+    download_location = tmp_path / file_name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Filename=download_location,
+    )
+    df_from_S3 = pd.read_parquet(download_location)
+    assert_frame_equal(df_from_S3, df_from_fixture)

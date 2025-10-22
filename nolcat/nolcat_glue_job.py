@@ -1401,7 +1401,6 @@ class ConvertJSONDictToDataframe:
             'statistics_source_ID': 'int',
             'report_type': 'string',
         })  # This sets the string data types
-        log.error(f"Checking field types:\n{df.info}")  #TEST: temp
         save_df_response = save_dataframe_to_S3_bucket(
             df,
             self.statistics_source_ID,
