@@ -5949,7 +5949,12 @@ def JSON_dicts_with_metadata(request):
 @pytest.mark.slow  # For IR tests
 def test_create_dataframe(JSON_dicts_with_metadata):
     """Tests converting JSONs as Python dicts to dataframes."""
+    log.error(f"`JSON_dicts_with_metadata` (type {type(JSON_dicts_with_metadata)}): {JSON_dicts_with_metadata}")  #TEST: temp
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
+    log.error(f"`JSON_report_path` (type {type(JSON_report_path)}): {JSON_report_path}")  #TEST: temp
+    log.error(f"`report_type` (type {type(report_type)}): {report_type}")  #TEST: temp
+    log.error(f"`statistics_source_ID` (type {type(statistics_source_ID)}): {statistics_source_ID}")  #TEST: temp
+    log.error(f"`Jdf_from_fixture` (type {type(df_from_fixture)}): {df_from_fixture}")  #TEST: temp
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
     df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe()
