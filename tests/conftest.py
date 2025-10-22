@@ -520,6 +520,8 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     )
     if isinstance(record, str):
         pytest.skip(database_function_skip_statements(record, False))
+    if record.empty:
+        pytest.skip("The query returned an empty dataframe. Rerun this test module.")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
