@@ -652,11 +652,11 @@ def most_recent_month_with_usage(caplog):
     yield (begin_date, end_date)
 
 
-#Section: Test Helper Functions Not Possible in `nolcat.app`
+#Section: Test Helper Functions
 def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
-    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
+    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
