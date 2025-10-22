@@ -1356,6 +1356,7 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> engine
     test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
+    test_save_dataframe_to_S3_bucket -> get_name_of_parquet_file_saved_to_S3
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> format_list_for_stdout
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket_success_regex
@@ -1368,6 +1369,7 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_create_dataframe_from_JSON -> JSON_dicts_with_metadata
     test_create_dataframe_from_JSON -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_JSON -> get_name_of_parquet_file_saved_to_S3
 
 
     subgraph cluster_test_AnnualStatistics {

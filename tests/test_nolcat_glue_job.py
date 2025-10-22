@@ -10,6 +10,7 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
+from conftest import get_name_of_parquet_file_saved_to_S3
 from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 
@@ -509,25 +510,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert result is None
     after = datetime.now()
-    possible_timestamps = []
-    diff = after - before
-    for n in range(diff.seconds+1):
-        possible_timestamps.append(before+timedelta(n))
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
-    log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
-
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
-    assert len(file_name_in_bucket) == 1
-    file_name = list(file_name_in_bucket)[0]
+    file_name = get_name_of_parquet_file_saved_to_S3(before, after)
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
@@ -5956,7 +5939,7 @@ def test_create_dataframe(tmp_path, JSON_dicts_with_metadata):
     df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe()
     after = datetime.now()
     assert df is None
-    file_name = #ToDo: Make function for getting name of parquet file saved to S3 by `df`
+    file_name = get_name_of_parquet_file_saved_to_S3(before, after)
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
