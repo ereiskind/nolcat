@@ -1088,18 +1088,9 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
-        match_direct_SUSHI_harvest_result [
-            style="dotted"
-            shape="box"
-        ]
-        COUNTER_reports_offered_by_statistics_source [
-            style="dotted"
-            shape="box"
-        ]
-        prepare_HTML_page_for_comparison [
-            style="dotted"
-            shape="box"
-        ]
+        match_direct_SUSHI_harvest_result [shape="box"]
+        COUNTER_reports_offered_by_statistics_source [shape="box"]
+        prepare_HTML_page_for_comparison [shape="box"]
     }
     app -> configure_logging
     app -> create_app
