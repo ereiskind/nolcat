@@ -774,8 +774,12 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
     log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
+        log.error(f"`contents_dict` (type {type(contents_dict)}): {contents_dict}")  #TEST: temp
+        log.error(f"`contents_dict['Key']` (type {type(contents_dict['Key'])}): {contents_dict['Key']}")  #TEST: temp
         bucket_contents.append(contents_dict['Key'])
+    log.error(f"`bucket_contents` before list comprehension (type {type(bucket_contents)}): {bucket_contents}")  #TEST: temp
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
+    log.error(f"`bucket_contents` after list comprehension (type {type(bucket_contents)}): {bucket_contents}")  #TEST: temp
     file_name = set(bucket_contents) & set(possible_file_names)
     return list(file_name)[0]
 
