@@ -510,7 +510,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert result is None
     after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after)
+    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
@@ -5939,7 +5939,7 @@ def test_create_dataframe(tmp_path, JSON_dicts_with_metadata):
     df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe()
     after = datetime.now()
     assert df is None
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after)
+    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
