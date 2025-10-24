@@ -293,12 +293,6 @@ def format_ISSN(unformatted_ISSN):
     Returns:
         str: the formatted ISSN
     """
-    #TEST: temp
-    log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-    log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `log` children:\n{logging.getLogger(log.name).getChildren()}")
-    log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `test_child_logger` (type {type(test_child_logger)}): {test_child_logger}")
-    test_child_logger.error("this is a statement with the test logger")
-    #TEST: end temp
     trimmed_ISSN = str(unformatted_ISSN).strip()
     if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
         return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]

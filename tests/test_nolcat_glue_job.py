@@ -15,9 +15,6 @@ from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
-#TEST: temp
-log.error(f"'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-#TEST: end temp
 
 
 #SECTION: Basic Helper Function Tests

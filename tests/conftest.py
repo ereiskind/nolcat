@@ -777,8 +777,6 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
     file_name = set(bucket_contents) & set(possible_file_names)
-    log.error(f"`file_name`(type {type(file_name)}): {file_name}")  #TEST: temp
-    log.error(f"`list(file_name)`(type {type(list(file_name))}): {list(file_name)}")  #TEST: temp
     return list(file_name)[0]
 
 
