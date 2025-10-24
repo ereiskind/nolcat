@@ -472,28 +472,20 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     before = datetime.now()
     yield (df, statistics_source_ID, report_type)
     after = datetime.now()
-    possible_timestamps = [before+timedelta(seconds=n) for n in range((after-before).seconds)]
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
-
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
+    file_name = get_name_of_parquet_file_saved_to_S3(
+        before,
+        after,
+        statistics_source_ID,
+        report_type,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    file_name_in_bucket = set(bucket_contents) & set(possible_file_names)
-    if file_name_in_bucket:
-        file_name_in_bucket = list(file_name_in_bucket)[0]
+    if file_name:
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH + file_name_in_bucket,
+                Key=TEST_COUNTER_FILE_PATH + file_name,
             )
         except botocore.exceptions as error:
-            log.error(unable_to_delete_test_file_in_S3_statement(file_name_in_bucket, error))
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
     else:
         log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
 
@@ -629,6 +621,7 @@ def JSON_dicts_with_metadata(request):
         tuple: the location of the JSON being converted to a dataframe (pathlib.Path); the report type of the JSON being converted to a dataframe (str); the statistics source ID of the JSON being converted to a dataframe (int); the dataframe resulting from the conversion (dataframe)
     """
     JSON_report_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data'
+    before = datetime.now()
     if request.param == "R5_PR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json'
         report_type = "PR"
@@ -5927,6 +5920,23 @@ def JSON_dicts_with_metadata(request):
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
         yield (JSON_report_path, report_type, statistics_source_ID, df)
+    after = datetime.now()
+    file_name = get_name_of_parquet_file_saved_to_S3(
+        before,
+        after,
+        statistics_source_ID,
+        report_type,
+    )
+    if file_name:
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=TEST_COUNTER_FILE_PATH + file_name,
+            )
+        except botocore.exceptions as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+    else:
+        log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
 
 
 @pytest.mark.slow  # For IR tests
