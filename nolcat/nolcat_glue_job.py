@@ -115,7 +115,7 @@ s3_client = boto3.client('s3')
 s3fs.S3FileSystem(profile='PROFILE')
 
 log = logging.getLogger(__name__)
-test_child_logger = logging.getLogger(log.name)  #TEST: temp
+test_child_logger = logging.getLogger(log.name + ".testing123")  #TEST: temp
 
 
 #SECTION: Basic Helper Functions
@@ -295,9 +295,7 @@ def format_ISSN(unformatted_ISSN):
     """
     #TEST: temp
     log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-    root_children = logging.getLogger(log.name).getChildren()
-    for child in root_children:
-        log.error(f"Children of `{child}`:\n{logging.getLogger(child.name).getChildren()}")
+    log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `log` children:\n{logging.getLogger(log.name).getChildren()}")
     log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `test_child_logger` (type {type(test_child_logger)}): {test_child_logger}")
     test_child_logger.error("this is a statement with the test logger")
     #TEST: end temp
