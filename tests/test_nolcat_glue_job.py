@@ -17,14 +17,15 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 #TEST: temp
 log.error(f"'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-log.error(f"All logs in test module:\n{logging.getLogger('root').getChildren()}")
+root_children = logging.getLogger('root').getChildren()
+for child in root_children:
+    log.error(f"Children of `{child}`:\n{logging.getLogger(child.name).getChildren()}")
 #TEST: end temp
 
 
 #SECTION: Basic Helper Function Tests
 def test_last_day_of_month():
     """Tests returning the last day of the given month."""
-    log.error(f"All logs in test function:\n{logging.getLogger('root').getChildren()}")  #TEST: temp
     assert last_day_of_month(date(2022, 1, 2)) == date(2022, 1, 31)
     assert last_day_of_month(date(2020, 2, 1)) == date(2020, 2, 29)
     assert last_day_of_month(date(2021, 2, 1)) == date(2021, 2, 28)
