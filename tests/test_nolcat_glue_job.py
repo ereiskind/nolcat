@@ -17,9 +17,6 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 #TEST: temp
 log.error(f"'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-root_children = logging.getLogger('root').getChildren()
-for child in root_children:
-    log.error(f"Children of `{child}`:\n{logging.getLogger(child.name).getChildren()}")
 #TEST: end temp
 
 

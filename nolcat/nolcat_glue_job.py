@@ -294,10 +294,9 @@ def format_ISSN(unformatted_ISSN):
     """
     #TEST: temp
     log.error(f"'nolcat/nolcat/nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-    root_children = logging.getLogger('root').getChildren()
+    root_children = logging.getLogger(log.name).getChildren()
     for child in root_children:
         log.error(f"Children of `{child}`:\n{logging.getLogger(child.name).getChildren()}")
-    log.error(f"All logs in main module:\n{logging.getLogger('root').getChildren()}")
     #TEST: end temp
     trimmed_ISSN = str(unformatted_ISSN).strip()
     if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
