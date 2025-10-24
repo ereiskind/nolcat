@@ -17,7 +17,7 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 #TEST: temp
 log.error(f"'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}): {log} (propagate: {log.propagate})")
-log.error(f"All logs:\n{return_string_of_dataframe_info(list(logging.getLogger('root').getChildren()))}")
+log.error(f"All logs:\n{logging.getLogger('root').getChildren()}")
 #TEST: end temp
 
 
