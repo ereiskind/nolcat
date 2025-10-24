@@ -1360,10 +1360,13 @@ class ConvertJSONDictToDataframe:
         self.statistics_source_ID = statistics_source_ID
     
 
-    def create_dataframe(self):
+    def create_dataframe(self, test=False):
         """This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
 
         This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToDataframe._transform_R5_JSON()` or the `ConvertJSONDictToDataframe._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
+
+        Args:
+            test (bool, optional): if the call is in a test; default is `False`
 
         Returns:
             str: the error message if a problem occurs
@@ -1401,11 +1404,15 @@ class ConvertJSONDictToDataframe:
             'statistics_source_ID': 'int',
             'report_type': 'string',
         })  # This sets the string data types
+        if test:
+            bucket_path = TEST_COUNTER_FILE_PATH
+        else:
+            bucket_path = PRODUCTION_COUNTER_FILE_PATH
         save_df_response = save_dataframe_to_S3_bucket(
             df,
             self.statistics_source_ID,
             self.report_type,
-            #ToDo: `bucket_path` depends on if test or prod
+            bucket_path,
         )
         if save_df_response:
             return error  # Error logged in `save_dataframe_to_S3_bucket()`

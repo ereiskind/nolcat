@@ -506,7 +506,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         df,
         statistics_source_ID,
         report_type,
-        TEST_COUNTER_FILE_PATH
+        TEST_COUNTER_FILE_PATH,
     )
     assert result is None
     after = datetime.now()
@@ -5936,7 +5936,7 @@ def test_create_dataframe(tmp_path, JSON_dicts_with_metadata):
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
     before = datetime.now()
-    df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe()
+    df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe(test=True)
     after = datetime.now()
     assert df is None
     file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
