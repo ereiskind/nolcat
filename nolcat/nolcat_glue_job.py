@@ -115,14 +115,6 @@ s3_client = boto3.client('s3')
 s3fs.S3FileSystem(profile='PROFILE')
 
 log = logging.getLogger(__name__)
-#TEST: temp
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log` (type {type(log)}):\n{log}")
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log.name` (type {type(log.name)}):\n{log.name}")
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log.parent` (type {type(log.parent)}):\n{log.parent}")
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log.propagate` (type {type(log.propagate)}):\n{log.propagate}")
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log.handlers` (type {type(log.handlers)}):\n{log.handlers}")
-print(f"'nolcat/nolcat/nolcat_glue_job.py' `log.getChildren()` (type {type(log.getChildren())}):\n{log.getChildren()}")
-#TEST: end temp
 
 
 #SECTION: Basic Helper Functions
