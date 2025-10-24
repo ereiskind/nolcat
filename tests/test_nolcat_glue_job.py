@@ -16,28 +16,11 @@ from nolcat.models import *
 
 log = logging.getLogger(__name__)
 #TEST: temp
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}):\n{log}")
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log.name` (type {type(log.name)}):\n{log.name}")
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log.parent` (type {type(log.parent)}):\n{log.parent}")
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log.propagate` (type {type(log.propagate)}):\n{log.propagate}")
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log.handlers` (type {type(log.handlers)}):\n{log.handlers}")
-print(f"Printing 'nolcat/tests/test_nolcat_glue_job.py' `log.getChildren()` (type {type(log.getChildren())}):\n{log.getChildren()}")
-
 log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}):\n{log}")
-log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log.name` (type {type(log.name)}):\n{log.name}")
 log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log.parent` (type {type(log.parent)}):\n{log.parent}")
 log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log.propagate` (type {type(log.propagate)}):\n{log.propagate}")
-log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log.handlers` (type {type(log.handlers)}):\n{log.handlers}")
 log.error(f"Error log for 'nolcat/tests/test_nolcat_glue_job.py' `log.getChildren()` (type {type(log.getChildren())}):\n{log.getChildren()}")
 #TEST: end temp
-
-def test_temp():  #TEST: temp
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log` (type {type(log)}):\n{log}")
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log.name` (type {type(log.name)}):\n{log.name}")
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log.parent` (type {type(log.parent)}):\n{log.parent}")
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log.propagate` (type {type(log.propagate)}):\n{log.propagate}")
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log.handlers` (type {type(log.handlers)}):\n{log.handlers}")
-    log.error(f"Error log in function for 'nolcat/tests/test_nolcat_glue_job.py' `log.getChildren()` (type {type(log.getChildren())}):\n{log.getChildren()}")
 
 
 #SECTION: Basic Helper Function Tests
