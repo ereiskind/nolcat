@@ -54,7 +54,7 @@ Move Code to Glue Jobs and Data to Parquet
 * Move `nolcat.UploadCOUNTERReports` to Glue job
 
   * Split class `nolcat.UploadCOUNTERReports` into separate classes for tabular COUNTER to dataframe and manipulation of dataframe for saving to S3
-  * Move latter class into "nolcat/nolcat/nolcat_glue_job.py"
+  * Move latter class into "nolcat/nolcat/nolcat_glue_job.py" with its own child logger
   * Update function call chain diagram to reflect above changes
   * Add `statistics_source_ID` as an attribute of both classes
   * Revise end of first new class to send dataframe converted to JSON to step function
@@ -79,7 +79,7 @@ Move Code to Glue Jobs and Data to Parquet
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
 
-* Move other functions and classes to be determined to "nolcat/nolcat/nolcat_glue_job.py"
+* Move other functions and classes to be determined to "nolcat/nolcat/nolcat_glue_job.py" (adjusting call chain diagram, creating child loggers, and adjusting caplog calls as needed)
 * Remove `nolcat.models.COUNTERData` class
 
   * Move sole class method to "nolcat/nolcat/nolcat_glue_job.py"
