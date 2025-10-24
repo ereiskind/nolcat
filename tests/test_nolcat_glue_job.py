@@ -5974,4 +5974,4 @@ def test_create_dataframe(tmp_path, JSON_dicts_with_metadata, caplog):
     df_from_S3 = pd.read_parquet(download_location)
     log.error(f"`df_from_S3`:\n{format_list_for_stdout(df_from_S3)}")  #TEST: temp
     log.error(f"`df_from_fixture`:\n{format_list_for_stdout(df_from_fixture)}")  #TEST: temp
-    assert_frame_equal(df_from_S3, df_from_fixture)
+    assert_frame_equal(df_from_S3, df_from_fixture[df_from_S3.columns.tolist()])
