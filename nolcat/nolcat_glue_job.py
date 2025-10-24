@@ -1155,14 +1155,14 @@ def file_extensions_and_mimetypes():
     }
 
 
-def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path):
     """The function for saving COUNTER usage data to S3 in parquet format.
 
     Args:
         df (dataframe): the data to save in S3 as a parquet file
         statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
         report_type (str): the two-letter abbreviation for the report the usage data is from
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+        bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
         Exception: the error if a problem occurs while saving the data to S3
@@ -1405,6 +1405,7 @@ class ConvertJSONDictToDataframe:
             df,
             self.statistics_source_ID,
             self.report_type,
+            #ToDo: `bucket_path` depends on if test or prod
         )
         if save_df_response:
             return error  # Error logged in `save_dataframe_to_S3_bucket()`

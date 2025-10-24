@@ -506,7 +506,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         df,
         statistics_source_ID,
         report_type,
-        bucket_path=TEST_COUNTER_FILE_PATH
+        TEST_COUNTER_FILE_PATH
     )
     assert result is None
     after = datetime.now()
