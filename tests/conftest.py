@@ -6,6 +6,7 @@ The fixtures for connecting to the database are primarily based upon the fixture
 import pytest
 from pathlib import Path
 from datetime import date
+from datetime import timedelta
 from random import choice
 import re
 import html
@@ -520,6 +521,8 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     )
     if isinstance(record, str):
         pytest.skip(database_function_skip_statements(record, False))
+    if record.empty:
+        pytest.skip("The query returned an empty dataframe. Rerun this test module.")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -650,11 +653,11 @@ def most_recent_month_with_usage(caplog):
     yield (begin_date, end_date)
 
 
-#Section: Test Helper Functions Not Possible in `nolcat.app`
+#Section: Test Helper Functions
 def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
-    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
+    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
@@ -743,6 +746,38 @@ def prepare_HTML_page_for_comparison(page_data):
     """
     log.info(f"`page_data` is:\n{page_data}")
     return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
+
+
+def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type):
+    """A test helper function returning the name of a parquet file saved to S3 during a test.
+
+    Args:
+        before (datetime.datetime): a timestamp from before the tested function ran
+        after (datetime.datetime): a timestamp from before the tested function ran
+        statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
+        report_type (str): the two-letter abbreviation for the report the usage data is from
+
+    Returns:
+        str: the name of the file
+    """
+    possible_timestamps = []
+    diff = after - before
+    for n in range(diff.seconds+1):
+        possible_timestamps.append(before+timedelta(n))
+    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+    log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
+
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=TEST_COUNTER_FILE_PATH,
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
+    file_name = set(bucket_contents) & set(possible_file_names)
+    return list(file_name)[0]
 
 
 #Section: Replacement Classes
