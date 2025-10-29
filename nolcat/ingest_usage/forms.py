@@ -15,8 +15,8 @@ class COUNTERDataForm(FlaskForm):
 class SUSHIParametersForm(FlaskForm):
     """Creates a form for capturing the parameters for calling the `StatisticsSources.collect_usage_statistics()` method."""
     statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int, validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     report_to_harvest = SelectField("If only harvesting a single report, select that report:", choices=[
         ('null', ""),  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
         ('PR', "PR"),

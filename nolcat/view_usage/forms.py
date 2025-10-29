@@ -86,8 +86,8 @@ class CustomSQLQueryForm(FlaskForm):
 
 class PresetQueryForm(FlaskForm):
     """Creates a form that serves as a wizard for querying the NoLCAT database."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     query_options = SelectField("Select the type of report you want:", choices=[
         ('PR_P1', "PR_P1"),
         ('DR_D1', "DR_D1"),
@@ -107,8 +107,8 @@ class PresetQueryForm(FlaskForm):
 
 class StartQueryWizardForm(FlaskForm):
     """Creates a form that collects the start date, end date, and report type for a query constructed with the wizard."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[Optional()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[Optional()])
     fiscal_year = SelectField("Select the fiscal year for which usage should be collected:", coerce=int, validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     report_type = SelectField("Select the type of report you want:", choices=[
         ('PR', "PR"),
@@ -120,8 +120,8 @@ class StartQueryWizardForm(FlaskForm):
 
 class PRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for platform data."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('platform', "Platform"),
         ('data_type', "Data Type"),
@@ -172,8 +172,8 @@ class PRQueryWizardForm(FlaskForm):
 
 class DRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for database data."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Database Name"),
         ('publisher', "Publisher"),
@@ -226,8 +226,8 @@ class DRQueryWizardForm(FlaskForm):
 
 class TRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for title data."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Title Name"),
         ('publisher', "Publisher"),
@@ -286,8 +286,8 @@ class TRQueryWizardForm(FlaskForm):
 
 class IRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for item data."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Item Name"),
         ('publisher', "Publisher"),
@@ -312,8 +312,8 @@ class IRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the item-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
-    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format (if this is before the previous value, this filter won't be used):", format='%Y-%m-%d', validators=[Optional()])
+    publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format):", format='%Y-%m-%d', validators=[Optional()])
+    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return (if field doesn't provide calendar or format for date selection, use 'yyyy-mm-dd' format) (if this is before the previous value, this filter won't be used):", format='%Y-%m-%d', validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
     ISSN_filter = StringField("Enter the ISSN of the item(s) the query should return (for multiple, separate by commas):", validators=[Optional()])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
