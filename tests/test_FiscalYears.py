@@ -357,7 +357,7 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
             for statistics_source_dict in vendor['interface']:
                 if "interface_id" in list(statistics_source_dict.keys()):
                         retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
-    retrieval_code = str(choice(retrieval_codes_as_interface_IDs)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+    retrieval_code = str(choice(retrieval_codes_as_interface_IDs))
 
     update_result = update_database(
         update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",

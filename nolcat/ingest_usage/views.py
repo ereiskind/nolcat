@@ -166,7 +166,7 @@ def harvest_SUSHI_statistics(testing):
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
             statistics_source_ID = int(df.at[0,'statistics_source_ID']),
             statistics_source_name = str(df.at[0,'statistics_source_name']),
-            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']),
             vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
         log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))

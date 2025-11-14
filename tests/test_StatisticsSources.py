@@ -80,9 +80,14 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+    fixture_retrieval_code = str(choice(retrieval_codes))
     statistics_source_name = query_database(  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; the `choice()` function ensures the retrieval code chosen is in the test data
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice(['1', '2', '3'])}",
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice([
+            '618759fd-bd3e-4617-a0d1-ccbe06c22171',  # May change
+            'b2b2736c-2cb9-48ec-91f4-870336acfb1c',  # May change
+            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP", None],
+            '1', '2', '3'
+        ])}",
         engine=engine,
     )
     if isinstance(statistics_source_name, str):

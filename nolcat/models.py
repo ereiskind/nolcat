@@ -463,7 +463,7 @@ class FiscalYears(db.Model):
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
                 statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
-                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
@@ -712,7 +712,7 @@ class StatisticsSources(db.Model):
     Attributes:
         self.statistics_source_ID (int): the primary key
         self.statistics_source_name (string): the name of the statistics source
-        self.statistics_source_retrieval_code (string): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
+        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER registry
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -768,7 +768,7 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
+        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
@@ -1639,7 +1639,7 @@ class AnnualUsageCollectionTracking(db.Model):
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))

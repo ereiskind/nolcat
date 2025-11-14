@@ -153,11 +153,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
-        [
-            ["ProQuest", "1", "ProQuest", None],
-            ["EBSCOhost", "2", "EBSCO", None],
+        [  #ToDo: Should COUNTER Registry IDs below be for statistics sources with less volume? If so, also change `tests.test_StatisticsSources.StatisticsSources_fixture()` and `tests.data.relations.statisticsSources_relation()`
+            ["ProQuest", "618759fd-bd3e-4617-a0d1-ccbe06c22171", "ProQuest", None],
+            ["EBSCOhost", "b2b2736c-2cb9-48ec-91f4-870336acfb1c", "EBSCO", None],
             ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", "3", "Duke UP", None],
+            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP", None],
             ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
             ["DemographicsNow", None, "Gale", None],
             ["Ebook Central", None, "ProQuest", None],
