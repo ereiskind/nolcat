@@ -840,7 +840,12 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call(bucket_path)
+        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+            self.statistics_source_name,
+            SUSHI_info['URL'],
+            "status",
+            SUSHI_parameters
+        ).make_SUSHI_call(bucket_path)
         all_flashed_statements['status'] = flash_message_list
         if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
@@ -892,7 +897,12 @@ class StatisticsSources(db.Model):
             #Section: Get List of Resources
             #Subsection: Make API Call
             log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_info['URL'],
+                "reports",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
@@ -1028,7 +1038,12 @@ class StatisticsSources(db.Model):
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                        self.statistics_source_name,
+                        SUSHI_URL,
+                        f"reports/{report.lower()}",
+                        SUSHI_parameters
+                    ).make_SUSHI_call(bucket_path)
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
                     if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
@@ -1083,7 +1098,12 @@ class StatisticsSources(db.Model):
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_URL,
+                f"reports/{report.lower()}",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             if isinstance(SUSHI_data_response, str):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
