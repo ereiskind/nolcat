@@ -6,7 +6,6 @@ import ast
 from datetime import datetime
 from pathlib import Path
 import random
-import requests
 from requests import Timeout
 import pandas as pd
 import pyinputplus
