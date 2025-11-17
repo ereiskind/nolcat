@@ -320,6 +320,9 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     assert len(flash_message_list) == 1
 
 
+#ToDo: Is a test for `_harvest_R5_SUSHI()` with a specified code of practice needed?
+
+
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`
 @pytest.fixture(scope='module')
 def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_usage):

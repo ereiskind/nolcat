@@ -403,7 +403,7 @@ class FiscalYears(db.Model):
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
@@ -862,7 +862,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -871,6 +871,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
@@ -882,7 +883,7 @@ class StatisticsSources(db.Model):
             message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
             log.error(message)
             return (message, {'dates': [message]})
-        SUSHI_info = self.fetch_SUSHI_information()
+        SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
@@ -1227,7 +1228,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1235,6 +1236,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
@@ -1246,6 +1248,7 @@ class StatisticsSources(db.Model):
             usage_start_date,
             usage_end_date,
             report_to_harvest,
+            code_of_practice,
             bucket_path,
             )
         if isinstance(df, str):
@@ -1652,7 +1655,7 @@ class AnnualUsageCollectionTracking(db.Model):
     def collect_annual_usage_statistics(self, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Args:
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
