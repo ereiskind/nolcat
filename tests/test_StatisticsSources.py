@@ -115,7 +115,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display."""
-    # credentials = StatisticsSources_fixture.fetch_SUSHI_information(False)
+    # credentials = StatisticsSources_fixture.fetch_SUSHI_information(code_of_practice=False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
 

@@ -11,6 +11,7 @@ import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 import requests
+from urllib.parse import urlparse
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
@@ -757,13 +758,14 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def fetch_SUSHI_information(self, for_API_call=True):
+    def fetch_SUSHI_information(self, code_of_practice=None, for_API_call=True):
         """A method for fetching the information required to make a SUSHI API call for the statistics source.
 
-        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+        This method fetches the information for making a SUSHI API call from a CSV file and the COUNTER Registry, then returns them for use in an API call or for display to the user.
 
         Args:
-            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+            code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call instead of for display to the user; default is `True`
         
         Returns:
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
@@ -772,36 +774,83 @@ class StatisticsSources(db.Model):
         log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
-        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-            SUSHI_data_file = json.load(JSON_file)
-            log.debug("JSON with SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
+        #ToDo: Change above to `CSV`
+        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:  #ToDo: Change to just `file`
+            SUSHI_data_file = json.load(JSON_file)  #ToDo: CSV_data = csv.DictReader(file)
+            log.debug("SUSHI credentials loaded.")
+            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list  #ToDo: for statistics_source_credentials in CSV_data:
                 for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
+                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:  #ToDo: if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                         log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
-                            URL = statistics_source_dict['statistics']['online_location'],
-                            customer_id = statistics_source_dict['statistics']['user_id']
+                            URL = statistics_source_dict['statistics']['online_location'],  #ToDo: Remove
+                            customer_id = statistics_source_dict['statistics']['user_id']  #ToDo: statistics_source_credentials['customer_ID']
                         )
+
+                        #ToDo: If `statistics_source_credentials['statistics_source_retrieval_code']` doesn't start with 'placeholder', save it with key `registry_ID`; if it does, save URL from CSV for CoP
 
                         try:
                             credentials['requestor_id'] = statistics_source_dict['statistics']['user_password']
                         except:
                             pass
+                        #ToDo: if statistics_source_dict.get('requestor_ID'):
+                            #ToDo: credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
 
                         try:
                             credentials['api_key'] = statistics_source_dict['statistics']['user_pass_note']
                         except:
                             pass
+                        #ToDo: if statistics_source_dict.get('API_key'):
+                            #ToDo: credentials['api_key'] = statistics_source_credentials['API_key']
 
                         try:
                             credentials['platform'] = statistics_source_dict['statistics']['delivery_address']
                         except:
                             pass
+                        #ToDo: if statistics_source_dict.get('platform'):
+                            #ToDo: credentials['platform'] = statistics_source_credentials['platform']
 
-        #Subsection: Retrieve Data from Alma
-        #ToDo: When credentials are in Alma, create this functionality
-
+        #Subsection: Get URL from COUNTER Registry
+        #ToDo: if credentials.get('registry_ID')
+            #ToDo: API_response = requests.get(f"https://registry.countermetrics.org/api/v1/platform/{credentials['registry_ID']}")
+            #ToDo: API_response = API_response.json()
+            #ToDo: if API_response.get('sushi_services') and API_response['sushi_services'] != []:
+            #ToDo: find_current_audit = {}
+                #ToDo: for release_data in API_response['sushi_services']:
+                    #ToDo: if code_of_practice = '5':
+                        #ToDo: if release_data['counter_release'] == "5":
+                            #ToDo: temp_URL == release_data['url']
+                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                    #ToDo: elif code_of_practice = '5.1':
+                        #ToDo: if release_data['counter_release'] == "5.1":
+                            #ToDo: temp_URL == release_data['url']
+                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                    #ToDo: else:
+                        #ToDo: for audit_info in release_data['last_audit']:
+                            #ToDo: find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
+                            #ToDo: log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
+            #ToDo: if find_current_audit:
+                #ToDo: currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
+                #ToDo: if len(currently_valid_release) == 1:
+                    #ToDo: for release_data in API_response['sushi_services']:
+                        #ToDo: if release_data['counter_release'] == currently_valid_release[0]:
+                            #ToDo: temp_URL == release_data['url']
+                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                #ToDo: elif len(currently_valid_release) == 0:
+                    #ToDo: Check other options for `audit_status`? Default to 5.1?
+                #ToDo: else:
+                    #ToDo: Is having multiple currently valid audits possible?
+            #ToDo: else:
+                #ToDo: Figure out how to handle a registry ID that doesn't return a URL
+            
+            #ToDo: Ensure `` doesn't have a slash at the end
+            #ToDo: parsed_URL = urlparse(temp_URL)
+            #ToDo: URL_path_parts = [i for i in parsed_URL.path.split('/') if i != ""]
+            #ToDo: if len(URL_path_parts) > 0 and URL_path_parts[-1] == "reports":
+                #ToDo: URL_path_parts = URL_path_parts[:-1]
+            #ToDo: credentials['URL'] = "https://" + parsed_URL.netloc + "/" + "/".join(URL_path_parts)+ "/"
+            #ToDo: log.debug(f"Added URL {credentials['URL']} to SUSHI credentials.")
+            #ToDo: del credentials['registry_ID']
 
         #Section: Return Data in Requested Format
         if for_API_call:
