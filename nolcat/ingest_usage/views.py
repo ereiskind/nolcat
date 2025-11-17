@@ -173,6 +173,10 @@ def harvest_SUSHI_statistics(testing):
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
+        if form.code_of_practice.data == 'null':
+            code_of_practice = None
+        else:
+            code_of_practice = form.code_of_practice.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
@@ -194,6 +198,7 @@ def harvest_SUSHI_statistics(testing):
                 begin_date,
                 end_date,
                 report_to_harvest,
+                code_of_practice,
                 bucket_path,
             )
             log.info(result_message)
