@@ -714,7 +714,7 @@ class StatisticsSources(db.Model):
     Attributes:
         self.statistics_source_ID (int): the primary key
         self.statistics_source_name (string): the name of the statistics source
-        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER registry
+        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER Registry
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
