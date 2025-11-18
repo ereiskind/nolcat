@@ -222,6 +222,25 @@ def create_app():
     return app
 
 
+class InvalidAPIResponseError(Exception):
+    """An error for when an API returns a value that doesn't contain the expected information.
+
+    NoLCAT makes frequent use of API calls. These APIs request information, and their responses are processed based on how the requested information is returned. This exception is raised when the API returns an unexpected value which doesn't contain the requested information.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Create subclasses for SUSHI responses
+    def __init__(self, message):
+        """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with an API response: {self.message}")
+
+
 def last_day_of_month(original_date):
     """The function for returning the last day of a given month.
 
@@ -883,22 +902,3 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     """
     log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
     pass
-
-
-class InvalidAPIResponseError(Exception):
-    """An error for when an API returns a value that doesn't contain the expected information.
-
-    NoLCAT makes frequent use of API calls. These APIs request information, and their responses are processed based on how the requested information is returned. This exception is raised when the API returns an unexpected value which doesn't contain the requested information.
-
-    Attributes:
-        self.message (str): a class attribute containing information to create the error message
-    """
-    #ToDo: Create subclasses for SUSHI responses
-    def __init__(self, message):
-        """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
-
-        Args:
-            message (str): information for creating the error message
-        """
-        self.message = message
-        super().__init__(f"There was a problem with an API response: {self.message}")
