@@ -7,6 +7,7 @@ import json
 import re
 from datetime import date
 import calendar
+from urllib.parse import urlparse
 from sqlalchemy import log as SQLAlchemy_log
 from sqlalchemy import text
 from flask import Flask
@@ -18,6 +19,7 @@ import pandas as pd
 from numpy import squeeze
 import boto3
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
+import requests
 
 from .statements import *
 
@@ -901,4 +903,38 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
         InvalidAPIResponseError: if the JSON doesn't contain a valid URL
     """
     log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
-    pass
+    API_response = requests.get(f"https://registry.countermetrics.org/api/v1/platform/{registry_ID}")
+    API_response = API_response.json()
+    if API_response.get('sushi_services') and API_response['sushi_services'] != []:
+        find_current_audit = {}
+        for release_data in API_response['sushi_services']:
+            if code_of_practice:
+                if release_data['counter_release'] == code_of_practice:
+                    temp_URL = release_data['url']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
+            else:
+                for audit_info in release_data['last_audit']:
+                    find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
+                    log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
+    else:
+        raise InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
+    
+    if find_current_audit:
+        currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
+        if len(currently_valid_release) == 1:
+            for release_data in API_response['sushi_services']:
+                if release_data['counter_release'] == currently_valid_release[0]:
+                    temp_URL = release_data['url']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
+        elif len(currently_valid_release) == 0:
+            raise InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
+        else:
+            raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
+    
+    parsed_URL = urlparse(temp_URL)
+    URL_path_parts = [i for i in parsed_URL.path.split('/') if i != ""]
+    if len(URL_path_parts) > 0 and URL_path_parts[-1] == "reports":
+        URL_path_parts = URL_path_parts[:-1]
+    URL = "https://" + parsed_URL.netloc + "/" + "/".join(URL_path_parts)+ "/"
+    log.info(f"Retrieved SUSHI URL {URL} from the COUNTER Registry.")
+    return URL
