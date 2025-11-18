@@ -868,6 +868,23 @@ def format_ISSN(unformatted_ISSN):
         return unformatted_ISSN
 
 
+def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
+    """A function for getting the SUSHI URL for a given statistics source, represented by its COUNTER Registry ID.
+
+    Args:
+        registry_ID (str): the COUNTER Registry ID
+        code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+    
+    Returns:
+        str: the SUSHI URL
+    
+    Raises:
+        InvalidAPIResponseError: if the JSON doesn't contain a valid URL
+    """
+    log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
+    pass
+
+
 class InvalidAPIResponseError(Exception):
     """An error for when an API returns a value that doesn't contain the expected information.
 

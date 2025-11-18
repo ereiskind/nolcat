@@ -518,3 +518,37 @@ def test_format_ISSN():
     assert format_ISSN("12345678") == "1234-5678"
     assert format_ISSN(" 1234567x ") == "1234-567x"
     assert format_ISSN("x2345678") == "x2345678"
+
+
+def test_fetch_URL_from_COUNTER_Registry():
+    """Tests getting a SUSHI URL from the COUNTER Registry.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    #ToDo: Pick a registry ID
+    #ToDo: URL = fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None)
+    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
+    pass
+
+
+def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP():
+    """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    #ToDo: Pick a registry ID
+    #ToDo: URL = fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice='5.1')
+    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
+    #ToDo: assert 'r51' in URL
+    pass
+
+
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
+def test_fetch_URL_from_COUNTER_Registry_failure():
+    """Tests getting a COUNTER Registry response not containing a URL returns an error.
+    
+    The specified registry ID is for a depreciated platform. Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    #ToDo: URL = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
+    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
+    pass
