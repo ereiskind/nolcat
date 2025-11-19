@@ -35,7 +35,7 @@ def SUSHI_credentials_fixture():
     Yields:
         tuple: the URL and parameters dictionary needed to make a SUSHI call
     """
-    URL = input("\nEnter the SUSHI base URL, including the final backslash: ")
+    registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
     customer_id = input("Enter the SUSHI customer ID: ")
     requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
     api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
@@ -73,6 +73,7 @@ def SUSHI_credentials_fixture():
         )
     SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
 
+    URL = fetch_URL_from_COUNTER_Registry(registry_ID)
     yield (URL, SUSHI_credentials)
 
 

@@ -520,35 +520,48 @@ def test_format_ISSN():
     assert format_ISSN("x2345678") == "x2345678"
 
 
-def test_fetch_URL_from_COUNTER_Registry():
+@pytest.fixture(params=[
+    ('c976a8e4-ecc7-4c47-aff6-94d2fa3f996d', "https://sitemaster.meridian.allenpress.com/sushi/r51/"),  # Has expired R5, testing removal of duplicated slash
+    ('2f0e9433-7217-4196-9ee2-9baf3cf179a1', "https://sushi5.igi-global.com/"),  # Expired R5, but no R5.1
+    ('eb725161-bdba-4913-991d-203d260a6b36', "https://counter5.cambridge.org/r51/"),  # Has expired R5
+    ('0657858f-f079-4200-a79e-1698cf36a95a', "https://c5sushi.mpsinsight.com/c5sushi/services/"),  # R5 is currently valid with no R5.1, URL in JSON doesn't end in a slash
+    ('463357e2-7abc-4c2b-9c51-b15c58f01281', "https://bookservice.proquest.com/anr/release/sushi/ebooks/r5/"),  # R5 is currently valid with no R5.1
+    ('f370697b-6baf-4c4c-bf1a-9610f6ffc284', "https://sitemaster.karger.com/sushi/r51/"),  # Has expired R5
+    ('f5ace0be-ad5e-4504-930e-b8cf376466ab', "https://api.elsevier.com/sushi/r51/"),  # Has expired R5, URL in JSON doesn't end in a slash
+])
+def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
     
     Regex taken from https://stackoverflow.com/a/3809435.
     """
-    #ToDo: Pick a registry ID
-    #ToDo: URL = fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None)
-    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
-    pass
+    registry_ID, resulting_URL = request.param
+    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID)
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert registry_URL == resulting_URL
 
 
-def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP():
+@pytest.fixture(params=[
+    ('4da3d0d2-2be6-49d4-a12e-b5063c9854dc', "https://inqwell.squidsolutions.com/r51/aps/"),  # R5.1 ends in `reports` (R5 doesn't) and has null `last_audit` value
+    ('9a2d940d-dcee-4f0c-b86c-18b72df9d9d9', "https://www.ingentaconnect.com/sushiadmin/statistics/sushi/r51/"),  # URL in JSON doesn't end in a slash
+    ('45817e1e-5d47-4ec9-8ae1-d228cab701c2', "https://sitemaster.connectsci.au/sushi/"),  # R5.1 has different domain than expired R5, URL in JSON doesn't end in a slash
+    ('f89d2141-9ec0-4bfc-8d77-7abca78b761f', "http://api.taylorandfrancis.com/v2/counterreports/r51/"),  # Only R5.1 with audit in progress
+])
+def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
     
     Regex taken from https://stackoverflow.com/a/3809435.
     """
-    #ToDo: Pick a registry ID
-    #ToDo: URL = fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice='5.1')
-    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
-    #ToDo: assert 'r51' in URL
-    pass
+    registry_ID, resulting_URL = request.param
+    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID)
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert registry_URL == resulting_URL
 
 
 @pytest.mark.xfail(raises=InvalidAPIResponseError)
 def test_fetch_URL_from_COUNTER_Registry_failure():
     """Tests getting a COUNTER Registry response not containing a URL returns an error.
     
-    The specified registry ID is for a depreciated platform. Regex taken from https://stackoverflow.com/a/3809435.
+    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
     """
-    #ToDo: URL = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
-    #ToDo: assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", URL)
-    pass
+    registry_URL = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)

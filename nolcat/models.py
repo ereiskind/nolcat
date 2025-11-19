@@ -811,46 +811,9 @@ class StatisticsSources(db.Model):
                             #ToDo: credentials['platform'] = statistics_source_credentials['platform']
 
         #Subsection: Get URL from COUNTER Registry
-        #ToDo: if credentials.get('registry_ID')
-            #ToDo: API_response = requests.get(f"https://registry.countermetrics.org/api/v1/platform/{credentials['registry_ID']}")
-            #ToDo: API_response = API_response.json()
-            #ToDo: if API_response.get('sushi_services') and API_response['sushi_services'] != []:
-            #ToDo: find_current_audit = {}
-                #ToDo: for release_data in API_response['sushi_services']:
-                    #ToDo: if code_of_practice = '5':
-                        #ToDo: if release_data['counter_release'] == "5":
-                            #ToDo: temp_URL == release_data['url']
-                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
-                    #ToDo: elif code_of_practice = '5.1':
-                        #ToDo: if release_data['counter_release'] == "5.1":
-                            #ToDo: temp_URL == release_data['url']
-                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
-                    #ToDo: else:
-                        #ToDo: for audit_info in release_data['last_audit']:
-                            #ToDo: find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
-                            #ToDo: log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
-            #ToDo: if find_current_audit:
-                #ToDo: currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
-                #ToDo: if len(currently_valid_release) == 1:
-                    #ToDo: for release_data in API_response['sushi_services']:
-                        #ToDo: if release_data['counter_release'] == currently_valid_release[0]:
-                            #ToDo: temp_URL == release_data['url']
-                            #ToDo: log.debug(f"{temp_URL} returned by COUNTER Registry.")
-                #ToDo: elif len(currently_valid_release) == 0:
-                    #ToDo: Check other options for `audit_status`? Default to 5.1?
-                #ToDo: else:
-                    #ToDo: Is having multiple currently valid audits possible?
-            #ToDo: else:
-                #ToDo: Figure out how to handle a registry ID that doesn't return a URL
-            
-            #ToDo: Ensure `` doesn't have a slash at the end
-            #ToDo: parsed_URL = urlparse(temp_URL)
-            #ToDo: URL_path_parts = [i for i in parsed_URL.path.split('/') if i != ""]
-            #ToDo: if len(URL_path_parts) > 0 and URL_path_parts[-1] == "reports":
-                #ToDo: URL_path_parts = URL_path_parts[:-1]
-            #ToDo: credentials['URL'] = "https://" + parsed_URL.netloc + "/" + "/".join(URL_path_parts)+ "/"
-            #ToDo: log.debug(f"Added URL {credentials['URL']} to SUSHI credentials.")
-            #ToDo: del credentials['registry_ID']
+        if credentials.get('registry_ID'):
+            credentials['URL'] = fetch_URL_from_COUNTER_Registry(credentials['registry_ID'])
+            del credentials['registry_ID']
 
         #Section: Return Data in Requested Format
         if for_API_call:
