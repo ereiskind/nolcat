@@ -730,7 +730,7 @@ class StatisticsSources(db.Model):
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100), nullable=False)
-    statistics_source_retrieval_code = db.Column(db.String(30))
+    statistics_source_retrieval_code = db.Column(db.String(36))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
