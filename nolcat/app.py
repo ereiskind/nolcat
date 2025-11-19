@@ -906,6 +906,14 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     API_response = requests.get(f"https://registry.countermetrics.org/api/v1/platform/{registry_ID}")
     API_response = API_response.json()
     if API_response.get('sushi_services') and API_response['sushi_services'] != []:
+        if len(API_response['sushi_services']) == 1:
+            if not code_of_practice or API_response['sushi_services'][0]['counter_release'] == code_of_practice:
+                temp_URL = API_response['sushi_services'][0]['url']
+                log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                if API_response['sushi_services'][0]['last_audit']['audit_status'] == "Audit expired":
+                    log.warning(f"The SUSHI URL for registry ID {registry_ID} has expired.")
+            else:
+                raise InvalidAPIResponseError("The requested code of practice isn't in the COUNTER Registry.")
         find_current_audit = {}
         for release_data in API_response['sushi_services']:
             if code_of_practice:
