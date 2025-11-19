@@ -83,10 +83,9 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     fixture_retrieval_code = str(choice(retrieval_codes))
     statistics_source_name = query_database(  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; the `choice()` function ensures the retrieval code chosen is in the test data
         query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice([
-            '618759fd-bd3e-4617-a0d1-ccbe06c22171',  # May change
-            'b2b2736c-2cb9-48ec-91f4-870336acfb1c',  # May change
-            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP", None],
-            '1', '2', '3'
+            '741ebb85-02ad-4ad0-ae4f-8b268f528cb0',
+            '6839b3e4-1a57-413e-9b3f-9faa4df06d54',
+            'dd585e77-6351-4548-b679-f2d337d15cdb',
         ])}",
         engine=engine,
     )
