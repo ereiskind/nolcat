@@ -562,7 +562,6 @@ class Vendors(db.Model):
     Attributes:
         self.vendor_ID (int): the primary key
         self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
-        self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -574,7 +573,6 @@ class Vendors(db.Model):
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80), nullable=False)
-    alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
@@ -585,7 +583,7 @@ class Vendors(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}', 'alma_vendor_code': '{self.alma_vendor_code}'>"
+        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}'"
 
 
     @hybrid_method
@@ -594,7 +592,6 @@ class Vendors(db.Model):
         """This method provides a dictionary of the attributes and their data types."""
         return {
             "vendor_name": 'string',
-            "alma_vendor_code": 'string',
         }
 
 
@@ -1286,7 +1283,7 @@ class StatisticsSourceNotes(db.Model):
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
 
-    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains.
+    Resource sources are often called platforms. Resource sources are often declared distinct by virtue of having different HTTP domains.
     
     Attributes:
         self.resource_source_ID (int): the primary key

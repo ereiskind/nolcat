@@ -121,7 +121,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
         "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
         "vendor_name": Vendors.state_data_types()['vendor_name'],
-        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
     check = load_data_into_database(
@@ -139,7 +138,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
                 statisticsSources.statistics_source_name,
                 statisticsSources.statistics_source_retrieval_code,
                 vendors.vendor_name,
-                vendors.alma_vendor_code
             FROM statisticsSources
             JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
             ORDER BY statisticsSources.statistics_source_ID;
@@ -154,20 +152,20 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     expected_output_data = pd.DataFrame(
         [  #ToDo: Should COUNTER Registry IDs below be for statistics sources with less volume? If so, also change `tests.test_StatisticsSources.StatisticsSources_fixture()` and `tests.data.relations.statisticsSources_relation()`
-            ["ProQuest", "618759fd-bd3e-4617-a0d1-ccbe06c22171", "ProQuest", None],
-            ["EBSCOhost", "b2b2736c-2cb9-48ec-91f4-870336acfb1c", "EBSCO", None],
-            ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP", None],
-            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
-            ["DemographicsNow", None, "Gale", None],
-            ["Ebook Central", None, "ProQuest", None],
-            ["Peterson's Career Prep", None, "Gale", None],
-            ["Peterson's Test Prep", None, "Gale", None],
-            ["Peterson's Prep", None, "Gale", None],
-            ["Pivot", None, "ProQuest", None],
-            ["Ulrichsweb", None, "ProQuest", None],
+            ["ProQuest", "618759fd-bd3e-4617-a0d1-ccbe06c22171", "ProQuest"],
+            ["EBSCOhost", "b2b2736c-2cb9-48ec-91f4-870336acfb1c", "EBSCO"],
+            ["Gale Cengage Learning", None, "Gale"],
+            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP"],
+            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP"],
+            ["DemographicsNow", None, "Gale"],
+            ["Ebook Central", None, "ProQuest"],
+            ["Peterson's Career Prep", None, "Gale"],
+            ["Peterson's Test Prep", None, "Gale"],
+            ["Peterson's Prep", None, "Gale"],
+            ["Pivot", None, "ProQuest"],
+            ["Ulrichsweb", None, "ProQuest"],
         ],
-        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name"],
     )
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
@@ -326,29 +324,29 @@ def vendors_relation_after_test_update_database():
     Yields:
         dataframe: data matching the updated `vendors` relation
     """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    return series
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database(engine, vendors_relation_after_test_update_database):
     """Tests updating data in the database through a SQL update statement."""
     update_result = update_database(
-        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+        update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
         engine=engine,
     )
     retrieved_updated_vendors_data = query_database(
@@ -370,31 +368,31 @@ def vendors_relation_after_test_update_database_with_insert_statement():
     Yields:
         dataframe: data matching the updated `vendors` relation
     """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
-            ["A Vendor", None],
-            ["Another Vendor", "1"],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
+            "A Vendor",
+            "Another Vendor",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    return series
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
     """Tests adding records to the database through a SQL insert statement."""
     update_result = update_database(
-        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
         engine=engine,
     )
     retrieved_updated_vendors_data = query_database(
