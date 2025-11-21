@@ -157,11 +157,6 @@ Iteration: Display Data Visualization of Usage Data Requests in Browser
 * Make final decision between Plotly/Dash and Bokeh
 * Change dataframes displayed as tables in browser to data visualizations
 
-Iteration: Get SUSHI Credentials from Alma
-==========================================
-* Add way to determine if data should be fetched from Alma or the JSON file at the beginning of ``nolcat.models.StatisticsSources.fetch_SUSHI_information()``
-* Write "Retrieve Data from Alma" subsection of ``nolcat.models.StatisticsSources.fetch_SUSHI_information()``
-
 Iteration: Add User Accounts to Restrict Access
 ===============================================
 * Add "Flask-User" library

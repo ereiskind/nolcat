@@ -486,7 +486,6 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     if isinstance(statisticsSources_relation_data, str):
         pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
-    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
     statisticsSourceNotes_relation_data = query_database(
         query="SELECT * FROM statisticsSourceNotes;",

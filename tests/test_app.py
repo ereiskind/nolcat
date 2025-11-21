@@ -121,7 +121,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
         "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
         "vendor_name": Vendors.state_data_types()['vendor_name'],
-        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
     check = load_data_into_database(
@@ -139,7 +138,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
                 statisticsSources.statistics_source_name,
                 statisticsSources.statistics_source_retrieval_code,
                 vendors.vendor_name,
-                vendors.alma_vendor_code
             FROM statisticsSources
             JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
             ORDER BY statisticsSources.statistics_source_ID;
@@ -154,20 +152,20 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     expected_output_data = pd.DataFrame(
         [
-            ["ProQuest", "1", "ProQuest", None],
-            ["EBSCOhost", "2", "EBSCO", None],
-            ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", "3", "Duke UP", None],
-            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
-            ["DemographicsNow", None, "Gale", None],
-            ["Ebook Central", None, "ProQuest", None],
-            ["Peterson's Career Prep", None, "Gale", None],
-            ["Peterson's Test Prep", None, "Gale", None],
-            ["Peterson's Prep", None, "Gale", None],
-            ["Pivot", None, "ProQuest", None],
-            ["Ulrichsweb", None, "ProQuest", None],
+            ["ProQuest", "741ebb85-02ad-4ad0-ae4f-8b268f528cb0", "ProQuest"],
+            ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", "EBSCO"],
+            ["Gale Cengage Learning", None, "Gale"],
+            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP"],
+            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP"],
+            ["DemographicsNow", None, "Gale"],
+            ["Ebook Central", None, "ProQuest"],
+            ["Peterson's Career Prep", None, "Gale"],
+            ["Peterson's Test Prep", None, "Gale"],
+            ["Peterson's Prep", None, "Gale"],
+            ["Pivot", None, "ProQuest"],
+            ["Ulrichsweb", None, "ProQuest"],
         ],
-        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name"],
     )
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
@@ -326,29 +324,29 @@ def vendors_relation_after_test_update_database():
     Yields:
         dataframe: data matching the updated `vendors` relation
     """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    return series
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database(engine, vendors_relation_after_test_update_database):
     """Tests updating data in the database through a SQL update statement."""
     update_result = update_database(
-        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+        update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
         engine=engine,
     )
     retrieved_updated_vendors_data = query_database(
@@ -370,31 +368,31 @@ def vendors_relation_after_test_update_database_with_insert_statement():
     Yields:
         dataframe: data matching the updated `vendors` relation
     """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
-            ["A Vendor", None],
-            ["Another Vendor", "1"],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
+            "A Vendor",
+            "Another Vendor",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    return series
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database_with_insert_statement(engine, vendors_relation_after_test_update_database_with_insert_statement):
     """Tests adding records to the database through a SQL insert statement."""
     update_result = update_database(
-        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+        update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
         engine=engine,
     )
     retrieved_updated_vendors_data = query_database(
@@ -518,3 +516,51 @@ def test_format_ISSN():
     assert format_ISSN("12345678") == "1234-5678"
     assert format_ISSN(" 1234567x ") == "1234-567x"
     assert format_ISSN("x2345678") == "x2345678"
+
+
+@pytest.fixture(params=[
+    ('c976a8e4-ecc7-4c47-aff6-94d2fa3f996d', "https://sitemaster.meridian.allenpress.com/sushi/r51/"),  # Has expired R5, testing removal of duplicated slash
+    ('2f0e9433-7217-4196-9ee2-9baf3cf179a1', "https://sushi5.igi-global.com/"),  # Expired R5, but no R5.1
+    ('eb725161-bdba-4913-991d-203d260a6b36', "https://counter5.cambridge.org/r51/"),  # Has expired R5, needs double quote replacement and spacing adjustment for conversion to JSON
+    ('0657858f-f079-4200-a79e-1698cf36a95a', "https://c5sushi.mpsinsight.com/c5sushi/services/"),  # R5 is currently valid with no R5.1, URL in JSON doesn't end in a slash
+    ('463357e2-7abc-4c2b-9c51-b15c58f01281', "https://bookservice.proquest.com/anr/release/sushi/ebooks/r5/"),  # R5 is currently valid with no R5.1
+    ('f370697b-6baf-4c4c-bf1a-9610f6ffc284', "https://sitemaster.karger.com/sushi/r51/"),  # Has expired R5
+    ('f5ace0be-ad5e-4504-930e-b8cf376466ab', "https://api.elsevier.com/sushi/r51/"),  # Has expired R5, URL in JSON doesn't end in a slash
+    ('7c7bdde7-7acf-42c3-a3b8-8f24a9dad614', "https://www.un-ilibrary.org/counter5/sushi/r51"),  # R5 is currently valid with R5.1 audit in progress, needs double quote replacement and spacing adjustment for conversion to JSON
+])
+def test_fetch_URL_from_COUNTER_Registry(request):
+    """Tests getting a SUSHI URL from the COUNTER Registry.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    registry_ID, resulting_URL = request.param
+    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID)
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert registry_URL == resulting_URL
+
+
+@pytest.fixture(params=[
+    ('4da3d0d2-2be6-49d4-a12e-b5063c9854dc', "https://inqwell.squidsolutions.com/r51/aps/"),  # R5.1 ends in `reports` (R5 doesn't) and has null `last_audit` value
+    ('9a2d940d-dcee-4f0c-b86c-18b72df9d9d9', "https://www.ingentaconnect.com/sushiadmin/statistics/sushi/r51/"),  # URL in JSON doesn't end in a slash
+    ('45817e1e-5d47-4ec9-8ae1-d228cab701c2', "https://sitemaster.connectsci.au/sushi/"),  # R5.1 has different domain than expired R5, URL in JSON doesn't end in a slash
+    ('f89d2141-9ec0-4bfc-8d77-7abca78b761f', "http://api.taylorandfrancis.com/v2/counterreports/r51/"),  # Only R5.1 with audit in progress
+])
+def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
+    """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    registry_ID, resulting_URL = request.param
+    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert registry_URL == resulting_URL
+
+
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
+def test_fetch_URL_from_COUNTER_Registry_failure():
+    """Tests getting a COUNTER Registry response not containing a URL returns an error.
+    
+    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    registry_URL = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
+    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
