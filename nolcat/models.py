@@ -810,6 +810,8 @@ class StatisticsSources(db.Model):
         #Subsection: Get URL from COUNTER Registry
         if credentials.get('registry_ID'):
             credentials['URL'] = fetch_URL_from_COUNTER_Registry(credentials['registry_ID'])
+            if isinstance(credentials['URL'], Exception):
+                return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
             del credentials['registry_ID']
 
         #Section: Return Data in Requested Format
