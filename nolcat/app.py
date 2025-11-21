@@ -897,7 +897,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
         code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
     
     Returns:
-        str: the SUSHI URL
+        tuple: the SUSHI URL (str); the code of practice (str)
     
     Raises:
         InvalidAPIResponseError: if the JSON doesn't contain a valid URL
@@ -927,6 +927,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
         if len(API_response['sushi_services']) == 1:
             if not code_of_practice or API_response['sushi_services'][0]['counter_release'] == code_of_practice:
                 temp_URL = API_response['sushi_services'][0]['url']
+                URL_CoP = API_response['sushi_services'][0]['counter_release']
                 log.debug(f"{temp_URL} returned by COUNTER Registry.")
                 if API_response['sushi_services'][0]['last_audit']['audit_status'] == "Audit expired":
                     log.warning(f"The SUSHI URL for registry ID {registry_ID} has expired.")
@@ -937,6 +938,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
             if code_of_practice:
                 if release_data['counter_release'] == code_of_practice:
                     temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
                 for audit_info in release_data['last_audit']:
@@ -951,6 +953,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
             for release_data in API_response['sushi_services']:
                 if release_data['counter_release'] == currently_valid_release[0]:
                     temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
         elif len(currently_valid_release) == 0:
             return InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
@@ -964,4 +967,4 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
         URL_path_parts = URL_path_parts[:-1]
     URL = "https://" + parsed_URL.netloc + "/" + "/".join(URL_path_parts)+ "/"
     log.info(f"Retrieved SUSHI URL {URL} from the COUNTER Registry.")
-    return URL
+    return (URL, URL_CoP)

@@ -36,6 +36,10 @@ def SUSHI_credentials_fixture():
         tuple: the URL and parameters dictionary needed to make a SUSHI call
     """
     registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
+    URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
+    if isinstance(URL, Exception):
+        pytest.exit(URL)
+    #ToDo: Get credential values from CSV
     customer_id = input("Enter the SUSHI customer ID: ")
     requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
     api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
@@ -73,9 +77,6 @@ def SUSHI_credentials_fixture():
         )
     SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
 
-    URL = fetch_URL_from_COUNTER_Registry(registry_ID)
-    if isinstance(URL, Exception):
-        pytest.exit(URL)
     yield (URL, SUSHI_credentials)
 
 

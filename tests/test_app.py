@@ -519,22 +519,23 @@ def test_format_ISSN():
 
 
 @pytest.fixture(params=[
-    ('c976a8e4-ecc7-4c47-aff6-94d2fa3f996d', "https://sitemaster.meridian.allenpress.com/sushi/r51/"),  # Has expired R5, testing removal of duplicated slash
-    ('2f0e9433-7217-4196-9ee2-9baf3cf179a1', "https://sushi5.igi-global.com/"),  # Expired R5, but no R5.1
-    ('eb725161-bdba-4913-991d-203d260a6b36', "https://counter5.cambridge.org/r51/"),  # Has expired R5, needs double quote replacement and spacing adjustment for conversion to JSON
-    ('0657858f-f079-4200-a79e-1698cf36a95a', "https://c5sushi.mpsinsight.com/c5sushi/services/"),  # R5 is currently valid with no R5.1, URL in JSON doesn't end in a slash
-    ('463357e2-7abc-4c2b-9c51-b15c58f01281', "https://bookservice.proquest.com/anr/release/sushi/ebooks/r5/"),  # R5 is currently valid with no R5.1
-    ('f370697b-6baf-4c4c-bf1a-9610f6ffc284', "https://sitemaster.karger.com/sushi/r51/"),  # Has expired R5
-    ('f5ace0be-ad5e-4504-930e-b8cf376466ab', "https://api.elsevier.com/sushi/r51/"),  # Has expired R5, URL in JSON doesn't end in a slash
-    ('7c7bdde7-7acf-42c3-a3b8-8f24a9dad614', "https://www.un-ilibrary.org/counter5/sushi/r51"),  # R5 is currently valid with R5.1 audit in progress, needs double quote replacement and spacing adjustment for conversion to JSON
+    ('c976a8e4-ecc7-4c47-aff6-94d2fa3f996d', "5.1", "https://sitemaster.meridian.allenpress.com/sushi/r51/"),  # Has expired R5, testing removal of duplicated slash
+    ('2f0e9433-7217-4196-9ee2-9baf3cf179a1', "5", "https://sushi5.igi-global.com/"),  # Expired R5, but no R5.1
+    ('eb725161-bdba-4913-991d-203d260a6b36', "5.1", "https://counter5.cambridge.org/r51/"),  # Has expired R5, needs double quote replacement and spacing adjustment for conversion to JSON
+    ('0657858f-f079-4200-a79e-1698cf36a95a', "5", "https://c5sushi.mpsinsight.com/c5sushi/services/"),  # R5 is currently valid with no R5.1, URL in JSON doesn't end in a slash
+    ('463357e2-7abc-4c2b-9c51-b15c58f01281', "5", "https://bookservice.proquest.com/anr/release/sushi/ebooks/r5/"),  # R5 is currently valid with no R5.1
+    ('f370697b-6baf-4c4c-bf1a-9610f6ffc284', "5.1", "https://sitemaster.karger.com/sushi/r51/"),  # Has expired R5
+    ('f5ace0be-ad5e-4504-930e-b8cf376466ab', "5.1", "https://api.elsevier.com/sushi/r51/"),  # Has expired R5, URL in JSON doesn't end in a slash
+    ('7c7bdde7-7acf-42c3-a3b8-8f24a9dad614', "5.1", "https://www.un-ilibrary.org/counter5/sushi/r51"),  # R5 is currently valid with R5.1 audit in progress, needs double quote replacement and spacing adjustment for conversion to JSON
 ])
 def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
     
     Regex taken from https://stackoverflow.com/a/3809435.
     """
-    registry_ID, resulting_URL = request.param
-    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID)
+    registry_ID, expected_code_of_practice, resulting_URL = request.param
+    registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
+    assert expected_code_of_practice == code_of_practice
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
     assert registry_URL == resulting_URL
 
@@ -551,7 +552,8 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     Regex taken from https://stackoverflow.com/a/3809435.
     """
     registry_ID, resulting_URL = request.param
-    registry_URL = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
+    registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
+    assert code_of_practice == "5.1"
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
     assert registry_URL == resulting_URL
 
@@ -562,5 +564,5 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     
     The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
     """
-    registry_URL = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
+    registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
