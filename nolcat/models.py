@@ -8,6 +8,7 @@ import re
 from datetime import date
 from datetime import datetime
 import calendar
+import csv
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 import requests
@@ -769,50 +770,45 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         """
         log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
+        #ALERT: Change file extension in Dockerfile
         #Section: Retrieve Data
-        #Subsection: Retrieve Data from JSON
-        #ToDo: Change above to `CSV`
-        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:  #ToDo: Change to just `file`
-            SUSHI_data_file = json.load(JSON_file)  #ToDo: CSV_data = csv.DictReader(file)
+        with open(PATH_TO_CREDENTIALS_FILE()) as file:
+            CSV_data = csv.DictReader(file)
             log.debug("SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list  #ToDo: for statistics_source_credentials in CSV_data:
-                for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:  #ToDo: if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
-                        log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                        credentials = dict(
-                            URL = statistics_source_dict['statistics']['online_location'],  #ToDo: Remove
-                            customer_id = statistics_source_dict['statistics']['user_id']  #ToDo: statistics_source_credentials['customer_ID']
-                        )
-
-                        #ToDo: If `statistics_source_credentials['statistics_source_retrieval_code']` doesn't start with 'placeholder', save it with key `registry_ID`; if it does, save URL from CSV for CoP
-
-                        try:
-                            credentials['requestor_id'] = statistics_source_dict['statistics']['user_password']
-                        except:
-                            pass
-                        #ToDo: if statistics_source_dict.get('requestor_ID'):
-                            #ToDo: credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
-
-                        try:
-                            credentials['api_key'] = statistics_source_dict['statistics']['user_pass_note']
-                        except:
-                            pass
-                        #ToDo: if statistics_source_dict.get('API_key'):
-                            #ToDo: credentials['api_key'] = statistics_source_credentials['API_key']
-
-                        try:
-                            credentials['platform'] = statistics_source_dict['statistics']['delivery_address']
-                        except:
-                            pass
-                        #ToDo: if statistics_source_dict.get('platform'):
-                            #ToDo: credentials['platform'] = statistics_source_credentials['platform']
-
-        #Subsection: Get URL from COUNTER Registry
-        if credentials.get('registry_ID'):
-            credentials['URL'] = fetch_URL_from_COUNTER_Registry(credentials['registry_ID'])
-            if isinstance(credentials['URL'], Exception):
-                return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
-            del credentials['registry_ID']
+            for statistics_source_credentials in CSV_data:
+                if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
+                    log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                    credentials = dict(statistics_source_credentials['customer_ID'])
+                    if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                        credentials['URL'] = statistics_source_credentials['URL']
+                        if "r51" in credentials['URL']:
+                            code_of_practice = "5.1"
+                        else:
+                            code_of_practice = "5"
+                    else:
+                        credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
+                        if isinstance(credentials['URL'], Exception):
+                            return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
+                
+                #statistics_source_retrieval_code	URL					R5.1_customer_ID	R5.1_requestor_ID	R5.1_API_key	R5.1_platform
+                if code_of_practice == "5":
+                    if statistics_source_credentials.get('R5_customer_ID'):
+                        credentials['customer_id'] = statistics_source_credentials['R5_customer_ID']
+                    if statistics_source_credentials.get('R5_requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['R5_requestor_ID']
+                    if statistics_source_credentials.get('R5_API_key'):
+                        credentials['api_key'] = statistics_source_credentials['R5_API_key']
+                    if statistics_source_credentials.get('R5_platform'):
+                        credentials['platform'] = statistics_source_credentials['R5_platform']
+                elif code_of_practice == "5.1":
+                    if statistics_source_credentials.get('R5.1_customer_ID'):
+                        credentials['customer_id'] = statistics_source_credentials['R5.1_customer_ID']
+                    if statistics_source_credentials.get('R5.1_requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['R5.1_requestor_ID']
+                    if statistics_source_credentials.get('R5.1_API_key'):
+                        credentials['api_key'] = statistics_source_credentials['R5.1_API_key']
+                    if statistics_source_credentials.get('R5.1_platform'):
+                        credentials['platform'] = statistics_source_credentials['R5.1_platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
