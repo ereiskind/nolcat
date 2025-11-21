@@ -284,7 +284,7 @@ class SUSHICallAndResponse:
         Returns:
             tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
         """
-        log.info("Starting `_convert_Response_to_JSON()`.")
+        log.info("Starting `_convert_Response_to_JSON()`.")  #ToDo: Can this be cleaned up by using `requests.Response.json()` and other conversions from `fetch_URL_from_COUNTER_Registry()`?
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
@@ -569,7 +569,7 @@ class SUSHICallAndResponse:
         elif error_code == '1000' or error_code == '1010' or error_code == '1011' or error_code == '1020' or error_code == '3031':
             message = message + " Try the call again later."
         elif error_code == '2000' or error_code == '2010' or error_code == '2020':
-            message = message + " Check and Update the credentials in the R5 SUSHI credentials JSON, then try the call again."
+            message = message + " Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again."
         elif error_code == '3020' :
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
         log.error(message)

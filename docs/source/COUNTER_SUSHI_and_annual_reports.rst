@@ -122,6 +122,21 @@ The CoP used for 5.1 and beyond is specified in the URL, so the URL used determi
 
 For the official information about transitioning from R5 to R5.1, see https://cop5.projectcounter.org/en/5.1/13-transitioning/03-transitioning-from-counter-r5-to-r51.html.
 
+The SUSHI Credential CSV
+************************
+The SUSHI credentials are saved in a CSV stored in the AWS instance and copied to the container through an operation in the Dockerfile. It contains the fields
+
+* **statistics_source_retrieval_code**: the COUNTER Registry ID for the statistics source or `placeholder` followed by a number if a registry ID is unavailable; this maps to the `StatisticsSources` attribute of the same name
+* **URL**: for all placeholder values, the SUSHI URL (needs to end in slash)
+* **R5_customer_ID**
+* **R5_requestor_ID**
+* **R5_API_key**
+* **R5_platform**
+* **R5.1_customer_ID**
+* **R5.1_requestor_ID**
+* **R5.1_API_key**
+* **R5.1_platform**
+
 Annual Usage Statistics
 ***********************
 Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the ``annualStatistics`` relation. That relation's class contains methods to calculate all of the metrics described below.

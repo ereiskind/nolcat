@@ -37,12 +37,12 @@ URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
 def PATH_TO_CREDENTIALS_FILE():
     """Provides the file path to the SUSHI credentials file as a string.
     
-    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
+    The SUSHI credentials are stored in a CSV file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.csv')
     if file_path.exists():
         log.debug(check_if_file_exists_statement(file_path))
         return str(file_path)
