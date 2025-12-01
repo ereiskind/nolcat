@@ -8,6 +8,7 @@ from flask import request
 from flask import abort
 from flask import flash
 import pandas as pd
+import numpy as np
 
 from . import bp
 from .forms import *
@@ -51,14 +52,11 @@ def collect_FY_and_vendor_data():
         
         fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        log.warning(f"`fiscalYears_dataframe['start_date']` is `object` dtype: {isinstance(fiscalYears_dataframe['start_date'], np.dtypes.ObjectDType)}\n")  #TEST: temp
+        log.warning(f"`fiscalYears_dataframe['end_date']` is `object` dtype: {isinstance(fiscalYears_dataframe['end_date'], np.dtypes.ObjectDType)}\n")  #TEST: temp
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
-        #TEST: temp
-        log.warning(f"`fiscalYears_dataframe.info()`:\n{fiscalYears_dataframe.info()}\n")
-        log.warning(f"`fiscalYears_dataframe['start_date']`:\n{fiscalYears_dataframe['start_date']}\n")
-        log.warning(f"`fiscalYears_dataframe['end_date']`:\n{fiscalYears_dataframe['end_date']}\n")
-        #TEST: end temp
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
@@ -111,12 +109,9 @@ def collect_FY_and_vendor_data():
         
         vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
+        log.warning(f"`vendorNotes_dataframe['date_written']` is `object` dtype: {isinstance(vendorNotes_dataframe['date_written'], np.dtypes.ObjectDType)}\n")  #TEST: temp
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
-        #TEST: temp
-        log.warning(f"`vendorNotes_dataframe.info()`:\n{vendorNotes_dataframe.info()}\n")
-        log.warning(f"`vendorNotes_dataframe['date_written']`:\n{vendorNotes_dataframe['date_written']}\n")
-        #TEST: end temp
 
 
         #Section: Load Data into Database
@@ -208,12 +203,9 @@ def collect_sources_data():
         
         statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
+        log.warning(f"`statisticsSourceNotes_dataframe['date_written']` is `object` dtype: {isinstance(statisticsSourceNotes_dataframe['date_written'], np.dtypes.ObjectDType)}\n")  #TEST: temp
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
-        #TEST: temp
-        log.warning(f"`statisticsSourceNotes_dataframe.info()`:\n{statisticsSourceNotes_dataframe.info()}\n")
-        log.warning(f"`statisticsSourceNotes_dataframe['date_written']`:\n{statisticsSourceNotes_dataframe['date_written']}\n")
-        #TEST: end temp
 
         #Subsection: Upload `resourceSources` CSV File
         log.debug(f"The `resourceSources` FileField data:\n{form.resourceSources_CSV.data}\n")
@@ -231,12 +223,9 @@ def collect_sources_data():
         
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
+        log.warning(f"`resourceSources_dataframe['access_stop_date']` is `object` dtype: {isinstance(resourceSources_dataframe['access_stop_date'], np.dtypes.ObjectDType)}\n")  #TEST: temp
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
-        #TEST: temp
-        log.warning(f"`resourceSources_dataframe.info()`:\n{resourceSources_dataframe.info()}\n")
-        log.warning(f"`resourceSources_dataframe['access_stop_date']`:\n{resourceSources_dataframe['access_stop_date']}\n")
-        #TEST: end temp
 
         #Subsection: Upload `resourceSourceNotes` CSV File
         log.debug(f"The `resourceSourceNotes` FileField data:\n{form.resourceSourceNotes_CSV.data}\n")
@@ -253,12 +242,9 @@ def collect_sources_data():
         
         resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
         log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
+        log.warning(f"`resourceSourceNotes_dataframe['date_written']` is `object` dtype: {isinstance(resourceSourceNotes_dataframe['date_written'], np.dtypes.ObjectDType)}\n")  #TEST: temp
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
-        #TEST: temp
-        log.warning(f"`resourceSourceNotes_dataframe.info()`:\n{resourceSourceNotes_dataframe.info()}\n")
-        log.warning(f"`resourceSourceNotes_dataframe['date_written']`:\n{resourceSourceNotes_dataframe['date_written']}\n")
-        #TEST: end temp
 
         #Subsection: Upload `statisticsResourceSources` CSV File
         log.debug(f"The `statisticsResourceSources` FileField data:\n{form.statisticsResourceSources_CSV.data}\n")
