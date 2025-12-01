@@ -51,7 +51,6 @@ def collect_FY_and_vendor_data():
         
         fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
-        log.warning(f"`fiscalYears_dataframe['start_date'].dtype`: {fiscalYears_dataframe['start_date'].dtype}\n")  #TEST: temp
         if fiscalYears_dataframe['start_date'].dtype == 'object':  # `isisntance()` doesn't work
             log.warning("`fiscalYears_dataframe['start_date'].dtype == 'object'` block entered")
         log.warning(f"`fiscalYears_dataframe['end_date'].dtype`: {fiscalYears_dataframe['end_date'].dtype}\n")  #TEST: temp
@@ -60,6 +59,7 @@ def collect_FY_and_vendor_data():
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
+        log.info(f"`fiscalYears` dataframe info:\n{fiscalYears_dataframe.info()}\n")  #TEST: temp
 
         #Subsection: Upload `annualStatistics` CSV File
         log.debug(f"The `annualStatistics` FileField data:\n{form.annualStatistics_CSV.data}\n")
@@ -112,11 +112,11 @@ def collect_FY_and_vendor_data():
         
         vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
-        log.warning(f"`vendorNotes_dataframe['date_written'].dtype`: {vendorNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         if vendorNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
             log.warning("`vendorNotes_dataframe['date_written'].dtype == 'object'` block entered")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
+        log.info(f"`vendorNotes` dataframe info:\n{vendorNotes_dataframe.info()}\n")  #TEST: temp
 
 
         #Section: Load Data into Database
@@ -208,11 +208,11 @@ def collect_sources_data():
         
         statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
-        log.warning(f"`statisticsSourceNotes_dataframe['date_written'].dtype`: {statisticsSourceNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         if statisticsSourceNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
             log.warning("`statisticsSourceNotes_dataframe['date_written'].dtype == 'object'` block entered")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
+        log.info(f"`statisticsSourceNotes` dataframe info:\n{statisticsSourceNotes_dataframe.info()}\n")  #TEST: temp
 
         #Subsection: Upload `resourceSources` CSV File
         log.debug(f"The `resourceSources` FileField data:\n{form.resourceSources_CSV.data}\n")
@@ -230,11 +230,11 @@ def collect_sources_data():
         
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
-        log.warning(f"`resourceSources_dataframe['access_stop_date'].dtype`: {resourceSources_dataframe['access_stop_date'].dtype}\n")  #TEST: temp
         if resourceSources_dataframe['access_stop_date'].dtype == 'object':  # `isisntance()` doesn't work
             log.warning("`resourceSources_dataframe['access_stop_date'].dtype == 'object'` block entered")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
+        log.info(f"`resourceSources` dataframe info:\n{resourceSources_dataframe.info()}\n")  #TEST: temp
 
         #Subsection: Upload `resourceSourceNotes` CSV File
         log.debug(f"The `resourceSourceNotes` FileField data:\n{form.resourceSourceNotes_CSV.data}\n")
@@ -251,11 +251,11 @@ def collect_sources_data():
         
         resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
-        log.warning(f"`resourceSourceNotes_dataframe['date_written'].dtype`: {resourceSourceNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         if resourceSourceNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
             log.warning("`resourceSourceNotes_dataframe['date_written'].dtype == 'object'` block entered")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
+        log.info(f"`resourceSourceNotes` dataframe info:\n{resourceSourceNotes_dataframe.info()}\n")  #TEST: temp
 
         #Subsection: Upload `statisticsResourceSources` CSV File
         log.debug(f"The `statisticsResourceSources` FileField data:\n{form.statisticsResourceSources_CSV.data}\n")
