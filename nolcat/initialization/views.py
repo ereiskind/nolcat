@@ -50,7 +50,7 @@ def collect_FY_and_vendor_data():
             log.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
-        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
         log.warning(f"`fiscalYears_dataframe['start_date'].dtype`: {fiscalYears_dataframe['start_date'].dtype}\n")  #TEST: temp
         log.warning(f"`fiscalYears_dataframe['end_date'].dtype`: {fiscalYears_dataframe['end_date'].dtype}\n")  #TEST: temp
@@ -107,7 +107,7 @@ def collect_FY_and_vendor_data():
             log.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
-        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         log.warning(f"`vendorNotes_dataframe['date_written'].dtype`: {vendorNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -201,7 +201,7 @@ def collect_sources_data():
             log.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
-        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
         log.warning(f"`statisticsSourceNotes_dataframe['date_written'].dtype`: {statisticsSourceNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -221,7 +221,7 @@ def collect_sources_data():
             log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
-        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items()})
+        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         log.warning(f"`resourceSources_dataframe['access_stop_date'].dtype` with `astype()` change: {resourceSources_dataframe['access_stop_date'].dtype}\n")  #TEST: temp
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -240,7 +240,7 @@ def collect_sources_data():
             log.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
-        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         log.warning(f"`resourceSourceNotes_dataframe['date_written'].dtype`: {resourceSourceNotes_dataframe['date_written'].dtype}\n")  #TEST: temp
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
