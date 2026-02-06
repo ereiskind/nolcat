@@ -94,8 +94,8 @@ class UploadCOUNTERReports:
                     log.error(f"`sheet[header_row_number]` (type {type(sheet[header_row_number])}): {sheet[header_row_number]}")  #TEST: temp
                     for cell in sheet[header_row_number]:
                         log.error(f"`cell.value` (type {type(cell.value)}): {cell.value}")  #TEST: temp
-                        if cell.value is None or isinstance(cell.value, int):
-                            continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
+                        if cell.value is None or isinstance(cell.value, int) or isinstance(cell.value, float):
+                            continue  # `None` and integers/floats (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or dates_as_string_regex.fullmatch(cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
