@@ -87,17 +87,20 @@ class UploadCOUNTERReports:
                 # To handle both R4 and R5 reports, as well as noncompliance with the standard in regards to empty rows in and after the header, the header row of the table is searched for instead of using any presets
                 looking_for_header_row = True
                 header_row_number = 1
+                log.error(f"`sheet` (type {type(sheet)}): {sheet}")  #TEST: temp
 
                 while looking_for_header_row:
                     count_of_month_labels = 0
+                    log.error(f"`sheet[header_row_number]` (type {type(sheet[header_row_number])}): {sheet[header_row_number]}")  #TEST: temp
                     for cell in sheet[header_row_number]:
+                        log.error(f"`cell.value` (type {type(cell.value)}): {cell.value}")  #TEST: temp
                         if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or dates_as_string_regex.fullmatch(cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
-                        log.debug(f"The table's header is at row {header_row_number}.")
+                        log.error(f"The table's header is at row {header_row_number}.")  #TEST: temp level, reset to `debug`
                         looking_for_header_row = False
                         break
                     else:
@@ -115,7 +118,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")
+                        log.error(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  #TEST: temp level, reset to `debug`
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
