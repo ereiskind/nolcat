@@ -429,7 +429,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     """
     data = request.param
     log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
-    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(S3_file_name_timestamp())}"  # This is the format used for usage reports, which are the most frequently type of saved report
+    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     if isinstance(data, dict):
@@ -491,11 +491,11 @@ def test_extract_value_from_single_value_df():
     assert extract_value_from_single_value_df(pd.DataFrame([[None]])) == 0
 
 
-def test_S3_file_name_timestamp():
+def test_AWS_timestamp_format():
     """Tests formatting a datetime value with the given format code."""
-    assert datetime(2022, 1, 12, 23, 59, 59).strftime(S3_file_name_timestamp()) == "2022-01-12T23.59.59"
-    assert datetime(2024, 7, 4, 2, 45, 8).strftime(S3_file_name_timestamp()) == "2024-07-04T02.45.08"
-    assert datetime(1999, 11, 27, 13, 18, 27).strftime(S3_file_name_timestamp()) == "1999-11-27T13.18.27"
+    assert datetime(2022, 1, 12, 23, 59, 59).strftime(AWS_timestamp_format()) == "2022-01-12T23-59-59"
+    assert datetime(2024, 7, 4, 2, 45, 8).strftime(AWS_timestamp_format()) == "2024-07-04T02-45-08"
+    assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
 
 
 def test_non_COUNTER_file_name_regex():

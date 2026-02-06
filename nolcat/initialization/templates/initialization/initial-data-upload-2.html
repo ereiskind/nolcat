@@ -48,7 +48,7 @@
     </ol>
 
     <h2>5. Upload the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` Relation CSVs</h2>
-    <ol><form method="POST" action="{{ url_for('initialization.collect_sources_data') }}" enctype="multipart/form-data">
+    <ol><form action="{{ url_for('initialization.collect_sources_data') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <li><label>
             {{ form.statisticsSources_CSV.label }}

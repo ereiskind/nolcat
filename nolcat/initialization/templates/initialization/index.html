@@ -45,7 +45,7 @@
     </ol>
 
     <h2>4. Upload the `fiscalYears`, `vendors`, and `vendorNotes` Relation CSVs</h2>
-    <ol><form method="POST" action="{{ url_for('initialization.collect_FY_and_vendor_data') }}" enctype="multipart/form-data">
+    <ol><form action="{{ url_for('initialization.collect_FY_and_vendor_data') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <li><label>
             {{ form.fiscalYears_CSV.label }}

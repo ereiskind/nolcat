@@ -186,7 +186,7 @@ digraph function_call_chains {
     _harvest_single_report -> last_day_of_month
     _harvest_single_report -> return_string_of_dataframe_info
     _harvest_single_report -> save_unconverted_data_via_upload
-    _harvest_single_report -> S3_file_name_timestamp
+    _harvest_single_report -> AWS_timestamp_format
     _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
     _harvest_single_report -> failed_upload_to_S3_statement
     _harvest_single_report -> upload_file_to_S3_bucket_success_regex
@@ -353,7 +353,7 @@ digraph function_call_chains {
     _save_raw_Response_text -> query_database
     _save_raw_Response_text -> save_unconverted_data_via_upload
     _save_raw_Response_text -> extract_value_from_single_value_df
-    _save_raw_Response_text -> S3_file_name_timestamp
+    _save_raw_Response_text -> AWS_timestamp_format
     _save_raw_Response_text -> file_IO_statement
     _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
     _save_raw_Response_text -> database_query_fail_statement
@@ -678,7 +678,7 @@ digraph function_call_chains {
         save_unconverted_data_via_upload [shape="box"]
         ISSN_regex [shape="box"]
         extract_value_from_single_value_df [shape="box"]
-        S3_file_name_timestamp [shape="box"]
+        AWS_timestamp_format [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
         format_ISSN [shape="box"]
     }
@@ -1343,7 +1343,7 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_S3_file_name_timestamp [
+        test_AWS_timestamp_format [
             style="dashed"
             shape="box"
         ]
@@ -1404,7 +1404,7 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_prepare_HTML_page_for_comparison -> prepare_HTML_page_for_comparison
-    file_name_stem_and_data -> S3_file_name_timestamp
+    file_name_stem_and_data -> AWS_timestamp_format
     file_name_stem_and_data -> most_recent_month_with_usage
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
@@ -1412,7 +1412,7 @@ digraph function_call_chains {
     test_ISSN_regex -> ISSN_regex
     test_last_day_of_month -> last_day_of_month
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    test_S3_file_name_timestamp -> S3_file_name_timestamp
+    test_AWS_timestamp_format -> AWS_timestamp_format
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
 
 

@@ -38,7 +38,7 @@ def upload_COUNTER_data():
         file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
         mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
         for file in file_objects:
-            log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
+            log.debug(f"Uploading the file {file} (type {type(file)}); mimetype {file.mimetype}).")
             if file.mimetype == 'application/octet-stream' and file.filename.endswith('.sql'):  # SQL files can have the generic `octet-stream` mimetype (before IANA RFC6922, SQL did use that mimetype)
                 mimetype_set.add('application/sql')
             else:
