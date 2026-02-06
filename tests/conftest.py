@@ -4,25 +4,17 @@ The fixtures for connecting to the database are primarily based upon the fixture
 """
 
 import pytest
-import logging
 from pathlib import Path
 from datetime import date
-import calendar
 from random import choice
 import re
 import html
 from sqlalchemy import create_engine
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
-from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
-from nolcat.app import create_app
-from nolcat.app import configure_logging
-from nolcat.app import s3_client
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET_FOR_TESTS
+from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
 
@@ -102,6 +94,7 @@ def db(app):
     # http://alexmic.net/flask-sqlalchemy-pytest/ with modifications at https://stackoverflow.com/q/28526781
     # https://spotofdata.com/flask-testing/
     # https://www.appsloveworld.com/coding/flask/3/rollback-many-transactions-between-tests-in-flask
+    #ToDo: If ``nolcat.app.db`` is needed, import with alias ``_db`` and import ``create_app``, ``configure_logging``, ``s3_client`` on their own lines with note about alias preventing wildcard usage
     pass
 
 
@@ -493,7 +486,7 @@ def remove_file_from_S3(path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + path_to_sample_file.name
+            Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
@@ -513,7 +506,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     record = query_database(
         query=f"""
             SELECT * FROM annualUsageCollectionTracking WHERE
@@ -545,7 +538,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name
+            Key=TEST_NON_COUNTER_FILE_PATH + file_name
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
@@ -564,7 +557,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
         engine=engine,
@@ -600,11 +593,11 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
-    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}`"))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}`"))
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
-        bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS,
+        bucket_path=TEST_NON_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
@@ -613,7 +606,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET_FOR_TESTS + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=TEST_NON_COUNTER_FILE_PATH + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
         log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
@@ -631,15 +624,19 @@ def header_value():
     yield {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
-@pytest.fixture(scope='session')
-def most_recent_month_with_usage():
+@pytest.fixture
+def most_recent_month_with_usage(caplog):
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
 
     Many methods and functions call the `SUSHICallAndResponse.make_SUSHI_call()` method, so proper testing requires making a SUSHI call; for the PR, DR, TR, and IR, the call requires dates. As the most recent month with usage is unlikely to raise any errors, cause a problem with the check for previously loaded data, or return an overly large amount of data, its first and last day are used in the SUSHI API call. The two dates are returned together in a tuple and separated in the test function with index operators.
 
+    Args:
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     current_date = date.today()
     if current_date.day < 15:
         begin_month = current_date + relativedelta(months=-2)
@@ -667,7 +664,7 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     Returns:
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     df = query_database(
         query=f"""
             SELECT *
@@ -721,7 +718,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         URL,
         "reports",
         credentials,
-    ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+    ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     if isinstance(response[0], str):
         pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))

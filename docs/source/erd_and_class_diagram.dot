@@ -21,7 +21,10 @@ digraph erd_and_classes {
         notes_on_corrections_after_submission
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_fiscalYears [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         calculate_depreciated_ACRL_60b [shape="Mrecord"]
         calculate_depreciated_ACRL_63 [shape="Mrecord"]
         calculate_ACRL_61a [shape="Mrecord"]
@@ -43,7 +46,10 @@ digraph erd_and_classes {
         count
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_annualStatistics [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         add_annual_statistic_value [shape="Mrecord"]
     }
 
@@ -57,7 +63,10 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_vendors [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         get_statisticsSources_records [shape="Mrecord"]
         get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
@@ -78,7 +87,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_vendorNotes [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
     }
 
 
@@ -95,7 +107,10 @@ digraph erd_and_classes {
         ]
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_statisticsSources [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         fetch_SUSHI_information [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
         _harvest_single_report [shape="Mrecord"]
@@ -119,7 +134,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_statisticsSourceNotes [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
     }
 
 
@@ -137,7 +155,10 @@ digraph erd_and_classes {
         ]
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_resourceSources [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
         change_StatisticsSource [shape="Mrecord"]
@@ -159,7 +180,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_resourceSourceNotes [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
     }
 
 
@@ -172,7 +196,10 @@ digraph erd_and_classes {
         current_statistics_source
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_statisticsResourceSources [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
     }
 
 
@@ -191,7 +218,10 @@ digraph erd_and_classes {
         notes
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_annualUsageCollectionTracking [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
         collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
         download_nonstandard_usage_file [shape="Mrecord"]
@@ -243,7 +273,10 @@ digraph erd_and_classes {
         report_creation_date
 
         // Methods
-        state_data_types [shape="Mrecord"]
+        state_data_types_in_COUNTERData [
+            shape="Mrecord"
+            label="state_data_types"
+        ]
     }
 
 
@@ -275,7 +308,10 @@ digraph erd_and_classes {
         COUNTER_report_files
 
         // Methods
-        create_dataframe [shape="Mrecord"]
+        create_dataframe_in_UploadCOUNTERReports [
+            shape="Mrecord"
+            label="create_dataframe"
+        ]
     }
 
 
@@ -283,23 +319,21 @@ digraph erd_and_classes {
         label="CLASS: ConvertJSONDictToDataframe"
 
         // Attributes
-        RESOURCE_NAME_LENGTH
-        PUBLISHER_LENGTH
-        PUBLISHER_ID_LENGTH
-        PLATFORM_LENGTH
-        AUTHORS_LENGTH
-        DOI_LENGTH
-        PROPRIETARY_ID_LENGTH
-        URI_LENGTH
-        proprietary_ID_regex
-        author_regex
         SUSHI_JSON_dictionary
+        report_type
+        statistics_source_ID
 
         // Methods
-        create_dataframe [shape="Mrecord"]
+        create_dataframe_in_ConvertJSONDictToDataframe [
+            shape="Mrecord"
+            label="create_dataframe"
+        ]
         _transform_R5_JSON [shape="Mrecord"]
         _transform_R5b1_JSON [shape="Mrecord"]
         _serialize_dates [shape="Mrecord"]
+        _extraction_start_logging_statement [shape="Mrecord"]
+        _extraction_complete_logging_statement [shape="Mrecord"]
+        _increase_field_length_logging_statement [shape="Mrecord"]
     }
 
 

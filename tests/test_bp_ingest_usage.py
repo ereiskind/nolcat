@@ -1,11 +1,8 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-09 ##########
 
 import pytest
-import logging
 from random import choice
-from pathlib import Path
-import os
 import re
 from ast import literal_eval
 from filecmp import cmp
@@ -17,9 +14,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import prepare_HTML_page_for_comparison
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.ingest_usage import *
 
 log = logging.getLogger(__name__)
@@ -46,8 +41,8 @@ def test_ingest_usage_homepage(client):
 @pytest.mark.slow
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
     log.debug(f"The files being uploaded to the database are:\n{format_list_for_stdout(form_submissions)}")
@@ -82,11 +77,14 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
 
 
 @pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])
-def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
+def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog):
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
     
     This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
+
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
@@ -150,7 +148,7 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
     
     This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. The function is tested here because the immediately preceding test function loads exactly seven records into the `COUNTERData` relation, and so if it passes, the won't fail due to the last records in `COUNTERData` not containing the expected data.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     df = match_direct_SUSHI_harvest_result(engine, 7, caplog)
     match_result_df = pd.DataFrame(
         [
@@ -175,7 +173,9 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     page = client.get(
         '/ingest_usage/harvest',
@@ -214,9 +214,9 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` called in `StatisticsSources.collect_usage_statistics()` and for `query_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     df = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
@@ -235,7 +235,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )
+    )  #ToDo: PARQUET IN S3--This creates a parquet file in S3; the file needs to be checked for and then removed
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -249,7 +249,8 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()` and `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
     
     page = client.get(
         '/ingest_usage/upload-non-COUNTER',
@@ -303,7 +304,8 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
 
 def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
 
     #Section: Create Form Submission
     if path_to_sample_file.suffix == '.json':
@@ -351,22 +353,22 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     #Section: Confirm Successful S3 Upload
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+        Prefix=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
     bucket_contents = list_objects_response.get('Contents')
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for name in files_in_bucket]
+        files_in_bucket = [name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for name in files_in_bucket]
         assert file_name in files_in_bucket
     else:
         assert False  # Nothing in bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Key=TEST_NON_COUNTER_FILE_PATH + file_name,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

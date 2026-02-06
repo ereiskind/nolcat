@@ -1,17 +1,14 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-08 ##########
 
 import pytest
-import logging
-from pathlib import Path
 from random import choice
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import mock_FileStorage_object  # Direct import is required because it isn't a fixture
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
-from nolcat.app import *
 
 log = logging.getLogger(__name__)
 

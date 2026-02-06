@@ -1,8 +1,7 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2025-10-08 ##########
 
 import pytest
-import logging
 from pathlib import Path
 import os
 import random
@@ -14,9 +13,7 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.initialization import *
 
 log = logging.getLogger(__name__)
@@ -377,7 +374,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 @pytest.mark.dependency()
 def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -456,7 +453,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
 def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -569,8 +566,8 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.slow
 def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
-    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     #Section: Submit Forms via HTTP POST
     form_submissions = {
@@ -624,7 +621,8 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
 
     page = client.get(
         '/initialization/initialization-page-4',
@@ -712,7 +710,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=PATH_WITHIN_BUCKET_FOR_TESTS + file
+                Key=TEST_NON_COUNTER_FILE_PATH + file
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
@@ -721,7 +719,8 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
     """Tests uploading the files with non-COUNTER usage statistics."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()` and `create_AUCT_SelectField_options()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
 
     #Section: Create Form Submission
     df = query_database(
@@ -813,15 +812,15 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}",
+        Prefix=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
     files_in_bucket = []
     bucket_contents = list_objects_response.get('Contents')
     if bucket_contents:
         for contents_dict in bucket_contents:
             files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for file_name in files_in_bucket]
+        files_in_bucket = [file_name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for file_name in files_in_bucket]
         assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
         assert False  # Nothing in bucket
