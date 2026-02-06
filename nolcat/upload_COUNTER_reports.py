@@ -91,13 +91,14 @@ class UploadCOUNTERReports:
                 while looking_for_header_row:
                     count_of_month_labels = 0
                     for cell in sheet[header_row_number]:
+                        log.error(f"`cell`: {cell}")  #TEST: temp
                         if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or dates_as_string_regex.fullmatch(cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
-                        log.debug(f"The table's header is at row {header_row_number}.")
+                        log.error(f"The table's header is at row {header_row_number}.")  #TEST: temp level, reset to `debug`
                         looking_for_header_row = False
                         break
                     else:
@@ -115,7 +116,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")
+                        log.error(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  #TEST: temp level, reset to `debug`
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
