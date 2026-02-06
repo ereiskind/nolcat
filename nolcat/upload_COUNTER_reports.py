@@ -87,20 +87,17 @@ class UploadCOUNTERReports:
                 # To handle both R4 and R5 reports, as well as noncompliance with the standard in regards to empty rows in and after the header, the header row of the table is searched for instead of using any presets
                 looking_for_header_row = True
                 header_row_number = 1
-                log.error(f"`sheet` (type {type(sheet)}): {sheet}")  #TEST: temp
 
                 while looking_for_header_row:
                     count_of_month_labels = 0
-                    log.error(f"`sheet[header_row_number]` (type {type(sheet[header_row_number])}): {sheet[header_row_number]}")  #TEST: temp
                     for cell in sheet[header_row_number]:
-                        log.error(f"`cell.value` (type {type(cell.value)}): {cell.value}")  #TEST: temp
                         if cell.value is None or isinstance(cell.value, int) or isinstance(cell.value, float):
                             continue  # `None` and integers/floats (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or dates_as_string_regex.fullmatch(cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
-                        log.error(f"The table's header is at row {header_row_number}.")  #TEST: temp level, reset to `debug`
+                        log.debug(f"The table's header is at row {header_row_number}.")
                         looking_for_header_row = False
                         break
                     else:
@@ -118,7 +115,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.error(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  #TEST: temp level, reset to `debug`
+                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
@@ -403,21 +400,21 @@ class UploadCOUNTERReports:
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 if "YOP" in df_dtypes.keys():
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
-                log.debug(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
+                log.error(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     if field == "YOP":  # At this point, is `int16`, which doesn't accept null values
                         df[field] = df[field].replace(["`None`"], [0])  # Values must be enclosed in lists for method to work
                     else:
                         df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
-                log.debug(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")
+                log.error(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
                 df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
                     df['YOP'] = df['YOP'].replace(0, pd.NA)
-                log.debug(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")
+                log.error(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
-                log.debug(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")
+                log.error(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
