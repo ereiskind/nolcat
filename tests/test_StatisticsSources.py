@@ -80,9 +80,13 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+    fixture_retrieval_code = str(choice(retrieval_codes))
     statistics_source_name = query_database(  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; the `choice()` function ensures the retrieval code chosen is in the test data
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice(['1', '2', '3'])}",
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice([
+            '741ebb85-02ad-4ad0-ae4f-8b268f528cb0',
+            '6839b3e4-1a57-413e-9b3f-9faa4df06d54',
+            'dd585e77-6351-4548-b679-f2d337d15cdb',
+        ])}",
         engine=engine,
     )
     if isinstance(statistics_source_name, str):
@@ -101,7 +105,8 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
     
-    Regex taken from https://stackoverflow.com/a/3809435. """
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
@@ -109,7 +114,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display."""
-    # credentials = StatisticsSources_fixture.fetch_SUSHI_information(False)
+    # credentials = StatisticsSources_fixture.fetch_SUSHI_information(code_of_practice=False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
 
@@ -312,6 +317,9 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
     assert len(flash_message_list) == 1
+
+
+#ToDo: Is a test for `_harvest_R5_SUSHI()` with a specified code of practice needed?
 
 
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`

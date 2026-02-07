@@ -7,6 +7,7 @@ import json
 import re
 from datetime import date
 import calendar
+from urllib.parse import urlparse
 from sqlalchemy import log as SQLAlchemy_log
 from sqlalchemy import text
 from flask import Flask
@@ -18,6 +19,7 @@ import pandas as pd
 from numpy import squeeze
 import boto3
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
+import requests
 
 from .statements import *
 
@@ -220,6 +222,25 @@ def create_app():
 
 
     return app
+
+
+class InvalidAPIResponseError(Exception):
+    """An error for when an API returns a value that doesn't contain the expected information.
+
+    NoLCAT makes frequent use of API calls. These APIs request information, and their responses are processed based on how the requested information is returned. This exception is raised when the API returns an unexpected value which doesn't contain the requested information.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Create subclasses for SUSHI responses
+    def __init__(self, message):
+        """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with an API response: {self.message}")
 
 
 def last_day_of_month(original_date):
@@ -866,3 +887,84 @@ def format_ISSN(unformatted_ISSN):
     else:
         log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
         return unformatted_ISSN
+
+
+def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
+    """A function for getting the SUSHI URL for a given statistics source, represented by its COUNTER Registry ID.
+
+    Args:
+        registry_ID (str): the COUNTER Registry ID
+        code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+    
+    Returns:
+        tuple: the SUSHI URL (str); the code of practice (str)
+    
+    Raises:
+        InvalidAPIResponseError: if the JSON doesn't contain a valid URL
+    """
+    log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
+    #SECTION: Retrieve Data from COUNTER Registry
+    API_response = requests.get(f"https://registry.countermetrics.org/api/v1/platform/{registry_ID}")
+    try:
+        API_response = API_response.json()
+    except:
+        try:
+            API_response = json.loads(API_response.content.decode('utf-8').replace("'", '"'))
+        except:
+            try:
+                modified_API_response = API_response.text.replace("'", '"')
+                places_to_insert_space = re.finditer(r'":[^\s]', modified_API_response)
+                i = 0
+                for location in places_to_insert_space:
+                    modified_API_response = f'{modified_API_response[:location.span()[0]+i]}": {modified_API_response[location.span()[0]+(2+i):]}'
+                    i += 1
+                API_response = json.loads(modified_API_response)
+            except:
+                return json.JSONDecodeError("The API response couldn't be converted into a Python dict.") 
+
+    #SECTION: Extract URL
+    if API_response.get('sushi_services') and API_response['sushi_services'] != []:
+        if len(API_response['sushi_services']) == 1:
+            if not code_of_practice or API_response['sushi_services'][0]['counter_release'] == code_of_practice:
+                temp_URL = API_response['sushi_services'][0]['url']
+                URL_CoP = API_response['sushi_services'][0]['counter_release']
+                log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                if API_response['sushi_services'][0]['last_audit']['audit_status'] == "Audit expired":
+                    log.warning(f"The SUSHI URL for registry ID {registry_ID} has expired.")
+            else:
+                return InvalidAPIResponseError("The requested code of practice isn't in the COUNTER Registry.")
+        find_current_audit = {}
+        for release_data in API_response['sushi_services']:
+            if code_of_practice:
+                if release_data['counter_release'] == code_of_practice:
+                    temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
+            else:
+                for audit_info in release_data['last_audit']:
+                    find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
+                    log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
+    else:
+        return InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
+    
+    if find_current_audit:
+        currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
+        if len(currently_valid_release) == 1:
+            for release_data in API_response['sushi_services']:
+                if release_data['counter_release'] == currently_valid_release[0]:
+                    temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
+        elif len(currently_valid_release) == 0:
+            return InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
+        else:
+            return InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
+    
+    #SECTION: Prepare URL Formatting
+    parsed_URL = urlparse(temp_URL)
+    URL_path_parts = [i for i in parsed_URL.path.split('/') if i != ""]
+    if len(URL_path_parts) > 0 and URL_path_parts[-1] == "reports":
+        URL_path_parts = URL_path_parts[:-1]
+    URL = "https://" + parsed_URL.netloc + "/" + "/".join(URL_path_parts)+ "/"
+    log.info(f"Retrieved SUSHI URL {URL} from the COUNTER Registry.")
+    return (URL, URL_CoP)

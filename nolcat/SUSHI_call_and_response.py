@@ -6,7 +6,6 @@ import ast
 from datetime import datetime
 from pathlib import Path
 import random
-import requests
 from requests import Timeout
 import pandas as pd
 import pyinputplus
@@ -285,7 +284,7 @@ class SUSHICallAndResponse:
         Returns:
             tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
         """
-        log.info("Starting `_convert_Response_to_JSON()`.")
+        log.info("Starting `_convert_Response_to_JSON()`.")  #ToDo: Can this be cleaned up by using `requests.Response.json()` and other conversions from `fetch_URL_from_COUNTER_Registry()`?
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
@@ -554,7 +553,7 @@ class SUSHICallAndResponse:
                     statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                         statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                         statistics_source_name = str(df.at[0,'statistics_source_name']),
-                        statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                        statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']),
                         vendor_ID = int(df.at[0,'vendor_ID']),
                     )  # Without the `int` constructors, a numpy int type is used
                     log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
@@ -570,7 +569,7 @@ class SUSHICallAndResponse:
         elif error_code == '1000' or error_code == '1010' or error_code == '1011' or error_code == '1020' or error_code == '3031':
             message = message + " Try the call again later."
         elif error_code == '2000' or error_code == '2010' or error_code == '2020':
-            message = message + " Check and Update the credentials in the R5 SUSHI credentials JSON, then try the call again."
+            message = message + " Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again."
         elif error_code == '3020' :
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
         log.error(message)

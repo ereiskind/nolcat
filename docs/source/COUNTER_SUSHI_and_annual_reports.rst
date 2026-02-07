@@ -118,9 +118,24 @@ COUNTER Code of Practice 5.1 was released 2023-05-05, and it brought a few chang
 
 * The Access_Type terms have been clarified
 
-The CoP used for 5.1 and beyond is specified in the URL, so the URL used determines the CoP. While the instructions indicate the URL should remain the same, with the release being in the URL as the first part of the call path, there is no guarantee of this. While a statistics source's current CoP and URL could be pulled from the COUNTER registry, doing so would give the user no control over which CoP is used during transition periods.
+The CoP used for 5.1 and beyond is specified in the URL, so the URL used determines the CoP. While the instructions indicate the URL should remain the same, with the release being in the URL as the first part of the call path, there is no guarantee of this, so the URL is pulled from the COUNTER registry using the registry ID in the `StatisticsSources.statistics_source_retrieval_code` attribute/field. The CoP can be specified at the time of the SUSHI pull; if none is specified, the CoP of the most recent currently valid audit is used.
 
 For the official information about transitioning from R5 to R5.1, see https://cop5.projectcounter.org/en/5.1/13-transitioning/03-transitioning-from-counter-r5-to-r51.html.
+
+The SUSHI Credential CSV
+************************
+The SUSHI credentials are saved in a CSV stored in the AWS instance and copied to the container through an operation in the Dockerfile. It contains the fields
+
+* **statistics_source_retrieval_code**: the COUNTER Registry ID for the statistics source or `placeholder` followed by a number if a registry ID is unavailable; this maps to the `StatisticsSources` attribute of the same name
+* **URL**: for all placeholder values, the SUSHI URL (needs to end in slash)
+* **R5_customer_ID**
+* **R5_requestor_ID**
+* **R5_API_key**
+* **R5_platform**
+* **R5.1_customer_ID**
+* **R5.1_requestor_ID**
+* **R5.1_API_key**
+* **R5.1_platform**
 
 Annual Usage Statistics
 ***********************

@@ -166,13 +166,17 @@ def harvest_SUSHI_statistics(testing):
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
             statistics_source_ID = int(df.at[0,'statistics_source_ID']),
             statistics_source_name = str(df.at[0,'statistics_source_name']),
-            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']),
             vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
         log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
+        if form.code_of_practice.data == 'null':
+            code_of_practice = None
+        else:
+            code_of_practice = form.code_of_practice.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
@@ -194,6 +198,7 @@ def harvest_SUSHI_statistics(testing):
                 begin_date,
                 end_date,
                 report_to_harvest,
+                code_of_practice,
                 bucket_path,
             )
             log.info(result_message)

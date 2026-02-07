@@ -94,7 +94,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     StatisticsSources_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
         statistics_source_ID = int(record.at[0,'statistics_source_ID']),
         statistics_source_name = str(record.at[0,'statistics_source_name']),
-        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']),
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))

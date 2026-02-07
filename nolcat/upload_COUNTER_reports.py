@@ -91,8 +91,8 @@ class UploadCOUNTERReports:
                 while looking_for_header_row:
                     count_of_month_labels = 0
                     for cell in sheet[header_row_number]:
-                        if cell.value is None or isinstance(cell.value, int):
-                            continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
+                        if cell.value is None or isinstance(cell.value, int) or isinstance(cell.value, float):
+                            continue  # `None` and integers/floats (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or dates_as_string_regex.fullmatch(cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
@@ -408,6 +408,8 @@ class UploadCOUNTERReports:
                         df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")
+                if "YOP" in df_dtypes.keys():
+                    df['YOP'] = df['YOP'].apply(lambda cell_value: str(cell_value)[:-2] if str(cell_value).endswith(".0") else cell_value)
                 df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype

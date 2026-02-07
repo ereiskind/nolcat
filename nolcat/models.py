@@ -8,8 +8,11 @@ import re
 from datetime import date
 from datetime import datetime
 import calendar
+import csv
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+import requests
+from urllib.parse import urlparse
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
@@ -35,12 +38,12 @@ URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
 def PATH_TO_CREDENTIALS_FILE():
     """Provides the file path to the SUSHI credentials file as a string.
     
-    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
+    The SUSHI credentials are stored in a CSV file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.csv')
     if file_path.exists():
         log.debug(check_if_file_exists_statement(file_path))
         return str(file_path)
@@ -401,7 +404,7 @@ class FiscalYears(db.Model):
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
@@ -463,7 +466,7 @@ class FiscalYears(db.Model):
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
                 statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
-                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
@@ -560,7 +563,6 @@ class Vendors(db.Model):
     Attributes:
         self.vendor_ID (int): the primary key
         self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
-        self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -572,7 +574,6 @@ class Vendors(db.Model):
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80), nullable=False)
-    alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
@@ -583,7 +584,7 @@ class Vendors(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}', 'alma_vendor_code': '{self.alma_vendor_code}'>"
+        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}'"
 
 
     @hybrid_method
@@ -592,7 +593,6 @@ class Vendors(db.Model):
         """This method provides a dictionary of the attributes and their data types."""
         return {
             "vendor_name": 'string',
-            "alma_vendor_code": 'string',
         }
 
 
@@ -712,7 +712,7 @@ class StatisticsSources(db.Model):
     Attributes:
         self.statistics_source_ID (int): the primary key
         self.statistics_source_name (string): the name of the statistics source
-        self.statistics_source_retrieval_code (string): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
+        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER Registry
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -728,7 +728,7 @@ class StatisticsSources(db.Model):
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100), nullable=False)
-    statistics_source_retrieval_code = db.Column(db.String(30))
+    statistics_source_retrieval_code = db.Column(db.String(36))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
@@ -756,51 +756,59 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def fetch_SUSHI_information(self, for_API_call=True):
+    def fetch_SUSHI_information(self, code_of_practice=None, for_API_call=True):
         """A method for fetching the information required to make a SUSHI API call for the statistics source.
 
-        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+        This method fetches the information for making a SUSHI API call from a CSV file and the COUNTER Registry, then returns them for use in an API call or for display to the user.
 
         Args:
-            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+            code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call instead of for display to the user; default is `True`
         
         Returns:
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
+        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
+        #ALERT: Change file extension in Dockerfile
         #Section: Retrieve Data
-        #Subsection: Retrieve Data from JSON
-        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-            SUSHI_data_file = json.load(JSON_file)
-            log.debug("JSON with SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
-                for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
-                        log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                        credentials = dict(
-                            URL = statistics_source_dict['statistics']['online_location'],
-                            customer_id = statistics_source_dict['statistics']['user_id']
-                        )
-
-                        try:
-                            credentials['requestor_id'] = statistics_source_dict['statistics']['user_password']
-                        except:
-                            pass
-
-                        try:
-                            credentials['api_key'] = statistics_source_dict['statistics']['user_pass_note']
-                        except:
-                            pass
-
-                        try:
-                            credentials['platform'] = statistics_source_dict['statistics']['delivery_address']
-                        except:
-                            pass
-
-        #Subsection: Retrieve Data from Alma
-        #ToDo: When credentials are in Alma, create this functionality
-
+        with open(PATH_TO_CREDENTIALS_FILE()) as file:
+            CSV_data = csv.DictReader(file)
+            log.debug("SUSHI credentials loaded.")
+            for statistics_source_credentials in CSV_data:
+                if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
+                    log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                    credentials = dict(statistics_source_credentials['customer_ID'])
+                    if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                        credentials['URL'] = statistics_source_credentials['URL']
+                        if "r51" in credentials['URL']:
+                            code_of_practice = "5.1"
+                        else:
+                            code_of_practice = "5"
+                    else:
+                        credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
+                        if isinstance(credentials['URL'], Exception):
+                            return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
+                
+                #statistics_source_retrieval_code	URL					R5.1_customer_ID	R5.1_requestor_ID	R5.1_API_key	R5.1_platform
+                if code_of_practice == "5":
+                    if statistics_source_credentials.get('R5_customer_ID'):
+                        credentials['customer_id'] = statistics_source_credentials['R5_customer_ID']
+                    if statistics_source_credentials.get('R5_requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['R5_requestor_ID']
+                    if statistics_source_credentials.get('R5_API_key'):
+                        credentials['api_key'] = statistics_source_credentials['R5_API_key']
+                    if statistics_source_credentials.get('R5_platform'):
+                        credentials['platform'] = statistics_source_credentials['R5_platform']
+                elif code_of_practice == "5.1":
+                    if statistics_source_credentials.get('R5.1_customer_ID'):
+                        credentials['customer_id'] = statistics_source_credentials['R5.1_customer_ID']
+                    if statistics_source_credentials.get('R5.1_requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['R5.1_requestor_ID']
+                    if statistics_source_credentials.get('R5.1_API_key'):
+                        credentials['api_key'] = statistics_source_credentials['R5.1_API_key']
+                    if statistics_source_credentials.get('R5.1_platform'):
+                        credentials['platform'] = statistics_source_credentials['R5.1_platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
@@ -812,7 +820,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -821,6 +829,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
         Returns:
@@ -832,7 +841,7 @@ class StatisticsSources(db.Model):
             message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
             log.error(message)
             return (message, {'dates': [message]})
-        SUSHI_info = self.fetch_SUSHI_information()
+        SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
@@ -840,7 +849,12 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call(bucket_path)
+        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+            self.statistics_source_name,
+            SUSHI_info['URL'],
+            "status",
+            SUSHI_parameters
+        ).make_SUSHI_call(bucket_path)
         all_flashed_statements['status'] = flash_message_list
         if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
@@ -892,7 +906,12 @@ class StatisticsSources(db.Model):
             #Section: Get List of Resources
             #Subsection: Make API Call
             log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_info['URL'],
+                "reports",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
@@ -1028,7 +1047,12 @@ class StatisticsSources(db.Model):
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                        self.statistics_source_name,
+                        SUSHI_URL,
+                        f"reports/{report.lower()}",
+                        SUSHI_parameters
+                    ).make_SUSHI_call(bucket_path)
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
                     if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
@@ -1083,7 +1107,12 @@ class StatisticsSources(db.Model):
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_URL,
+                f"reports/{report.lower()}",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             if isinstance(SUSHI_data_response, str):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
@@ -1157,7 +1186,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PATH_WITHIN_BUCKET):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1165,6 +1194,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
         
@@ -1176,6 +1206,7 @@ class StatisticsSources(db.Model):
             usage_start_date,
             usage_end_date,
             report_to_harvest,
+            code_of_practice,
             bucket_path,
             )
         if isinstance(df, str):
@@ -1250,7 +1281,7 @@ class StatisticsSourceNotes(db.Model):
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
 
-    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains.
+    Resource sources are often called platforms. Resource sources are often declared distinct by virtue of having different HTTP domains.
     
     Attributes:
         self.resource_source_ID (int): the primary key
@@ -1582,7 +1613,7 @@ class AnnualUsageCollectionTracking(db.Model):
     def collect_annual_usage_statistics(self, bucket_path=PATH_WITHIN_BUCKET):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Args:
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
@@ -1619,7 +1650,7 @@ class AnnualUsageCollectionTracking(db.Model):
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
