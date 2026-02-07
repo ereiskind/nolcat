@@ -408,16 +408,9 @@ class UploadCOUNTERReports:
                         df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")
-                try:
-                    df = df.astype(df_dtypes)
-                except Exception as e:
-                    log.error(f"Exception: {e}")  #TEST: temp
-                    df = df.astype({k: v for (k, v) in df_dtypes.items() if k != "YOP"})
+                if "YOP" in df_dtypes.keys():
                     df['YOP'] = df['YOP'].apply(lambda cell_value: str(cell_value)[:-2] if str(cell_value).endswith(".0") else cell_value)
-                    #TEST: temp
-                    log.error(f"`COUNTERData.state_data_types()['YOP']`: {COUNTERData.state_data_types()['YOP']}")
-                    log.error(f"`df['YOP']`: {df['YOP']}")
-                    #TEST: end temp
+                df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
                     df['YOP'] = df['YOP'].replace(0, pd.NA)
