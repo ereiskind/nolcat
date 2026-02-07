@@ -400,7 +400,7 @@ class UploadCOUNTERReports:
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 if "YOP" in df_dtypes.keys():
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
-                log.error(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
+                log.debug(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     if field == "YOP":  # At this point, is `int16`, which doesn't accept null values
                         df[field] = df[field].replace(["`None`"], [0])  # Values must be enclosed in lists for method to work
@@ -410,12 +410,17 @@ class UploadCOUNTERReports:
                 log.error(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
                 df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
+                    #TEST: temp
+                    log.error(f"`COUNTERData.state_data_types()['YOP']`: {COUNTERData.state_data_types()['YOP']}")
+                    log.error(f"`df['YOP']`: {df['YOP']}")
+                    log.error(f"`'2014.0' in df['YOP']`: {'2014.0' in df['YOP']}")
+                    #TEST: end temp
                     df['YOP'] = df['YOP'].apply(lambda cell_value: str(cell_value)[:-2] if str(cell_value).endswith(".0") else cell_value)
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
                     df['YOP'] = df['YOP'].replace(0, pd.NA)
-                log.error(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
+                log.debug(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
-                log.error(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")  #TEST: temp level, revert to `debug`
+                log.debug(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
