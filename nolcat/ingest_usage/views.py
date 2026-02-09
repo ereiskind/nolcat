@@ -71,11 +71,11 @@ def upload_COUNTER_data():
             #    log.error(message)
             #    flash(message)
             #    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            if df is None:
-                flash(message_to_flash)
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            if message_to_flash:
-                messages_to_flash.append(message_to_flash)
+            #if df is None:
+            #    flash(message_to_flash)
+            #    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            #if message_to_flash:
+            #    messages_to_flash.append(message_to_flash)
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
