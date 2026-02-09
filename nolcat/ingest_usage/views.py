@@ -64,18 +64,18 @@ def upload_COUNTER_data():
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.debug(f"`COUNTERData` data:\n{df}\n")
             
-            #try:
-            #    df, message_to_flash = check_if_data_already_in_COUNTERData(df)
-            #except Exception as error:
-            #    message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-            #    log.error(message)
-            #    flash(message)
-            #    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            #if df is None:
-            #    flash(message_to_flash)
-            #    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            #if message_to_flash:
-            #    messages_to_flash.append(message_to_flash)
+            try:
+                df, message_to_flash = check_if_data_already_in_COUNTERData(df)
+            except Exception as error:
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                log.error(message)
+                flash(message)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if df is None:
+                flash(message_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if message_to_flash:
+                messages_to_flash.append(message_to_flash)
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
