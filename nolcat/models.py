@@ -1033,7 +1033,7 @@ class StatisticsSources(db.Model):
             tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
-        subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        subset_of_months_to_harvest = None #TEST: temp `self._check_if_data_in_database(report, start_date, end_date)`
         if isinstance(subset_of_months_to_harvest, list):
             if len(subset_of_months_to_harvest) == 0:
                 message = f"The database already has {report} usage for {self.statistics_source_name} for every month in the {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} date range."
