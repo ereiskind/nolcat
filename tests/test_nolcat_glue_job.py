@@ -5954,9 +5954,8 @@ def JSON_dicts_with_metadata(request):
 
 
 @pytest.mark.slow  # For IR tests
-def test_create_dataframe(tmp_path, JSON_dicts_with_metadata, caplog):
+def test_create_dataframe(tmp_path, JSON_dicts_with_metadata):
     """Tests converting JSONs as Python dicts to dataframes."""
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToDataframe')
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
