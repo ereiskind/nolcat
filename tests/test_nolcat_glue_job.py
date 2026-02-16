@@ -5206,6 +5206,8 @@ def R5b1_JSON_0_DR_relation():
         'access_method': COUNTERData.state_data_types()['access_method'],
         'metric_type': COUNTERData.state_data_types()['metric_type'],
         'usage_count': COUNTERData.state_data_types()['usage_count'],
+        'statistics_source_ID': COUNTERData.state_data_types()['statistics_source_ID'],
+        'report_type': COUNTERData.state_data_types()['report_type'],
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
