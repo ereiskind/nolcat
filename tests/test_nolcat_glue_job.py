@@ -6143,42 +6143,42 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json'
         report_type = "PR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_PR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_PR_relation)
     elif request.param == "R5_DR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '0_DR.json'
         report_type = "DR"
         statistics_source_ID = 0
-        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_0_DR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_0_DR_relation)
     elif request.param == "R5_TR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_TR.json'
         report_type = "TR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_TR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_TR_relation)
     elif request.param == "R5_IR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_IR.json'
         report_type = "IR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_IR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5_JSON_3_IR_relation)
     elif request.param == "R5b1_PR":
         JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_PR.json'
         report_type = "PR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_PR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_PR_relation)
     elif request.param == "R5b1_DR":
         JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '0_DR.json'
         report_type = "DR"
         statistics_source_ID = 0
-        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_0_DR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_0_DR_relation)
     elif request.param == "R5b1_TR":
         JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_TR.json'
         report_type = "TR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_TR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_TR_relation)
     elif request.param == "R5b1_IR":
         JSON_report_path = JSON_report_path / 'R5.1_COUNTER_JSONs_for_tests' / '3_IR.json'
         report_type = "IR"
         statistics_source_ID = 3
-        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation())
+        yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
     after = datetime.now()
     file_name = get_name_of_parquet_file_saved_to_S3(
         before,
