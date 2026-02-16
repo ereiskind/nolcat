@@ -719,6 +719,7 @@ def R5_JSON_3_PR_relation():
 def R5_JSON_0_DR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_DR.json` JSON."""
     log.info("Starting `R5_JSON_0_DR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database", "Regular", "Searches_Automated", "2019-10-01", 4942, "2019-07-01", 0, "DR"],
@@ -1139,6 +1140,8 @@ def R5_JSON_0_DR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -1146,6 +1149,7 @@ def R5_JSON_0_DR_relation():
 def R5_JSON_3_TR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_TR.json` JSON."""
     log.info("Starting `R5_JSON_3_TR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>", "Duke University Press", "Duke University Press", "10.1215/9780822387046", "Silverchair:989", "978-0-8223-8704-6", "Book", "Chapter", 2005, "Controlled", "Regular", "Total_Item_Investigations", "2019-12-01", 10, "2019-07-01", 3, "TR"],
@@ -1186,6 +1190,8 @@ def R5_JSON_3_TR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -1193,6 +1199,7 @@ def R5_JSON_3_TR_relation():
 def R5_JSON_3_IR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_IR.json` JSON."""
     log.info("Starting `R5_JSON_3_IR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["(Com)Post-Capitalism<subtitle>Cultivating a More-than-Human Economy in the Appalachian Anthropocene</subtitle>", "Duke University Press", "Duke University Press", "Bradley M. Jones", "2019-05-01", "VoR", "10.1215/22011919-7349347", "Silverchair:138280", None, "Article", 2019, "OA_Gold", "Regular", "Environmental Humanities", None, None, "Journal", None, "Silverchair:1000015", None, "2201-1919", "2201-1919", "Total_Item_Investigations", "2019-10-01", 6, "2019-07-01", 3, "IR"],
@@ -5029,6 +5036,8 @@ def R5_JSON_3_IR_relation():
     df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -5036,6 +5045,7 @@ def R5_JSON_3_IR_relation():
 def R5b1_JSON_3_PR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `3_PR.json` JSON."""
     log.info("Starting `R5b1_JSON_3_PR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["Duke University Press", "Book", "Regular", "Unique_Title_Investigations", "2024-09-01", 43, "2024-11-20", 3, "PR"],
@@ -5074,6 +5084,8 @@ def R5b1_JSON_3_PR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -5081,6 +5093,7 @@ def R5b1_JSON_3_PR_relation():
 def R5b1_JSON_0_DR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `0_DR.json` JSON."""
     log.info("Starting `R5b1_JSON_0_DR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database_Aggregated", "Regular", "Searches_Automated", "2024-11-01", 2123, "2025-01-15", 0, "DR"],
@@ -5212,6 +5225,8 @@ def R5b1_JSON_0_DR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -5219,6 +5234,7 @@ def R5b1_JSON_0_DR_relation():
 def R5b1_JSON_3_TR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `3_TR.json` JSON."""
     log.info("Starting `R5b1_JSON_3_TR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["American Literature", "Duke University Press", "Duke University Press", None, "Silverchair:1000004", None, "0002-9831", "1527-2117", "Journal", 2023, "Controlled", "Regular", "Unique_Item_Investigations", "2024-09-01", 1, "2025-01-15", 3, "TR"],
@@ -5496,6 +5512,8 @@ def R5b1_JSON_3_TR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
@@ -5503,6 +5521,7 @@ def R5b1_JSON_3_TR_relation():
 def R5b1_JSON_3_IR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `3_IR.json` JSON."""
     log.info("Starting `R5b1_JSON_3_IR_relation()`.")
+    '''
     df = pd.DataFrame(
         [
             ["- FSU Sociology Professor Named Director of Claude Pepper Center", "Targeted News Service", "ProQuest", None, "2022-05-10", None, None, "ProQuest:2661419826", "Other", 2022, "Controlled", "Regular", None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2024-11-01", 2, "2025-01-15", 3, "IR"],
@@ -5929,6 +5948,8 @@ def R5b1_JSON_3_IR_relation():
     df['publication_date'] = pd.to_datetime(df['publication_date'])
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+    '''
+    df = None
     return df
 
 
