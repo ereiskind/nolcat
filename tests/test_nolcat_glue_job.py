@@ -5080,7 +5080,6 @@ def R5b1_JSON_3_PR_relation():
 def R5b1_JSON_0_DR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `0_DR.json` JSON."""
     log.info("Starting `R5b1_JSON_0_DR_relation()`.")
-    '''
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database_Aggregated", "Regular", "Searches_Automated", "2024-11-01", 2123, "2025-01-15", 0, "DR"],
@@ -5212,8 +5211,6 @@ def R5b1_JSON_0_DR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    '''
-    df = None
     return df
 
 
@@ -5946,7 +5943,7 @@ def R5b1_JSON_3_IR_relation():
     "R5_TR",
     "R5_IR",
     "R5b1_PR",
-    #TEST: `"R5b1_DR",` commented out for working on TypeError
+    "R5b1_DR",
     #TEST: `"R5b1_TR",` commented out for working on TypeError
     #TEST: `"R5b1_IR",` commented out for working on TypeError
 ])
