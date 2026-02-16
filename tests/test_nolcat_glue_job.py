@@ -1145,7 +1145,6 @@ def R5_JSON_0_DR_relation():
 def R5_JSON_3_TR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_TR.json` JSON."""
     log.info("Starting `R5_JSON_3_TR_relation()`.")
-    '''
     df = pd.DataFrame(
         [
             ["Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>", "Duke University Press", "Duke University Press", "10.1215/9780822387046", "Silverchair:989", "978-0-8223-8704-6", "Book", "Chapter", 2005, "Controlled", "Regular", "Total_Item_Investigations", "2019-12-01", 10, "2019-07-01", 3, "TR"],
@@ -1186,8 +1185,6 @@ def R5_JSON_3_TR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    '''
-    df = None
     return df
 
 
@@ -5952,7 +5949,7 @@ def R5b1_JSON_3_IR_relation():
 @pytest.fixture(params=[
     "R5_PR",
     "R5_DR",
-    #TEST: `"R5_TR",` commented out for working on TypeError
+    "R5_TR",
     #TEST: `"R5_IR",` commented out for working on TypeError
     #TEST: `"R5b1_PR",` commented out for working on TypeError
     #TEST: `"R5b1_DR",` commented out for working on TypeError
