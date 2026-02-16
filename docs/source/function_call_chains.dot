@@ -1166,6 +1166,8 @@ digraph function_call_chains {
     match_direct_SUSHI_harvest_result -> engine
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
     COUNTER_reports_offered_by_statistics_source -> successful_SUSHI_call_statement
+    get_name_of_parquet_file_saved_to_S3 -> format_list_for_stdout
+    get_name_of_parquet_file_saved_to_S3 -> parquet_file_name_regex
 
 
     subgraph cluster_test_nolcat_glue_job {

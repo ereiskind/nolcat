@@ -778,7 +778,18 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
     log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
     file_name = set(bucket_contents) & set(possible_file_names)
-    return list(file_name)[0]
+    try:
+        return list(file_name)[0]
+    except IndexError:
+        parquet_file_names_in_bucket = [file for file in bucket_contents if parquet_file_name_regex().fullmatch(file)]
+        possible_name_matches = []
+        for file_name in parquet_file_names_in_bucket:
+            name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
+            file_extension = seconds_and_file_extension.split(".")[0]
+            for possible_file_name in possible_file_names:
+                if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
+                    possible_name_matches.append(file_name)
+        return possible_name_matches[0]
 
 
 #Section: Replacement Classes
