@@ -23,7 +23,7 @@ digraph package_dependencies {
 
         Package included in 'requirements.txt`: `color="#782F40"`
         Package directly included in 'requirements.txt`: `penwidth=4`
-        Packages in 'requirements.txt' as automated dependencies: `style="bold"`
+        Packages in 'requirements.txt' as automated dependencies: `style="bold"` (may need to be changed to narrower penwidth in future)
     */
     /* Edge Types
         Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
@@ -175,6 +175,15 @@ digraph package_dependencies {
     docutils [
         label="\N==0.21.2"
         shape="box"
+    ]
+    docutils [
+        label="\N==0.21.2"
+        // When `awscli`included --> 0.16
+        shape="box"
+        /*
+        awscli 1.38.* requires docutils<0.17 and >=0.10
+        sphinx 7.3.7 requires docutils<0.22,>=0.18.1
+        */
     ]
 
     "et-xmlfile" [
@@ -582,6 +591,7 @@ digraph package_dependencies {
 
     Sphinx [
         label="\N==7.3.7"
+        // With `awscli`, use 5.3.0
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
