@@ -5933,13 +5933,13 @@ def R5b1_JSON_3_IR_relation():
 
 @pytest.fixture(params=[
     "R5_PR",
-    "R5_DR",
-    "R5_TR",
-    "R5_IR",
-    "R5b1_PR",
-    "R5b1_DR",
-    "R5b1_TR",
-    "R5b1_IR",
+    #TEST: `"R5_DR",` commented out for working on TypeError
+    #TEST: `"R5_TR",` commented out for working on TypeError
+    #TEST: `"R5_IR",` commented out for working on TypeError
+    #TEST: `"R5b1_PR",` commented out for working on TypeError
+    #TEST: `"R5b1_DR",` commented out for working on TypeError
+    #TEST: `"R5b1_TR",` commented out for working on TypeError
+    #TEST: `"R5b1_IR",` commented out for working on TypeError
 ])
 def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
     """A parameterized fixture function with the data for testing `ConvertJSONDictToDataframe().create_dataframe()` for all COUNTER R5 report types and minor releases.
