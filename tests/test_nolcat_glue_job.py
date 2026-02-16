@@ -1192,7 +1192,6 @@ def R5_JSON_3_TR_relation():
 def R5_JSON_3_IR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_IR.json` JSON."""
     log.info("Starting `R5_JSON_3_IR_relation()`.")
-    '''
     df = pd.DataFrame(
         [
             ["(Com)Post-Capitalism<subtitle>Cultivating a More-than-Human Economy in the Appalachian Anthropocene</subtitle>", "Duke University Press", "Duke University Press", "Bradley M. Jones", "2019-05-01", "VoR", "10.1215/22011919-7349347", "Silverchair:138280", None, "Article", 2019, "OA_Gold", "Regular", "Environmental Humanities", None, None, "Journal", None, "Silverchair:1000015", None, "2201-1919", "2201-1919", "Total_Item_Investigations", "2019-10-01", 6, "2019-07-01", 3, "IR"],
@@ -5029,8 +5028,6 @@ def R5_JSON_3_IR_relation():
     df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    '''
-    df = None
     return df
 
 
@@ -5950,7 +5947,7 @@ def R5b1_JSON_3_IR_relation():
     "R5_PR",
     "R5_DR",
     "R5_TR",
-    #TEST: `"R5_IR",` commented out for working on TypeError
+    "R5_IR",
     #TEST: `"R5b1_PR",` commented out for working on TypeError
     #TEST: `"R5b1_DR",` commented out for working on TypeError
     #TEST: `"R5b1_TR",` commented out for working on TypeError
