@@ -5501,7 +5501,7 @@ def R5b1_JSON_3_IR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `3_IR.json` JSON."""
     log.info("Starting `R5b1_JSON_3_IR_relation()`.")
     df = pd.DataFrame(
-            [
+        [
             ["- FSU Sociology Professor Named Director of Claude Pepper Center", "Targeted News Service", "ProQuest", None, "2022-05-10", None, None, "ProQuest:2661419826", "Other", 2022, "Controlled", "Regular", None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2024-11-01", 2, "2025-01-15", 3, "IR"],
             ["- FSU Sociology Professor Named Director of Claude Pepper Center", "Targeted News Service", "ProQuest", None, "2022-05-10", None, None, "ProQuest:2661419826", "Other", 2022, "Controlled", "Regular", None, None, None, None, None, None, None, None, "Total_Item_Requests", "2024-11-01", 2, "2025-01-15", 3, "IR"],
             ["- FSU Sociology Professor Named Director of Claude Pepper Center", "Targeted News Service", "ProQuest", None, "2022-05-10", None, None, "ProQuest:2661419826", "Other", 2022, "Controlled", "Regular", None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2024-11-01", 2, "2025-01-15", 3, "IR"],
