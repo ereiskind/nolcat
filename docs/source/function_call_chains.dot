@@ -871,14 +871,6 @@ digraph function_call_chains {
             label="workbook_3_2020_relation"
             shape="box"
         ]
-        R5_JSON_3_PR_relation [shape="box"]
-        R5_JSON_0_DR_relation [shape="box"]
-        R5_JSON_3_TR_relation [shape="box"]
-        R5_JSON_3_IR_relation [shape="box"]
-        R5b1_JSON_3_PR_relation [shape="box"]
-        R5b1_JSON_0_DR_relation [shape="box"]
-        R5b1_JSON_3_TR_relation [shape="box"]
-        R5b1_JSON_3_IR_relation [shape="box"]
     }
     fiscalYears_relation_in_relations -> state_data_types_in_fiscalYears
     annualStatistics_relation_in_relations -> state_data_types_in_annualStatistics
@@ -904,14 +896,6 @@ digraph function_call_chains {
     workbook_1_2020_relation_in_relations -> state_data_types_in_COUNTERData
     workbook_2_2020_relation_in_relations -> state_data_types_in_COUNTERData
     workbook_3_2020_relation_in_relations -> state_data_types_in_COUNTERData
-    R5_JSON_3_PR_relation -> state_data_types_in_COUNTERData
-    R5_JSON_0_DR_relation -> state_data_types_in_COUNTERData
-    R5_JSON_3_TR_relation -> state_data_types_in_COUNTERData
-    R5_JSON_3_IR_relation -> state_data_types_in_COUNTERData
-    R5b1_JSON_3_PR_relation -> state_data_types_in_COUNTERData
-    R5b1_JSON_0_DR_relation -> state_data_types_in_COUNTERData
-    R5b1_JSON_3_TR_relation -> state_data_types_in_COUNTERData
-    R5b1_JSON_3_IR_relation -> state_data_types_in_COUNTERData
 
 
     subgraph cluster_conftest {
@@ -1310,6 +1294,38 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        R5_JSON_3_PR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5_JSON_0_DR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5_JSON_3_TR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5_JSON_3_IR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5b1_JSON_3_PR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5b1_JSON_0_DR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5b1_JSON_3_TR_relation [
+            style="dotted"
+            shape="box"
+        ]
+        R5b1_JSON_3_IR_relation [
+            style="dotted"
+            shape="box"
+        ]
         JSON_dicts_with_metadata [
             style="dotted"
             shape="box"
@@ -1383,6 +1399,14 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    R5_JSON_3_PR_relation -> state_data_types_in_COUNTERData
+    R5_JSON_0_DR_relation -> state_data_types_in_COUNTERData
+    R5_JSON_3_TR_relation -> state_data_types_in_COUNTERData
+    R5_JSON_3_IR_relation -> state_data_types_in_COUNTERData
+    R5b1_JSON_3_PR_relation -> state_data_types_in_COUNTERData
+    R5b1_JSON_0_DR_relation -> state_data_types_in_COUNTERData
+    R5b1_JSON_3_TR_relation -> state_data_types_in_COUNTERData
+    R5b1_JSON_3_IR_relation -> state_data_types_in_COUNTERData
     JSON_dicts_with_metadata -> R5_JSON_3_PR_relation
     JSON_dicts_with_metadata -> R5_JSON_0_DR_relation
     JSON_dicts_with_metadata -> R5_JSON_3_TR_relation
