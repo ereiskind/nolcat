@@ -5951,7 +5951,7 @@ def R5b1_JSON_3_IR_relation():
 
 @pytest.fixture(params=[
     "R5_PR",
-    #TEST: `"R5_DR",` commented out for working on TypeError
+    "R5_DR",
     #TEST: `"R5_TR",` commented out for working on TypeError
     #TEST: `"R5_IR",` commented out for working on TypeError
     #TEST: `"R5b1_PR",` commented out for working on TypeError
