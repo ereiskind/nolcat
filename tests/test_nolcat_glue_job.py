@@ -718,7 +718,6 @@ def R5_JSON_3_PR_relation():
 def R5_JSON_0_DR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `0_DR.json` JSON."""
     log.info("Starting `R5_JSON_0_DR_relation()`.")
-    '''
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database", "Regular", "Searches_Automated", "2019-10-01", 4942, "2019-07-01", 0, "DR"],
@@ -1139,8 +1138,6 @@ def R5_JSON_0_DR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    '''
-    df = None
     return df
 
 
