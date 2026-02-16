@@ -1158,6 +1158,8 @@ def file_extensions_and_mimetypes():
 def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_path):
     """The function for saving COUNTER usage data to S3 in parquet format.
 
+    The `datetime.now()` function returns single-digit values when only a single digit is needed, so possible single-digit values are padded like in ISO dates, which is what NoLCAT expects.
+
     Args:
         df (dataframe): the data to save in S3 as a parquet file
         statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
@@ -1171,7 +1173,7 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
     now = datetime.now()
     try:
         df.to_parquet(
-            f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month}-{now.day}T{now.hour}-{now.minute}-{now.second}.parquet",
+            f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet",
             index=False,
         )
     except Exception as error:
