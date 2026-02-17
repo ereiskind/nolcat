@@ -5218,7 +5218,6 @@ def R5b1_JSON_0_DR_relation():
 def R5b1_JSON_3_TR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the R5.1 `3_TR.json` JSON."""
     log.info("Starting `R5b1_JSON_3_TR_relation()`.")
-    '''
     df = pd.DataFrame(
         [
             ["American Literature", "Duke University Press", "Duke University Press", None, "Silverchair:1000004", None, "0002-9831", "1527-2117", "Journal", 2023, "Controlled", "Regular", "Unique_Item_Investigations", "2024-09-01", 1, "2025-01-15", 3, "TR"],
@@ -5496,8 +5495,6 @@ def R5b1_JSON_3_TR_relation():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    '''
-    df = None
     return df
 
 
@@ -5944,7 +5941,7 @@ def R5b1_JSON_3_IR_relation():
     "R5_IR",
     "R5b1_PR",
     "R5b1_DR",
-    #TEST: `"R5b1_TR",` commented out for working on TypeError
+    "R5b1_TR",
     #TEST: `"R5b1_IR",` commented out for working on TypeError
 ])
 def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
