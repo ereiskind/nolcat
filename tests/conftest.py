@@ -785,20 +785,16 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
         log.error(f"`parquet_file_names_in_bucket` (type {type(parquet_file_names_in_bucket)}): {parquet_file_names_in_bucket}")  #TEST: temp
         possible_name_matches = []
         for file_name in parquet_file_names_in_bucket:
-            #TEST: temp
-            testing = file_name.rpartition("-")
-            log.error(f"`testing` (type {type(testing)}): {testing}")
-            #TEST: end temp
-            #name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
-            #log.error(f"`name_sans_seconds` (type {type(name_sans_seconds)}): {name_sans_seconds}")  #TEST: temp
-            #file_extension = seconds_and_file_extension.split(".")[0]
-            #log.error(f"`file_extension` (type {type(file_extension)}): {file_extension}")  #TEST: temp
-            #for possible_file_name in possible_file_names:
-            #    log.error(f"`possible_file_name` (type {type(possible_file_name)}): {possible_file_name}")  #TEST: temp
-            #    if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
-            #        possible_name_matches.append(file_name)
-        #return possible_name_matches[0]
-        return None  #TEST: temp
+            if "-" in file_name:
+                name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
+                log.error(f"`name_sans_seconds` (type {type(name_sans_seconds)}): {name_sans_seconds}")  #TEST: temp
+                file_extension = seconds_and_file_extension.split(".")[0]
+                log.error(f"`file_extension` (type {type(file_extension)}): {file_extension}")  #TEST: temp
+                for possible_file_name in possible_file_names:
+                    log.error(f"`possible_file_name` (type {type(possible_file_name)}): {possible_file_name}")  #TEST: temp
+                    if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
+                        possible_name_matches.append(file_name)
+        return possible_name_matches[0]
 
 
 #Section: Replacement Classes
