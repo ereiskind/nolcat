@@ -412,7 +412,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 if data_not_in_df:
                     messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
             except Exception as error:
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))

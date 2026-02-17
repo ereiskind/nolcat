@@ -52,7 +52,7 @@ def upload_COUNTER_data():
                 else:
                     messages_to_flash = []
             except Exception as error:
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
