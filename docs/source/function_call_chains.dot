@@ -2357,6 +2357,7 @@ digraph function_call_chains {
     test_harvest_single_report -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
     test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report -> get_name_of_parquet_file_saved_to_S3
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex

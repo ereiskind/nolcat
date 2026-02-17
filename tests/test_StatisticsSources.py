@@ -16,6 +16,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
+from conftest import get_name_of_parquet_file_saved_to_S3
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
@@ -213,23 +214,31 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
+    report_checked = choice(reports_offered_by_StatisticsSource_fixture)
+    before = datetime.now()
     with client:
-        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
-            choice(reports_offered_by_StatisticsSource_fixture),
+        error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
+            report_checked,
             SUSHI_credentials_fixture['URL'],
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
-    if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
-        pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
-    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))
-    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    after = datetime.now()
+    if isinstance(error_message, str) and skip_test_due_to_SUSHI_error_regex().match(error_message):
+        pytest.skip(database_function_skip_statements(error_message, SUSHI_error=True))
+    elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
+        pytest.skip(database_function_skip_statements(error_message, no_data=True))
+    file_name = get_name_of_parquet_file_saved_to_S3(
+        before,
+        after,
+        StatisticsSources_fixture.statistics_source_ID,
+        report_checked,
+    )
+    log.error(f"`file_name` (type {type(file_name)}): {file_name}")  #TEST: temp
+    assert file_name.startswith(f"0_{report_checked}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
     assert isinstance(flash_message_list, list)
-    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
