@@ -2270,6 +2270,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        data_for_testing_harvest_single_report [
+            style="dotted"
+            shape="box"
+        ]
         test_harvest_single_report [
             style="dashed"
             shape="box"
@@ -2347,17 +2351,18 @@ digraph function_call_chains {
     test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
     test_check_if_data_in_database_yes -> StatisticsSources_fixture
     test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture
+    data_for_testing_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    data_for_testing_harvest_single_report -> most_recent_month_with_usage
     test_harvest_single_report -> _harvest_single_report
     test_harvest_single_report -> last_day_of_month
     test_harvest_single_report -> database_function_skip_statements
     test_harvest_single_report -> reports_with_no_usage_regex
     test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
     test_harvest_single_report -> client
-    test_harvest_single_report -> most_recent_month_with_usage
     test_harvest_single_report -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
     test_harvest_single_report -> get_name_of_parquet_file_saved_to_S3
+    test_harvest_single_report -> data_for_testing_harvest_single_report
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
@@ -2365,7 +2370,7 @@ digraph function_call_chains {
     test_harvest_single_report_with_partial_date_range -> client
     test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture
     test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report_with_partial_date_range -> data_for_testing_harvest_single_report
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI -> client
     test_harvest_R5_SUSHI -> most_recent_month_with_usage

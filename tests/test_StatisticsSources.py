@@ -206,15 +206,33 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
+@pytest.fixture
+def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
+    """A fixture with data to match for the next two tests.
+
+    The `test_harvest_single_report_with_partial_date_range()` needs to include a date range where some but not all of the data for the specified statistics source is loaded. The easiest way to ensure such a range is used is to have the range be the month used in `` and the preceding two months and for the report pulled to be the same. The month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` is used as the starting month to avoid being stopped by duplication check.
+
+    Args:
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+
+    Yields:
+        tuple: the uppercase abbreviation of one of the COUNTER R5 reports offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
+    """
+    yield (
+        choice(reports_offered_by_StatisticsSource_fixture),
+        most_recent_month_with_usage[0] + relativedelta(months=-2),
+    )
+
+
 @pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 @pytest.mark.slow
-def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
+def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
+    begin_date, report_checked = data_for_testing_harvest_single_report
     end_date = last_day_of_month(begin_date)
-    report_checked = choice(reports_offered_by_StatisticsSource_fixture)
     before = datetime.now()
     with client:
         error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
@@ -243,20 +261,23 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
-def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
+def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
     
-    To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range starts with the last month covered by the test data; for efficiency, the date range only goes another two months past that point.
+    To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range ends with the month pulled in the test above; for efficiency, the date range only looks at three months total.
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    end_month, report_checked = data_for_testing_harvest_single_report
+    begin_date = end_month + relativedelta(months=-2)
+    end_date = last_day_of_month(end_month)
     with client:
         SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
-            choice(reports_offered_by_StatisticsSource_fixture),
+            report_checked,
             SUSHI_credentials_fixture['URL'],
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-            date(2020, 6, 1),  # The last month with usage in the test data
-            date(2020, 8, 1),
+            begin_date,
+            end_date,
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
