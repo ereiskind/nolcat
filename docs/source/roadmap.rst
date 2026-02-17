@@ -27,8 +27,16 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--)
-  * Adjust tests and function call chain diagram to correspond with above changes
+  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes
+
+    * `nolcat.models.StatisticsSources._harvest_single_report()` with `tests.test_StatisticsSources.test_harvest_single_report()`, `tests.test_StatisticsSources.test_harvest_single_report_with_partial_date_range()`
+    * `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualStatisticsCollectionTracking.harvest_R5_SUSHI_result()`
+    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.StatisticsSources.test_collect_usage_statistics()`
+    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualStatisticsCollectionTracking.test_collect_annual_usage_statistics()`
+    * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
+    * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
+    * `nolcat.models.StatisticsSources.` with `tests.StatisticsSources.()`, `tests.StatisticsSources.()`
+
   * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
   * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
   * For all functions above, adjust to anticipate no return value if successful
