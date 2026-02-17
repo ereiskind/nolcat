@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2025-10-08 ##########
+########## Failing 2026-02-13 ##########
 
 import pytest
 from datetime import date
@@ -311,6 +311,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
+    #TEST: AssertionError: DataFrame.iloc[:, 4] (column name="collection_status") are different
 
 
 #Section: Test Collecting Usage Statistics
@@ -378,6 +379,7 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
     #ToDo: PARQUET IN S3--Remove `    pytest.skip(database_function_skip_statements(before_count, False))`
     #ToDo: PARQUET IN S3--Remove `before_count = extract_value_from_single_value_df(before_count)`
     logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()  #ToDo: PARQUET IN S3--no more `logging_statement`
+    #TEST: nolcat/models.py:1098: TypeError: 'NoneType' object does not support item assignment
     if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
         pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
     #ToDo: PARQUET IN S3--Remove `after_count = query_database(`
