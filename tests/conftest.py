@@ -764,7 +764,7 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
     diff = after - before
     for n in range(diff.seconds+1):
         possible_timestamps.append(before+timedelta(n))
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month}-{timestamp.day}T{timestamp.hour}-{timestamp.minute}-{timestamp.second}.parquet" for timestamp in possible_timestamps]
+    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month:02}-{timestamp.day:02}T{timestamp.hour:02}-{timestamp.minute:02}-{timestamp.second:02}.parquet" for timestamp in possible_timestamps]
     log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
 
     list_objects_response = s3_client.list_objects_v2(
