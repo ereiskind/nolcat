@@ -1,19 +1,13 @@
-import logging
 import time
 import re
 import json
 import ast
 from datetime import datetime
-from pathlib import Path
 import random
 import requests
 from requests import Timeout
-import pandas as pd
-import pyinputplus
 
-from .app import *
 from .models import *
-from .statements import *
 
 log = logging.getLogger(__name__)
 
@@ -66,13 +60,13 @@ class SUSHICallAndResponse:
         pass
     
 
-    def make_SUSHI_call(self, bucket_path=PATH_WITHIN_BUCKET):
+    def make_SUSHI_call(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
 
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
 
         Args:
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
             tuple: the API call response (dict) or an error message (str); a list of the statements that should be flashed (list of str)
@@ -376,12 +370,12 @@ class SUSHICallAndResponse:
         return (API_response, [])
     
 
-    def _save_raw_Response_text(self, Response_text, bucket_path=PATH_WITHIN_BUCKET):
+    def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
             str: an error message to flash indicating the creation of the bailout file
@@ -397,7 +391,7 @@ class SUSHICallAndResponse:
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
-            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().strftime(S3_file_name_timestamp())}"
+            file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().strftime(AWS_timestamp_format())}"
         log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
         logging_message = save_unconverted_data_via_upload(
             Response_text,

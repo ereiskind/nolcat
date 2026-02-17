@@ -1,4 +1,3 @@
-import logging
 import re
 from datetime import date
 from datetime import datetime
@@ -6,9 +5,7 @@ import html
 from random import choice
 from openpyxl import load_workbook
 import pandas as pd
-from pandas.api.types import is_string_dtype
 
-from .app import *
 from .models import *
 
 log = logging.getLogger(__name__)
