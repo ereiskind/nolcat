@@ -782,16 +782,12 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
         return list(file_name)[0]
     except IndexError:
         parquet_file_names_in_bucket = [file for file in bucket_contents if parquet_file_name_regex().fullmatch(file)]
-        log.error(f"`parquet_file_names_in_bucket` (type {type(parquet_file_names_in_bucket)}): {parquet_file_names_in_bucket}")  #TEST: temp
         possible_name_matches = []
         for file_name in parquet_file_names_in_bucket:
             if "-" in file_name:
                 name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
-                log.error(f"`name_sans_seconds` (type {type(name_sans_seconds)}): {name_sans_seconds}")  #TEST: temp
                 file_extension = seconds_and_file_extension.split(".")[1]
-                log.error(f"`file_extension` (type {type(file_extension)}): {file_extension}")  #TEST: temp
                 for possible_file_name in possible_file_names:
-                    log.error(f"`possible_file_name` (type {type(possible_file_name)}): {possible_file_name}")  #TEST: temp
                     if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
                         possible_name_matches.append(file_name)
         return possible_name_matches[0]
