@@ -788,7 +788,7 @@ def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, re
             if "-" in file_name:
                 name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
                 log.error(f"`name_sans_seconds` (type {type(name_sans_seconds)}): {name_sans_seconds}")  #TEST: temp
-                file_extension = seconds_and_file_extension.split(".")[0]
+                file_extension = seconds_and_file_extension.split(".")[1]
                 log.error(f"`file_extension` (type {type(file_extension)}): {file_extension}")  #TEST: temp
                 for possible_file_name in possible_file_names:
                     log.error(f"`possible_file_name` (type {type(possible_file_name)}): {possible_file_name}")  #TEST: temp
