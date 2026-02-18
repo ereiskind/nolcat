@@ -1,8 +1,4 @@
-import logging
 from datetime import date
-import calendar
-from pathlib import Path
-import re
 from ast import literal_eval
 from flask import render_template
 from flask import request
@@ -10,14 +6,11 @@ from flask import redirect
 from flask import url_for
 from flask import abort
 from flask import flash
-import pandas as pd
 from MySQLdb._mysql import escape_string  # `MySQLdb` in requirements.txt as `mysqlclient`
 
 from . import bp
 from .forms import *
-from ..app import *
 from ..models import *
-from ..statements import *
 
 log = logging.getLogger(__name__)
 
@@ -1082,9 +1075,9 @@ def download_non_COUNTER_usage(testing):
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
         if testing == "":
-            bucket_path = PATH_WITHIN_BUCKET
+            bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
         elif testing == "test":
-            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+            bucket_path = TEST_NON_COUNTER_FILE_PATH
         else:
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)

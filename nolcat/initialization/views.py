@@ -1,5 +1,3 @@
-import logging
-from pathlib import Path
 import re
 from flask import render_template
 from flask import redirect
@@ -11,9 +9,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import *
 from ..models import *
-from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -428,7 +424,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 if data_not_in_df:
                     messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
             except Exception as error:
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -582,9 +578,9 @@ def upload_historical_non_COUNTER_usage(testing):
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
                 if testing == "":
-                    bucket_path = PATH_WITHIN_BUCKET
+                    bucket_path = PRODUCTION_COUNTER_FILE_PATH
                 elif testing == "test":
-                    bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+                    bucket_path = TEST_COUNTER_FILE_PATH
                 else:
                     message = f"The dynamic route featured the invalid value {testing}."
                     log.error(message)
