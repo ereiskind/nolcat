@@ -268,11 +268,13 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+
     end_month, report_checked = data_for_testing_harvest_single_report
     begin_date = end_month + relativedelta(months=-2)
     end_date = last_day_of_month(end_month)
+    for_timestamp = datetime.now()
     with client:
-        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
+        error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             report_checked,
             SUSHI_credentials_fixture['URL'],
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
@@ -280,16 +282,24 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             end_date,
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
-    if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
-        pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
-    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))  # Many statistics source providers don't have usage going back this far
-    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    if isinstance(error_message, str) and skip_test_due_to_SUSHI_error_regex().match(error_message):
+        pytest.skip(database_function_skip_statements(error_message, SUSHI_error=True))
+    elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
+        pytest.skip(database_function_skip_statements(error_message, no_data=True))
+    
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=TEST_COUNTER_FILE_PATH,
+    )
+    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
+    log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
+    matching_file_names = [file_name for file_name in bucket_contents if file_name.startswith(f"0_{report_checked}_{for_timestamp.year}-{for_timestamp.month:02}-{for_timestamp.day:02}T{for_timestamp.hour:02}-{for_timestamp.minute:02}-") and file_name.endswith(".parquet")]
+    assert len(matching_file_names) == 2  # Because two files should match, `get_name_of_parquet_file_saved_to_S3()` can't be used
     assert isinstance(flash_message_list, list)
-    assert pd.concat([
-        SUSHI_data_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
-        SUSHI_data_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
-    ], axis='columns').any(axis='columns').all()
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
