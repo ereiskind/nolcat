@@ -301,23 +301,6 @@ def format_ISSN(unformatted_ISSN):
 
 
 #SUBSECTION: SUSHI Statements and Regexes
-def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_type=None, statistics_source_name=None):
-    """This statement indicates that the provided COUNTER data couldn't be converted into a dataframe.
-
-    Args:
-        error_message (str): the error message returned by the attempt to convert the COUNTER data to a dataframe
-        report_type (str, optional): the type of report for a SUSHI call; default is `None`
-        statistics_source_name (str, optional): the name of the statistics source for a SUSHI call; default is `None`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if report_type and statistics_source_name:
-        return f"Changing the JSON-like dictionary of {report_type} for {statistics_source_name} into a dataframe raised the error {error_message}."
-    else:
-        return f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error_message}."
-
-
 def successful_SUSHI_call_statement(call_path, statistics_source_name):
     """This statement indicates a successful call to `SUSHICallAndResponse.make_SUSHI_call()`.
 
@@ -430,7 +413,7 @@ def reports_with_no_usage_regex():
 def skip_test_due_to_SUSHI_error_regex():
     """This regex object matches the return statements in `failed_SUSHI_call_statement()`.
 
-    The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method.
+    The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method. This function is only called in test modules but is kept here instead of conftest to keep it with the statements it needs to match.
 
     Returns:
         re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`

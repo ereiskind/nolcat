@@ -1001,7 +1001,7 @@ class StatisticsSources(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
+            tuple: an error message, if applicable (str or null); a list of the statements that should be flashed (list of str)
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
@@ -1012,7 +1012,6 @@ class StatisticsSources(db.Model):
                 return (message, [message])
             else:
                 self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
-                individual_month_dfs = []
                 complete_flash_message_list = []
                 no_usage_returned_count = 0
                 for month_to_harvest in subset_of_months_to_harvest:
@@ -1022,10 +1021,10 @@ class StatisticsSources(db.Model):
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
                     if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
-                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
-                        self._log.warning(SUSHI_data_response + " " + message)
+                        message = SUSHI_data_response + " " + f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
+                        self._log.warning(message)
                         complete_flash_message_list.append(message)
-                        return (SUSHI_data_response, complete_flash_message_list)
+                        return (message, complete_flash_message_list)
                     elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
                         self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                         no_usage_returned_count += 1
@@ -1037,8 +1036,8 @@ class StatisticsSources(db.Model):
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
                     df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
-                    if isinstance(df, str):
-                        message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                    if df:
+                        message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                         self._log.warning(message)
                         file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                         logging_message = save_unconverted_data_via_upload(
@@ -1054,20 +1053,14 @@ class StatisticsSources(db.Model):
                             self._log.debug(message)
                         complete_flash_message_list.append(message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report
-                    df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
-                    self._log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
-                    self._log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
-                    if not df.empty:
-                        individual_month_dfs.append(df)
+                    else:
+                        self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 successful.")
+                        return (None, complete_flash_message_list)
                 
-                if len(subset_of_months_to_harvest) == no_usage_returned_count or len(individual_month_dfs) == 0:
+                if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
                     self._log.warning(message)
                     return (message, complete_flash_message_list)
-                self._log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
-                return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
         elif subset_of_months_to_harvest is None:
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
@@ -1078,8 +1071,8 @@ class StatisticsSources(db.Model):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
-            if isinstance(df, str):
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+            if df:
+                message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                 self._log.warning(message)
                 file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                 logging_message = save_unconverted_data_via_upload(
@@ -1095,14 +1088,11 @@ class StatisticsSources(db.Model):
                     self._log.debug(message)
                 flash_message_list.append(message)
                 return (message, flash_message_list)
-            df['statistics_source_ID'] = self.statistics_source_ID
-            df['report_type'] = report
-            df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
-            self._log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
-            self._log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
-            return (df, flash_message_list)
+            else:
+                self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 successful.")
+                return (None, flash_message_list)
 
-        if isinstance(subset_of_months_to_harvest, str):
+        elif isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
 

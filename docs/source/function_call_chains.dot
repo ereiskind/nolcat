@@ -197,7 +197,6 @@ digraph function_call_chains {
     _harvest_single_report -> return_string_of_dataframe_info
     _harvest_single_report -> save_unconverted_data_via_upload
     _harvest_single_report -> AWS_timestamp_format
-    _harvest_single_report -> unable_to_convert_SUSHI_data_to_dataframe_statement
     _harvest_single_report -> failed_upload_to_S3_statement
     _harvest_single_report -> upload_file_to_S3_bucket_success_regex
     _harvest_single_report -> no_data_returned_by_SUSHI_statement
@@ -427,7 +426,6 @@ digraph function_call_chains {
     upload_COUNTER_data -> truncate_longer_lines
     upload_COUNTER_data -> update_database
     upload_COUNTER_data -> format_list_for_stdout
-    upload_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
     upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     upload_COUNTER_data -> Flask_error_statement
     upload_COUNTER_data -> database_update_fail_statement
@@ -486,7 +484,6 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
     collect_AUCT_and_historical_COUNTER_data -> update_database
     collect_AUCT_and_historical_COUNTER_data -> format_list_for_stdout
-    collect_AUCT_and_historical_COUNTER_data -> unable_to_convert_SUSHI_data_to_dataframe_statement
     collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
     collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
@@ -652,7 +649,6 @@ digraph function_call_chains {
         remove_IDE_spacing_from_statement [shape="box"]
         truncate_longer_lines [shape="box"]
         format_ISSN [shape="box"]
-        unable_to_convert_SUSHI_data_to_dataframe_statement [shape="box"]
         successful_SUSHI_call_statement [shape="box"]
         harvest_R5_SUSHI_success_statement [shape="box"]
         failed_SUSHI_call_statement [shape="box"]
@@ -2274,6 +2270,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        data_for_testing_harvest_single_report [
+            style="dotted"
+            shape="box"
+        ]
         test_harvest_single_report [
             style="dashed"
             shape="box"
@@ -2351,16 +2351,18 @@ digraph function_call_chains {
     test_check_if_data_in_database_yes -> current_month_like_most_recent_month_with_usage
     test_check_if_data_in_database_yes -> StatisticsSources_fixture
     test_check_if_data_in_database_yes -> reports_offered_by_StatisticsSource_fixture
+    data_for_testing_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    data_for_testing_harvest_single_report -> most_recent_month_with_usage
     test_harvest_single_report -> _harvest_single_report
     test_harvest_single_report -> last_day_of_month
     test_harvest_single_report -> database_function_skip_statements
     test_harvest_single_report -> reports_with_no_usage_regex
     test_harvest_single_report -> skip_test_due_to_SUSHI_error_regex
     test_harvest_single_report -> client
-    test_harvest_single_report -> most_recent_month_with_usage
     test_harvest_single_report -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
-    test_harvest_single_report -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report -> get_name_of_parquet_file_saved_to_S3
+    test_harvest_single_report -> data_for_testing_harvest_single_report
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements
     test_harvest_single_report_with_partial_date_range -> reports_with_no_usage_regex
@@ -2368,7 +2370,7 @@ digraph function_call_chains {
     test_harvest_single_report_with_partial_date_range -> client
     test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture
     test_harvest_single_report_with_partial_date_range -> SUSHI_credentials_fixture_in_test_StatisticsSources
-    test_harvest_single_report_with_partial_date_range -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_single_report_with_partial_date_range -> data_for_testing_harvest_single_report
     test_harvest_R5_SUSHI -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI -> client
     test_harvest_R5_SUSHI -> most_recent_month_with_usage
