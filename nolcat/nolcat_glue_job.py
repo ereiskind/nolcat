@@ -2499,3 +2499,89 @@ class ConvertJSONDictToDataframe:
             str: the logging statement
         """
         return f"Increase the `COUNTERData.{field}` max field length to {ceil(length * 1.1)}."
+
+
+class InvalidAPIResponseError(Exception):
+    """An error for when an API returns a value that doesn't contain the expected information.
+
+    NoLCAT makes frequent use of API calls. These APIs request information, and their responses are processed based on how the requested information is returned. This exception is raised when the API returns an unexpected value which doesn't contain the requested information.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Mark all `requests` instances not covered by the subclasses below
+    def __init__(self, message):
+        """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with an API response: {self.message}")
+
+
+class InvalidSUSHIResponseError(InvalidAPIResponseError):
+    """An error for when SUSHI returns an invalid response."""
+    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` not fitting the other subclasses
+    pass
+
+
+class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns a response with no usage data."""
+    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` and `no_data_returned_by_SUSHI_statement()` fitting this case
+    pass
+
+
+class NoSUSHIDataError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns no data."""
+    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` and `no_data_returned_by_SUSHI_statement()` fitting this case
+    pass
+
+
+class InvalidSUSHIDatesError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns an error due to invalid dates."""
+    #ToDo: Mark all instances of `attempted_SUSHI_call_with_invalid_dates_statement()`
+    pass
+
+
+class DatabaseInteractionError(Exception):
+    """An error for an unsuccessful SELECT, INSERT, UPDATE, or DELETE operation.
+
+    NoLCAT stores its non-usage data--vendor information, records of what sources are COUNTER-compliant, ARL and ACRL/IPEDS numbers for prior years, ect.--in a MySQL database. This exception is raised whenever an operation on that database fails.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Mark all instances of `database_query_fail_statement()`
+    #ToDo: Mark all instances of `unable_to_get_updated_primary_key_values_statement()`
+    #ToDo: Mark all instances of `database_update_fail_statement()`
+    #ToDo: Mark all instances of `add_data_success_and_update_database_fail_statement()`
+    def __init__(self, message):
+        """The `DatabaseInteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with a SQL operation: {self.message}")
+
+
+class S3InteractionError(Exception):
+    """An error for an unsuccessful S3 operation.
+
+    NoLCAT stores usage data in S3--COUNTER data is stored in parquet files while non-COUNTER data files are saved in their original forms. This exception is raised whenever there's a problem getting files in or out of S3.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Find and mark instances of failed download
+    #ToDo: Mark all instances of `failed_upload_to_S3_statement()`
+    #ToDo: Mark all instances of `unable_to_delete_test_file_in_S3_statement()`
+    def __init__(self, message):
+        """The `S3InteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with a S3 operation: {self.message}")

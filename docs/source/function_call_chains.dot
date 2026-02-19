@@ -8,6 +8,7 @@ digraph function_call_chains {
 
         Relation: `color="#ceb888"` (Gold)
         Blueprint: `color="#782f40"` (Garnet)
+        Exceptions: `color="#425563"`
         Module collecting general functions: `color="#5cb8b2"`
     */
 
@@ -704,6 +705,48 @@ digraph function_call_chains {
             _extraction_start_logging_statement [shape="box"]
             _extraction_complete_logging_statement [shape="box"]
             _increase_field_length_logging_statement [shape="box"]
+        }
+        subgraph cluster_InvalidAPIResponseError {
+            label="nolcat.nolcat_glue_job.InvalidAPIResponseError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_InvalidSUSHIResponseError {
+            label="nolcat.nolcat_glue_job.InvalidSUSHIResponseError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_NoSUSHIUsageDataError {
+            label="nolcat.nolcat_glue_job.NoSUSHIUsageDataError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_NoSUSHIDataError {
+            label="nolcat.nolcat_glue_job.NoSUSHIDataError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_InvalidSUSHIDatesError {
+            label="nolcat.nolcat_glue_job.InvalidSUSHIDatesError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_DatabaseInteractionError {
+            label="nolcat.nolcat_glue_job.DatabaseInteractionError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_S3InteractionError {
+            label="nolcat.nolcat_glue_job.S3InteractionError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
         }
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
