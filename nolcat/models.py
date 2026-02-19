@@ -828,7 +828,7 @@ class StatisticsSources(db.Model):
         #Section: Get API Call URL and Parameters
         self._log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
+            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)  #ALERT: `raise InvalidSUSHIDatesError`
             self._log.error(message)
             return (message, {'dates': [message]})
         SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
@@ -854,7 +854,7 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)
+            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)  #ALERT: `raise InvalidSUSHIResponseError`
             self._log.warning(message)
             return (message, all_flashed_statements)
         else:
@@ -1082,7 +1082,7 @@ class StatisticsSources(db.Model):
                         return (None, complete_flash_message_list)
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
+                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)  #ALERT: `raise NoSUSHIUsageDataError`
                     self._log.warning(message)
                     return (message, complete_flash_message_list)
 

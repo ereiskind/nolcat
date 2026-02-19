@@ -132,7 +132,7 @@ def use_predefined_SQL_query():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
+            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)  #ALERT: `raise InvalidSUSHIDatesError`
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
@@ -324,7 +324,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
-            flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
+            flash(f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which would have resulted in an error when querying the database. Please correct the dates and try again.")
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
             flash_statement = "The usage data being requested includes COUNTER Release 4 data for all usage"

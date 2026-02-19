@@ -399,7 +399,7 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
 
 
-def reports_with_no_usage_regex():
+def reports_with_no_usage_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`, `raise NoSUSHIUsageDataError`, `raise NoSUSHIDataError`
     """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.
 
     In the pytest modules, the statements using this function are looking just for those SUSHI responses with neither data nor a SUSHI error, but this regex matches all return values that indicate no usage data was returned; having the `skip_test_due_to_SUSHI_error_regex()` comparison first in test functions means `failed_SUSHI_call_statement()` return values indicating no usage data are never compared to this regex.
@@ -410,7 +410,7 @@ def reports_with_no_usage_regex():
     return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
-def skip_test_due_to_SUSHI_error_regex():
+def skip_test_due_to_SUSHI_error_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`
     """This regex object matches the return statements in `failed_SUSHI_call_statement()`.
 
     The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method. This function is only called in test modules but is kept here instead of conftest to keep it with the statements it needs to match.
@@ -2509,7 +2509,7 @@ class InvalidAPIResponseError(Exception):
     Attributes:
         self.message (str): a class attribute containing information to create the error message
     """
-    #ToDo: Mark all `requests` instances not covered by the subclasses below
+    #ToDo: Mark all `requests` instances not covered by the subclasses below--will originate from `SUSHICallAndResponse.make_SUSHI_call()`, which has only direct call to `SUSHICallAndResponse._make_API_call()`
     def __init__(self, message):
         """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
@@ -2522,25 +2522,21 @@ class InvalidAPIResponseError(Exception):
 
 class InvalidSUSHIResponseError(InvalidAPIResponseError):
     """An error for when SUSHI returns an invalid response."""
-    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` not fitting the other subclasses
     pass
 
 
 class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
     """An error for when SUSHI returns a response with no usage data."""
-    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` and `no_data_returned_by_SUSHI_statement()` fitting this case
     pass
 
 
 class NoSUSHIDataError(InvalidSUSHIResponseError):
     """An error for when SUSHI returns no data."""
-    #ToDo: Mark all instances of `failed_SUSHI_call_statement()` and `no_data_returned_by_SUSHI_statement()` fitting this case
     pass
 
 
 class InvalidSUSHIDatesError(InvalidSUSHIResponseError):
     """An error for when SUSHI returns an error due to invalid dates."""
-    #ToDo: Mark all instances of `attempted_SUSHI_call_with_invalid_dates_statement()`
     pass
 
 
