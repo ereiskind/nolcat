@@ -702,7 +702,7 @@ class StatisticsSources(db.Model):
     Attributes:
         self.statistics_source_ID (int): the primary key
         self.statistics_source_name (string): the name of the statistics source
-        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER Registry
+        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER registry
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -760,15 +760,14 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
-        #ALERT: Change file extension in Dockerfile
+        self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
         with open(PATH_TO_CREDENTIALS_FILE()) as file:
             CSV_data = csv.DictReader(file)
-            log.debug("SUSHI credentials loaded.")
+            self._log.debug("SUSHI credentials loaded.")
             for statistics_source_credentials in CSV_data:
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
-                    log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                    self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                     credentials = dict(statistics_source_credentials['customer_ID'])
                     if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
                         credentials['URL'] = statistics_source_credentials['URL']
@@ -833,7 +832,7 @@ class StatisticsSources(db.Model):
             self._log.error(message)
             return (message, {'dates': [message]})
         SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
+        self._log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
         self._log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
@@ -896,7 +895,7 @@ class StatisticsSources(db.Model):
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
-            log.debug(f"Making a call for the `reports` endpoint.")
+            self._log.debug(f"Making a call for the `reports` endpoint.")
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
                 self.statistics_source_name,
                 SUSHI_info['URL'],
@@ -1175,8 +1174,8 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
