@@ -810,7 +810,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -820,7 +820,7 @@ class StatisticsSources(db.Model):
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
             code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized in `nolcat.app`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
             tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
@@ -1166,7 +1166,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PATH_WITHIN_BUCKET):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
