@@ -1258,16 +1258,8 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        vendors_relation_after_test_update_database [
-            style="dotted"
-            shape="box"
-        ]
         test_update_database [
             style="dashed"
-            shape="box"
-        ]
-        vendors_relation_after_test_update_database_with_insert_statement [
-            style="dotted"
             shape="box"
         ]
         test_update_database_with_insert_statement [
@@ -1383,22 +1375,18 @@ digraph function_call_chains {
     test_query_database -> engine
     test_query_database -> vendors_relation_in_conftest
     test_first_new_PK_value -> first_new_PK_value
-    vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     test_update_database -> query_database
     test_update_database -> update_database
     test_update_database -> database_function_skip_statements
     test_update_database -> update_database_success_regex
     test_update_database -> engine
-    test_update_database -> vendors_relation_after_test_update_database
-    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> query_database
     test_update_database_with_insert_statement -> update_database
     test_update_database_with_insert_statement -> database_function_skip_statements
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> engine
-    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
     test_save_dataframe_to_S3_bucket -> get_name_of_parquet_file_saved_to_S3
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket

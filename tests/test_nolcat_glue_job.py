@@ -279,7 +279,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
         "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
         "vendor_name": Vendors.state_data_types()['vendor_name'],
-        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
     check = load_data_into_database(
@@ -297,7 +296,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
                 statisticsSources.statistics_source_name,
                 statisticsSources.statistics_source_retrieval_code,
                 vendors.vendor_name,
-                vendors.alma_vendor_code
             FROM statisticsSources
             JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
             ORDER BY statisticsSources.statistics_source_ID;
@@ -312,20 +310,20 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     expected_output_data = pd.DataFrame(
         [
-            ["ProQuest", "1", "ProQuest", None],
-            ["EBSCOhost", "2", "EBSCO", None],
-            ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", "3", "Duke UP", None],
-            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
-            ["DemographicsNow", None, "Gale", None],
-            ["Ebook Central", None, "ProQuest", None],
-            ["Peterson's Career Prep", None, "Gale", None],
-            ["Peterson's Test Prep", None, "Gale", None],
-            ["Peterson's Prep", None, "Gale", None],
-            ["Pivot", None, "ProQuest", None],
-            ["Ulrichsweb", None, "ProQuest", None],
+            ["ProQuest", "741ebb85-02ad-4ad0-ae4f-8b268f528cb0", "ProQuest"],
+            ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", "EBSCO"],
+            ["Gale Cengage Learning", None, "Gale"],
+            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP"],
+            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP"],
+            ["DemographicsNow", None, "Gale"],
+            ["Ebook Central", None, "ProQuest"],
+            ["Peterson's Career Prep", None, "Gale"],
+            ["Peterson's Test Prep", None, "Gale"],
+            ["Peterson's Prep", None, "Gale"],
+            ["Pivot", None, "ProQuest"],
+            ["Ulrichsweb", None, "ProQuest"],
         ],
-        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name"],
     )
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
@@ -357,37 +355,12 @@ def test_first_new_PK_value(client):
 # Testing of `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 
-@pytest.fixture
-def vendors_relation_after_test_update_database():
-    """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
-
-    Yields:
-        dataframe: data matching the updated `vendors` relation
-    """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
-        ],
-        columns=["vendor_name", "alma_vendor_code"],
-    )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
-
-
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, client, vendors_relation_after_test_update_database):
+def test_update_database(engine, client):
     """Tests updating data in the database through a SQL update statement."""
     with client:
         update_result = update_database(
-            update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+            update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
             engine=engine,
         )
     retrieved_updated_vendors_data = query_database(
@@ -398,43 +371,31 @@ def test_update_database(engine, client, vendors_relation_after_test_update_data
     if isinstance(retrieved_updated_vendors_data, str):
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(vendors_relation_after_test_update_database, retrieved_updated_vendors_data)
-
-
-@pytest.fixture
-def vendors_relation_after_test_update_database_with_insert_statement():
-    """The test data for the `vendors` relation featuring the changes to be made in the `test_update_database_with_insert_statement()` test.
-
-    Yields:
-        dataframe: data matching the updated `vendors` relation
-    """
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", "CODE"],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
-            ["A Vendor", None],
-            ["Another Vendor", "1"],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    yield df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert_frame_equal(series, retrieved_updated_vendors_data)
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database_with_insert_statement(engine, client, vendors_relation_after_test_update_database_with_insert_statement):
+def test_update_database_with_insert_statement(engine, client):
     """Tests adding records to the database through a SQL insert statement."""
     with client:
         update_result = update_database(
-            update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor', NULL), (9, 'Another Vendor', '1');",
+            update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
             engine=engine,
         )
     retrieved_updated_vendors_data = query_database(
@@ -445,8 +406,25 @@ def test_update_database_with_insert_statement(engine, client, vendors_relation_
     if isinstance(retrieved_updated_vendors_data, str):
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/Business Expert Press",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
+            "A Vendor",
+            "Another Vendor",
+        ],
+        name="vendor_name",
+    )
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(vendors_relation_after_test_update_database_with_insert_statement, retrieved_updated_vendors_data)
+    assert_frame_equal(series, retrieved_updated_vendors_data)
 
 
 #SECTION: S3 Interaction Tests
