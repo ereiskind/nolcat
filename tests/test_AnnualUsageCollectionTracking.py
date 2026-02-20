@@ -49,7 +49,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
 
 
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
-def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
+def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
 
     The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
@@ -57,13 +57,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    # Cannot use `caplog` for `query_database()` due to scope mismatch
 
     record = query_database(
         query=f"""
