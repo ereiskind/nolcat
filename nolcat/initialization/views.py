@@ -334,7 +334,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(df))
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
@@ -378,7 +378,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                         update_statement=f"Truncate {relation};",
                         engine=db.engine,
                     )
-                    if not update_database_success_regex().fullmatch(update_result):
+                    if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
                         message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
                         log.critical(message)
                         flash(message)
@@ -445,7 +445,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             
             try:
                 COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:
+            except Exception as error:  #ALERT: `except DatabaseInteractionError`
                 message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
                 log.warning(message)
                 messages_to_flash.append(message)
@@ -520,7 +520,7 @@ def upload_historical_non_COUNTER_usage(testing):
             """,
             engine=db.engine,
         )
-        if isinstance(non_COUNTER_files_needed, str):
+        if isinstance(non_COUNTER_files_needed, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('initialization.data_load_complete'))
         list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
@@ -560,7 +560,7 @@ def upload_historical_non_COUNTER_usage(testing):
                     """,
                     engine=db.engine,
                 )
-                if isinstance(df, str):
+                if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
                     message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
                     log.error(message)
                     flash_error_messages[file['usage_file'].filename] = message

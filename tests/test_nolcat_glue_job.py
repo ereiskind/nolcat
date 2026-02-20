@@ -304,7 +304,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
-    if isinstance(retrieved_data, str):
+    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype(df_dtypes)
 
@@ -368,7 +368,7 @@ def test_update_database(engine, client):
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(retrieved_updated_vendors_data, str):
+    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
@@ -403,7 +403,7 @@ def test_update_database_with_insert_statement(engine, client):
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(retrieved_updated_vendors_data, str):
+    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
@@ -502,7 +502,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -537,9 +537,9 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
     """
     data = request.param
-    log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
+    log.debug(f"In `file_name_stem_and_data()`, the `data` is {data}.")
     file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
-    log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
+    log.info(f"In `file_name_stem_and_data()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     if isinstance(data, dict):
         file_name = file_name_stem + '.json'
@@ -562,7 +562,7 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,

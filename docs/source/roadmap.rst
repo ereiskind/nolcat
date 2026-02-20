@@ -200,6 +200,7 @@ Iteration 6: Miscellaneous
 * Create CSS class for flashed messages
 * Add FSU Libraries wordmark as link to library homepage in footer
 * Consolidate `nolcat.models.StatisticsSources._check_if_data_in_database()` and `nolcat.app.check_if_data_already_in_COUNTERData()`
+* Convert error catches by returning strings to returning Python exception classes
 
 Iteration 7: Interact with Host File System
 ============================================

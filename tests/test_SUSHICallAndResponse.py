@@ -95,7 +95,7 @@ def StatisticsSource_instance_name(engine, caplog):
         query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df, False))
     yield extract_value_from_single_value_df(df, False)
 

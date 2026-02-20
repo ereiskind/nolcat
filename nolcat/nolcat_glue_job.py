@@ -399,7 +399,7 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
 
 
-def reports_with_no_usage_regex():
+def reports_with_no_usage_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`, `raise NoSUSHIUsageDataError`, `raise NoSUSHIDataError`
     """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.
 
     In the pytest modules, the statements using this function are looking just for those SUSHI responses with neither data nor a SUSHI error, but this regex matches all return values that indicate no usage data was returned; having the `skip_test_due_to_SUSHI_error_regex()` comparison first in test functions means `failed_SUSHI_call_statement()` return values indicating no usage data are never compared to this regex.
@@ -410,7 +410,7 @@ def reports_with_no_usage_regex():
     return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
-def skip_test_due_to_SUSHI_error_regex():
+def skip_test_due_to_SUSHI_error_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`
     """This regex object matches the return statements in `failed_SUSHI_call_statement()`.
 
     The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method. This function is only called in test modules but is kept here instead of conftest to keep it with the statements it needs to match.
@@ -804,6 +804,7 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
+        #ALERT: `raise DatabaseInteractionError`
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
@@ -847,7 +848,7 @@ def first_new_PK_value(relation):
         """,
         engine=db.engine,
     )
-    if isinstance(largest_PK_value, str):
+    if isinstance(largest_PK_value, str):  #ALERT: `except DatabaseInteractionError`
         log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
         return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
@@ -901,7 +902,7 @@ def check_if_data_already_in_COUNTERData(df):
             query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
             engine=db.engine,
         )
-        if isinstance(number_of_matching_records, str):
+        if isinstance(number_of_matching_records, str):  #ALERT: `except DatabaseInteractionError`
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
         number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
@@ -931,7 +932,7 @@ def check_if_data_already_in_COUNTERData(df):
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source_name, str):
+            if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
             instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
@@ -981,7 +982,7 @@ def update_database(update_statement, engine):
             query=query,
             engine=db.engine,
         )
-        if isinstance(before_df, str):
+        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             log.debug(f"The records to be updated:\n{before_df}")
@@ -991,7 +992,7 @@ def update_database(update_statement, engine):
             query=query,
             engine=db.engine,
         )
-        if isinstance(before_df, str):
+        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             before_number = extract_value_from_single_value_df(before_df)
@@ -1009,31 +1010,31 @@ def update_database(update_statement, engine):
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     except Exception as error:
         message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
-        return message
+        return message  #ALERT: `raises DatabaseInteractionError`
     
     if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
         after_df = query_database(
             query=query,
             engine=db.engine,
         )
-        if isinstance(after_df, str):
+        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
         after_df = query_database(
             query=query,
             engine=db.engine,
         )
-        if isinstance(after_df, str):
+        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             after_number = extract_value_from_single_value_df(after_df)
@@ -1041,19 +1042,19 @@ def update_database(update_statement, engine):
             if before_number >= after_number:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     elif TRUNCATE_regex:
         df = query_database(
             query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(df, "confirm success of change to database"))
         else:
             if extract_value_from_single_value_df(df) > 0:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
@@ -1160,6 +1161,7 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
             index=False,
         )
     except Exception as error:
+        #ALERT: `raise S3InteractionError`
         log.error(f"")
         return error  #ToDo: When called, response should be handled as "if not null, then problem"
 
@@ -1184,6 +1186,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
         check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
         message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
+        #ALERT: `raise S3InteractionError`
         log.error(message)
         return message
  
@@ -1223,14 +1226,17 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                 log.info(message)
                 return message
             except Exception as error:
+                #ALERT: `raise S3InteractionError`
                 message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
                 log.error(message)
                 return message
         else:
+              #ALERT: `raise S3InteractionError`
             message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
             log.error(message)
             return message
     except AttributeError as error:
+        #ALERT: `raise S3InteractionError`
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
@@ -1286,6 +1292,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
+                #ALERT: `raise S3InteractionError`
                 message = f"Writing data into a binary file raised the error {binary_error}; writing that data into a text file raised the error {text_error}."
                 log.error(message)
                 return message
@@ -1302,7 +1309,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):  #ALERT: `except S3InteractionError`
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:
@@ -1401,7 +1408,7 @@ class ConvertJSONDictToDataframe:
             self.report_type,
             bucket_path,
         )
-        if save_df_response:
+        if save_df_response:  #ALERT: `except S3InteractionError`
             return error  # Error logged in `save_dataframe_to_S3_bucket()`
     
 
@@ -2499,3 +2506,78 @@ class ConvertJSONDictToDataframe:
             str: the logging statement
         """
         return f"Increase the `COUNTERData.{field}` max field length to {ceil(length * 1.1)}."
+
+
+class InvalidAPIResponseError(Exception):
+    """An error for when an API returns a value that doesn't contain the expected information.
+
+    NoLCAT makes frequent use of API calls. These APIs request information, and their responses are processed based on how the requested information is returned. This exception is raised when the API returns an unexpected value which doesn't contain the requested information.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    #ToDo: Revise use of this class and its subclasses; all possible instances originate from `SUSHICallAndResponse.make_SUSHI_call()`, which has only direct call to `SUSHICallAndResponse._make_API_call()`
+    def __init__(self, message):
+        """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with an API response: {self.message}")
+
+
+class InvalidSUSHIResponseError(InvalidAPIResponseError):
+    """An error for when SUSHI returns an invalid response."""
+    pass
+
+
+class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns a response with no usage data."""
+    pass
+
+
+class NoSUSHIDataError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns no data."""
+    pass
+
+
+class InvalidSUSHIDatesError(InvalidSUSHIResponseError):
+    """An error for when SUSHI returns an error due to invalid dates."""
+    pass
+
+
+class DatabaseInteractionError(Exception):
+    """An error for an unsuccessful SELECT, INSERT, UPDATE, or DELETE operation.
+
+    NoLCAT stores its non-usage data--vendor information, records of what sources are COUNTER-compliant, ARL and ACRL/IPEDS numbers for prior years, ect.--in a MySQL database. This exception is raised whenever an operation on that database fails.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    def __init__(self, message):
+        """The `DatabaseInteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with a SQL operation: {self.message}")
+
+
+class S3InteractionError(Exception):
+    """An error for an unsuccessful S3 operation.
+
+    NoLCAT stores usage data in S3--COUNTER data is stored in parquet files while non-COUNTER data files are saved in their original forms. This exception is raised whenever there's a problem getting files in or out of S3.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+    """
+    def __init__(self, message):
+        """The `S3InteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+        """
+        self.message = message
+        super().__init__(f"There was a problem with a S3 operation: {self.message}")

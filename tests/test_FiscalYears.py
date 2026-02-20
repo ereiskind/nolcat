@@ -31,7 +31,7 @@ def FY2020_FiscalYears_object(engine, caplog):
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
@@ -185,7 +185,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
         engine=engine,
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
-    if isinstance(retrieved_data, str):
+    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
@@ -332,7 +332,7 @@ def FY2022_FiscalYears_object(engine, caplog):
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
@@ -367,7 +367,7 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
         update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",
         engine=engine,
     )
-    if not update_database_success_regex().fullmatch(update_result):
+    if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
     
     #Section: Make Function Call

@@ -34,7 +34,7 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
         query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
+    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
