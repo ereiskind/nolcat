@@ -342,7 +342,7 @@ def test_query_database(engine, vendors_relation):
         index='vendor_ID',
     )
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
-    assert_frame_equal(vendors_relation, retrieved_vendors_data)
+    assert_series_equal(vendors_relation, change_single_field_dataframe_into_series(retrieved_vendors_data))
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
@@ -387,7 +387,7 @@ def test_update_database(engine, client):
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(series, retrieved_updated_vendors_data)
+    assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
@@ -424,7 +424,7 @@ def test_update_database_with_insert_statement(engine, client):
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
     assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
-    assert_frame_equal(series, retrieved_updated_vendors_data)
+    assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
 #SECTION: S3 Interaction Tests
