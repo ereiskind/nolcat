@@ -424,7 +424,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
         month_before_month_like_most_recent_month_with_usage[0],
         month_before_month_like_most_recent_month_with_usage[1],
         bucket_path=TEST_COUNTER_FILE_PATH,
-        )
+    )
     method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
