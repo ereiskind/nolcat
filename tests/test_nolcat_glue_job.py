@@ -537,9 +537,9 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
     """
     data = request.param
-    log.debug(f"In `remove_file_from_S3_with_yield()`, the `data` is {data}.")
+    log.debug(f"In `file_name_stem_and_data()`, the `data` is {data}.")
     file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
-    log.info(f"In `remove_file_from_S3_with_yield()`, the `file_name_stem` is {file_name_stem}.")
+    log.info(f"In `file_name_stem_and_data()`, the `file_name_stem` is {file_name_stem}.")
     yield (file_name_stem, data)
     if isinstance(data, dict):
         file_name = file_name_stem + '.json'
