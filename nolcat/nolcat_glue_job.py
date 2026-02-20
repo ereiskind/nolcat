@@ -2516,7 +2516,7 @@ class InvalidAPIResponseError(Exception):
     Attributes:
         self.message (str): a class attribute containing information to create the error message
     """
-    #ToDo: Mark all `requests` instances not covered by the subclasses below--will originate from `SUSHICallAndResponse.make_SUSHI_call()`, which has only direct call to `SUSHICallAndResponse._make_API_call()`
+    #ToDo: Revise use of this class and its subclasses; all possible instances originate from `SUSHICallAndResponse.make_SUSHI_call()`, which has only direct call to `SUSHICallAndResponse._make_API_call()`
     def __init__(self, message):
         """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
