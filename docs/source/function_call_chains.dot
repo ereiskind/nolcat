@@ -688,7 +688,7 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
-        save_unconverted_data_via_upload [shape="box"]
+        save_unconverted_data_via_upload [shape="folder"]
         fetch_URL_from_COUNTER_Registry [shape="box"]
         subgraph cluster_ConvertJSONDictToDataframe {
             label="nolcat.nolcat_glue_job.ConvertJSONDictToDataframe"
