@@ -40,64 +40,30 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine):
+def StatisticsSources_fixture():
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
-    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
-
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file.
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
     # Cannot use `caplog` for `query_database()` due to scope mismatch
-    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
-    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-        SUSHI_data_file = json.load(JSON_file)
-        for vendor in SUSHI_data_file:
-            for statistics_source_dict in vendor['interface']:
-                if "interface_id" in list(statistics_source_dict.keys()):
-                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
-    
-    today = date.today()
-    if today.day < 15:
-        usage_date = today + relativedelta(months=-2)
-    else:
-        usage_date = today + relativedelta(months=-1)
-    usage_date = f"{usage_date.year}-{usage_date.month}-01"
     retrieval_codes = []
-    for interface in retrieval_codes_as_interface_IDs:
-        query_result = query_database(
-            query=f"""
-                SELECT COUNT(*)
-                FROM statisticsSources
-                JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID
-                WHERE statisticsSources.statistics_source_retrieval_code={interface}
-                AND COUNTERData.usage_date={usage_date};
-            """,
-            engine=engine,
-        )
-        if isinstance(query_result, str):  #ALERT: `except DatabaseInteractionError`
-            pytest.skip(database_function_skip_statements(query_result, False))
-        if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
-            retrieval_codes.append(interface)
-    
-    fixture_retrieval_code = str(choice(retrieval_codes))
-    statistics_source_name = query_database(  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; the `choice()` function ensures the retrieval code chosen is in the test data
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice([
-            '741ebb85-02ad-4ad0-ae4f-8b268f528cb0',
-            '6839b3e4-1a57-413e-9b3f-9faa4df06d54',
-            'dd585e77-6351-4548-b679-f2d337d15cdb',
-        ])}",
-        engine=engine,
-    )
-    if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(statistics_source_name, False))
+    with open(PATH_TO_CREDENTIALS_FILE()) as file:
+        CSV_data = csv.DictReader(file)
+        for statistics_source_credentials in CSV_data:
+            if statistics_source_credentials['statistics_source_retrieval_code']:
+                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = extract_value_from_single_value_df(statistics_source_name, False),
-        statistics_source_retrieval_code = fixture_retrieval_code,
+        statistics_source_name = choice([  # If the name isn't in the database, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; using the names of the statistics sources associated with COUNTER in the test data is a further hedge against problems
+            "ProQuest",
+            "EBSCOhost",
+            "Duke UP",
+        ]),
+        statistics_source_retrieval_code = str(choice(retrieval_codes)),
         vendor_ID = 0,
     )
     log.warning(fixture_variable_value_declaration_statement("StatisticsSources_fixture", yield_object))  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
