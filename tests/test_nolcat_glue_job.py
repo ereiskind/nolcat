@@ -295,7 +295,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
                 statisticsSources.statistics_source_ID,
                 statisticsSources.statistics_source_name,
                 statisticsSources.statistics_source_retrieval_code,
-                vendors.vendor_name,
+                vendors.vendor_name
             FROM statisticsSources
             JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
             ORDER BY statisticsSources.statistics_source_ID;
