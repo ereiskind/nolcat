@@ -804,6 +804,7 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
+        #ALERT: `raise DatabaseInteractionError`
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
         return message
@@ -847,7 +848,7 @@ def first_new_PK_value(relation):
         """,
         engine=db.engine,
     )
-    if isinstance(largest_PK_value, str):
+    if isinstance(largest_PK_value, str):  #ALERT: `except DatabaseInteractionError`
         log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
         return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
@@ -901,7 +902,7 @@ def check_if_data_already_in_COUNTERData(df):
             query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
             engine=db.engine,
         )
-        if isinstance(number_of_matching_records, str):
+        if isinstance(number_of_matching_records, str):  #ALERT: `except DatabaseInteractionError`
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
         number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
@@ -931,7 +932,7 @@ def check_if_data_already_in_COUNTERData(df):
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source_name, str):
+            if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
             instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
@@ -981,7 +982,7 @@ def update_database(update_statement, engine):
             query=query,
             engine=db.engine,
         )
-        if isinstance(before_df, str):
+        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             log.debug(f"The records to be updated:\n{before_df}")
@@ -991,7 +992,7 @@ def update_database(update_statement, engine):
             query=query,
             engine=db.engine,
         )
-        if isinstance(before_df, str):
+        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             before_number = extract_value_from_single_value_df(before_df)
@@ -1009,31 +1010,31 @@ def update_database(update_statement, engine):
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     except Exception as error:
         message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
-        return message
+        return message  #ALERT: `raises DatabaseInteractionError`
     
     if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
         after_df = query_database(
             query=query,
             engine=db.engine,
         )
-        if isinstance(after_df, str):
+        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
         after_df = query_database(
             query=query,
             engine=db.engine,
         )
-        if isinstance(after_df, str):
+        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             after_number = extract_value_from_single_value_df(after_df)
@@ -1041,19 +1042,19 @@ def update_database(update_statement, engine):
             if before_number >= after_number:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     elif TRUNCATE_regex:
         df = query_database(
             query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             log.warning(database_query_fail_statement(df, "confirm success of change to database"))
         else:
             if extract_value_from_single_value_df(df) > 0:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
                 log.warning(message)
-                return message
+                return message  #ALERT: `raises DatabaseInteractionError`
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
@@ -2548,10 +2549,6 @@ class DatabaseInteractionError(Exception):
     Attributes:
         self.message (str): a class attribute containing information to create the error message
     """
-    #ToDo: Mark all instances of `database_query_fail_statement()`
-    #ToDo: Mark all instances of `unable_to_get_updated_primary_key_values_statement()`
-    #ToDo: Mark all instances of `database_update_fail_statement()`
-    #ToDo: Mark all instances of `add_data_success_and_update_database_fail_statement()`
     def __init__(self, message):
         """The `DatabaseInteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 

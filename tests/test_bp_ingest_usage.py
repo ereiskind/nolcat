@@ -63,7 +63,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         engine=engine,
         index='COUNTER_data_ID',
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
@@ -108,13 +108,13 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
-    if isinstance(check_relation_size, str):
+    if isinstance(check_relation_size, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(check_relation_size))
     df = query_database(
         query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns='COUNTER_data_ID')
@@ -199,7 +199,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = list(df.itertuples(index=False, name=None))
 
@@ -222,7 +222,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
     form_input = {
@@ -292,7 +292,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         """,
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = create_AUCT_SelectField_options(df)
 

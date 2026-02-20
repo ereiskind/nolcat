@@ -78,7 +78,7 @@ def StatisticsSources_fixture(engine):
             """,
             engine=engine,
         )
-        if isinstance(query_result, str):
+        if isinstance(query_result, str):  #ALERT: `except DatabaseInteractionError`
             pytest.skip(database_function_skip_statements(query_result, False))
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
@@ -92,7 +92,7 @@ def StatisticsSources_fixture(engine):
         ])}",
         engine=engine,
     )
-    if isinstance(statistics_source_name, str):
+    if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statistics_source_name, False))
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
@@ -515,7 +515,7 @@ def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicat
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
-    if isinstance(number_of_records, str):
+    if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(number_of_records))
     if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")

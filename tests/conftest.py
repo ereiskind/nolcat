@@ -519,7 +519,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")
@@ -566,7 +566,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
@@ -680,7 +680,7 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         """,
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values

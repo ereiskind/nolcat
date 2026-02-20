@@ -30,7 +30,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
@@ -83,7 +83,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         """,
         engine=engine,
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     
     start_date = record.at[0,'start_date']
@@ -140,7 +140,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
         engine=engine,
     )
-    if isinstance(database_update_check, str):
+    if isinstance(database_update_check, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_update_check))
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
 
@@ -211,7 +211,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
-    if isinstance(usage_file_path_in_database, str):
+    if isinstance(usage_file_path_in_database, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
     usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))

@@ -111,7 +111,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_B1_df, str):
+        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -127,7 +127,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(IR_M1_df, str):
+        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -143,7 +143,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_J1_df, str):
+        if isinstance(TR_J1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_J1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -173,7 +173,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -201,7 +201,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_B1_df, str):
+        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -217,7 +217,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(IR_M1_df, str):
+        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -247,7 +247,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -275,7 +275,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -303,7 +303,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -331,7 +331,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -355,7 +355,7 @@ class FiscalYears(db.Model):
             query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             engine=db.engine,
         )
-        if isinstance(current_statistics_sources, str):
+        if isinstance(current_statistics_sources, str):  #ALERT: `except DatabaseInteractionError`
             return database_query_fail_statement(current_statistics_sources, "return requested series")
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
@@ -419,7 +419,7 @@ class FiscalYears(db.Model):
             """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
             engine=db.engine,
         )
-        if isinstance(AUCT_objects_to_collect_df, str):
+        if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
             return (message, [message])
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
@@ -447,7 +447,7 @@ class FiscalYears(db.Model):
                 query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source_df, str):
+            if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
                 all_flash_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
             statistics_source = StatisticsSources(
@@ -475,7 +475,7 @@ class FiscalYears(db.Model):
         df = pd.concat(dfs)
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             all_flash_statements['first_new_PK_value()'] = message
@@ -497,7 +497,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             self._log.warning(message)
             all_flash_statements['update_database()'] = message
@@ -607,7 +607,7 @@ class Vendors(db.Model):
         #     engine=db.engine,
         #     index='statistics_source_ID',
         # )
-        # if isinstance(df, str):
+        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -639,7 +639,7 @@ class Vendors(db.Model):
         #     engine=db.engine,
         #     index='resource_source_ID',
         # )
-        # if isinstance(df, str):
+        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -1149,7 +1149,7 @@ class StatisticsSources(db.Model):
                 query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
                 engine=db.engine,
             )
-            if isinstance(number_of_records, str):
+            if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
                 return database_query_fail_statement(number_of_records, "return requested value")
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
@@ -1196,7 +1196,7 @@ class StatisticsSources(db.Model):
             self._log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[0]))
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             flash_statements['first_new_PK_value()'] = message
@@ -1331,7 +1331,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1357,7 +1357,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1386,7 +1386,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1395,7 +1395,7 @@ class ResourceSources(db.Model):
             query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
             engine=db.engine,
         )
-        if isinstance(check_for_existing_record, str):
+        if isinstance(check_for_existing_record, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(check_for_existing_record, "return requested record")
             self._log.warning(message)
             return message
@@ -1436,7 +1436,7 @@ class ResourceSources(db.Model):
                 update_statement=update_statement,
                 engine=db.engine,
             )
-            if not update_database_success_regex().fullmatch(update_result):
+            if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
                 message = database_update_fail_statement(update_statement)
                 self._log.warning(message)
                 return message
@@ -1613,7 +1613,7 @@ class AnnualUsageCollectionTracking(db.Model):
             query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
             engine=db.engine,
         )
-        if isinstance(fiscal_year_data, str):
+        if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(fiscal_year_data, "return requested values")
             self._log.warning(message)
             return (fiscal_year_data, {"Before SUSHI": message})
@@ -1628,7 +1628,7 @@ class AnnualUsageCollectionTracking(db.Model):
             query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
             engine=db.engine,
         )
-        if isinstance(statistics_source_data, str):
+        if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(statistics_source_data, "return requested values")
             self._log.warning(message)
             return (fiscal_year_data, {"Before SUSHI": message})
@@ -1648,7 +1648,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], fiscal_year))
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             flash_statements['first_new_PK_value()'] = message
@@ -1670,7 +1670,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             self._log.warning(message)
             flash_statements['update_database()'] = message
@@ -1730,7 +1730,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             self._log.warning(message)
             return message

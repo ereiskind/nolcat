@@ -304,7 +304,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
-    if isinstance(retrieved_data, str):
+    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype(df_dtypes)
 
@@ -368,7 +368,7 @@ def test_update_database(engine, client):
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(retrieved_updated_vendors_data, str):
+    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
@@ -403,7 +403,7 @@ def test_update_database_with_insert_statement(engine, client):
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(retrieved_updated_vendors_data, str):
+    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
