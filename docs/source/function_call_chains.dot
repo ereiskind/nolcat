@@ -1328,6 +1328,18 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        test_fetch_URL_from_COUNTER_Registry [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_for_specific_CoP [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_failure [
+            style="dashed"
+            shape="box"
+        ]
         R5_JSON_3_PR_relation [
             style="dotted"
             shape="box"

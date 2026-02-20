@@ -578,6 +578,32 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         assert f"{file_name_stem}.txt" in bucket_contents
 
 
+#SECTION: COUNTER Registry Tests
+def test_fetch_URL_from_COUNTER_Registry():
+    """Tests getting a SUSHI URL from the COUNTER Registry.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    pass
+
+
+def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP():
+    """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
+    
+    Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    pass
+
+
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
+def test_fetch_URL_from_COUNTER_Registry_failure():
+    """Tests getting a COUNTER Registry response not containing a URL returns an error.
+    
+    The specified registry ID is for a depreciated platform. Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    pass
+
+
 #SECTION: `ConvertJSONDictToDataframe()` Tests
 @pytest.fixture
 def R5_JSON_3_PR_relation():

@@ -1318,6 +1318,24 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
     return message
 
 
+#SECTION: COUNTER Registry
+def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
+    """A function for getting the SUSHI URL for a given statistics source, represented by its COUNTER Registry ID.
+
+    Args:
+        registry_ID (str): the COUNTER Registry ID
+        code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+    
+    Returns:
+        str: the SUSHI URL
+    
+    Raises:
+        InvalidAPIResponseError: if the JSON doesn't contain a valid URL
+    """
+    log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
+    pass
+
+
 class ConvertJSONDictToDataframe:
     """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into dataframes.
 
