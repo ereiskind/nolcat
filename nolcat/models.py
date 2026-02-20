@@ -10,8 +10,6 @@ import calendar
 import csv
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
-import requests
-from urllib.parse import urlparse
 from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
