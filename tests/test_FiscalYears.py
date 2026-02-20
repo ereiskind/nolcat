@@ -354,45 +354,42 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
 
     #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
     # A random value is added at this point for greater variability in the testing
-    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
-    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-        SUSHI_data_file = json.load(JSON_file)
-        for vendor in SUSHI_data_file:
-            for statistics_source_dict in vendor['interface']:
-                if "interface_id" in list(statistics_source_dict.keys()):
-                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
-    retrieval_code = str(choice(retrieval_codes_as_interface_IDs))
+    retrieval_codes = []
+    with open(PATH_TO_CREDENTIALS_FILE()) as file:
+        CSV_data = csv.DictReader(file)
+        for statistics_source_credentials in CSV_data:
+            if statistics_source_credentials['statistics_source_retrieval_code']:
+                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
 
     update_result = update_database(
-        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",
+        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{str(choice(retrieval_codes))}' WHERE statistics_source_ID=11;",
         engine=engine,
     )
     if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
     
     #Section: Make Function Call
-    #ToDo: PARQUET IN S3--Remove `before_count = query_database(`
-    #ToDo: PARQUET IN S3--Remove `    query=f"SELECT COUNT(*) FROM COUNTERData;",`
-    #ToDo: PARQUET IN S3--Remove `    engine=engine,`
-    #ToDo: PARQUET IN S3--Remove `)`
-    #ToDo: PARQUET IN S3--Remove `if isinstance(before_count, str):`
-    #ToDo: PARQUET IN S3--Remove `    pytest.skip(database_function_skip_statements(before_count, False))`
-    #ToDo: PARQUET IN S3--Remove `before_count = extract_value_from_single_value_df(before_count)`
-    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()  #ToDo: PARQUET IN S3--no more `logging_statement`
-    #TEST: nolcat/models.py:1098: TypeError: 'NoneType' object does not support item assignment
+    before_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(before_count, str):
+        pytest.skip(database_function_skip_statements(before_count, False))
+    before_count = extract_value_from_single_value_df(before_count)
+    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
     if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
         pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
-    #ToDo: PARQUET IN S3--Remove `after_count = query_database(`
-    #ToDo: PARQUET IN S3--Remove `    query=f"SELECT COUNT(*) FROM COUNTERData;",`
-    #ToDo: PARQUET IN S3--Remove `    engine=engine,`
-    #ToDo: PARQUET IN S3--Remove `)`
-    #ToDo: PARQUET IN S3--Remove `if isinstance(after_count, str):`
-    #ToDo: PARQUET IN S3--Remove `    pytest.skip(database_function_skip_statements(after_count, False))`
-    #ToDo: PARQUET IN S3--Remove `after_count = extract_value_from_single_value_df(after_count)`
+    after_count = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if isinstance(after_count, str):
+        pytest.skip(database_function_skip_statements(after_count, False))
+    after_count = extract_value_from_single_value_df(after_count)
 
     #Section: Assert Statements
-    #ToDo: PARQUET IN S3--Remove `assert before_count < after_count`
-    #ToDo: PARQUET IN S3--Check S3 for parquet file of expected name; file will also need to be removed
-    assert load_data_into_database_success_regex().match(logging_statement)  #ToDo: PARQUET IN S3--Remove statements or edit regexes as necessary
-    assert update_database_success_regex().search(logging_statement)  #ToDo: PARQUET IN S3--Remove statements or edit regexes as necessary
+    assert before_count < after_count
+    assert load_data_into_database_success_regex().match(logging_statement)
+    assert update_database_success_regex().search(logging_statement)
     assert isinstance(flash_messages, dict)
