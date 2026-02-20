@@ -1452,14 +1452,10 @@ digraph function_call_chains {
     file_name_stem_and_data -> most_recent_month_with_usage
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
-    test_ISSN_regex -> ISSN_regex
-    test_last_day_of_month -> last_day_of_month
-    test_extract_value_from_single_value_df -> extract_value_from_single_value_df
-    test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
+    test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_fetch_URL_from_COUNTER_Registry -> fetch_URL_from_COUNTER_Registry
     test_fetch_URL_from_COUNTER_Registry_for_specific_CoP -> fetch_URL_from_COUNTER_Registry
     test_fetch_URL_from_COUNTER_Registry_failure -> fetch_URL_from_COUNTER_Registry
-    test_save_unconverted_data_via_upload -> file_name_stem_and_data
     R5_JSON_3_PR_relation -> state_data_types_in_COUNTERData
     R5_JSON_0_DR_relation -> state_data_types_in_COUNTERData
     R5_JSON_3_TR_relation -> state_data_types_in_COUNTERData
