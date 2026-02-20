@@ -603,7 +603,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         bucket_path=TEST_NON_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
     try:

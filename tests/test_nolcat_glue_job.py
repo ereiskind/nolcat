@@ -502,7 +502,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
     log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -562,7 +562,7 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,

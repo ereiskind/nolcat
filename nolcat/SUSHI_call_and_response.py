@@ -397,7 +397,7 @@ class SUSHICallAndResponse:
             file_name_stem,
             bucket_path,
         )
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
             message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
             log.critical(message)
         else:

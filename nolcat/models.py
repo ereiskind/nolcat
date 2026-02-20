@@ -1069,7 +1069,7 @@ class StatisticsSources(db.Model):
                             file_name_stem,
                             bucket_path,
                         )
-                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
                             message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                             self._log.critical(message)
                         else:
@@ -1109,7 +1109,7 @@ class StatisticsSources(db.Model):
                     file_name_stem,
                     bucket_path,
                 )
-                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
                     message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                     self._log.critical(message)
                 else:
@@ -1712,7 +1712,7 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path,
         )
         temp_file_path.unlink()
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
             message = failed_upload_to_S3_statement(file_name, logging_message)
             self._log.critical(message)
             return message
@@ -1764,6 +1764,7 @@ class AnnualUsageCollectionTracking(db.Model):
             self._log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
             return file_download_path
         else:
+            #ALERT: `raise S3InteractionError`
             self._log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {TOP_NOLCAT_DIRECTORY}.")
             return False
 

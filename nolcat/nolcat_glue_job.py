@@ -1161,6 +1161,7 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
             index=False,
         )
     except Exception as error:
+        #ALERT: `raise S3InteractionError`
         log.error(f"")
         return error  #ToDo: When called, response should be handled as "if not null, then problem"
 
@@ -1185,6 +1186,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
         check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
         message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
+        #ALERT: `raise S3InteractionError`
         log.error(message)
         return message
  
@@ -1224,14 +1226,17 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                 log.info(message)
                 return message
             except Exception as error:
+                #ALERT: `raise S3InteractionError`
                 message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
                 log.error(message)
                 return message
         else:
+              #ALERT: `raise S3InteractionError`
             message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
             log.error(message)
             return message
     except AttributeError as error:
+        #ALERT: `raise S3InteractionError`
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
@@ -1287,6 +1292,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
+                #ALERT: `raise S3InteractionError`
                 message = f"Writing data into a binary file raised the error {binary_error}; writing that data into a text file raised the error {text_error}."
                 log.error(message)
                 return message
@@ -1303,7 +1309,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
     log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):  #ALERT: `except S3InteractionError`
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:
@@ -1402,7 +1408,7 @@ class ConvertJSONDictToDataframe:
             self.report_type,
             bucket_path,
         )
-        if save_df_response:
+        if save_df_response:  #ALERT: `except S3InteractionError`
             return error  # Error logged in `save_dataframe_to_S3_bucket()`
     
 
@@ -2567,9 +2573,6 @@ class S3InteractionError(Exception):
     Attributes:
         self.message (str): a class attribute containing information to create the error message
     """
-    #ToDo: Find and mark instances of failed download
-    #ToDo: Mark all instances of `failed_upload_to_S3_statement()`
-    #ToDo: Mark all instances of `unable_to_delete_test_file_in_S3_statement()`
     def __init__(self, message):
         """The `S3InteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
