@@ -1352,7 +1352,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     i += 1
                 API_response = json.loads(modified_API_response)
             except:
-                return json.JSONDecodeError("The API response couldn't be converted into a Python dict.") 
+                raise json.JSONDecodeError("The API response couldn't be converted into a Python dict.") 
 
     #Section: Extract SUSHI URL
     if API_response.get('sushi_services') and API_response['sushi_services'] != []:
@@ -1364,7 +1364,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                 if API_response['sushi_services'][0]['last_audit']['audit_status'] == "Audit expired":
                     log.warning(f"The SUSHI URL for registry ID {registry_ID} has expired.")
             else:
-                return InvalidAPIResponseError("The requested code of practice isn't in the COUNTER Registry.")
+                raise InvalidAPIResponseError("The requested code of practice isn't in the COUNTER Registry.")
         find_current_audit = {}
         for release_data in API_response['sushi_services']:
             if code_of_practice:
@@ -1377,7 +1377,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
                     log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:
-        return InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
+        raise InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
     
     if find_current_audit:
         currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
@@ -1388,9 +1388,9 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
         elif len(currently_valid_release) == 0:
-            return InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
+            raise InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
         else:
-            return InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
+            raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
     
     #Section: Format SUSHI URL
     parsed_URL = urlparse(temp_URL)
