@@ -183,6 +183,7 @@ digraph function_call_chains {
         ]
     }
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
+    fetch_SUSHI_information -> fetch_URL_from_COUNTER_Registry
     _harvest_R5_SUSHI -> fetch_SUSHI_information
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_R5_SUSHI -> make_SUSHI_call
@@ -2524,6 +2525,7 @@ digraph function_call_chains {
         ]
     }
     SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> fetch_URL_from_COUNTER_Registry
     StatisticsSource_instance_name -> query_database
     StatisticsSource_instance_name -> extract_value_from_single_value_df
     StatisticsSource_instance_name -> database_function_skip_statements
