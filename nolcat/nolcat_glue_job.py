@@ -1374,6 +1374,8 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
                 for audit_info in release_data['last_audit']:
+                    log.error(f"`audit_info['counter_release']` (type {type(audit_info['counter_release'])}): {audit_info['counter_release']}")  #TEST: temp
+                    log.error(f"`audit_info['audit_status']` (type {type(audit_info['audit_status'])}): {audit_info['audit_status']}")  #TEST: temp
                     find_current_audit[audit_info['counter_release']] = audit_info['audit_status']
                     log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:
