@@ -764,7 +764,7 @@ class StatisticsSources(db.Model):
             CSV_data = csv.DictReader(file)
             self._log.debug("SUSHI credentials loaded.")
             self._log.error(f"`CSV_data` (type {type(CSV_data)}): {CSV_data}")  #TEST: temp
-            self._log.error(f"`len(CSV_data): {len(CSV_data)}")  #TEST: temp
+            self._log.error(f"`len(CSV_data): {len(list(CSV_data))}")  #TEST: temp
             for statistics_source_credentials in CSV_data:
                 self._log.error(f"`statistics_source_credentials['statistics_source_retrieval_code']`: {statistics_source_credentials['statistics_source_retrieval_code']}")  #TEST: temp
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
