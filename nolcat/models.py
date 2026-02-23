@@ -764,6 +764,7 @@ class StatisticsSources(db.Model):
             CSV_data = csv.DictReader(file)
             self._log.debug("SUSHI credentials loaded.")
             for statistics_source_credentials in CSV_data:
+                self._log.error(f"`statistics_source_credentials['statistics_source_retrieval_code']`: {statistics_source_credentials['statistics_source_retrieval_code']}")  #TEST: temp
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                     self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                     credentials = {'customer_id': statistics_source_credentials['customer_ID']}
@@ -778,12 +779,6 @@ class StatisticsSources(db.Model):
                         if isinstance(credentials['URL'], Exception):
                             return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
                 
-                #TEST: temp
-                try:
-                    self._log.error(f"`credentials` (type {type(credentials)}): {credentials}")
-                except Exception as e:
-                    self._log.error(f"Log statement with `credentials` raised {e}")
-                #TEST: end temp
                 if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
                     if statistics_source_credentials.get('alt_customer_ID'):
                         credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
