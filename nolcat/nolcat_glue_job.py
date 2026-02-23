@@ -1374,11 +1374,12 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
                 find_current_audit[release_data['last_audit']['counter_release']] = release_data['last_audit']['audit_status']
-                log.error(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")  #TEST: temp level--should be `debug`
+                log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:
         raise InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
     
     if find_current_audit:
+        log.error(f"`find_current_audit` (type {type(find_current_audit)}): {find_current_audit}")  #TEST: temp
         currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
         if len(currently_valid_release) == 1:
             for release_data in API_response['sushi_services']:
