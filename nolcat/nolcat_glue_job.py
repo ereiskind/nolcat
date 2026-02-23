@@ -1373,10 +1373,8 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
-                for audit_info in release_data['last_audit']:
-                    release_version = audit_info['counter_release']  # Using a dict index operator as the index operator value for another dict raises TypeError
-                    find_current_audit[release_version] = audit_info['audit_status']
-                    log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
+                find_current_audit[release_data['last_audit']['counter_release']] = release_data['last_audit']['audit_status']
+                log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:
         raise InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
     
