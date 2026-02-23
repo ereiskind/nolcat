@@ -778,7 +778,12 @@ class StatisticsSources(db.Model):
                         if isinstance(credentials['URL'], Exception):
                             return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
                 
-                #statistics_source_retrieval_code	URL					R5.1_customer_ID	R5.1_requestor_ID	R5.1_API_key	R5.1_platform
+                #TEST: temp
+                try:
+                    self._log.error(f"`credentials` (type {type(credentials)}): {credentials}")
+                except Exception as e:
+                    self._log.error(f"Log statement with `credentials` raised {e}")
+                #TEST: end temp
                 if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
                     if statistics_source_credentials.get('alt_customer_ID'):
                         credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
