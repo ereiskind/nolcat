@@ -766,7 +766,7 @@ class StatisticsSources(db.Model):
             for statistics_source_credentials in CSV_data:
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                     self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                    credentials = dict(statistics_source_credentials['customer_ID'])
+                    credentials = {'customer_id': statistics_source_credentials['customer_ID']}
                     if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
                         credentials['URL'] = statistics_source_credentials['URL']
                         if "r51" in credentials['URL']:
@@ -779,24 +779,22 @@ class StatisticsSources(db.Model):
                             return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
                 
                 #statistics_source_retrieval_code	URL					R5.1_customer_ID	R5.1_requestor_ID	R5.1_API_key	R5.1_platform
-                if code_of_practice == "5":
-                    if statistics_source_credentials.get('R5_customer_ID'):
-                        credentials['customer_id'] = statistics_source_credentials['R5_customer_ID']
-                    if statistics_source_credentials.get('R5_requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['R5_requestor_ID']
-                    if statistics_source_credentials.get('R5_API_key'):
-                        credentials['api_key'] = statistics_source_credentials['R5_API_key']
-                    if statistics_source_credentials.get('R5_platform'):
-                        credentials['platform'] = statistics_source_credentials['R5_platform']
-                elif code_of_practice == "5.1":
-                    if statistics_source_credentials.get('R5.1_customer_ID'):
-                        credentials['customer_id'] = statistics_source_credentials['R5.1_customer_ID']
-                    if statistics_source_credentials.get('R5.1_requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['R5.1_requestor_ID']
-                    if statistics_source_credentials.get('R5.1_API_key'):
-                        credentials['api_key'] = statistics_source_credentials['R5.1_API_key']
-                    if statistics_source_credentials.get('R5.1_platform'):
-                        credentials['platform'] = statistics_source_credentials['R5.1_platform']
+                if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
+                    if statistics_source_credentials.get('alt_customer_ID'):
+                        credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
+                    if statistics_source_credentials.get('alt_requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
+                    if statistics_source_credentials.get('alt_API_key'):
+                        credentials['api_key'] = statistics_source_credentials['alt_API_key']
+                    if statistics_source_credentials.get('alt_platform'):
+                        credentials['platform'] = statistics_source_credentials['alt_platform']
+                else:
+                    if statistics_source_credentials.get('requestor_ID'):
+                        credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
+                    if statistics_source_credentials.get('API_key'):
+                        credentials['api_key'] = statistics_source_credentials['API_key']
+                    if statistics_source_credentials.get('platform'):
+                        credentials['platform'] = statistics_source_credentials['platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:

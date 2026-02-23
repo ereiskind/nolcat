@@ -128,14 +128,14 @@ The SUSHI credentials are saved in a CSV stored in the AWS instance and copied t
 
 * **statistics_source_retrieval_code**: the COUNTER Registry ID for the statistics source or `placeholder` followed by a number if a registry ID is unavailable; this maps to the `StatisticsSources` attribute of the same name
 * **URL**: for all placeholder values, the SUSHI URL (needs to end in slash)
-* **R5_customer_ID**
-* **R5_requestor_ID**
-* **R5_API_key**
-* **R5_platform**
-* **R5.1_customer_ID**
-* **R5.1_requestor_ID**
-* **R5.1_API_key**
-* **R5.1_platform**
+* **customer_ID**
+* **requestor_ID**: for statistics sources that need it
+* **API_key**: for statistics sources that need it
+* **platform**: for statistics sources that need it
+* **alt_customer_ID**: when between versions, if the credentials differ between the versions, the older credentials go here
+* **alt_requestor_ID**: when between versions, if the credentials differ between the versions, the older credentials go here
+* **alt_API_key**: when between versions, if the credentials differ between the versions, the older credentials go here
+* **alt_platform**: when between versions, if the credentials differ between the versions, the older credentials go here
 
 Annual Usage Statistics
 ***********************
