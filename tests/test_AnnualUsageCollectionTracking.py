@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine, caplog):
+def AUCT_fixture_for_SUSHI(engine):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
 
     Args:
@@ -25,7 +25,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    # Cannot use `caplog` for `query_database()` due to scope mismatch
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
