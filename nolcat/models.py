@@ -779,22 +779,22 @@ class StatisticsSources(db.Model):
                         if isinstance(credentials['URL'], Exception):
                             return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
                 
-                if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
-                    if statistics_source_credentials.get('alt_customer_ID'):
-                        credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
-                    if statistics_source_credentials.get('alt_requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
-                    if statistics_source_credentials.get('alt_API_key'):
-                        credentials['api_key'] = statistics_source_credentials['alt_API_key']
-                    if statistics_source_credentials.get('alt_platform'):
-                        credentials['platform'] = statistics_source_credentials['alt_platform']
-                else:
-                    if statistics_source_credentials.get('requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
-                    if statistics_source_credentials.get('API_key'):
-                        credentials['api_key'] = statistics_source_credentials['API_key']
-                    if statistics_source_credentials.get('platform'):
-                        credentials['platform'] = statistics_source_credentials['platform']
+                    if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
+                        if statistics_source_credentials.get('alt_customer_ID'):
+                            credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
+                        if statistics_source_credentials.get('alt_requestor_ID'):
+                            credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
+                        if statistics_source_credentials.get('alt_API_key'):
+                            credentials['api_key'] = statistics_source_credentials['alt_API_key']
+                        if statistics_source_credentials.get('alt_platform'):
+                            credentials['platform'] = statistics_source_credentials['alt_platform']
+                    else:
+                        if statistics_source_credentials.get('requestor_ID'):
+                            credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
+                        if statistics_source_credentials.get('API_key'):
+                            credentials['api_key'] = statistics_source_credentials['API_key']
+                        if statistics_source_credentials.get('platform'):
+                            credentials['platform'] = statistics_source_credentials['platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
