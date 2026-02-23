@@ -111,7 +111,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
             URL,
             "status",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -132,7 +132,7 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSourc
             URL,
             "status",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
@@ -152,7 +152,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
             URL,
             "reports",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -173,7 +173,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
             URL,
             "reports",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     list_of_reports = [report for report in list(response[0].values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
@@ -219,7 +219,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
             URL,
             "reports/pr",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -244,7 +244,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
             URL,
             "reports/dr",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -269,7 +269,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
             URL,
             "reports/tr",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -294,7 +294,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
             URL,
             "reports/ir",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
         if skip_test_due_to_SUSHI_error_regex().match(response[0]):
@@ -321,5 +321,5 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, Statis
             URL,
             "reports/pr",
             SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=PATH_WITHIN_BUCKET_FOR_TESTS)
+        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     assert isinstance(response[0], dict)
