@@ -18,7 +18,7 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_parquet()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
+  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_parquet()` to expect S3 file name as return value (`#ToDo: PARQUET IN S3--` notes changes for no return value); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
 
     * `nolcat.models.StatisticsSources._harvest_single_report()` with `tests.test_StatisticsSources.test_harvest_single_report()`, `tests.test_StatisticsSources.test_harvest_single_report_with_partial_date_range()`
     * **`nolcat.models.StatisticsSources._harvest_R5_SUSHI()`** with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
