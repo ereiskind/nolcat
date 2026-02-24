@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-02-20 ##########
 
 import pytest
 from pathlib import Path
@@ -400,7 +400,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='fiscal_year_ID',
     )
-    if isinstance(fiscalYears_relation_data, str):
+    if isinstance(fiscalYears_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
@@ -411,7 +411,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index=['fiscal_year_ID', 'question'],
     )
-    if isinstance(annualStatistics_relation_data, str):
+    if isinstance(annualStatistics_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
     annualStatistics_relation_data = change_single_field_dataframe_into_series(annualStatistics_relation_data)
     annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
@@ -421,7 +421,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(vendors_relation_data, str):
+    if isinstance(vendors_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(vendors_relation_data))
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
@@ -430,7 +430,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='vendor_notes_ID',
     )
-    if isinstance(vendorNotes_relation_data, str):
+    if isinstance(vendorNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
@@ -446,7 +446,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert HTML_file_page_title in POST_response.data
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_series_equal(annualStatistics_relation_data, annualStatistics_relation)
-    assert_frame_equal(vendors_relation_data, vendors_relation)
+    assert_series_equal(change_single_field_dataframe_into_series(vendors_relation_data), vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
@@ -480,17 +480,16 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='statistics_source_ID',
     )
-    if isinstance(statisticsSources_relation_data, str):
+    if isinstance(statisticsSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
-    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
     statisticsSourceNotes_relation_data = query_database(
         query="SELECT * FROM statisticsSourceNotes;",
         engine=engine,
         index='statistics_source_notes_ID',
     )
-    if isinstance(statisticsSourceNotes_relation_data, str):
+    if isinstance(statisticsSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
@@ -500,7 +499,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='resource_source_ID',
     )
-    if isinstance(resourceSources_relation_data, str):
+    if isinstance(resourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(resourceSources_relation_data))
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
@@ -510,7 +509,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='resource_source_notes_ID',
     )
-    if isinstance(resourceSourceNotes_relation_data, str):
+    if isinstance(resourceSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
@@ -520,7 +519,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    if isinstance(statisticsResourceSources_relation_data, str):
+    if isinstance(statisticsResourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
@@ -588,7 +587,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         engine=engine,
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
-    if isinstance(annualUsageCollectionTracking_relation_data, str):
+    if isinstance(annualUsageCollectionTracking_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
@@ -597,7 +596,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         engine=engine,
         index="COUNTER_data_ID",
     )
-    if isinstance(COUNTERData_relation_data, str):
+    if isinstance(COUNTERData_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
@@ -659,7 +658,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
         """,
         engine=db.engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
 
     assert page.status == "200 OK"
@@ -745,7 +744,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         """,
         engine=db.engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = {f"usage_files-{i}-usage_file": AUCT_options for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields)}
@@ -797,7 +796,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             pytest.skip(database_function_skip_statements(df))
         collection_status_and_file_path.append((
             df.at[0,'collection_status'],

@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-02-20 ##########
 
 import pytest
 from random import choice
@@ -122,7 +122,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
         query=query_options[1],
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype(COUNTERData.state_data_types())
 
@@ -148,7 +148,7 @@ def start_query_wizard_form_data(engine, caplog):
         query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
     yield {
@@ -288,7 +288,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -426,7 +426,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -793,7 +793,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -1115,7 +1115,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -1165,7 +1165,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
             """,
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
+    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 

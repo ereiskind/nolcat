@@ -6,6 +6,8 @@ import json
 import re
 from datetime import date
 from datetime import datetime
+import calendar
+import csv
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 from dateutil.rrule import rrule
@@ -20,12 +22,12 @@ log = logging.getLogger(__name__)
 def PATH_TO_CREDENTIALS_FILE():
     """Provides the file path to the SUSHI credentials file as a string.
     
-    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
+    The SUSHI credentials are stored in a CSV file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.csv')
     if file_path.exists():
         log.debug(check_if_file_exists_statement(file_path))
         return str(file_path)
@@ -107,7 +109,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_B1_df, str):
+        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -123,7 +125,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(IR_M1_df, str):
+        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -139,7 +141,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_J1_df, str):
+        if isinstance(TR_J1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_J1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -169,7 +171,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -197,7 +199,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(TR_B1_df, str):
+        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -213,7 +215,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(IR_M1_df, str):
+        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
@@ -243,7 +245,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -271,7 +273,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -299,7 +301,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -327,7 +329,7 @@ class FiscalYears(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -351,7 +353,7 @@ class FiscalYears(db.Model):
             query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             engine=db.engine,
         )
-        if isinstance(current_statistics_sources, str):
+        if isinstance(current_statistics_sources, str):  #ALERT: `except DatabaseInteractionError`
             return database_query_fail_statement(current_statistics_sources, "return requested series")
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
@@ -387,7 +389,7 @@ class FiscalYears(db.Model):
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
@@ -415,7 +417,7 @@ class FiscalYears(db.Model):
             """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
             engine=db.engine,
         )
-        if isinstance(AUCT_objects_to_collect_df, str):
+        if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
             return (message, [message])
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
@@ -443,13 +445,13 @@ class FiscalYears(db.Model):
                 query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
-            if isinstance(statistics_source_df, str):
+            if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
                 all_flash_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
                 statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
-                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'].split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
@@ -471,7 +473,7 @@ class FiscalYears(db.Model):
         df = pd.concat(dfs)
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             all_flash_statements['first_new_PK_value()'] = message
@@ -493,7 +495,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             self._log.warning(message)
             all_flash_statements['update_database()'] = message
@@ -547,7 +549,6 @@ class Vendors(db.Model):
     Attributes:
         self.vendor_ID (int): the primary key
         self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
-        self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -560,7 +561,6 @@ class Vendors(db.Model):
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80), nullable=False)
-    alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
     FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
@@ -571,7 +571,7 @@ class Vendors(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}', 'alma_vendor_code': '{self.alma_vendor_code}'>"
+        return f"<Vendors - 'vendor_ID': {self.vendor_ID}, 'vendor_name': '{self.vendor_name}'"
 
 
     @hybrid_method
@@ -580,7 +580,6 @@ class Vendors(db.Model):
         """This method provides a dictionary of the attributes and their data types."""
         return {
             "vendor_name": 'string',
-            "alma_vendor_code": 'string',
         }
 
 
@@ -606,7 +605,7 @@ class Vendors(db.Model):
         #     engine=db.engine,
         #     index='statistics_source_ID',
         # )
-        # if isinstance(df, str):
+        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -638,7 +637,7 @@ class Vendors(db.Model):
         #     engine=db.engine,
         #     index='resource_source_ID',
         # )
-        # if isinstance(df, str):
+        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -701,7 +700,7 @@ class StatisticsSources(db.Model):
     Attributes:
         self.statistics_source_ID (int): the primary key
         self.statistics_source_name (string): the name of the statistics source
-        self.statistics_source_retrieval_code (string): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
+        self.statistics_source_retrieval_code (string): the alphanumeric ID used to uniquely identify each set of SUSHI credentials, primarily derived from the COUNTER registry
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -718,7 +717,7 @@ class StatisticsSources(db.Model):
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100), nullable=False)
-    statistics_source_retrieval_code = db.Column(db.String(30))
+    statistics_source_retrieval_code = db.Column(db.String(36))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
@@ -746,51 +745,55 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def fetch_SUSHI_information(self, for_API_call=True):
+    def fetch_SUSHI_information(self, code_of_practice=None, for_API_call=True):
         """A method for fetching the information required to make a SUSHI API call for the statistics source.
 
-        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+        This method fetches the information for making a SUSHI API call from a CSV file and the COUNTER Registry, then returns them for use in an API call or for display to the user.
 
         Args:
-            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+            code_of_practice (str, optional): the COUNTER code of practice for the fetched SUSHI URL; default is `None`, which uses the current CoP as designated by the COUNTER Registry
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call instead of for display to the user; default is `True`
         
         Returns:
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
+        self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
-        #Subsection: Retrieve Data from JSON
-        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-            SUSHI_data_file = json.load(JSON_file)
-            self._log.debug("JSON with SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
-                for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
-                        self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                        credentials = dict(
-                            URL = statistics_source_dict['statistics']['online_location'],
-                            customer_id = statistics_source_dict['statistics']['user_id']
-                        )
-
-                        try:
-                            credentials['requestor_id'] = statistics_source_dict['statistics']['user_password']
-                        except:
-                            pass
-
-                        try:
-                            credentials['api_key'] = statistics_source_dict['statistics']['user_pass_note']
-                        except:
-                            pass
-
-                        try:
-                            credentials['platform'] = statistics_source_dict['statistics']['delivery_address']
-                        except:
-                            pass
-
-        #Subsection: Retrieve Data from Alma
-        #ToDo: When credentials are in Alma, create this functionality
-
+        with open(PATH_TO_CREDENTIALS_FILE()) as file:
+            CSV_data = csv.DictReader(file)
+            self._log.debug("SUSHI credentials loaded.")
+            for statistics_source_credentials in CSV_data:
+                if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
+                    self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                    credentials = {'customer_id': statistics_source_credentials['customer_ID']}
+                    if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                        credentials['URL'] = statistics_source_credentials['URL']
+                        if "r51" in credentials['URL']:
+                            code_of_practice = "5.1"
+                        else:
+                            code_of_practice = "5"
+                    else:
+                        credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
+                        if isinstance(credentials['URL'], Exception):
+                            return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
+                
+                    if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
+                        if statistics_source_credentials.get('alt_customer_ID'):
+                            credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
+                        if statistics_source_credentials.get('alt_requestor_ID'):
+                            credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
+                        if statistics_source_credentials.get('alt_API_key'):
+                            credentials['api_key'] = statistics_source_credentials['alt_API_key']
+                        if statistics_source_credentials.get('alt_platform'):
+                            credentials['platform'] = statistics_source_credentials['alt_platform']
+                    else:
+                        if statistics_source_credentials.get('requestor_ID'):
+                            credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
+                        if statistics_source_credentials.get('API_key'):
+                            credentials['api_key'] = statistics_source_credentials['API_key']
+                        if statistics_source_credentials.get('platform'):
+                            credentials['platform'] = statistics_source_credentials['platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
@@ -802,7 +805,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
@@ -811,6 +814,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
@@ -819,10 +823,10 @@ class StatisticsSources(db.Model):
         #Section: Get API Call URL and Parameters
         self._log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
+            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)  #ALERT: `raise InvalidSUSHIDatesError`
             self._log.error(message)
             return (message, {'dates': [message]})
-        SUSHI_info = self.fetch_SUSHI_information()
+        SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
         self._log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
@@ -830,7 +834,12 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call(bucket_path)
+        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+            self.statistics_source_name,
+            SUSHI_info['URL'],
+            "status",
+            SUSHI_parameters
+        ).make_SUSHI_call(bucket_path)
         all_flashed_statements['status'] = flash_message_list
         if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
@@ -840,7 +849,7 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)
+            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)  #ALERT: `raise InvalidSUSHIResponseError`
             self._log.warning(message)
             return (message, all_flashed_statements)
         else:
@@ -882,7 +891,12 @@ class StatisticsSources(db.Model):
             #Section: Get List of Resources
             #Subsection: Make API Call
             self._log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_info['URL'],
+                "reports",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 self._log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
@@ -1017,7 +1031,12 @@ class StatisticsSources(db.Model):
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                        self.statistics_source_name,
+                        SUSHI_URL,
+                        f"reports/{report.lower()}",
+                        SUSHI_parameters
+                    ).make_SUSHI_call(bucket_path)
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
                     if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
@@ -1045,7 +1064,7 @@ class StatisticsSources(db.Model):
                             file_name_stem,
                             bucket_path,
                         )
-                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
                             message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                             self._log.critical(message)
                         else:
@@ -1058,7 +1077,7 @@ class StatisticsSources(db.Model):
                         return (None, complete_flash_message_list)
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)
+                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)  #ALERT: `raise NoSUSHIUsageDataError`
                     self._log.warning(message)
                     return (message, complete_flash_message_list)
 
@@ -1066,7 +1085,12 @@ class StatisticsSources(db.Model):
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call(bucket_path)
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_URL,
+                f"reports/{report.lower()}",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
             if isinstance(SUSHI_data_response, str):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
@@ -1080,7 +1104,7 @@ class StatisticsSources(db.Model):
                     file_name_stem,
                     bucket_path,
                 )
-                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
                     message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                     self._log.critical(message)
                 else:
@@ -1120,7 +1144,7 @@ class StatisticsSources(db.Model):
                 query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
                 engine=db.engine,
             )
-            if isinstance(number_of_records, str):
+            if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
                 return database_query_fail_statement(number_of_records, "return requested value")
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
@@ -1137,7 +1161,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1146,6 +1170,7 @@ class StatisticsSources(db.Model):
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
@@ -1156,6 +1181,7 @@ class StatisticsSources(db.Model):
             usage_start_date,
             usage_end_date,
             report_to_harvest,
+            code_of_practice,
             bucket_path,
         )
         if isinstance(df, str):
@@ -1165,7 +1191,7 @@ class StatisticsSources(db.Model):
             self._log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[0]))
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             flash_statements['first_new_PK_value()'] = message
@@ -1231,7 +1257,7 @@ class StatisticsSourceNotes(db.Model):
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
 
-    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains.
+    Resource sources are often called platforms. Resource sources are often declared distinct by virtue of having different HTTP domains.
     
     Attributes:
         self.resource_source_ID (int): the primary key
@@ -1300,7 +1326,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1326,7 +1352,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1355,7 +1381,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = database_update_fail_statement(update_statement)
             self._log.warning(message)
             return message
@@ -1364,7 +1390,7 @@ class ResourceSources(db.Model):
             query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
             engine=db.engine,
         )
-        if isinstance(check_for_existing_record, str):
+        if isinstance(check_for_existing_record, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(check_for_existing_record, "return requested record")
             self._log.warning(message)
             return message
@@ -1405,7 +1431,7 @@ class ResourceSources(db.Model):
                 update_statement=update_statement,
                 engine=db.engine,
             )
-            if not update_database_success_regex().fullmatch(update_result):
+            if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
                 message = database_update_fail_statement(update_statement)
                 self._log.warning(message)
                 return message
@@ -1567,7 +1593,7 @@ class AnnualUsageCollectionTracking(db.Model):
     def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Args:
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
@@ -1582,7 +1608,7 @@ class AnnualUsageCollectionTracking(db.Model):
             query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
             engine=db.engine,
         )
-        if isinstance(fiscal_year_data, str):
+        if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(fiscal_year_data, "return requested values")
             self._log.warning(message)
             return (fiscal_year_data, {"Before SUSHI": message})
@@ -1597,14 +1623,14 @@ class AnnualUsageCollectionTracking(db.Model):
             query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
             engine=db.engine,
         )
-        if isinstance(statistics_source_data, str):
+        if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(statistics_source_data, "return requested values")
             self._log.warning(message)
             return (fiscal_year_data, {"Before SUSHI": message})
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         self._log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
@@ -1617,7 +1643,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], fiscal_year))
         try:
             df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
+        except Exception as error:  #ALERT: `except DatabaseInteractionError`
             message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             self._log.warning(message)
             flash_statements['first_new_PK_value()'] = message
@@ -1639,7 +1665,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             self._log.warning(message)
             flash_statements['update_database()'] = message
@@ -1681,7 +1707,7 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path,
         )
         temp_file_path.unlink()
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
             message = failed_upload_to_S3_statement(file_name, logging_message)
             self._log.critical(message)
             return message
@@ -1699,7 +1725,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if not update_database_success_regex().fullmatch(update_result):
+        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             self._log.warning(message)
             return message
@@ -1733,6 +1759,7 @@ class AnnualUsageCollectionTracking(db.Model):
             self._log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
             return file_download_path
         else:
+            #ALERT: `raise S3InteractionError`
             self._log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {TOP_NOLCAT_DIRECTORY}.")
             return False
 

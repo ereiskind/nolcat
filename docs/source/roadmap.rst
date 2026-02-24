@@ -2,22 +2,13 @@ NoLCAT Development Roadmap
 ##########################
 This page contains all the current to-dos and possible plans for the NoLCAT program.
 
-To Investigate
-**************
-This is a list of issues encountered over the course of development that require further investigation.
-
-* A ScienceDirect SUSHI call returned `401 Client Error: Unauthorized for url`; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
-* J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
-* Morgan & Claypool raised `HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))`
-* Certificate issues raising errors with
-
-  * *Allen Press/Pinnacle Hosting*: `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`
-  * *Grain Science Library*: `HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))`
-  * *Adam matthew*: `HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))`
-  * *Sciendo*: `HTTPSConnectionPool(host='ams.degruyter.com', port=443): Max retries exceeded with url: /rest/COUNTER/v5/status?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fb5414a4520>: Failed to establish a new connection: [Errno -2] Name or service not known'))`
-
 Planned Iterations
 ******************
+* Confirm the following functions work with SUSHI CSV
+
+  * `nolcat.models.StatisticsSources.fetch_SUSHI_information()` and `tests.test_StatisticsSources.StatisticsSources_fixture()`
+  * `nolcat.models.StatisticsSources.collect_usage_statistics()`, `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`, `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
+  * `tests.test_StatisticsSources.SUSHI_credentials_fixture_in_test_StatisticsSources()`, `tests.test_StatisticsSources.reports_offered_by_StatisticsSource_fixture()`, `tests.test_StatisticsSources.data_for_testing_harvest_single_report()`, `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
@@ -27,12 +18,12 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
 
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes
+  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
 
     * `nolcat.models.StatisticsSources._harvest_single_report()` with `tests.test_StatisticsSources.test_harvest_single_report()`, `tests.test_StatisticsSources.test_harvest_single_report_with_partial_date_range()`
-    * `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualStatisticsCollectionTracking.harvest_R5_SUSHI_result()`
+    * **`nolcat.models.StatisticsSources._harvest_R5_SUSHI()`** with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
     * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.StatisticsSources.test_collect_usage_statistics()`
-    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualStatisticsCollectionTracking.test_collect_annual_usage_statistics()`
+    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
     * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
     * `nolcat.models.StatisticsSources.` with `tests.StatisticsSources.()`, `tests.StatisticsSources.()`
@@ -206,6 +197,7 @@ Iteration 6: Miscellaneous
 * Create CSS class for flashed messages
 * Add FSU Libraries wordmark as link to library homepage in footer
 * Consolidate `nolcat.models.StatisticsSources._check_if_data_in_database()` and `nolcat.app.check_if_data_already_in_COUNTERData()`
+* Convert error catches by returning strings to returning Python exception classes
 
 Iteration 7: Interact with Host File System
 ============================================
@@ -253,11 +245,6 @@ Iteration: Display Data Visualization of Usage Data Requests in Browser
 =======================================================================
 * Make final decision between Plotly/Dash and Bokeh
 * Change dataframes displayed as tables in browser to data visualizations
-
-Iteration: Get SUSHI Credentials from Alma
-==========================================
-* Add way to determine if data should be fetched from Alma or the JSON file at the beginning of `nolcat.models.StatisticsSources.fetch_SUSHI_information()`
-* Write "Retrieve Data from Alma" subsection of `nolcat.models.StatisticsSources.fetch_SUSHI_information()`
 
 Iteration: Add User Accounts to Restrict Access
 ===============================================

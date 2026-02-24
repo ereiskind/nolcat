@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-02-20 ##########
 
 import pytest
 from random import choice
@@ -63,7 +63,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         engine=engine,
         index='COUNTER_data_ID',
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
@@ -108,13 +108,13 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
-    if isinstance(check_relation_size, str):
+    if isinstance(check_relation_size, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(check_relation_size))
     df = query_database(
         query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns='COUNTER_data_ID')
@@ -199,7 +199,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = list(df.itertuples(index=False, name=None))
 
@@ -212,7 +212,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
 def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
-    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data must be valid COUNTER Registry ID values; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
@@ -222,7 +222,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
     form_input = {
@@ -292,7 +292,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         """,
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = create_AUCT_SelectField_options(df)
 

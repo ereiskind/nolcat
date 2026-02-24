@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2026-02-13 ##########
+########## Failing 2026-02-24 ##########
 
 import pytest
 from filecmp import cmp
@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine, caplog):
+def AUCT_fixture_for_SUSHI(engine):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
 
     Args:
@@ -25,12 +25,12 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    # Cannot use `caplog` for `query_database()` due to scope mismatch
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
@@ -49,7 +49,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
 
 
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
-def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
+def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
 
     The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
@@ -57,13 +57,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    # Cannot use `caplog` for `query_database()` due to scope mismatch
 
     record = query_database(
         query=f"""
@@ -83,7 +81,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         """,
         engine=engine,
     )
-    if isinstance(record, str):
+    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
     
     start_date = record.at[0,'start_date']
@@ -91,11 +89,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     StatisticsSources_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
         statistics_source_ID = int(record.at[0,'statistics_source_ID']),
         statistics_source_name = str(record.at[0,'statistics_source_name']),
-        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']),
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(  #TEST: `AttributeError: 'NoneType' object has no attribute 'empty'` because `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` hasn't been adjusted for saving to S3 as parquet
         start_date,
         end_date,
         bucket_path=TEST_COUNTER_FILE_PATH,
@@ -118,7 +116,6 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
 
 
 @pytest.mark.slow
-@pytest.mark.skip(reason="Almost all of the options for this test will trigger skipping the test.")  #TEST: Remove if reason for skip changes
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
@@ -140,7 +137,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
         engine=engine,
     )
-    if isinstance(database_update_check, str):
+    if isinstance(database_update_check, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_update_check))
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
 
@@ -211,7 +208,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
-    if isinstance(usage_file_path_in_database, str):
+    if isinstance(usage_file_path_in_database, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
     usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))

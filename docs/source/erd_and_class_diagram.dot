@@ -60,7 +60,6 @@ digraph erd_and_classes {
         //Attributes
         vendor_ID [shape="note"]
         vendor_name
-        alma_vendor_code
 
         //Methods
         state_data_types_in_vendors [

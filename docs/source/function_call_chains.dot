@@ -8,6 +8,7 @@ digraph function_call_chains {
 
         Relation: `color="#ceb888"` (Gold)
         Blueprint: `color="#782f40"` (Garnet)
+        Exceptions: `color="#425563"`
         Module collecting general functions: `color="#5cb8b2"`
     */
 
@@ -182,6 +183,7 @@ digraph function_call_chains {
         ]
     }
     fetch_SUSHI_information -> PATH_TO_CREDENTIALS_FILE
+    fetch_SUSHI_information -> fetch_URL_from_COUNTER_Registry
     _harvest_R5_SUSHI -> fetch_SUSHI_information
     _harvest_R5_SUSHI -> _harvest_single_report
     _harvest_R5_SUSHI -> make_SUSHI_call
@@ -687,7 +689,8 @@ digraph function_call_chains {
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
-        save_unconverted_data_via_upload [shape="box"]
+        save_unconverted_data_via_upload [shape="folder"]
+        fetch_URL_from_COUNTER_Registry [shape="box"]
         subgraph cluster_ConvertJSONDictToDataframe {
             label="nolcat.nolcat_glue_job.ConvertJSONDictToDataframe"
             penwidth=5
@@ -703,6 +706,48 @@ digraph function_call_chains {
             _extraction_start_logging_statement [shape="box"]
             _extraction_complete_logging_statement [shape="box"]
             _increase_field_length_logging_statement [shape="box"]
+        }
+        subgraph cluster_InvalidAPIResponseError {
+            label="nolcat.nolcat_glue_job.InvalidAPIResponseError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_InvalidSUSHIResponseError {
+            label="nolcat.nolcat_glue_job.InvalidSUSHIResponseError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_NoSUSHIUsageDataError {
+            label="nolcat.nolcat_glue_job.NoSUSHIUsageDataError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_NoSUSHIDataError {
+            label="nolcat.nolcat_glue_job.NoSUSHIDataError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_InvalidSUSHIDatesError {
+            label="nolcat.nolcat_glue_job.InvalidSUSHIDatesError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_DatabaseInteractionError {
+            label="nolcat.nolcat_glue_job.DatabaseInteractionError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
+        }
+        subgraph cluster_S3InteractionError {
+            label="nolcat.nolcat_glue_job.S3InteractionError"
+            penwidth=5
+            style="rounded"
+            color="#425563"
         }
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
@@ -1256,16 +1301,8 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        vendors_relation_after_test_update_database [
-            style="dotted"
-            shape="box"
-        ]
         test_update_database [
             style="dashed"
-            shape="box"
-        ]
-        vendors_relation_after_test_update_database_with_insert_statement [
-            style="dotted"
             shape="box"
         ]
         test_update_database_with_insert_statement [
@@ -1291,6 +1328,18 @@ digraph function_call_chains {
         test_save_unconverted_data_via_upload [
             style="dashed"
             shape="folder"
+        ]
+        test_fetch_URL_from_COUNTER_Registry [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_for_specific_CoP [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_failure [
+            style="dashed"
+            shape="box"
         ]
         R5_JSON_3_PR_relation [
             style="dotted"
@@ -1333,6 +1382,18 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_fetch_URL_from_COUNTER_Registry [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_for_specific_CoP [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_URL_from_COUNTER_Registry_failure [
+            style="dashed"
+            shape="box"
+        ]
     }
     test_last_day_of_month -> last_day_of_month
     test_ISSN_regex -> ISSN_regex
@@ -1369,22 +1430,18 @@ digraph function_call_chains {
     test_query_database -> engine
     test_query_database -> vendors_relation_in_conftest
     test_first_new_PK_value -> first_new_PK_value
-    vendors_relation_after_test_update_database -> state_data_types_in_vendors
     test_update_database -> state_data_types_in_vendors
     test_update_database -> query_database
     test_update_database -> update_database
     test_update_database -> database_function_skip_statements
     test_update_database -> update_database_success_regex
     test_update_database -> engine
-    test_update_database -> vendors_relation_after_test_update_database
-    vendors_relation_after_test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> query_database
     test_update_database_with_insert_statement -> update_database
     test_update_database_with_insert_statement -> database_function_skip_statements
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> engine
-    test_update_database_with_insert_statement -> vendors_relation_after_test_update_database_with_insert_statement
     test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
     test_save_dataframe_to_S3_bucket -> get_name_of_parquet_file_saved_to_S3
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
@@ -1397,6 +1454,9 @@ digraph function_call_chains {
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> upload_file_to_S3_bucket_success_regex
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_fetch_URL_from_COUNTER_Registry -> fetch_URL_from_COUNTER_Registry
+    test_fetch_URL_from_COUNTER_Registry_for_specific_CoP -> fetch_URL_from_COUNTER_Registry
+    test_fetch_URL_from_COUNTER_Registry_failure -> fetch_URL_from_COUNTER_Registry
     R5_JSON_3_PR_relation -> state_data_types_in_COUNTERData
     R5_JSON_0_DR_relation -> state_data_types_in_COUNTERData
     R5_JSON_3_TR_relation -> state_data_types_in_COUNTERData
@@ -2465,6 +2525,7 @@ digraph function_call_chains {
         ]
     }
     SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> last_day_of_month
+    SUSHI_credentials_fixture_in_test_SUSHICallAndResponse -> fetch_URL_from_COUNTER_Registry
     StatisticsSource_instance_name -> query_database
     StatisticsSource_instance_name -> extract_value_from_single_value_df
     StatisticsSource_instance_name -> database_function_skip_statements
