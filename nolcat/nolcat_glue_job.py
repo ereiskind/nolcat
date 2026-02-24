@@ -1153,19 +1153,21 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
-        Exception: the error if a problem occurs while saving the data to S3
+        str: the S3 file name/location
+    
+    Raises:
+        S3InteractionError: if a problem occurs while saving the data to S3
     """
     log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
     now = datetime.now()
+    S3_file_name = f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet"
     try:
         df.to_parquet(
-            f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet",
+            S3_file_name,
             index=False,
         )
     except Exception as error:
-        #ALERT: `raise S3InteractionError`
-        log.error(f"")
-        return error  #ToDo: When called, response should be handled as "if not null, then problem"
+        raise S3InteractionError(error)
 
 
 def upload_file_to_S3_bucket(file, file_name, bucket_path):
