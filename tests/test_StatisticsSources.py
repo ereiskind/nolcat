@@ -224,7 +224,6 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
         StatisticsSources_fixture.statistics_source_ID,
         report_to_check,
     )
-    log.error(f"`file_name` (type {type(file_name)}): {file_name}")  #TEST: temp
     assert file_name.startswith(f"0_{report_to_check}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
     assert isinstance(flash_message_list, list)
 
