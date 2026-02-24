@@ -56,6 +56,13 @@ def StatisticsSources_fixture():
             if statistics_source_credentials['statistics_source_retrieval_code']:
                 if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
                     retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
+    valid_retrieval_codes = []  # If there isn't a valid audit on the randomly selected COUNTER registry ID, most of the module's tests are skipped
+    for code in retrieval_codes:
+        try:
+            if fetch_URL_from_COUNTER_Registry(code):
+                valid_retrieval_codes.append(code)
+        except:
+            pass
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = choice([  # If the name isn't in the database, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; using the names of the statistics sources associated with COUNTER in the test data is a further hedge against problems
@@ -63,7 +70,7 @@ def StatisticsSources_fixture():
             "EBSCOhost",
             "Duke UP",
         ]),
-        statistics_source_retrieval_code = str(choice(retrieval_codes)),
+        statistics_source_retrieval_code = str(choice(valid_retrieval_codes)),
         vendor_ID = 0,
     )
     log.warning(fixture_variable_value_declaration_statement("StatisticsSources_fixture", yield_object))  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
