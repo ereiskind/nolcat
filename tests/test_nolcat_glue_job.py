@@ -6055,15 +6055,12 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
-    before = datetime.now()
-    df = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
-    after = datetime.now()
-    assert df is None
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
+    S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
+    assert isinstance(S3_file_name, str)
+    download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name,
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)

@@ -1015,7 +1015,10 @@ class StatisticsSources(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: an error message, if applicable (str or null); a list of the statements that should be flashed (list of str)
+            tuple: the parquet file(s) saved to S3 (str or list); a list of the statements that should be flashed (list of str)
+
+        Raises:
+            NoSUSHIUsageDataError: if no SUSHI usage data is returned
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
@@ -1027,6 +1030,7 @@ class StatisticsSources(db.Model):
             else:
                 self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
                 complete_flash_message_list = []
+                S3_file_name_list = []
                 no_usage_returned_count = 0
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
@@ -1054,32 +1058,20 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
-                    if df:
-                        message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
-                        self._log.warning(message)
-                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
-                        logging_message = save_unconverted_data_via_upload(
-                            SUSHI_data_response,
-                            file_name_stem,
-                            bucket_path,
-                        )
-                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-                            message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
-                            self._log.critical(message)
-                        else:
-                            message = message + " " + logging_message
-                            self._log.debug(message)
-                        complete_flash_message_list.append(message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    try:
+                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
+                    except S3InteractionError as error:
+                        complete_flash_message_list.append(error)
+                        continue  # Raising an error here would keep any other reports from being pulled and processed
+                    S3_file_name_list.append(S3_file_name)
+                    if parquet_file_name_regex().fullmatch(S3_file_name):
+                        self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
                     else:
-                        self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 successful.")
-                        return (None, complete_flash_message_list)
+                        self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)  #ALERT: `raise NoSUSHIUsageDataError`
-                    self._log.warning(message)
-                    return (message, complete_flash_message_list)
+                    raise NoSUSHIUsageDataError(report.lower(), self.statistics_source_name, "all months returned no usage")
+                return (S3_file_name_list, complete_flash_message_list)
 
         elif subset_of_months_to_harvest is None:
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
@@ -1094,27 +1086,16 @@ class StatisticsSources(db.Model):
             if isinstance(SUSHI_data_response, str):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
-            if df:
-                message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
-                self._log.warning(message)
-                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
-                logging_message = save_unconverted_data_via_upload(
-                    SUSHI_data_response,
-                    file_name_stem,
-                    bucket_path,
-                )
-                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-                    message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
-                    self._log.critical(message)
-                else:
-                    message = message + " " + logging_message
-                    self._log.debug(message)
-                flash_message_list.append(message)
-                return (message, flash_message_list)
+            try:
+                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
+            except S3InteractionError as error:
+                flash_message_list.append(error)
+                raise S3InteractionError(error)  #ToDo: How to pass `flash_message_list`?
+            if parquet_file_name_regex().fullmatch(S3_file_name):
+                self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
-                self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 successful.")
-                return (None, flash_message_list)
+                self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
+            return (S3_file_name, flash_message_list)
 
         elif isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
