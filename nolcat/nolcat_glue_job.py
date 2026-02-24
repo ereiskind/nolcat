@@ -1451,7 +1451,7 @@ class ConvertJSONDictToParquet:
             str: the name of the file saved to S3
 
         Raises:
-            #ToDo: List the errors raised
+            S3InteractionError: if a problem occurs while saving the data to S3
         """
         self._log.info("Starting `ConvertJSONDictToParquet.create_parquet()`.")
         try:
@@ -1490,14 +1490,16 @@ class ConvertJSONDictToParquet:
             bucket_path = TEST_COUNTER_FILE_PATH
         else:
             bucket_path = PRODUCTION_COUNTER_FILE_PATH
-        save_df_response = save_dataframe_to_S3_bucket(
-            df,
-            self.statistics_source_ID,
-            self.report_type,
-            bucket_path,
-        )
-        if save_df_response:  #ALERT: `except S3InteractionError`
-            return error  # Error logged in `save_dataframe_to_S3_bucket()`
+        try:
+            S3_file_name = save_dataframe_to_S3_bucket(
+                df,
+                self.statistics_source_ID,
+                self.report_type,
+                bucket_path,
+            )
+        except S3InteractionError as error:
+            raise S3InteractionError(error)
+        return S3_file_name
     
 
     def _transform_R5_JSON(self, report_creation_date):
