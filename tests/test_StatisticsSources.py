@@ -201,12 +201,12 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
     """Tests the method making the API call and turing the result into a dataframe."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    begin_date, report_checked = data_for_testing_harvest_single_report
+    report_to_check, begin_date = data_for_testing_harvest_single_report
     end_date = last_day_of_month(begin_date)
     before = datetime.now()
     with client:
         error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
-            report_checked,
+            report_to_check,
             SUSHI_credentials_fixture['URL'],
             {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
@@ -222,10 +222,10 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
         before,
         after,
         StatisticsSources_fixture.statistics_source_ID,
-        report_checked,
+        report_to_check,
     )
     log.error(f"`file_name` (type {type(file_name)}): {file_name}")  #TEST: temp
-    assert file_name.startswith(f"0_{report_checked}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
+    assert file_name.startswith(f"0_{report_to_check}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
     assert isinstance(flash_message_list, list)
 
 
