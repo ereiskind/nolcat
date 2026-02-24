@@ -194,7 +194,7 @@ digraph function_call_chains {
     _harvest_single_report -> _check_if_data_in_database
     _harvest_single_report -> state_data_types_in_COUNTERData
     _harvest_single_report -> make_SUSHI_call
-    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToDataframe
+    _harvest_single_report -> create_dataframe_in_ConvertJSONDictToParquet
     _harvest_single_report -> last_day_of_month
     _harvest_single_report -> return_string_of_dataframe_info
     _harvest_single_report -> save_unconverted_data_via_upload
@@ -691,12 +691,12 @@ digraph function_call_chains {
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="folder"]
         fetch_URL_from_COUNTER_Registry [shape="box"]
-        subgraph cluster_ConvertJSONDictToDataframe {
-            label="nolcat.nolcat_glue_job.ConvertJSONDictToDataframe"
+        subgraph cluster_ConvertJSONDictToParquet {
+            label="nolcat.nolcat_glue_job.ConvertJSONDictToParquet"
             penwidth=5
             style="rounded"
 
-            create_dataframe_in_ConvertJSONDictToDataframe [
+            create_dataframe_in_ConvertJSONDictToParquet [
                 label="create_dataframe"
                 shape="box"
             ]
@@ -772,9 +772,9 @@ digraph function_call_chains {
     update_database -> database_query_fail_statement
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
     save_unconverted_data_via_upload -> format_list_for_stdout
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5_JSON
-    create_dataframe_in_ConvertJSONDictToDataframe -> _transform_R5b1_JSON
-    create_dataframe_in_ConvertJSONDictToDataframe -> save_dataframe_to_S3_bucket
+    create_dataframe_in_ConvertJSONDictToParquet -> _transform_R5_JSON
+    create_dataframe_in_ConvertJSONDictToParquet -> _transform_R5b1_JSON
+    create_dataframe_in_ConvertJSONDictToParquet -> save_dataframe_to_S3_bucket
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
     _transform_R5_JSON -> ISSN_regex
@@ -1474,7 +1474,7 @@ digraph function_call_chains {
     JSON_dicts_with_metadata -> R5b1_JSON_3_TR_relation
     JSON_dicts_with_metadata -> R5b1_JSON_3_IR_relation
     test_create_dataframe_from_JSON -> JSON_dicts_with_metadata
-    test_create_dataframe_from_JSON -> create_dataframe_in_ConvertJSONDictToDataframe
+    test_create_dataframe_from_JSON -> create_dataframe_in_ConvertJSONDictToParquet
     test_create_dataframe_from_JSON -> get_name_of_parquet_file_saved_to_S3
 
 

@@ -314,8 +314,8 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_ConvertJSONDictToDataframe {
-        label="CLASS: ConvertJSONDictToDataframe"
+    subgraph cluster_ConvertJSONDictToParquet {
+        label="CLASS: ConvertJSONDictToParquet"
 
         // Attributes
         SUSHI_JSON_dictionary
@@ -323,7 +323,7 @@ digraph erd_and_classes {
         statistics_source_ID
 
         // Methods
-        create_dataframe_in_ConvertJSONDictToDataframe [
+        create_dataframe_in_ConvertJSONDictToParquet [
             shape="Mrecord"
             label="create_dataframe"
         ]

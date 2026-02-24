@@ -629,7 +629,7 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
 
 
-#SECTION: `ConvertJSONDictToDataframe()` Tests
+#SECTION: `ConvertJSONDictToParquet()` Tests
 @pytest.fixture
 def R5_JSON_3_PR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_PR.json` JSON."""
@@ -5971,7 +5971,7 @@ def R5b1_JSON_3_IR_relation():
     "R5b1_IR",
 ])
 def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
-    """A parameterized fixture function with the data for testing `ConvertJSONDictToDataframe().create_dataframe()` for all COUNTER R5 report types and minor releases.
+    """A parameterized fixture function with the data for testing `ConvertJSONDictToParquet().create_dataframe()` for all COUNTER R5 report types and minor releases.
 
     Args:
         request (str): description of the use case
@@ -6051,12 +6051,12 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
 @pytest.mark.slow  # For IR tests
 def test_create_dataframe(tmp_path, JSON_dicts_with_metadata, caplog):
     """Tests converting JSONs as Python dicts to dataframes."""
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToDataframe')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
     before = datetime.now()
-    df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe(test=True)
+    df = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_dataframe(test=True)
     after = datetime.now()
     assert df is None
     file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)

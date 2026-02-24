@@ -1054,7 +1054,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
+                    df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
                     if df:
                         message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                         self._log.warning(message)
@@ -1094,7 +1094,7 @@ class StatisticsSources(db.Model):
             if isinstance(SUSHI_data_response, str):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
+            df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
             if df:
                 message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                 self._log.warning(message)
@@ -1767,7 +1767,7 @@ class AnnualUsageCollectionTracking(db.Model):
 class COUNTERData(db.Model):
     """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
 
-    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToDataframe` to be updated at the same time.
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToParquet` to be updated at the same time.
 
     Attributes:
         self.COUNTER_data_ID (int): the primary key
