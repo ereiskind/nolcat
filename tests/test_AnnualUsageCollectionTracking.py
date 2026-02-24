@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2026-02-13 ##########
+########## Failing 2026-02-24 ##########
 
 import pytest
 from filecmp import cmp
@@ -93,7 +93,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(  #TEST: `AttributeError: 'NoneType' object has no attribute 'empty'` because `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` hasn't been adjusted for saving to S3 as parquet
         start_date,
         end_date,
         bucket_path=TEST_COUNTER_FILE_PATH,
@@ -116,7 +116,6 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
 
 
 @pytest.mark.slow
-#@pytest.mark.skip(reason="Almost all of the options for this test will trigger skipping the test.")  #TEST: Remove if reason for skip changes
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
