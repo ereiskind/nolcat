@@ -2623,13 +2623,47 @@ class InvalidSUSHIResponseError(InvalidAPIResponseError):
 
 
 class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
-    """An error for when SUSHI returns a response with no usage data."""
-    pass
+    """An error for when SUSHI returns a response with no usage data.
+    
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+        initial_error (str): the original error raised
+    """
+    def __init__(self, call_path, statistics_source_name, initial_error):
+        """The `NoSUSHIUsageDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+            statistics_source_name (str): the name of the statistics source
+            initial_error (str): the original error raised
+        """
+        self.call_path = call_path
+        self.statistics_source_name = statistics_source_name
+        self.initial_error = initial_error
+        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`.")
 
 
 class NoSUSHIDataError(InvalidSUSHIResponseError):
-    """An error for when SUSHI returns no data."""
-    pass
+    """An error for when SUSHI returns no data.
+    
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+        initial_error (str): the original error raised
+    """
+    def __init__(self, call_path, statistics_source_name, initial_error):
+        """The `NoSUSHIUsageDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+            statistics_source_name (str): the name of the statistics source
+            initial_error (str): the original error raised
+        """
+        self.call_path = call_path
+        self.statistics_source_name = statistics_source_name
+        self.initial_error = initial_error
+        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`.")
 
 
 class InvalidSUSHIDatesError(InvalidSUSHIResponseError):
