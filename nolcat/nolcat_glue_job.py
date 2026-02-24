@@ -1380,7 +1380,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     
     if find_current_audit:
         log.error(f"`find_current_audit` (type {type(find_current_audit)}): {find_current_audit}")  #TEST: temp
-        currently_valid_release = [k for (k, v) in find_current_audit if v=="Currently valid audit"]
+        currently_valid_release = [k for (k, v) in find_current_audit.items() if v=="Currently valid audit"]
         if len(currently_valid_release) == 1:
             for release_data in API_response['sushi_services']:
                 if release_data['counter_release'] == currently_valid_release[0]:
