@@ -1054,7 +1054,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
+                    df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
                     if df:
                         message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                         self._log.warning(message)
@@ -1094,7 +1094,7 @@ class StatisticsSources(db.Model):
             if isinstance(SUSHI_data_response, str):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
+            df = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
             if df:
                 message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
                 self._log.warning(message)

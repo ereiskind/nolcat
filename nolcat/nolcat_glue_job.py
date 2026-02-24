@@ -1406,7 +1406,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
 class ConvertJSONDictToParquet:
     """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into parquet files.
 
-    SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a tabular format, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into parquet files for saving to S3; since the desired behavior is more that of a function than a class, the would-be function becomes a class by separating the traditional `__init__` method, which instantiates the dictionary as a class attribute, from the methods which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `ConvertJSONDictToParquet` type are never instantiated. This class was initially called `ConvertJSONDictToDataframe` when COUNTER data was being saved to a SQL relation.
+    SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a tabular format, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into parquet files for saving to S3; since the desired behavior is more that of a function than a class, the would-be function becomes a class by separating the traditional `__init__` method, which instantiates the dictionary as a class attribute, from the methods which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_parquet()` method, which means objects of the `ConvertJSONDictToParquet` type are never instantiated. This class was initially called `ConvertJSONDictToDataframe` when COUNTER data was being saved to a SQL relation.
 
     Attributes:
         self.SUSHI_JSON_dictionary (dict): the dictionary created by converting the JSON returned by the SUSHI API call into Python data types
@@ -1414,7 +1414,7 @@ class ConvertJSONDictToParquet:
         self.statistics_source_ID (int): the primary key value of the statistics source the SUSHI API call is from (the `StatisticsSources.statistics_source_ID` attribute)
 
     Methods:
-        create_dataframe: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
+        create_parquet: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a dataframe then saves that dataframe as a parquet file or saves the JSON as a file if it cannot be successfully converted into a dataframe.
         _transform_R5_JSON: This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe.
         _transform_R5b1_JSON: This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe.
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
@@ -1427,7 +1427,7 @@ class ConvertJSONDictToParquet:
     def __init__(self, SUSHI_JSON_dictionary, report_type, statistics_source_ID):
         """The constructor method for `ConvertJSONDictToParquet`, which instantiates the dictionary object and two additional variables.
 
-        This constructor is not meant to be used alone; all class instantiations should have a `create_dataframe()` method call appended to it.
+        This constructor is not meant to be used alone; all class instantiations should have a `create_parquet()` method call appended to it.
 
         Args:
             SUSHI_JSON_dictionary (dict): the dictionary created by converting the JSON returned by the SUSHI API call into Python data types
@@ -1439,18 +1439,21 @@ class ConvertJSONDictToParquet:
         self.statistics_source_ID = statistics_source_ID
     
 
-    def create_dataframe(self, test=False):
-        """This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
+    def create_parquet(self, test=False):
+        """This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a dataframe then saves that dataframe as a parquet file or saves the JSON as a file if it cannot be successfully converted into a dataframe.
 
-        This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToParquet._transform_R5_JSON()` or the `ConvertJSONDictToParquet._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
+        This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToParquet._transform_R5_JSON()` or the `ConvertJSONDictToParquet._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after, then the file is saved to the S3 bucket specified in the 'nolcat_secrets.py' file.
 
         Args:
             test (bool, optional): if the call is in a test; default is `False`
 
         Returns:
-            str: the error message if a problem occurs
+            str: the name of the file saved to S3
+
+        Raises:
+            #ToDo: List the errors raised
         """
-        self._log.info("Starting `ConvertJSONDictToParquet.create_dataframe()`.")
+        self._log.info("Starting `ConvertJSONDictToParquet.create_parquet()`.")
         try:
             report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
