@@ -435,7 +435,6 @@ digraph function_call_chains {
     upload_non_COUNTER_reports -> create_AUCT_SelectField_options
     upload_non_COUNTER_reports -> query_database
     upload_non_COUNTER_reports -> Flask_error_statement
-    upload_non_COUNTER_reports -> upload_nonstandard_usage_file_success_regex
     upload_non_COUNTER_reports -> database_query_fail_statement
 
 
@@ -491,7 +490,6 @@ digraph function_call_chains {
     upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
     upload_historical_non_COUNTER_usage -> initialize_relation_class_object_statement
     upload_historical_non_COUNTER_usage -> Flask_error_statement
-    upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file_success_regex
     upload_historical_non_COUNTER_usage -> database_query_fail_statement
 
 
@@ -1535,8 +1533,6 @@ digraph function_call_chains {
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_upload_nonstandard_usage_file -> query_database
     test_upload_nonstandard_usage_file -> extract_value_from_single_value_df
-    test_upload_nonstandard_usage_file -> format_list_for_stdout
-    test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file_success_regex
     test_upload_nonstandard_usage_file -> return_value_from_query_statement
     test_upload_nonstandard_usage_file -> database_function_skip_statements
     test_upload_nonstandard_usage_file -> engine

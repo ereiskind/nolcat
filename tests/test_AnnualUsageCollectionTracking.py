@@ -3,6 +3,7 @@
 
 import pytest
 from filecmp import cmp
+from urllib.parse import urlsplit
 from pandas.testing import assert_frame_equal
 from werkzeug.datastructures import FileStorage
 
@@ -170,40 +171,18 @@ def sample_FileStorage_object(path_to_sample_file):
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
-    #Section: Make Function Call
-    with client:
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=TEST_NON_COUNTER_FILE_PATH)
-
-    #Section: Check Results with Assert Statements
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{Path(sample_FileStorage_object.filename).suffix}"
-    
-    #Subsection: Check Function Return Value
-    log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
-    upload_result = upload_nonstandard_usage_file_success_regex().fullmatch(upload_result)
-    assert upload_result is not None
-    assert upload_result.group(1) == file_name
+    with client:
+        S3_file_name = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=TEST_NON_COUNTER_FILE_PATH)
 
-    #Subsection: Check File Upload to S3
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_NON_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(TEST_NON_COUNTER_FILE_PATH, "") for file_name in bucket_contents]
-    log.info(f"List of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` contents:\n{format_list_for_stdout(bucket_contents)}")
-    assert file_name in bucket_contents
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_NON_COUNTER_FILE_PATH + file_name,
+        Key=urlsplit(S3_file_name).path,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
-    
-    #Subsection: Check Database Update
+
     usage_file_path_in_database = query_database(
         query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
