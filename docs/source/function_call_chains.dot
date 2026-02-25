@@ -197,7 +197,6 @@ digraph function_call_chains {
     _harvest_single_report -> create_parquet
     _harvest_single_report -> last_day_of_month
     _harvest_single_report -> return_string_of_dataframe_info
-    _harvest_single_report -> save_unconverted_data_via_upload
     _harvest_single_report -> AWS_timestamp_format
     _harvest_single_report -> failed_upload_to_S3_statement
     _harvest_single_report -> upload_file_to_S3_bucket_success_regex
