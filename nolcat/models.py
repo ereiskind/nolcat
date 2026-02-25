@@ -1663,7 +1663,11 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
+            str: the name/location of the file successfully saved to S3
+
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
+            S3InteractionError: if a problem occurs while saving the data to S3
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` for the file {file}.")
         #Section: Create S3 File Name
@@ -1672,7 +1676,7 @@ class AnnualUsageCollectionTracking(db.Model):
         except:
             file_path = Path(file.filename)
         file_extension = file_path.suffix
-        if file_extension not in file_extensions_and_mimetypes().keys():
+        if file_extension not in file_extensions_and_mimetypes().keys():  #ALERT: `raise some error`
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             self._log.error(message)
             return message
@@ -1682,17 +1686,17 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
         file.save(temp_file_path)
-        logging_message = upload_file_to_S3_bucket(
-            temp_file_path,
-            file_name,
-            bucket_path,
-        )
-        temp_file_path.unlink()
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-            message = failed_upload_to_S3_statement(file_name, logging_message)
-            self._log.critical(message)
-            return message
-        self._log.debug(logging_message)
+        try:
+            S3_file_name = upload_file_to_S3_bucket(
+                temp_file_path,
+                file_name,
+                bucket_path,
+            )
+        except S3InteractionError as error:
+            raise S3InteractionError(error)
+        finally:
+            temp_file_path.unlink()
+        self._log.debug(f"File {S3_file_name} successfully loaded to S3.")
         
         #Section: Update `collection_status` in Database
         update_statement = f"""
@@ -1707,12 +1711,9 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
-            self._log.warning(message)
-            return message
-        message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
-        self._log.info(message)
-        return message
+            raise DatabaseInteractionError(f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}")
+        self._log.info(f"Successfully updated `annualUsageCollectionTracking.usage_file_path` to {file_name} and `annualUsageCollectionTracking.collection_status` to 'Collection complete'.")
+        return S3_file_name
     
 
     @hybrid_method

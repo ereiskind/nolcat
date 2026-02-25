@@ -316,9 +316,6 @@ digraph function_call_chains {
     upload_nonstandard_usage_file -> update_database
     upload_nonstandard_usage_file -> file_extensions_and_mimetypes
     upload_nonstandard_usage_file -> file_IO_statement
-    upload_nonstandard_usage_file -> failed_upload_to_S3_statement
-    upload_nonstandard_usage_file -> upload_file_to_S3_bucket_success_regex
-    upload_nonstandard_usage_file -> add_data_success_and_update_database_fail_statement
     upload_nonstandard_usage_file -> update_database_success_regex
     download_nonstandard_usage_file -> file_IO_statement
 
@@ -365,7 +362,6 @@ digraph function_call_chains {
     _save_raw_Response_text -> extract_value_from_single_value_df
     _save_raw_Response_text -> AWS_timestamp_format
     _save_raw_Response_text -> file_IO_statement
-    _save_raw_Response_text -> upload_file_to_S3_bucket_success_regex
     _save_raw_Response_text -> database_query_fail_statement
     _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
     _handle_SUSHI_exceptions -> format_list_for_stdout
@@ -1187,9 +1183,7 @@ digraph function_call_chains {
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
     non_COUNTER_file_to_download_from_S3 -> fixture_variable_value_declaration_statement
     non_COUNTER_file_to_download_from_S3 -> file_IO_statement
-    non_COUNTER_file_to_download_from_S3 -> failed_upload_to_S3_statement
     non_COUNTER_file_to_download_from_S3 -> unable_to_delete_test_file_in_S3_statement
-    non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket_success_regex
     non_COUNTER_file_to_download_from_S3 -> download_destination
     non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
     non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
