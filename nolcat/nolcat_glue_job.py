@@ -1153,7 +1153,7 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
-        str: the S3 file name/location
+        str: the name/location of the file successfully saved to S3
     
     Raises:
         S3InteractionError: if a problem occurs while saving the data to S3
@@ -1181,7 +1181,10 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
         bucket_path (str): the path within the bucket where the files will be saved
     
     Returns:
-        str: the logging statement to indicate if uploading the data succeeded or failed
+        str: the name/location of the file successfully saved to S3
+    
+    Raises:
+        S3InteractionError: if a problem occurs while saving the data to S3
     """
     log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
     #Section: Confirm Bucket Exists
@@ -1189,10 +1192,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
-        message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
-        #ALERT: `raise S3InteractionError`
-        log.error(message)
-        return message
+        raise S3InteractionError(f"Unable to upload files to S3 because the check for S3 location `{BUCKET_NAME}/{bucket_path}` raised `{error}`.")
  
 
     #Section: Upload File to Bucket
@@ -1226,24 +1226,14 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                     Bucket=BUCKET_NAME,
                     Key=bucket_path + file_name,
                 )
-                message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
-                log.info(message)
-                return message
+                log.info(f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`.")
+                return f"{BUCKET_NAME}/{bucket_path}{file_name}"
             except Exception as error:
-                #ALERT: `raise S3InteractionError`
-                message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {error}."
-                log.error(message)
-                return message
+                raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because `{error}`.")
         else:
-              #ALERT: `raise S3InteractionError`
-            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file."
-            log.error(message)
-            return message
+            raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file.")
     except AttributeError as error:
-        #ALERT: `raise S3InteractionError`
-        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object."
-        log.error(message)
-        return message
+        raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object.")
 
 
 def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
@@ -1257,7 +1247,11 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
         bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
     
     Returns:
-        str: a message indicating success or including the error raised by the attempt to load the data
+        str: the name/location of the file successfully saved to S3
+    
+    Raises:
+        S3InteractionError: if a problem occurs while saving the data to S3
+        RuntimeError: if a non-dict can't be written to a binary or text file
     """
     log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
 
@@ -1278,7 +1272,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
                 log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")
                 json.dump(data, file)
             log.debug(f"Data written as bytes JSON to file object {file}.")
-        except Exception as TypeError:
+        except TypeError:
             with open(temp_file_path, 'wt') as file:
                 log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")
                 file.write(json.dumps(data))
@@ -1296,30 +1290,25 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
-                #ALERT: `raise S3InteractionError`
-                message = f"Writing data into a binary file raised the error {binary_error}; writing that data into a text file raised the error {text_error}."
-                log.error(message)
-                return message
+                raise RuntimeError(f"Writing data of type {type(data)} into a binary file raised `{binary_error}`; writing that data into a text file raised `{text_error}`.")
     log.debug(f"File at {temp_file_path} successfully created.")
 
     #Section: Upload File to S3
     file_name = file_name_stem + temp_file_path.suffix
     log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 location `{BUCKET_NAME}/{bucket_path}`.")
-    logging_message = upload_file_to_S3_bucket(
-        temp_file_path,
-        file_name,
-        bucket_path=bucket_path,
-    )
-    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    temp_file_path.unlink()
-    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.+\(\)` on .+ \(type .+\) raised the error .+\.', logging_message):  #ALERT: `except S3InteractionError`
-        message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
-        log.critical(message)
-    else:
-        message = logging_message
-        log.debug(message)
-    return message
+    try:
+        S3_file_name = upload_file_to_S3_bucket(
+            temp_file_path,
+            file_name,
+            bucket_path=bucket_path,
+        )
+        return S3_file_name
+    except S3InteractionError as error:
+        raise S3InteractionError(error)
+    finally:
+        log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
+        temp_file_path.unlink()
+        log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
 
 
 #SECTION: COUNTER Registry
