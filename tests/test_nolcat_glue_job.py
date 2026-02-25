@@ -4,7 +4,8 @@
 import pytest
 from filecmp import cmp
 from random import choice
-from datetime import timedelta
+from urllib.parse import urlsplit
+from random import randrange
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
@@ -433,7 +434,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     """Creates a dataframe for use in `test_save_dataframe_to_S3_bucket()` and deletes it when the test is complete.
 
     Args:
-        COUNTERData_relation (dataframe): a dataframe of test data
+        COUNTERData_relation (dataframe): a dataframe of all the COUNTER test data
     
     Yields:
         tuple: a dataframe of test data (dataframe); the test data statistics source ID of the data in the dataframe (int); the report type of the data in the dataframe (str)
@@ -471,20 +472,18 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     """Tests saving a dataframe as a parquet file in a S3 bucket."""
     df, statistics_source_ID, report_type = dataframe_to_save_to_S3
-    before = datetime.now()
-    result = save_dataframe_to_S3_bucket(
+    S3_file_name = save_dataframe_to_S3_bucket(
         df,
         statistics_source_ID,
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    assert result is None
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
+    assert parquet_file_name_regex().fullmatch(S3_file_name)
+    S3_file_name_path = urlsplit(S3_file_name).path
+    download_location = tmp_path / S3_file_name_path.split("/")[-1]
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
@@ -496,28 +495,17 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     
     TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
     """
-    logging_message = upload_file_to_S3_bucket(
+    S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    assert path_to_sample_file.name in bucket_contents
+    S3_file_name_path = urlsplit(S3_file_name).path
+    assert S3_file_name_path.split("/")[-1] == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
@@ -527,19 +515,20 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     {'Report_Header': {'Created': '2023-10-17T21:13:26Z','Created_By': 'ProQuest','Customer_ID': '0000','Report_ID': 'PR','Release': '5','Report_Name': 'Platform Master Report','Institution_Name': 'FLORIDA STATE UNIVERSITY','Institution_ID': [{'Type': 'Proprietary','Value': 'ProQuest:0000'}],'Report_Filters': [{'Name': 'Platform','Value': 'ProQuest'},{'Name': 'Begin_Date','Value': '2022-07-01'},{'Name': 'End_Date','Value': '2023-08-31'},{'Name': 'Data_Type','Value': 'Book|Journal'}],'Report_Attributes': [{'Name': 'Attributes_To_Show','Value': 'Data_Type|Access_Method'}]},'Report_Items': [{'Platform': 'ProQuest','Data_Type': 'Book','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 8},{'Metric_Type': 'Total_Item_Requests','Count': 9}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 2},{'Metric_Type': 'Total_Item_Requests','Count': 12}]}]},{'Platform': 'ProQuest','Data_Type': 'Journal','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 53},{'Metric_Type': 'Total_Item_Requests','Count': 89}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 77},{'Metric_Type': 'Total_Item_Requests','Count': 92}]}]}]},
     "{'Report_Header': {'Created': '2023-10-17T21:13:26Z','Created_By': 'ProQuest','Customer_ID': '0000','Report_ID': 'PR','Release': '5','Report_Name': 'Platform Master Report','Institution_Name': 'FLORIDA STATE UNIVERSITY','Institution_ID': [{'Type': 'Proprietary','Value': 'ProQuest:0000'}],'Report_Filters': [{'Name': 'Platform','Value': 'ProQuest'},{'Name': 'Begin_Date','Value': '2022-07-01'},{'Name': 'End_Date','Value': '2023-08-31'},{'Name': 'Data_Type','Value': 'Book|Journal'}],'Report_Attributes': [{'Name': 'Attributes_To_Show','Value': 'Data_Type|Access_Method'}]},'Report_Items': [{'Platform': 'ProQuest','Data_Type': 'Book','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 8},{'Metric_Type': 'Total_Item_Requests','Count': 9}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 2},{'Metric_Type': 'Total_Item_Requests','Count': 12}]}]},{'Platform': 'ProQuest','Data_Type': 'Journal','Access_Method': 'Regular','Performance': [{'Period': {'Begin_Date': '2022-07-01','End_Date': '2022-07-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 53},{'Metric_Type': 'Total_Item_Requests','Count': 89}]},{'Period': {'Begin_Date': '2022-08-01','End_Date': '2022-08-31'},'Instance': [{'Metric_Type': 'Total_Item_Investigations','Count': 77},{'Metric_Type': 'Total_Item_Requests','Count': 92}]}]}]}",
 ])
-def file_name_stem_and_data(request, most_recent_month_with_usage):
+def file_name_stem_and_data(request, most_recent_month_with_usage, AWS_timestamp_format):
     """Provides the contents and name stem for the file in `test_save_unconverted_data_via_upload()`, then removes that file from S3 after the test runs.
 
     Args:
         request (dict or str): the contents of the file that will be saved to S3
+        most_recent_month_with_usage (tuple): two datetime.date values, representing the first and last day of a month respectively
+        AWS_timestamp_format (str): Python datetime format code
 
     Yields:
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
     """
     data = request.param
     log.debug(f"In `file_name_stem_and_data()`, the `data` is {data}.")
-    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
-    log.info(f"In `file_name_stem_and_data()`, the `file_name_stem` is {file_name_stem}.")
+    file_name_stem = f"{randrange(11)}_report-{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     yield (file_name_stem, data)
     if isinstance(data, dict):
         file_name = file_name_stem + '.json'
@@ -554,28 +543,29 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
-def test_save_unconverted_data_via_upload(file_name_stem_and_data):
+def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     """Tests saving data that can't be transformed for loading into the database to a file in S3."""
     file_name_stem, data = file_name_stem_and_data
-    logging_message = save_unconverted_data_via_upload(
+    S3_file_name = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
+    S3_file_name_path = urlsplit(S3_file_name).path
+    assert S3_file_name_path.split("/")[-1].split(".")[0] == file_name_stem
+    download_location = tmp_path / S3_file_name_path.split("/")[-1]
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
+        Key=S3_file_name_path,
+        Filename=download_location,
     )
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(TEST_COUNTER_FILE_PATH, "") for file_name in bucket_contents]
-    if isinstance(data, dict):
-        assert f"{file_name_stem}.json" in bucket_contents
-    else:
-        assert f"{file_name_stem}.txt" in bucket_contents
+    with open(download_location, encoding='utf-8') as f:
+        if isinstance(data, dict):
+            file_contents = json.load(f)
+        else:
+            file_contents = f.read()
+    log.debug(f"The contents of `{S3_file_name}` (type {type(file_contents)}):\n{file_contents}")
+    assert data == file_contents
 
 
 #SECTION: COUNTER Registry Tests
