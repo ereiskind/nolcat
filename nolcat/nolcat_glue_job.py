@@ -1168,6 +1168,8 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         )
     except Exception as error:
         raise S3InteractionError(error)
+    log.info(f"Successfully saved {S3_file_name}")
+    return S3_file_name
 
 
 def upload_file_to_S3_bucket(file, file_name, bucket_path):
