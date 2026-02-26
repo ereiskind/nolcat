@@ -1059,7 +1059,7 @@ class StatisticsSources(db.Model):
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
                     try:
-                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
+                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
                     except S3InteractionError as error:
                         complete_flash_message_list.append(error)
                         continue  # Raising an error here would keep any other reports from being pulled and processed
@@ -1087,7 +1087,7 @@ class StatisticsSources(db.Model):
                 self._log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
             try:
-                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
+                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
             except S3InteractionError as error:
                 flash_message_list.append(error)
                 raise S3InteractionError(error)  #ToDo: How to pass `flash_message_list`?
