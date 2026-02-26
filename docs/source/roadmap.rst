@@ -26,7 +26,6 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
     * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
-    * `nolcat.models.StatisticsSources.` with `tests.StatisticsSources.()`, `tests.StatisticsSources.()`
 
   * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
   * Update location of `nolcat.nolcat_glue_job.save_unconverted_data_via_upload()` within `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
