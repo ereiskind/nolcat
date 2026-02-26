@@ -403,7 +403,7 @@ class SUSHICallAndResponse:
             )
         except S3InteractionError as error:
             raise S3InteractionError(f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {error}")
-        message = f"Successfully loaded the file {file_name_stem} into S3 location `{S3_file_name}`.")
+        message = f"Successfully loaded the file {file_name_stem} into S3 location `{S3_file_name}`."
         log.debug(message)
         return message
 
