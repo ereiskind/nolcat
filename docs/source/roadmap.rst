@@ -4,11 +4,6 @@ This page contains all the current to-dos and possible plans for the NoLCAT prog
 
 Planned Iterations
 ******************
-* Confirm the following functions work with SUSHI CSV
-
-  * `nolcat.models.StatisticsSources.fetch_SUSHI_information()` and `tests.test_StatisticsSources.StatisticsSources_fixture()`
-  * `nolcat.models.StatisticsSources.collect_usage_statistics()`, `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`, `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
-  * `tests.test_StatisticsSources.SUSHI_credentials_fixture_in_test_StatisticsSources()`, `tests.test_StatisticsSources.reports_offered_by_StatisticsSource_fixture()`, `tests.test_StatisticsSources.data_for_testing_harvest_single_report()`, `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================

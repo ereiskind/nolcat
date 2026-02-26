@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Failing 2026-02-24 ##########
+########## Failing 2026-02-26 ##########
 
 import pytest
 from filecmp import cmp
@@ -49,7 +49,6 @@ def AUCT_fixture_for_SUSHI(engine):
     yield yield_object
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
 def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
@@ -95,7 +94,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(  #TEST: `AttributeError: 'NoneType' object has no attribute 'empty'` because `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` hasn't been adjusted for saving to S3 as parquet
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
         start_date,
         end_date,
         bucket_path=TEST_COUNTER_FILE_PATH,
@@ -178,11 +177,14 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         S3_file_name = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=TEST_NON_COUNTER_FILE_PATH)
 
     download_location = tmp_path / file_name
-    s3_client.download_file(
+    #ToDo: need to double check file name and bucket folder contents?
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
         Key=urlsplit(S3_file_name).path,
         Filename=download_location,
     )
+    #TEST: `botocore.exceptions.ClientError` raised on successful `[2026-02-26 22:17:57] urllib3.connectionpool::544 - https://s3.amazonaws.com:443 "DELETE /ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/5_5.json HTTP/1.1" 204 0`
+    #TEST: `botocore.exceptions.ClientError` raised on stated but failed `[2026-02-26 22:17:57] urllib3.connectionpool::544 - https://s3.amazonaws.com:443 "DELETE /ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/7_0.xlsx HTTP/1.1" 204 0`
     assert cmp(path_to_sample_file, download_location)
 
     usage_file_path_in_database = query_database(
@@ -196,7 +198,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
     assert file_name == usage_file_path_in_database
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
     """Test downloading a file in S3 to a local computer."""
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(

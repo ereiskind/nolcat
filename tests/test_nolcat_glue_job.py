@@ -1,5 +1,5 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-02-20 ##########
+########## Failing 2026-02-26 ##########
 
 import pytest
 from filecmp import cmp
@@ -478,7 +478,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    assert parquet_file_name_regex().fullmatch(S3_file_name)
+    assert parquet_file_name_regex().fullmatch(S3_file_name)  #TEST: AssertionError: assert None where None = <built-in method fullmatch of re.Pattern object at 0x629b1d07c020>('s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/0_PR_2026-02-26T22-52-07.parquet') where <built-in method fullmatch of re.Pattern object at 0x629b1d07c020> = re.compile('(\\d+)_(\\w{2}\\d?)_((\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\-\\d{2}\\-\\d{2})|(NULL))\\.parquet').fullmatch where re.compile('(\\d+)_(\\w{2}\\d?)_((\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\-\\d{2}\\-\\d{2})|(NULL))\\.parquet') = parquet_file_name_regex()
     S3_file_name_path = urlsplit(S3_file_name).path
     download_location = tmp_path / S3_file_name_path.split("/")[-1]
     s3_client.download_file(
@@ -502,6 +502,8 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     )
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1] == path_to_sample_file.name
+    #TEST: `AssertionError: assert '`.' == '2_PR.json'` for test_upload_file_to_S3_bucket[path_to_sample_file0] -- [2026-02-26 22:52:09] nolcat.nolcat_glue_job:upload_file_to_S3_bucket:1214 - Successfully loaded the file 2_PR.json into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/`.
+    #TEST: `AssertionError: assert '`.' == 'sample_BR2_reports.xlsx'` for test_upload_file_to_S3_bucket[path_to_sample_file1] -- [2026-02-26 22:52:09] nolcat.nolcat_glue_job:upload_file_to_S3_bucket:1214 - Successfully loaded the file sample_BR2_reports.xlsx into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/`.
     download_location = tmp_path / path_to_sample_file.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
@@ -552,6 +554,8 @@ def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     )
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1].split(".")[0] == file_name_stem
+    #TEST: `AssertionError: assert '`' == '7_report-IR_...2-26T22-52-10'` for test_save_unconverted_data_via_upload[file_name_stem_and_data0] -- [2026-02-26 22:52:10] nolcat.nolcat_glue_job::1214 - Successfully loaded the file 7_report-IR_2026-01_2026-01_2026-02-26T22-52-10.json into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/`.
+    #TEST: `AssertionError: assert '`' == '2_report-PR_2026-01_2026-01_2026-02-26T22-52-11'` for test_save_unconverted_data_via_upload[file_name_stem_and_data1] -- [2026-02-26 22:52:11] nolcat.nolcat_glue_job::1214 - Successfully loaded the file 2_report-PR_2026-01_2026-01_2026-02-26T22-52-11.txt into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/`.
     download_location = tmp_path / S3_file_name_path.split("/")[-1]
     s3_client.download_file(
         Bucket=BUCKET_NAME,
@@ -6048,6 +6052,8 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     assert isinstance(S3_file_name, str)
     download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
     s3_client.download_file(
+        #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+        #TEST: Last internal log at `nolcat.nolcat_glue_job:save_dataframe_to_S3_bucket:1171`
         Bucket=BUCKET_NAME,
         Key=S3_file_name,
         Filename=download_location,

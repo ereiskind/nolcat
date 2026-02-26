@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-02-26 ##########
 
 import pytest
 import json
@@ -249,7 +249,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     end_month, report_checked = data_for_testing_harvest_single_report
-    begin_date = end_month + relativedelta(months=-2)
+    begin_date = end_month + relativedelta(months=-2)  #TEST: `TypeError: can only concatenate str (not "relativedelta") to str` implies `end_month` is str
     end_date = last_day_of_month(end_month)
     for_timestamp = datetime.now()
     with client:
@@ -365,7 +365,6 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
     yield (begin_date, end_date)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
 def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_usage_statistics()`.

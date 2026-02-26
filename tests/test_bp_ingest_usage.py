@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2026-02-20 ##########
+########## Failing 2026-02-26 ##########
 
 import pytest
 from random import choice
@@ -39,7 +39,7 @@ def test_ingest_usage_homepage(client):
 
 @pytest.mark.dependency()
 @pytest.mark.slow
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):  #TEST: FAILED tests/test_bp_ingest_usage.py::test_upload_COUNTER_data_via_Excel - AssertionError: DataFrame.iloc[:, 0] (column name="statistics_source_ID") are different
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
@@ -168,7 +168,9 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
         match_result_df["publication_date"],
         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
     )
-    assert_frame_equal(match_result_df, df)
+    assert_frame_equal(match_result_df, df)  #TEST: AssertionError: DataFrame are different--DataFrame shape mismatch--[left]:  (7, 24); [right]: (7, 25)
+    #TEST: [2026-02-26 22:39:00] nolcat.nolcat_glue_job:query_database:806 - The complete response to `SELECT * FROM ( SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7 ) subquery ORDER BY COUNTER_data_ID ASC;`: [7 rows x 36 columns]
+    #TEST: [2026-02-26 22:39:00] conftest::704 - `match_direct_SUSHI_harvest_result()` yields (type <class 'pandas.core.frame.DataFrame'>): [7 rows x 25 columns]
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
@@ -341,7 +343,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully to s3://", prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully to s3://", prepare_HTML_page_for_comparison(POST_response.data))  #TEST: Check regex against flash statements
+    '''#TEST: test_upload_non_COUNTER_reports[path_to_sample_file0] `POST_response.data`
+<!DOCTYPE html>\\n<html lang="en">\\n<head>\\n    <meta charset="UTF-8">\\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\\n    <title>Ingest Usage</title>\\n</head>\\n<body>\\n    <h1>Ingest Usage Homepage</h1>\\n\\n    \\n        \\n            <p>[\'Usage file for Ulrichsweb--FY 2022 uploaded successfully to Successfully loaded the file 11_5.json into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/`..\']</p>\\n        \\n    \\n\\n    <ul>\\n        <li>To upload COUNTER data, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest/">click here</a>.</li>\\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER/">click here</a>.</li>\\n    </ul>\\n\\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\\n</body>\\n</html>
+    '''
+    '''#TEST: test_upload_non_COUNTER_reports[path_to_sample_file1] `POST_response.data`
+<!DOCTYPE html>\\n<html lang="en">\\n<head>\\n    <meta charset="UTF-8">\\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\\n    <title>Ingest Usage</title>\\n</head>\\n<body>\\n    <h1>Ingest Usage Homepage</h1>\\n\\n    \\n        \\n            <p>["Usage file for Peterson\'s Test Prep--FY 2017 uploaded successfully to Successfully loaded the file 8_0.xlsx into S3 location `ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/`.."]</p>\\n        \\n    \\n\\n    <ul>\\n        <li>To upload COUNTER data, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest/">click here</a>.</li>\\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER/">click here</a>.</li>\\n    </ul>\\n\\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\\n</body>\\n</html>
+    '''
     
     #Section: Confirm Successful Database Update
     df = query_database(
