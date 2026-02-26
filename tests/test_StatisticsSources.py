@@ -78,6 +78,7 @@ def StatisticsSources_fixture():
 
 
 #Section: Tests and Fixture for SUSHI Credentials
+@pytest.mark.slow
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
     
