@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-02-26 ##########
 
 import pytest
 from pathlib import Path
@@ -716,7 +716,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
+def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):  #TEST: Loads multiple files into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/
     """Tests uploading the files with non-COUNTER usage statistics."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')

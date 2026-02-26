@@ -36,6 +36,7 @@ Move Code to Glue Jobs and Data to Parquet
   * For all tests, get call chains and adjust caplog calls
   * Confirm all tests still pass
 
+* Fix lack of cleanup in `tests.test_StatisticsSources.test_upload_historical_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
 * Create function to check S3 file existence and type with fuzzy matching
 
