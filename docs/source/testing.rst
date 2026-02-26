@@ -16,6 +16,7 @@ Test modules are designed to be run from the root folder with the command `pytho
   * Pytest has a built-in argument for saving logging to a file, but it saves only the logging; the session2file extension copies the complete pytest output to stdout, including the stack trace.
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
+* To run a single test, end the command with the module containing the file, two colons, and the name of the test
 
 Working with the Database Within the Container
 ==============================================
