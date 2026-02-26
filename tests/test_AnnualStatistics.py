@@ -1,5 +1,5 @@
 """Tests the methods in AnnualStatistics."""
-########## No tests written 2026-02-20 ##########
+########## No tests written 2026-02-26 ##########
 
 import pytest
 
