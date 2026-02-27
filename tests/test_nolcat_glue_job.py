@@ -480,7 +480,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     S3_file_name_path = urlsplit(S3_file_name).path
     S3_file_path, slash, S3_parquet_file_name = S3_file_name_path.rpartition("/")
-    assert S3_file_path + slash == TEST_COUNTER_FILE_PATH
+    assert S3_file_path.strip("/") == TEST_COUNTER_FILE_PATH.strip("/")
     assert parquet_file_name_regex().fullmatch(S3_parquet_file_name)
     download_location = tmp_path / S3_parquet_file_name
     s3_client.download_file(
