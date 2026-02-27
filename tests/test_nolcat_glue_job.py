@@ -1,5 +1,5 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Failing 2026-02-26 ##########
+########## Failing 2026-02-27 ##########
 
 import pytest
 from filecmp import cmp
@@ -483,7 +483,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     assert S3_file_path.strip("/") == TEST_COUNTER_FILE_PATH.strip("/")
     assert parquet_file_name_regex().fullmatch(S3_parquet_file_name)
     download_location = tmp_path / S3_parquet_file_name
-    s3_client.download_file(
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
         Key=S3_file_name_path,
         Filename=download_location,
@@ -505,7 +505,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1] == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
-    s3_client.download_file(
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
         Key=S3_file_name_path,
         Filename=download_location,
@@ -555,7 +555,7 @@ def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1].split(".")[0] == file_name_stem
     download_location = tmp_path / S3_file_name_path.split("/")[-1]
-    s3_client.download_file(
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
         Key=S3_file_name_path,
         Filename=download_location,
@@ -6057,16 +6057,14 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
         Prefix=S3_prefix,
     )
     bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
+    for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
         bucket_contents.append(contents_dict['Key'])
     if S3_file_name_path in bucket_contents:
         log.warning(f"File `{S3_file_name_path}` in `{BUCKET_NAME}/{S3_prefix}`")
     else:
         log.error(f"Files in `{BUCKET_NAME}/{S3_prefix}`:\n{format_list_for_stdout(bucket_contents)}.")
     #TEST: end temp
-    s3_client.download_file(
-        #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
-        #TEST: Last internal log at `nolcat.nolcat_glue_job:save_dataframe_to_S3_bucket:1171`
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
         Key=S3_file_name_path,
         Filename=download_location,

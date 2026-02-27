@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Failing 2026-02-26 ##########
+########## Failing 2026-02-27 ##########
 
 import pytest
 from filecmp import cmp
@@ -185,7 +185,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         Prefix=S3_prefix,
     )
     bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
+    for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
         bucket_contents.append(contents_dict['Key'])
     if S3_file_name_path in bucket_contents:
         log.warning(f"File `{S3_file_name_path}` in `{BUCKET_NAME}/{S3_prefix}`")
@@ -197,8 +197,6 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         Key=urlsplit(S3_file_name).path,
         Filename=download_location,
     )
-    #TEST: `botocore.exceptions.ClientError` raised on successful `[2026-02-26 22:17:57] urllib3.connectionpool::544 - https://s3.amazonaws.com:443 "DELETE /ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/5_5.json HTTP/1.1" 204 0`
-    #TEST: `botocore.exceptions.ClientError` raised on stated but failed `[2026-02-26 22:17:57] urllib3.connectionpool::544 - https://s3.amazonaws.com:443 "DELETE /ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/7_0.xlsx HTTP/1.1" 204 0`
     assert cmp(path_to_sample_file, download_location)
 
     usage_file_path_in_database = query_database(

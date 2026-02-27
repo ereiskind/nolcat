@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2026-02-26 ##########
+########## Passing 2026-02-27 ##########
 
 import pytest
 from random import choice
@@ -39,7 +39,7 @@ def test_ingest_usage_homepage(client):
 
 @pytest.mark.dependency()
 @pytest.mark.slow
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):  #TEST: FAILED tests/test_bp_ingest_usage.py::test_upload_COUNTER_data_via_Excel - AssertionError: DataFrame.iloc[:, 0] (column name="statistics_source_ID") are different
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
@@ -73,19 +73,6 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #TEST: temp
-    try:
-        log.error(df.compare(COUNTERData_relation[df.columns.tolist()], result_names=("query", "fixture")))
-    except Exception as error:
-        if df.columns != COUNTERData_relation[df.columns.tolist()].columns:
-            log.error(f"`df.columns`: {df.columns}")
-            log.error(f"`COUNTERData_relation.columns`: {COUNTERData_relation.columns}")
-        if df.index != COUNTERData_relation.index:
-            log.error(f"`df.index`: {df.index}")
-            log.error(f"`COUNTERData_relation.index`: {COUNTERData_relation.index}")
-        if df.axes == COUNTERData_relation.axes:
-            log.error(f"`df.axes == COUNTERData_relation.axes` evaluates to true, but `compare()` raises {error}")
-    #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
@@ -181,14 +168,7 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
         match_result_df["publication_date"],
         errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
     )
-    #TEST: temp
-    log.error(f"`df.info`:\n{df.info()}")
-    log.error(f"`match_result_df.info`:\n{match_result_df.info()}")
-    log.error(f"Fields in `df` but not in `match_result_df`:\n{set(df.columns).difference(set(match_result_df.columns))}")
-    #TEST: end temp
-    assert_frame_equal(match_result_df, df)  #TEST: AssertionError: DataFrame are different--DataFrame shape mismatch--[left]:  (7, 24); [right]: (7, 25)
-    #TEST: [2026-02-26 22:39:00] nolcat.nolcat_glue_job:query_database:806 - The complete response to `SELECT * FROM ( SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7 ) subquery ORDER BY COUNTER_data_ID ASC;`: [7 rows x 36 columns]
-    #TEST: [2026-02-26 22:39:00] conftest::704 - `match_direct_SUSHI_harvest_result()` yields (type <class 'pandas.core.frame.DataFrame'>): [7 rows x 25 columns]
+    assert_frame_equal(match_result_df, df)
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
