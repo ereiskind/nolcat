@@ -6053,11 +6053,12 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
     assert isinstance(S3_file_name, str)
     download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
+    S3_file_name_path = urlsplit(S3_file_name).path
     s3_client.download_file(
         #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         #TEST: Last internal log at `nolcat.nolcat_glue_job:save_dataframe_to_S3_bucket:1171`
         Bucket=BUCKET_NAME,
-        Key=S3_file_name,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)
