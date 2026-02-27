@@ -478,9 +478,11 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    assert parquet_file_name_regex().fullmatch(S3_file_name)  #TEST: AssertionError: assert None where None = <built-in method fullmatch of re.Pattern object at 0x629b1d07c020>('s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/0_PR_2026-02-26T22-52-07.parquet') where <built-in method fullmatch of re.Pattern object at 0x629b1d07c020> = re.compile('(\\d+)_(\\w{2}\\d?)_((\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\-\\d{2}\\-\\d{2})|(NULL))\\.parquet').fullmatch where re.compile('(\\d+)_(\\w{2}\\d?)_((\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\-\\d{2}\\-\\d{2})|(NULL))\\.parquet') = parquet_file_name_regex()
     S3_file_name_path = urlsplit(S3_file_name).path
-    download_location = tmp_path / S3_file_name_path.split("/")[-1]
+    S3_file_path, slash, S3_parquet_file_name = S3_file_name_path.rpartition("/")
+    assert S3_file_path + slash == TEST_COUNTER_FILE_PATH
+    assert parquet_file_name_regex().fullmatch(S3_parquet_file_name)
+    download_location = tmp_path / S3_parquet_file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=S3_file_name_path,
