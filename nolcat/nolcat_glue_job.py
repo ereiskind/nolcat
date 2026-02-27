@@ -1210,9 +1210,8 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`."
-            log.info(message)
-            return message
+            log.info(f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`.")
+            return f"{BUCKET_NAME}/{bucket_path}{file_name}"
         except Exception as error:
             log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
             file_object.close()
