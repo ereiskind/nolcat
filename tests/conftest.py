@@ -586,7 +586,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
 
 
 @pytest.fixture
-def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
     """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
 
     Args:
