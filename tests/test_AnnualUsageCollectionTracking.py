@@ -185,6 +185,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         Prefix=S3_prefix,
     )
     bucket_contents = []
+    print(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
     for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
         bucket_contents.append(contents_dict['Key'])
     if S3_file_name_path in bucket_contents:
