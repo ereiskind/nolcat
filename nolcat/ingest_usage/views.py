@@ -300,13 +300,13 @@ def upload_non_COUNTER_reports(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
-        if upload_nonstandard_usage_file_success_regex().match(response) is None:
-            #ToDo: Do any other actions need to be taken?
-            log.error(response)
-            flash(response)
+        try:
+            S3_file_name = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        except Exception as error:
+            log.error(error)
+            flash(error)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully."
+        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully to {S3_file_name}."
         log.debug(message)
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))

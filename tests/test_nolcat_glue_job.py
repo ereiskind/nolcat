@@ -1,10 +1,11 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-02-20 ##########
+########## Failing 2026-02-27 ##########
 
 import pytest
 from filecmp import cmp
 from random import choice
-from datetime import timedelta
+from urllib.parse import urlsplit
+from random import randrange
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
@@ -433,7 +434,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     """Creates a dataframe for use in `test_save_dataframe_to_S3_bucket()` and deletes it when the test is complete.
 
     Args:
-        COUNTERData_relation (dataframe): a dataframe of test data
+        COUNTERData_relation (dataframe): a dataframe of all the COUNTER test data
     
     Yields:
         tuple: a dataframe of test data (dataframe); the test data statistics source ID of the data in the dataframe (int); the report type of the data in the dataframe (str)
@@ -471,20 +472,20 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     """Tests saving a dataframe as a parquet file in a S3 bucket."""
     df, statistics_source_ID, report_type = dataframe_to_save_to_S3
-    before = datetime.now()
-    result = save_dataframe_to_S3_bucket(
+    S3_file_name = save_dataframe_to_S3_bucket(
         df,
         statistics_source_ID,
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    assert result is None
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
-    s3_client.download_file(
+    S3_file_name_path = urlsplit(S3_file_name).path
+    S3_file_path, slash, S3_parquet_file_name = S3_file_name_path.rpartition("/")
+    assert S3_file_path.strip("/") == TEST_COUNTER_FILE_PATH.strip("/")
+    assert parquet_file_name_regex().fullmatch(S3_parquet_file_name)
+    download_location = tmp_path / S3_parquet_file_name
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
@@ -496,28 +497,17 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     
     TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
     """
-    logging_message = upload_file_to_S3_bucket(
+    S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    assert path_to_sample_file.name in bucket_contents
+    S3_file_name_path = urlsplit(S3_file_name).path
+    assert S3_file_name_path.split("/")[-1] == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
-    s3_client.download_file(
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
@@ -532,14 +522,14 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
 
     Args:
         request (dict or str): the contents of the file that will be saved to S3
+        most_recent_month_with_usage (tuple): two datetime.date values, representing the first and last day of a month respectively
 
     Yields:
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
     """
     data = request.param
     log.debug(f"In `file_name_stem_and_data()`, the `data` is {data}.")
-    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
-    log.info(f"In `file_name_stem_and_data()`, the `file_name_stem` is {file_name_stem}.")
+    file_name_stem = f"{randrange(11)}_report-{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     yield (file_name_stem, data)
     if isinstance(data, dict):
         file_name = file_name_stem + '.json'
@@ -554,28 +544,29 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
-def test_save_unconverted_data_via_upload(file_name_stem_and_data):
+def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     """Tests saving data that can't be transformed for loading into the database to a file in S3."""
     file_name_stem, data = file_name_stem_and_data
-    logging_message = save_unconverted_data_via_upload(
+    S3_file_name = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
+    S3_file_name_path = urlsplit(S3_file_name).path
+    assert S3_file_name_path.split("/")[-1].split(".")[0] == file_name_stem
+    download_location = tmp_path / S3_file_name_path.split("/")[-1]
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
+        Key=S3_file_name_path,
+        Filename=download_location,
     )
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(TEST_COUNTER_FILE_PATH, "") for file_name in bucket_contents]
-    if isinstance(data, dict):
-        assert f"{file_name_stem}.json" in bucket_contents
-    else:
-        assert f"{file_name_stem}.txt" in bucket_contents
+    with open(download_location, encoding='utf-8') as f:
+        if isinstance(data, dict):
+            file_contents = json.load(f)
+        else:
+            file_contents = f.read()
+    log.debug(f"The contents of `{S3_file_name}` (type {type(file_contents)}):\n{file_contents}")
+    assert data == file_contents
 
 
 #SECTION: COUNTER Registry Tests
@@ -629,7 +620,7 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
 
 
-#SECTION: `ConvertJSONDictToDataframe()` Tests
+#SECTION: `ConvertJSONDictToParquet()` Tests
 @pytest.fixture
 def R5_JSON_3_PR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_PR.json` JSON."""
@@ -5971,7 +5962,7 @@ def R5b1_JSON_3_IR_relation():
     "R5b1_IR",
 ])
 def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
-    """A parameterized fixture function with the data for testing `ConvertJSONDictToDataframe().create_dataframe()` for all COUNTER R5 report types and minor releases.
+    """A parameterized fixture function with the data for testing `ConvertJSONDictToParquet().create_parquet()` for all COUNTER R5 report types and minor releases.
 
     Args:
         request (str): description of the use case
@@ -6049,21 +6040,33 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
 
 
 @pytest.mark.slow  # For IR tests
-def test_create_dataframe(tmp_path, JSON_dicts_with_metadata, caplog):
+def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     """Tests converting JSONs as Python dicts to dataframes."""
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToDataframe')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
-    before = datetime.now()
-    df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe(test=True)
-    after = datetime.now()
-    assert df is None
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
-    s3_client.download_file(
+    S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
+    assert isinstance(S3_file_name, str)
+    download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
+    S3_file_name_path = urlsplit(S3_file_name).path
+    #TEST: temp
+    S3_prefix = S3_file_name_path.rpartition("/")[0] + "/"
+    list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Prefix=S3_prefix,
+    )
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
+        bucket_contents.append(contents_dict['Key'])
+    if S3_file_name_path in bucket_contents:
+        log.warning(f"File `{S3_file_name_path}` in `{BUCKET_NAME}/{S3_prefix}`")
+    else:
+        log.error(f"Files in `{BUCKET_NAME}/{S3_prefix}`:\n{format_list_for_stdout(bucket_contents)}.")
+    #TEST: end temp
+    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+        Bucket=BUCKET_NAME,
+        Key=S3_file_name_path,
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)

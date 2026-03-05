@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-02-26 ##########
 
 import pytest
 from random import choice
@@ -1175,7 +1175,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3):
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form.
     
     The fixtures creating the annualUsageCollectionTracking instance called and creating the file that will be downloaded from S3 are separate, so the file extension, which is derived from the former, may not match the file, which comes from the latter.

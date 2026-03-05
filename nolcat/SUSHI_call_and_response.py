@@ -378,6 +378,9 @@ class SUSHICallAndResponse:
         
         Returns:
             str: an error message to flash indicating the creation of the bailout file
+
+        Raises:
+            S3InteractionError: if a problem occurs while saving the data to S3
         """
         log.info("Starting `_save_raw_Response_text()`.")
         statistics_source_ID = query_database(
@@ -392,17 +395,16 @@ class SUSHICallAndResponse:
         else:  # `status` and `report` requests don't include dates
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().strftime(AWS_timestamp_format())}"
         log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
-        logging_message = save_unconverted_data_via_upload(
-            Response_text,
-            file_name_stem,
-            bucket_path,
-        )
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-            message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
-            log.critical(message)
-        else:
-            message = logging_message
-            log.debug(message)
+        try:
+            S3_file_name = save_unconverted_data_via_upload(
+                Response_text,
+                file_name_stem,
+                bucket_path,
+            )
+        except S3InteractionError as error:
+            raise S3InteractionError(f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {error}")
+        message = f"Successfully loaded the file {file_name_stem} into S3 location `{S3_file_name}`."
+        log.debug(message)
         return message
 
 
