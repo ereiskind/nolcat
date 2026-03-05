@@ -122,6 +122,13 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
+        harvest_R5_SUSHI_result (dataframe): the response data of an identical SUSHI call
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
@@ -171,7 +178,16 @@ def sample_FileStorage_object(path_to_sample_file):
 
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
-    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
+    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        sample_FileStorage_object (werkzeug.datastructures.FileStorage): a file in a Werkzeug FileStorage object
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+    """
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{Path(sample_FileStorage_object.filename).suffix}"
     with client:
         S3_file_name = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=TEST_NON_COUNTER_FILE_PATH)
@@ -212,7 +228,13 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
 
 
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
-    """Test downloading a file in S3 to a local computer."""
+    """Test downloading a file in S3 to a local computer.
+
+    Args:
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+        non_COUNTER_file_to_download_from_S3 (pathlib.Path): an absolute file path to a randomly selected file that's also been temporarily uploaded to S3
+        download_destination (pathlib.Path): a path to the destination for downloaded files
+    """
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(
         download_destination,

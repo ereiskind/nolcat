@@ -13,7 +13,11 @@ log = logging.getLogger(__name__)
 
 
 def test_login_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/login/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title

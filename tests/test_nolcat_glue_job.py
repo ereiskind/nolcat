@@ -100,6 +100,7 @@ def test_return_string_of_dataframe_info():
     })
     assert return_string_of_dataframe_info(two) == "<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 3 columns):\n #   Column  Non-Null Count  Dtype  \n---  ------  --------------  -----  \n 0   int     3 non-null      int64  \n 1   string  3 non-null      string \n 2   Bool    2 non-null      boolean\ndtypes: boolean(1), int64(1), string(1)\nmemory usage: 186.0 bytes\n"
 
+
 def test_format_list_for_stdout_with_list():
     """Test pretty printing a list by adding a line break between each item."""
     assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
@@ -109,6 +110,9 @@ def test_format_list_for_stdout_with_generator(create_COUNTERData_workbook_iterd
     """Test pretty printing a list created by a generator object by adding a line break between each item.
     
     The assert statements, which look for every file that should be in the created string and then check that there are only that many items in the string, is used to compensate for `iterdir()` not outputting the files in an exact order.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
     """
     result = format_list_for_stdout(create_COUNTERData_workbook_iterdir_list)
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2017.xlsx" in result
@@ -258,6 +262,10 @@ def test_load_data_into_database(engine, vendors_relation):
     """Tests loading data into a relation.
 
     Testing the helper function for loading data into the database also confirms that the database and program are connected.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        vendors_relation (dataframe): a relation of test data
     """
     result = load_data_into_database(
         df=vendors_relation,
@@ -275,6 +283,10 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        statisticsSources_relation (dataframe): a relation of test data
     """
     df_dtypes = {
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
@@ -336,6 +348,10 @@ def test_query_database(engine, vendors_relation):
     """Tests getting data from the database through a SQL query.
 
     This test performs a `SELECT *` query on the relation that had data loaded into it in the previous test, confirming that the function works and that the database and program are connected to allow CRUD operations.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        vendors_relation (dataframe): a relation of test data
     """
     retrieved_vendors_data = query_database(
         query="SELECT * FROM vendors;",
@@ -348,7 +364,11 @@ def test_query_database(engine, vendors_relation):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_first_new_PK_value(client):
-    """Tests the retrieval of a relation's next primary key value."""
+    """Tests the retrieval of a relation's next primary key value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         assert first_new_PK_value('vendors') == 8
 
@@ -358,7 +378,12 @@ def test_first_new_PK_value(client):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database(engine, client):
-    """Tests updating data in the database through a SQL update statement."""
+    """Tests updating data in the database through a SQL update statement.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         update_result = update_database(
             update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
@@ -393,7 +418,12 @@ def test_update_database(engine, client):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database_with_insert_statement(engine, client):
-    """Tests adding records to the database through a SQL insert statement."""
+    """Tests adding records to the database through a SQL insert statement.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         update_result = update_database(
             update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
@@ -470,7 +500,12 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
 
 
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
-    """Tests saving a dataframe as a parquet file in a S3 bucket."""
+    """Tests saving a dataframe as a parquet file in a S3 bucket.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        dataframe_to_save_to_S3 (tuple): test data from `COUNTERData` matching a given statistics source ID and report type; that statistics source ID; that report type
+    """
     df, statistics_source_ID, report_type = dataframe_to_save_to_S3
     S3_file_name = save_dataframe_to_S3_bucket(
         df,
@@ -492,10 +527,15 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     assert_frame_equal(df.reset_index(drop=True), df_from_parquet)
 
 
-def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):
     """Tests uploading files to a S3 bucket.
     
     TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        remove_file_from_S3 (None): removes a file at a specified location from S3
     """
     S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
@@ -522,7 +562,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
 
     Args:
         request (dict or str): the contents of the file that will be saved to S3
-        most_recent_month_with_usage (tuple): two datetime.date values, representing the first and last day of a month respectively
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
 
     Yields:
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
@@ -545,7 +585,12 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
 
 
 def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
-    """Tests saving data that can't be transformed for loading into the database to a file in S3."""
+    """Tests saving data that can't be transformed for loading into the database to a file in S3.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        file_name_stem_and_data (tuple): the file name stem; the file contents
+    """
     file_name_stem, data = file_name_stem_and_data
     S3_file_name = save_unconverted_data_via_upload(
         data=data,
@@ -584,6 +629,9 @@ def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
     
     Regex taken from https://stackoverflow.com/a/3809435.
+
+    Args:
+        request (tuple): COUNTER registry ID; COUNTER CoP; SUSHI URL matching registry ID and CoP
     """
     registry_ID, expected_code_of_practice, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
@@ -602,6 +650,9 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
     
     Regex taken from https://stackoverflow.com/a/3809435.
+
+    Args:
+        request (tuple): COUNTER registry ID; SUSHI URL matching registry ID
     """
     registry_ID, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
@@ -6041,7 +6092,13 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
 
 @pytest.mark.slow  # For IR tests
 def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
-    """Tests converting JSONs as Python dicts to dataframes."""
+    """Tests converting JSONs as Python dicts to dataframes.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        JSON_dicts_with_metadata (tuple): the location of the JSON being converted to a dataframe; the report type; the statistics source ID; the dataframe resulting from the conversion
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:

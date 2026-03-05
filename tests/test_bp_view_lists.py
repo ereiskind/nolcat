@@ -12,7 +12,11 @@ log = logging.getLogger(__name__)
 
 
 def test_view_lists_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
 
     #page = client.get('/view_lists/')  #ToDo: Add variable route element

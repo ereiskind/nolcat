@@ -83,6 +83,9 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
     
     Regex taken from https://stackoverflow.com/a/3809435.
+
+    Args:
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
     """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
@@ -90,7 +93,11 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
-    """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display."""
+    """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display.
+
+    Args:
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+    """
     # credentials = StatisticsSources_fixture.fetch_SUSHI_information(code_of_practice=False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
@@ -101,7 +108,7 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
     """A fixture returning the SUSHI credentials dictionary to avoid repeated callings of the `StatisticsSources.fetch_SUSHI_information()` method in later test functions.
 
     Args:
-        StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
     
     Yields:
         dict: SUSHI credentials
@@ -136,6 +143,10 @@ def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_Statist
     """Tests creating list of available reports from a `/reports` SUSHI call.
     
     This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. To best test this function, the test is placed immediately after the instantiation of a fixture that exists to call the function in a test module that randomly selects SUSHI credentials to use. Since the fixture is generated dynamically from a randomly designated source, it cannot be compared to a static value, and dynamically retrieving the data for comparison would effectively be comparing the same code in two places; instead, this test checks various aspects of the data that will be true in all cases.
+
+    Args:
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
@@ -151,7 +162,14 @@ def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_Statist
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there aren't any matches.
     
-    This test uses the current month as the date; since the current month's data isn't available, it won't be in the database. 
+    This test uses the current month as the date; since the current month's data isn't available, it won't be in the database.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        current_month_like_most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the current month
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -168,6 +186,13 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        current_month_like_most_recent_month_with_usage (tuple):  `begin_date` and `end_date` SUSHI parameter values representing the current month
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     report = choice(reports_offered_by_StatisticsSource_fixture)
@@ -207,7 +232,15 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
 @pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
-    """Tests the method making the API call and turing the result into a dataframe."""
+    """Tests the method making the API call and turing the result into a dataframe.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        data_for_testing_harvest_single_report (tuple): a COUNTER R5 reports offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
+        SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     report_to_check, begin_date = data_for_testing_harvest_single_report
@@ -244,6 +277,13 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range ends with the month pulled in the test above; for efficiency, the date range only looks at three months total.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        data_for_testing_harvest_single_report (tuple): a COUNTER R5 reports offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
+        SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
@@ -286,7 +326,14 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
-    """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
+    """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     with client:
@@ -305,7 +352,14 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
-    """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value."""
+    """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value.
+
+    Args:
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
@@ -325,7 +379,14 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
 @pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
-    """Tests the code for rejecting a SUSHI end date before the begin date."""
+    """Tests the code for rejecting a SUSHI end date before the begin date.
+
+    Args:
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
@@ -395,6 +456,13 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation.
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        month_before_month_like_most_recent_month_with_usage (tuple): the first and last days of the month before the most recent month for which COUNTER data is available
+        harvest_R5_SUSHI_result (tuple): the data from a SUSHI pull; a dictionary of harvested reports and their corresponding flash statements
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
@@ -488,6 +556,13 @@ def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicat
     """Tests the check for statistics source/report type/usage date combinations already in the database.
     
     While the function being tested here is in `nolcat.app`, the test is in this module because it requires the `COUNTERData` relation to contain data, while the `nolcat.app` test module starts with an empty database and never loads data into that relation.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        partially_duplicate_COUNTER_data (dataframe): data for loading into the `COUNTERData` relation, some of which is already in the test data for that relation
+        non_duplicate_COUNTER_data (dataframe): data in `partially_duplicate_COUNTER_data()` not in the `COUNTERData` relation
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     number_of_records = query_database(

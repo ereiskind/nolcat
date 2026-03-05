@@ -355,7 +355,11 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
 
 #Section: Tests
 def test_GET_request_for_collect_FY_and_vendor_data(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/initialization/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -372,8 +376,24 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):
+    """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_fiscalYears_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        fiscalYears_relation (dataframe): a relation of test data
+        create_annualStatistics_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        annualStatistics_relation (dataframe): a relation of test data
+        create_vendors_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        vendors_relation (dataframe): a relation of test data
+        create_vendorNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        vendorNotes_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
@@ -451,8 +471,26 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):
+    """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_statisticsSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsSources_relation (dataframe): a relation of test data
+        create_statisticsSourceNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsSourceNotes_relation (dataframe): a relation of test data
+        create_resourceSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        resourceSources_relation (dataframe): a relation of test data
+        create_resourceSourceNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        resourceSourceNotes_relation (dataframe): a relation of test data
+        create_statisticsResourceSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsResourceSources_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
@@ -542,7 +580,14 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
-    """Test creating the AUCT relation template CSV."""
+    """Test creating the AUCT relation template CSV.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        create_blank_annualUsageCollectionTracking_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        blank_annualUsageCollectionTracking_data_types (dict): the `astype` argument for `annualUsageCollectionTracking`
+    """
     page = client.get('/initialization/initialization-page-3')
     AUCT_template_df = pd.read_csv(
         TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'initialize_annualUsageCollectionTracking.csv',
@@ -563,8 +608,20 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 @pytest.mark.slow
-def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
-    """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):
+    """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        create_annualUsageCollectionTracking_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        annualUsageCollectionTracking_relation (dataframe): a relation of test data
+        COUNTERData_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
@@ -619,7 +676,12 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
-    """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
+    """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
@@ -716,8 +778,15 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):  #TEST: Loads multiple files into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/
-    """Tests uploading the files with non-COUNTER usage statistics."""
+def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):  #TEST: Loads multiple files into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/
+    """Tests uploading the files with non-COUNTER usage statistics.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        files_for_test_upload_historical_non_COUNTER_usage (dict): a valid `MultipartEncoder.fields` argument using a randomly selected file
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
