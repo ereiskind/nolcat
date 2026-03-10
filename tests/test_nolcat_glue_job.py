@@ -513,6 +513,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
+    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
     S3_file_name_path = urlsplit(S3_file_name).path
     S3_file_path, slash, S3_parquet_file_name = S3_file_name_path.rpartition("/")
     assert S3_file_path.strip("/") == TEST_COUNTER_FILE_PATH.strip("/")
@@ -542,6 +543,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
         path_to_sample_file.name,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
+    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1] == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
@@ -597,6 +599,7 @@ def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
+    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
     S3_file_name_path = urlsplit(S3_file_name).path
     assert S3_file_name_path.split("/")[-1].split(".")[0] == file_name_stem
     download_location = tmp_path / S3_file_name_path.split("/")[-1]
@@ -6104,6 +6107,7 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
     S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
+    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
     assert isinstance(S3_file_name, str)
     download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
     S3_file_name_path = urlsplit(S3_file_name).path
