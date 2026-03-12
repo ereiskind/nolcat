@@ -23,6 +23,7 @@ import pandas as pd
 from numpy import squeeze
 from sqlalchemy import text
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
+from cloudpathlib import CloudPath
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 

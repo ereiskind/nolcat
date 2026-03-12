@@ -165,6 +165,15 @@ digraph package_dependencies {
         shape="box"
     ]
 
+    cloudpathlib [
+        label="\N==0.23.*"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
+        shape="box"
+    ]
+
     colorama [
         label="\N==0.4.*"
         shape="box"
