@@ -34,8 +34,6 @@ digraph package_dependencies {
 
     aiobotocore [
         label="\N==2.21.1"
-        color="#782F40"
-        penwidth=4
         shape="box"
     ]
     aiobotocore -> aiohttp
@@ -108,7 +106,7 @@ digraph package_dependencies {
     ]
 
     beautifulsoup4 [
-        label="\N==4.12.3"
+        label="\N==4.12.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -123,7 +121,7 @@ digraph package_dependencies {
     ]
 
     boto3 [
-        label="\N==1.37.1"
+        label="\N==1.42.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -192,7 +190,7 @@ digraph package_dependencies {
     ]
 
     Flask [
-        label="\N==3.0.3"
+        label="\N==3.1.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -217,7 +215,7 @@ digraph package_dependencies {
     "Flask-SQLAlchemy" -> SQLAlchemy
 
     "Flask-WTF" [
-        label="\N==1.2.1"
+        label="\N==1.2.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -251,7 +249,7 @@ digraph package_dependencies {
     gevent -> "zope.interface" [style="dashed"]
 
     graphviz [
-        label="\N==0.20.3"
+        label="\N==0.21.*"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -314,7 +312,7 @@ digraph package_dependencies {
     ]
 
     lxml [
-        label="\N==5.2.1"
+        label="\N==6.0.*"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -341,7 +339,7 @@ digraph package_dependencies {
     mysql -> mysqlclient
 
     mysqlclient [
-        label="\N==2.2.4"
+        label="\N==2.2.*"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -372,7 +370,7 @@ digraph package_dependencies {
     ]
 
     openpyxl [
-        label="\N==3.1.2"
+        label="\N==3.1.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -387,7 +385,7 @@ digraph package_dependencies {
     ]
 
     pandas [
-        label="\N==2.2.2"
+        label="\N==2.3.3"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -469,7 +467,7 @@ digraph package_dependencies {
     ]
 
     pytest [
-        label="\N==8.2.0"
+        label="\N==8.4.2"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -481,7 +479,7 @@ digraph package_dependencies {
     pytest -> pluggy
 
     "pytest-dependency" [
-        label="\N==0.6.0"
+        label="\N==0.6.*"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -517,7 +515,7 @@ digraph package_dependencies {
     ]
 
     requests [
-        label="\N==2.31.0"
+        label="\N==2.32.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -590,7 +588,7 @@ digraph package_dependencies {
     ]
 
     Sphinx [
-        label="\N==7.3.7"
+        label="\N==7.4.*"
         // With `awscli`, use 5.3.0
         style="filled"
         fillcolor="#DFD1A7"
@@ -670,7 +668,7 @@ digraph package_dependencies {
     ]
 
     SQLAlchemy [
-        label="\N==2.0.29"
+        label="\N==2.0.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
