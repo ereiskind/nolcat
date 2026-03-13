@@ -513,15 +513,15 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
-    S3_file_name_path = urlsplit(S3_file_name).path
-    S3_file_path, slash, S3_parquet_file_name = S3_file_name_path.rpartition("/")
-    assert S3_file_path.strip("/") == TEST_COUNTER_FILE_PATH.strip("/")
-    assert parquet_file_name_regex().fullmatch(S3_parquet_file_name)
-    download_location = tmp_path / S3_parquet_file_name
+    log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
+    if not isinstance(S3_file_name, CloudPath):
+        S3_file_name = CloudPath(S3_file_name)
+    assert S3_file_name.key.replace(S3_file_name.name, "") == TEST_COUNTER_FILE_PATH
+    assert parquet_file_name_regex().fullmatch(S3_file_name.name)
+    download_location = tmp_path / S3_file_name.name
     s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
-        Key=S3_file_name_path,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
