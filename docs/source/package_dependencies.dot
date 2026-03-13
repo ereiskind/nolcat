@@ -241,9 +241,11 @@ digraph package_dependencies {
     ]
 
     fsspec [
-        label="\N==2025.3.0"
-        style="bold"
+        label="\N==2025.10.0"
+        style="filled"
+        fillcolor="#CEB888"
         color="#782F40"
+        penwidth=4
         shape="box"
     ]
 
@@ -402,25 +404,10 @@ digraph package_dependencies {
         shape="box"
     ]
     pandas -> numpy
-    pandas -> "pandas[aws]"
-    pandas -> "pandas[parquet]"
     pandas -> "pandas[performance]"
     pandas -> "python-dateutil"
     pandas -> pytz
     pandas -> tzdata
-
-    "pandas[aws]" [
-        color="#782F40"
-        shape="box"
-    ]
-    "pandas[aws]" -> fsspec
-    "pandas[aws]" -> s3fs
-
-    "pandas[parquet]" [
-        color="#782F40"
-        shape="box"
-    ]
-    "pandas[parquet]" -> pyarrow
 
     "pandas[performance]" [
         color="#782F40"
@@ -441,9 +428,11 @@ digraph package_dependencies {
     ]
 
     pyarrow [
-        label="\N==19.0.1"
-        style="bold"
-        color="#782f40"
+        label="\N==23.0.*"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
         shape="box"
     ]
     pyarrow -> numpy
@@ -554,9 +543,11 @@ digraph package_dependencies {
     rsa -> pyasn1 [style="dotted"]
 
     s3fs [
-        label="\N==2025.3.0"
-        style="bold"
+        label="\N==2025.10.0"
+        style="filled"
+        fillcolor="#CEB888"
         color="#782F40"
+        penwidth=4
         shape="box"
     ]
     s3fs -> aiobotocore
