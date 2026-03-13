@@ -1166,7 +1166,7 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
     log.error(f"`str(S3_file_name)` (type {type(str(S3_file_name))}): {str(S3_file_name)}")  #TEST: temp
     try:
         df.to_parquet(
-            S3_file_name,
+            str(S3_file_name),  # When a CloudPath object is used, the `s3://` is replaced with a temp path
             index=False,
         )
     except Exception as error:
