@@ -4,11 +4,6 @@ This page contains all the current to-dos and possible plans for the NoLCAT prog
 
 Planned Iterations
 ******************
-* Confirm the following functions work with SUSHI CSV
-
-  * `nolcat.models.StatisticsSources.fetch_SUSHI_information()` and `tests.test_StatisticsSources.StatisticsSources_fixture()`
-  * `nolcat.models.StatisticsSources.collect_usage_statistics()`, `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`, `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
-  * `tests.test_StatisticsSources.SUSHI_credentials_fixture_in_test_StatisticsSources()`, `tests.test_StatisticsSources.reports_offered_by_StatisticsSource_fixture()`, `tests.test_StatisticsSources.data_for_testing_harvest_single_report()`, `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
@@ -16,9 +11,9 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
 
-* Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
+* Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
+  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()` to expect S3 file name as return value (`#ToDo: PARQUET IN S3--` notes changes for no return value); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
 
     * `nolcat.models.StatisticsSources._harvest_single_report()` with `tests.test_StatisticsSources.test_harvest_single_report()`, `tests.test_StatisticsSources.test_harvest_single_report_with_partial_date_range()`
     * **`nolcat.models.StatisticsSources._harvest_R5_SUSHI()`** with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
@@ -26,15 +21,16 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
     * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
-    * `nolcat.models.StatisticsSources.` with `tests.StatisticsSources.()`, `tests.StatisticsSources.()`
 
-  * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
-  * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
+  * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
+  * Update location of `nolcat.nolcat_glue_job.save_unconverted_data_via_upload()` within `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
+  * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
   * For all tests, get call chains and adjust caplog calls
   * Confirm all tests still pass
 
+* Fix lack of cleanup in `tests.test_StatisticsSources.test_upload_historical_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
 * Create function to check S3 file existence and type with fuzzy matching
 

@@ -10,6 +10,7 @@ from datetime import timedelta
 from random import choice
 import re
 import html
+from urllib.parse import urlsplit
 from sqlalchemy import create_engine
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
@@ -585,35 +586,34 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
 
 
 @pytest.fixture
-def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
     """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
 
     Args:
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
         non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+        download_destination (pathlib.Path): a path to the destination for downloaded files
 
     Yields:
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
     log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
     log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}`"))
-    logging_message = upload_file_to_S3_bucket(
+    S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
         bucket_path=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_NON_COUNTER_FILE_PATH + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=urlparse(S3_file_name).path,
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
-    Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
+        log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
+    finally:
+        Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
 #Section: Other Fixtures Used in Multiple Test Modules

@@ -1,5 +1,5 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-02-26 ##########
 
 import pytest
 from random import choice
@@ -20,6 +20,9 @@ def sample_COUNTER_report_workbook(create_COUNTERData_workbook_iterdir_list):
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
 
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+
     Yields:
         list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
     """
@@ -27,7 +30,12 @@ def sample_COUNTER_report_workbook(create_COUNTERData_workbook_iterdir_list):
 
 
 def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, workbooks_and_relations):
-    """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe."""
+    """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe.
+
+    Args:
+        sample_COUNTER_report_workbook (list): a simulation of a single file selected in a MultipleFileField field
+        workbooks_and_relations (dict): key-value pairs of workbook names and fixture names for the data in the given workbook
+    """
     COUNTERData_relation = workbooks_and_relations[sample_COUNTER_report_workbook[0].filename]
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbook).create_dataframe()
     assert isinstance(data_not_in_df, list)
@@ -40,6 +48,9 @@ def sample_COUNTER_report_workbooks(create_COUNTERData_workbook_iterdir_list):
     """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
 
     Yields:
         list: a list of mock_FileStorage_object object(s) simulating multiple files selected in a MultipleFileField field
@@ -55,6 +66,10 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, COUNTERData_relation)
     """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe.
     
     The order of the possible delimiters means the existence of the delimiter characters in a string field is tested, but the possibility of a delimiter character as the first character in a string field isn't covered by this test.
+
+    Args:
+        sample_COUNTER_report_workbooks (list): a simulation of multiple files selected in a MultipleFileField field
+        COUNTERData_relation (dataframe): a relation of test data
     """
     df, data_not_in_df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     assert isinstance(data_not_in_df, list)
