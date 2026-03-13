@@ -58,10 +58,10 @@ DOI_LENGTH = 110
 PROPRIETARY_ID_LENGTH = 100
 URI_LENGTH = 450
 
-PRODUCTION_COUNTER_FILE_PATH = "nolcat/usage/"
-PRODUCTION_NON_COUNTER_FILE_PATH = "nolcat/usage/raw_vendor_reports/"
-TEST_COUNTER_FILE_PATH = "nolcat/usage/test/"
-TEST_NON_COUNTER_FILE_PATH = "nolcat/usage/test/raw_vendor_reports/"
+PRODUCTION_COUNTER_FILE_PATH = CloudPath(f"s3://{BUCKET_NAME}/nolcat/usage")
+PRODUCTION_NON_COUNTER_FILE_PATH = CloudPath(f"s3://{BUCKET_NAME}/nolcat/usage/raw_vendor_reports")
+TEST_COUNTER_FILE_PATH = CloudPath(f"s3://{BUCKET_NAME}/nolcat/usage/test")
+TEST_NON_COUNTER_FILE_PATH = CloudPath(f"s3://{BUCKET_NAME}/nolcat/usage/test/raw_vendor_reports")
 
 
 def filter_empty_parentheses(log_statement):
