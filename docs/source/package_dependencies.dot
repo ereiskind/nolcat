@@ -47,7 +47,7 @@ digraph package_dependencies {
     ]
 
     aiohttp [
-        label="\N==3.11.13"
+        label="\N==3.13.3"
         shape="box"
     ]
     aiohttp -> aiohappyeyeballs
@@ -59,7 +59,7 @@ digraph package_dependencies {
     aiohttp -> yarl
 
     aioitertools [
-        label="\N==0.12.0"
+        label="\N==0.13.0"
         shape="box"
     ]
 
@@ -101,7 +101,7 @@ digraph package_dependencies {
     awscli -> s3transfer [style="dotted"]
 
     Babel [
-        label="\N==2.17.0"
+        label="\N==2.18.0"
         shape="box"
     ]
 
@@ -143,7 +143,7 @@ digraph package_dependencies {
     botocore -> urllib3
 
     Bottleneck [
-        label="\N==1.4.2"
+        label="\N==1.6.0"
         style="bold"
         color="#782F40"
         shape="box"
@@ -151,17 +151,17 @@ digraph package_dependencies {
     Bottleneck -> numpy
 
     certifi [
-        label="\N==2025.1.31"
+        label="\N==2026.2.25"
         shape="box"
     ]
 
     "charset-normalizer" [
-        label="\N==3.4.1"
+        label="\N==3.4.5"
         shape="box"
     ]
 
     click [
-        label="\N==8.1.8"
+        label="\N==8.3.1"
         shape="box"
     ]
 
@@ -182,15 +182,6 @@ digraph package_dependencies {
     docutils [
         label="\N==0.21.2"
         shape="box"
-    ]
-    docutils [
-        label="\N==0.21.2"
-        // When `awscli`included --> 0.16
-        shape="box"
-        /*
-        awscli 1.38.* requires docutils<0.17 and >=0.10
-        sphinx 7.3.7 requires docutils<0.22,>=0.18.1
-        */
     ]
 
     "et-xmlfile" [
@@ -287,17 +278,17 @@ digraph package_dependencies {
     ]
 
     idna [
-        label="\N==3.10"
+        label="\N==3.11"
         shape="box"
     ]
 
     imagesize [
-        label="\N==1.4.1"
+        label="\N==2.0.0"
         shape="box"
     ]
 
     iniconfig [
-        label="\N==2.0.0"
+        label="\N==2.3.0"
         shape="box"
     ]
 
@@ -307,13 +298,13 @@ digraph package_dependencies {
     ]
 
     Jinja2 [
-        label="\N==3.1.*"
+        label="\N==3.1.6"
         shape="box"
     ]
     Jinja2 -> MarkupSafe
 
     jmespath [
-        label="\N==1.0.*"
+        label="\N==1.1.0"
         shape="box"
     ]
 
@@ -332,7 +323,7 @@ digraph package_dependencies {
     ]
 
     MarkupSafe [
-        label="\N==3.0.2"
+        label="\N==3.0.3"
         shape="box"
     ]
 
@@ -357,7 +348,7 @@ digraph package_dependencies {
     ]
 
     numba [
-        label="\N==0.61.0"
+        label="\N==0.64.0"
         style="bold"
         color="#782F40"
         shape="box"
@@ -366,7 +357,7 @@ digraph package_dependencies {
     numba -> numpy
 
     numexpr [
-        label="\N==2.10.2"
+        label="\N==2.14.1"
         style="bold"
         color="#782F40"
         shape="box"
@@ -374,7 +365,7 @@ digraph package_dependencies {
     numexpr -> numpy
 
     numpy [
-        label="\N==2.1.3"
+        label="\N==2.4.3"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -418,7 +409,7 @@ digraph package_dependencies {
     "pandas[performance]" -> numexpr
 
     pluggy [
-        label="\N==1.5.0"
+        label="\N==1.6.0"
         shape="box"
     ]
 
@@ -444,7 +435,7 @@ digraph package_dependencies {
     ]
 
     Pygments [
-        label="\N==2.19.1"
+        label="\N==2.19.2"
         shape="box"
     ]
 
@@ -502,7 +493,7 @@ digraph package_dependencies {
     "python-dateutil" -> six
 
     pytz [
-        label="\N==2025.1"
+        label="\N==2026.1.post1"
         shape="box"
     ]
 
@@ -555,7 +546,7 @@ digraph package_dependencies {
     s3fs -> fsspec
 
     s3transfer [
-        label="\N==0.11.3"
+        label="\N==0.16.0"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -563,7 +554,7 @@ digraph package_dependencies {
     s3transfer -> botocore
 
     setuptools [
-        label="\N==76.0.0"
+        label="\N==82.0.1"
         shape="box"
     ]
 
@@ -578,12 +569,12 @@ digraph package_dependencies {
     ]
 
     snowballstemmer [
-        label="\N==2.2.0"
+        label="\N==3.0.1"
         shape="box"
     ]
 
     soupsieve [
-        label="\N==2.6"
+        label="\N==2.8.3"
         shape="box"
     ]
 
@@ -613,7 +604,7 @@ digraph package_dependencies {
     Sphinx -> "sphinxcontrib-serializinghtml"
 
     "sphinx-autobuild" [
-        label="\N==2024.10.3"
+        label="\N==2025.8.25"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -628,7 +619,7 @@ digraph package_dependencies {
     "sphinx-autobuild" -> websockets
 
     "sphinx-autodocgen" [
-        label="\N==1.3"
+        label="\N==1.4"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -690,17 +681,17 @@ digraph package_dependencies {
     ]
 
     "typing_extensions" [
-        label="\N==4.12.2"
+        label="\N==4.15.0"
         shape="box"
     ]
 
     tzdata [
-        label="\N==2025.1"
+        label="\N==2025.3"
         shape="box"
     ]
 
     urllib3 [
-        label="\N==2.3.0"
+        label="\N==2.6.3"
         shape="box"
     ]
 
@@ -723,7 +714,7 @@ digraph package_dependencies {
     ]
 
     Werkzeug [
-        label="\N==3.1.3"
+        label="\N==3.1.6"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
