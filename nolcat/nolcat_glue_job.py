@@ -1162,6 +1162,8 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
     log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
     now = datetime.now()
     S3_file_name = CloudPath(f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet")
+    log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
+    log.error(f"`str(S3_file_name)` (type {type(str(S3_file_name))}): {str(S3_file_name)}")  #TEST: temp
     try:
         df.to_parquet(
             S3_file_name,
