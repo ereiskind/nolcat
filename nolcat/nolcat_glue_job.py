@@ -1183,25 +1183,26 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        bucket_path (str): the path within the bucket where the files will be saved
+        bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved
     
     Returns:
-        str: the name/location of the file successfully saved to S3
+        cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
     
     Raises:
         S3InteractionError: if a problem occurs while saving the data to S3
     """
-    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name} and S3 location `{bucket_path}`.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
-        raise S3InteractionError(f"Unable to upload files to S3 because the check for S3 location `{BUCKET_NAME}/{bucket_path}` raised `{error}`.")
+        raise S3InteractionError(f"Unable to upload files to S3 because the check for S3 bucket `{BUCKET_NAME}` raised `{error}`.")
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    S3_file_name = bucket_path / file_name
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{S3_file_name.name}` into S3 location `{S3_file_name.parent}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
@@ -1210,13 +1211,13 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
             s3_client.upload_fileobj(
                 Fileobj=file_object,
                 Bucket=BUCKET_NAME,
-                Key=bucket_path + file_name,
+                Key=S3_file_name.key,
             )
-            file_object.close()
             log.info(f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`.")
             return f"{BUCKET_NAME}/{bucket_path}{file_name}"
         except Exception as error:
             log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
+        finally:
             file_object.close()
     except Exception as error:
         log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
@@ -1228,10 +1229,10 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                 s3_client.upload_file(  # This uploads `file` like a path-like object
                     Filename=file,
                     Bucket=BUCKET_NAME,
-                    Key=bucket_path + file_name,
+                    Key=S3_file_name.key,
                 )
-                log.info(f"Successfully loaded the file {file_name} into S3 location `{BUCKET_NAME}/{bucket_path}`.")
-                return f"{BUCKET_NAME}/{bucket_path}{file_name}"
+                log.info(f"Successfully loaded the file {file_name} into S3 location `{S3_file_name.parent}`.")
+                return S3_file_name
             except Exception as error:
                 raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because `{error}`.")
         else:
