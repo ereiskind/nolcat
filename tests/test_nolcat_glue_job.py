@@ -513,6 +513,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
+    S3_file_name = CloudPath(S3_file_name)
     log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
     if not isinstance(S3_file_name, CloudPath):
         S3_file_name = CloudPath(S3_file_name)
@@ -541,12 +542,12 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
-        bucket_path=TEST_COUNTER_FILE_PATH.parent,
+        bucket_path=TEST_COUNTER_FILE_PATH,
     )
     log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
     assert S3_file_name.name == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
-    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=S3_file_name.key,
         Filename=download_location,
