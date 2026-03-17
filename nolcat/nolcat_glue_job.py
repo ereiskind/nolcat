@@ -424,23 +424,6 @@ def skip_test_due_to_SUSHI_error_regex():  #ALERT: Replaced with `raise InvalidS
     return re.compile(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?")
 
 
-#SUBSECTION: Testing and Error Statements
-def fixture_variable_value_declaration_statement(variable_name, variable_value):
-    """This statement adds the value of any arguments used in fixture functions to the logging output for troubleshooting purposes.
-
-    Args:
-        variable_name (str): the name of the argument/variable
-        variable_value (object): the argument/variable value
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if isinstance(variable_value, Path):
-        return f"The `{variable_name}` is {variable_value.resolve()}."
-    else:
-        return f"The `{variable_name}` is {variable_value}."
-
-
 def Flask_error_statement(error_statement):
     """This statement provides details on why the form couldn't be successfully submitted.
 

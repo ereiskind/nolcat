@@ -622,7 +622,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yields:
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
-    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
+    log.debug(f"The AUCT object is {non_COUNTER_AUCT_object_after_upload}")
     log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}`"))
     S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,

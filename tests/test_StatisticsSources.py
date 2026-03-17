@@ -73,7 +73,7 @@ def StatisticsSources_fixture():
         statistics_source_retrieval_code = str(choice(valid_retrieval_codes)),
         vendor_ID = 0,
     )
-    log.warning(fixture_variable_value_declaration_statement("StatisticsSources_fixture", yield_object))  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
+    log.warning(f"The statistics source retrieval code being used is {yield_object.statistics_source_retrieval_code}.")  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
     yield yield_object
 
 

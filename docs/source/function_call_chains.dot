@@ -648,7 +648,6 @@ digraph function_call_chains {
         attempted_SUSHI_call_with_invalid_dates_statement [shape="box"]
         reports_with_no_usage_regex [shape="box"]
         skip_test_due_to_SUSHI_error_regex [shape="box"]
-        fixture_variable_value_declaration_statement [shape="box"]
         Flask_error_statement [shape="box"]
         database_function_skip_statements [shape="box"]
         file_IO_statement [shape="box"]
@@ -1184,7 +1183,6 @@ digraph function_call_chains {
     non_COUNTER_AUCT_object_after_upload -> database_function_skip_statements
     non_COUNTER_AUCT_object_after_upload -> engine
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
-    non_COUNTER_file_to_download_from_S3 -> fixture_variable_value_declaration_statement
     non_COUNTER_file_to_download_from_S3 -> file_IO_statement
     non_COUNTER_file_to_download_from_S3 -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_file_to_download_from_S3 -> download_destination
@@ -2372,7 +2370,6 @@ digraph function_call_chains {
     StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
     StatisticsSources_fixture -> query_database
     StatisticsSources_fixture -> extract_value_from_single_value_df
-    StatisticsSources_fixture -> fixture_variable_value_declaration_statement
     StatisticsSources_fixture -> database_function_skip_statements
     StatisticsSources_fixture -> engine
     StatisticsSources_fixture -> most_recent_month_with_usage
