@@ -633,9 +633,9 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=urlparse(S3_file_name).path,
+            Key=S3_file_name.key,
         )
-    except botocore.exceptions as error:
+    except botocore.exceptions.BotoCoreError as error:
         log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
     finally:
         Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
