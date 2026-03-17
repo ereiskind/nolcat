@@ -529,7 +529,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     assert_frame_equal(df.reset_index(drop=True), df_from_parquet)
 
 
-def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_test_file_from_COUNTER_S3_folder):
     """Tests uploading files to a S3 bucket.
     
     TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
@@ -537,7 +537,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_fro
     Args:
         tmp_path (pathlib.Path): a temporary directory created just for running tests
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
-        remove_file_from_S3 (None): removes a file at a specified location from S3
+        remove_test_file_from_COUNTER_S3_folder (None): removes a file loaded into `TEST_COUNTER_FILE_PATH` in S3
     """
     S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,

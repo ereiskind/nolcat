@@ -472,8 +472,8 @@ def path_to_sample_file(request):
 
 
 @pytest.fixture
-def remove_file_from_S3(path_to_sample_file):
-    """Removes a file loaded into S3.
+def remove_test_file_from_COUNTER_S3_folder(path_to_sample_file):
+    """Removes a file loaded into `TEST_COUNTER_FILE_PATH` in S3.
 
     The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
 
@@ -483,14 +483,39 @@ def remove_file_from_S3(path_to_sample_file):
     Yields:
         None
     """
-    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
+    log.debug(f"Removing the copy of the file at {path_to_sample_file} in {TEST_COUNTER_FILE_PATH} from S3.")
+    S3_file_name = TEST_COUNTER_FILE_PATH / path_to_sample_file.name
     yield None
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name
+            Key=S3_file_name.key,
         )
-    except botocore.exceptions as error:
+    except botocore.exceptions.BotoCoreError as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
+
+
+@pytest.fixture
+def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
+    """Removes a file loaded into `TEST_NON_COUNTER_FILE_PATH` in S3.
+
+    The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+
+    Yields:
+        None
+    """
+    log.debug(f"Removing the copy of the file at {path_to_sample_file} in {TEST_NON_COUNTER_FILE_PATH} from S3.")
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / path_to_sample_file.name
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+        )
+    except botocore.exceptions.BotoCoreError as error:
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
