@@ -478,7 +478,6 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
         if not df.empty:
             break
     log.info(f"Using test data from statistics source ID {statistics_source_ID} and report type {report_type} for `test_save_dataframe_to_S3_bucket()`.")
-    before = datetime.now()
     yield (df, statistics_source_ID, report_type)
     after = datetime.now()
     file_name = get_name_of_parquet_file_saved_to_S3(
@@ -513,11 +512,8 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    S3_file_name = CloudPath(S3_file_name)
-    log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
-    if not isinstance(S3_file_name, CloudPath):
-        S3_file_name = CloudPath(S3_file_name)
-    assert S3_file_name.key.replace(S3_file_name.name, "") == TEST_COUNTER_FILE_PATH
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.parent == TEST_COUNTER_FILE_PATH
     assert parquet_file_name_regex().fullmatch(S3_file_name.name)
     download_location = tmp_path / S3_file_name.name
     s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found

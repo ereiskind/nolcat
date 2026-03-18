@@ -1134,19 +1134,17 @@ def save_dataframe_to_S3_bucket(df, statistics_source_ID, report_type, bucket_pa
         df (dataframe): the data to save in S3 as a parquet file
         statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
         report_type (str): the two-letter abbreviation for the report the usage data is from
-        bucket_path (str): the path within the bucket where the files will be saved
+        bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved
     
     Returns:
-        str: the name/location of the file successfully saved to S3
+        cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
     
     Raises:
         S3InteractionError: if a problem occurs while saving the data to S3
     """
-    log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    log.info(f"Starting `save_dataframe_to_S3_bucket()` for the {report_type} report from statistics source {statistics_source_ID} and S3 location `{bucket_path}`.")
     now = datetime.now()
-    S3_file_name = CloudPath(f"s3://{BUCKET_NAME}/{bucket_path}{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet")
-    log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
-    log.error(f"`str(S3_file_name)` (type {type(str(S3_file_name))}): {str(S3_file_name)}")  #TEST: temp
+    S3_file_name = bucket_path / f"{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet"
     try:
         df.to_parquet(
             str(S3_file_name),  # When a CloudPath object is used, the `s3://` is replaced with a temp path
