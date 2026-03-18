@@ -759,6 +759,7 @@ digraph function_call_chains {
     save_unconverted_data_via_upload -> format_list_for_stdout
     create_parquet -> _transform_R5_JSON
     create_parquet -> _transform_R5b1_JSON
+    create_parquet -> save_unconverted_data_via_upload
     create_parquet -> save_dataframe_to_S3_bucket
     _transform_R5_JSON -> _serialize_dates
     _transform_R5_JSON -> return_string_of_dataframe_info
@@ -1121,7 +1122,6 @@ digraph function_call_chains {
         match_direct_SUSHI_harvest_result [shape="box"]
         COUNTER_reports_offered_by_statistics_source [shape="box"]
         prepare_HTML_page_for_comparison [shape="box"]
-        get_name_of_parquet_file_saved_to_S3 [shape="folder"]
     }
     app -> configure_logging
     app -> create_app
@@ -1194,8 +1194,6 @@ digraph function_call_chains {
     match_direct_SUSHI_harvest_result -> engine
     COUNTER_reports_offered_by_statistics_source -> make_SUSHI_call
     COUNTER_reports_offered_by_statistics_source -> successful_SUSHI_call_statement
-    get_name_of_parquet_file_saved_to_S3 -> format_list_for_stdout
-    get_name_of_parquet_file_saved_to_S3 -> parquet_file_name_regex
 
 
     subgraph cluster_test_nolcat_glue_job {
@@ -1459,7 +1457,6 @@ digraph function_call_chains {
     JSON_dicts_with_metadata -> R5b1_JSON_3_IR_relation
     test_create_parquet -> JSON_dicts_with_metadata
     test_create_parquet -> create_parquet
-    test_create_parquet -> get_name_of_parquet_file_saved_to_S3
 
 
     subgraph cluster_test_AnnualStatistics {
@@ -2401,7 +2398,6 @@ digraph function_call_chains {
     test_harvest_single_report -> client
     test_harvest_single_report -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
-    test_harvest_single_report -> get_name_of_parquet_file_saved_to_S3
     test_harvest_single_report -> data_for_testing_harvest_single_report
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> database_function_skip_statements

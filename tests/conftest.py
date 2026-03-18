@@ -773,51 +773,6 @@ def prepare_HTML_page_for_comparison(page_data):
     return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
 
 
-def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type):
-    """A test helper function returning the name of a parquet file saved to S3 during a test.
-
-    Args:
-        before (datetime.datetime): a timestamp from before the tested function ran
-        after (datetime.datetime): a timestamp from before the tested function ran
-        statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
-        report_type (str): the two-letter abbreviation for the report the usage data is from
-
-    Returns:
-        str: the name of the file
-    """
-    possible_timestamps = []
-    diff = after - before
-    for n in range(diff.seconds+1):
-        possible_timestamps.append(before+timedelta(n))
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month:02}-{timestamp.day:02}T{timestamp.hour:02}-{timestamp.minute:02}-{timestamp.second:02}.parquet" for timestamp in possible_timestamps]
-    log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
-
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
-    file_name = set(bucket_contents) & set(possible_file_names)
-    try:
-        return list(file_name)[0]
-    except IndexError:
-        parquet_file_names_in_bucket = [file for file in bucket_contents if parquet_file_name_regex().fullmatch(file)]
-        possible_name_matches = []
-        for file_name in parquet_file_names_in_bucket:
-            if "-" in file_name:
-                name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
-                file_extension = seconds_and_file_extension.split(".")[1]
-                for possible_file_name in possible_file_names:
-                    if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
-                        possible_name_matches.append(file_name)
-        return possible_name_matches[0]
-
-
 #Section: Replacement Classes
 class _fileAttribute:
     """Enables the `_file` attribute of the `mock_FileStorage_object.stream` attribute.

@@ -16,7 +16,6 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
-from conftest import get_name_of_parquet_file_saved_to_S3
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
@@ -260,12 +259,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
         pytest.skip(database_function_skip_statements(error_message, SUSHI_error=True))
     elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
         pytest.skip(database_function_skip_statements(error_message, no_data=True))
-    file_name = get_name_of_parquet_file_saved_to_S3(
-        before,
-        after,
-        StatisticsSources_fixture.statistics_source_ID,
-        report_to_check,
-    )
+    #ToDo: Get `file_name` as name of file saved to S3
     assert file_name.startswith(f"0_{report_to_check}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
     assert isinstance(flash_message_list, list)
 
@@ -316,8 +310,9 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
     log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
+    #ToDo: See if below works as way to confirm file in S3
     matching_file_names = [file_name for file_name in bucket_contents if file_name.startswith(f"0_{report_checked}_{for_timestamp.year}-{for_timestamp.month:02}-{for_timestamp.day:02}T{for_timestamp.hour:02}-{for_timestamp.minute:02}-") and file_name.endswith(".parquet")]
-    assert len(matching_file_names) == 2  # Because two files should match, `get_name_of_parquet_file_saved_to_S3()` can't be used
+    assert len(matching_file_names) == 2
     assert isinstance(flash_message_list, list)
 
 

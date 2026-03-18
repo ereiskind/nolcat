@@ -11,7 +11,6 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
-from conftest import get_name_of_parquet_file_saved_to_S3
 from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 
@@ -6028,7 +6027,6 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         tuple: the location of the JSON being converted to a dataframe (pathlib.Path); the report type of the JSON being converted to a dataframe (str); the statistics source ID of the JSON being converted to a dataframe (int); the dataframe resulting from the conversion (dataframe)
     """
     JSON_report_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data'
-    before = datetime.now()
     if request.param == "R5_PR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json'
         report_type = "PR"
@@ -6069,23 +6067,7 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         report_type = "IR"
         statistics_source_ID = 3
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(
-        before,
-        after,
-        statistics_source_ID,
-        report_type,
-    )
-    if file_name:
-        try:
-            s3_client.delete_object(
-                Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH + file_name,
-            )
-        except botocore.exceptions as error:
-            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
-    else:
-        log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
+    #ToDo: Get name of file saved to S3 to remove it as part of test teardown
 
 
 @pytest.mark.slow  # For IR tests
