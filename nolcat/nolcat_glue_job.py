@@ -1232,16 +1232,16 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
     Args:
         data (dict or str): the data to be saved to a file in S3
         file_name_stem (str): the stem of the name the file will be saved with in S3
-        bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+        bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
     
     Returns:
-        str: the name/location of the file successfully saved to S3
+        cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
     
     Raises:
         S3InteractionError: if a problem occurs while saving the data to S3
         RuntimeError: if a non-dict can't be written to a binary or text file
     """
-    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    log.info(f"Starting `save_unconverted_data_via_upload()` for the file named {file_name_stem} and S3 location `{bucket_path}`.")
 
     #Section: Create Temporary File
     #Subsection: Create File Path
@@ -1282,13 +1282,13 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
     log.debug(f"File at {temp_file_path} successfully created.")
 
     #Section: Upload File to S3
-    file_name = file_name_stem + temp_file_path.suffix
-    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 location `{BUCKET_NAME}/{bucket_path}`.")
+    S3_file_path = bucket_path / f"{file_name_stem}{temp_file_path.suffix}"
+    log.debug(f"About to upload file '{S3_file_path.name}' from temporary file location {temp_file_path} to S3 location `{S3_file_path.parent}`.")
     try:
         S3_file_name = upload_file_to_S3_bucket(
             temp_file_path,
-            file_name,
-            bucket_path=bucket_path,
+            S3_file_path.name,
+            bucket_path=S3_file_path.parent,
         )
         return S3_file_name
     except S3InteractionError as error:
