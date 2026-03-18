@@ -6009,7 +6009,7 @@ def R5b1_JSON_3_IR_relation():
     "R5b1_TR",
     "R5b1_IR",
 ])
-def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
+def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):  #TEST: TEARDOWN ERROR--No operational teardown
     """A parameterized fixture function with the data for testing `ConvertJSONDictToParquet().create_parquet()` for all COUNTER R5 report types and minor releases.
 
     Args:
@@ -6067,7 +6067,14 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         report_type = "IR"
         statistics_source_ID = 3
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
-    #ToDo: Get name of file saved to S3 to remove it as part of test teardown
+    #ToDo: Get `file_name` as name of file saved to S3 (formatted as `f"{statistics_source_ID}_{report_type}_{now.year}-{now.month:02}-{now.day:02}T{now.hour:02}-{now.minute:02}-{now.second:02}.parquet"`) to remove it as part of test teardown
+    #try:
+    #    s3_client.delete_object(
+    #        Bucket=BUCKET_NAME,
+    #        Key=TEST_COUNTER_FILE_PATH.key + file_name,
+    #    )
+    #except botocore.exceptions as error:
+    #    log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.mark.slow  # For IR tests

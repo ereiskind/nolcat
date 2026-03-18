@@ -1425,7 +1425,7 @@ class ConvertJSONDictToParquet:
             test (bool, optional): if the call is in a test; default is `False`
 
         Returns:
-            str: the name of the file saved to S3
+            cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
 
         Raises:
             S3InteractionError: if a problem occurs while saving the data to S3
@@ -1442,20 +1442,65 @@ class ConvertJSONDictToParquet:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
-                self._log.error(message)
-                return message
+                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
+                if test:
+                    bucket_path = TEST_COUNTER_FILE_PATH
+                else:
+                    bucket_path = PRODUCTION_COUNTER_FILE_PATH
+                try:
+                    S3_file_name = save_unconverted_data_via_upload(
+                        self.SUSHI_JSON_dictionary,
+                        file_name_stem,
+                        bucket_path,
+                    )
+                except S3InteractionError as error:
+                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                    log.critical(message)
+                    raise S3InteractionError(message)
+                self._log.warning(f"Data saved to {S3_file_name}.")
+                return S3_file_name
         elif COUNTER_release == "5.1":
             try:
                 df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
-                message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
-                self._log.error(message)
-                return message
+                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
+                if test:
+                    bucket_path = TEST_COUNTER_FILE_PATH
+                else:
+                    bucket_path = PRODUCTION_COUNTER_FILE_PATH
+                try:
+                    S3_file_name = save_unconverted_data_via_upload(
+                        self.SUSHI_JSON_dictionary,
+                        file_name_stem,
+                        bucket_path,
+                    )
+                except S3InteractionError as error:
+                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                    log.critical(message)
+                    raise S3InteractionError(message)
+                self._log.warning(f"Data saved to {S3_file_name}.")
+                return S3_file_name
         else:
-            message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."  # Call to `nolcat.app.save_unconverted_data_via_upload()` occurs in `nolcat.models.StatisticsSources._harvest_single_report()` after call to this function
-            self._log.error(message)
-            return message
+            self._log.error(f"The COUNTER release couldn't be identified, so the data couldn't be saved as a parquet file; it will be saved as a file instead.")
+            file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
+            if test:
+                bucket_path = TEST_COUNTER_FILE_PATH
+            else:
+                bucket_path = PRODUCTION_COUNTER_FILE_PATH
+            try:
+                S3_file_name = save_unconverted_data_via_upload(
+                    self.SUSHI_JSON_dictionary,
+                    file_name_stem,
+                    bucket_path,
+                )
+            except S3InteractionError as error:
+                message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                log.critical(message)
+                raise S3InteractionError(message)
+            self._log.warning(f"Data saved to {S3_file_name}.")
+            return S3_file_name
         
         df['statistics_source_ID'] = self.statistics_source_ID
         df['report_type'] = self.report_type
