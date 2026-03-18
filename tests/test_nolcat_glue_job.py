@@ -540,7 +540,7 @@ def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_test_fil
         path_to_sample_file.name,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    log.error(f"`S3_file_name` (type {type(S3_file_name)}): {S3_file_name}")  #TEST: temp
+    assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
     s3_client.download_file(
