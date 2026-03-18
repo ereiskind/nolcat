@@ -361,7 +361,6 @@ digraph function_call_chains {
     _save_raw_Response_text -> save_unconverted_data_via_upload
     _save_raw_Response_text -> extract_value_from_single_value_df
     _save_raw_Response_text -> AWS_timestamp_format
-    _save_raw_Response_text -> file_IO_statement
     _save_raw_Response_text -> database_query_fail_statement
     _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
     _handle_SUSHI_exceptions -> format_list_for_stdout

@@ -90,7 +90,7 @@ class SUSHICallAndResponse:
             message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
             messages_to_flash = [message]
-            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)  #ALERT: Raises errors if a problem occurs
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
@@ -101,7 +101,7 @@ class SUSHICallAndResponse:
         if isinstance(API_response, Exception):
             message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
-            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
+            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)  #ALERT: Raises errors if a problem occurs
             messages_to_flash.append(flash_message)
             if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
@@ -374,12 +374,13 @@ class SUSHICallAndResponse:
 
         Args:
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
             str: an error message to flash indicating the creation of the bailout file
 
         Raises:
+            DatabaseInteractionError: if the SQL query fails
             S3InteractionError: if a problem occurs while saving the data to S3
         """
         log.info("Starting `_save_raw_Response_text()`.")
@@ -387,14 +388,14 @@ class SUSHICallAndResponse:
             query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
             engine=db.engine,
         )
-        if isinstance(statistics_source_ID, str):  #ALERT: `except DatabaseInteractionError`
-            return database_query_fail_statement(statistics_source_ID, "return requested value")
+        if isinstance(statistics_source_ID, str):
+            raise DatabaseInteractionError(database_query_fail_statement(statistics_source_ID, "return requested value"))
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}__{datetime.now().strftime(AWS_timestamp_format())}"
-        log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem}.txt", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
+        log.debug(f"Saving data in file named {file_name_stem} to S3 location `{bucket_path}`.")
         try:
             S3_file_name = save_unconverted_data_via_upload(
                 Response_text,
