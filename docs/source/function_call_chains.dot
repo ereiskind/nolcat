@@ -2504,8 +2504,6 @@ digraph function_call_chains {
     StatisticsSource_instance_name -> database_function_skip_statements
     StatisticsSource_instance_name -> engine
     test_status_call -> make_SUSHI_call
-    test_status_call -> database_function_skip_statements
-    test_status_call -> skip_test_due_to_SUSHI_error_regex
     test_status_call -> client
     test_status_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
     test_status_call -> StatisticsSource_instance_name
@@ -2514,8 +2512,6 @@ digraph function_call_chains {
     test_status_call_validity -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
     test_status_call_validity -> StatisticsSource_instance_name
     test_reports_call -> make_SUSHI_call
-    test_reports_call -> database_function_skip_statements
-    test_reports_call -> skip_test_due_to_SUSHI_error_regex
     test_reports_call -> client
     test_reports_call -> SUSHI_credentials_fixture_in_test_SUSHICallAndResponse
     test_reports_call -> StatisticsSource_instance_name

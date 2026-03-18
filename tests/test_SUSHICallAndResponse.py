@@ -102,7 +102,7 @@ def StatisticsSource_instance_name(engine, caplog):
 
 @pytest.mark.dependency()
 def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
-    """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects.
+    """Tests that an API call via `make_SUSHI_call()` to the `status` endpoint returns a value of the type `StatisticsSources._harvest_R5_SUSHI()` expects.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
@@ -112,25 +112,24 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    with client:
-        response = SUSHICallAndResponse(
-            StatisticsSource_instance_name,
-            URL,
-            "status",
-            SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                StatisticsSource_instance_name,
+                URL,
+                "status",
+                SUSHI_credentials
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
     assert isinstance(response, tuple)
-    if isinstance(response[0], str):
-        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
-            pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
-        elif reports_with_no_usage_regex().fullmatch(response[0]):
-            pytest.skip(database_function_skip_statements(response[0], no_data=True))
-    assert isinstance(response[0], dict) or (isinstance(response[0][0], dict) and len(response[0]) == 1)  # EBSCO's is a dict inside a list as of 2022-12-14
+    assert isinstance(response[0], dict)
+    assert isinstance(response[1], list)
 
 
-@pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
+@pytest.mark.dependency(depends=['test_status_call'])
 def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
-    """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response.
+    """Tests that the API call via `make_SUSHI_call()` to the `status` endpoint return a valid SUSHI status response.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
@@ -157,7 +156,7 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSourc
 
 @pytest.mark.dependency()
 def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
-    """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects.
+    """Tests that an API call via `make_SUSHI_call()` to the `reports` endpoint returns a value of the type `StatisticsSources._harvest_R5_SUSHI()` expects.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
@@ -167,25 +166,24 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    with client:
-        response = SUSHICallAndResponse(
-            StatisticsSource_instance_name,
-            URL,
-            "reports",
-            SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                StatisticsSource_instance_name,
+                URL,
+                "reports",
+                SUSHI_credentials
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
     assert isinstance(response, tuple)
-    if isinstance(response[0], str):
-        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
-            pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
-        elif reports_with_no_usage_regex().fullmatch(response[0]):
-            pytest.skip(database_function_skip_statements(response[0], no_data=True))
     assert isinstance(response[0], dict)
+    assert isinstance(response[1], list)
 
 
-@pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
+@pytest.mark.dependency(depends=['test_reports_call'])
 def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
-    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports.
+    """Tests that the API call via `make_SUSHI_call()` to the `reports` endpoint return a valid SUSHI list of reports.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
@@ -365,7 +363,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
         assert response[0].get('Report_Header').get('Report_ID') == "IR" or response[0].get('Report_Header').get('Report_ID') == "ir"
 
 
-@pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
+@pytest.mark.dependency(depends=['test_PR_call_validity'])
 @pytest.mark.xfail(raises=AssertionError)
 def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that a SUSHI call with invalid credentials returns an error.
