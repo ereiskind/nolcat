@@ -366,29 +366,6 @@ def failed_SUSHI_call_statement(call_path, statistics_source_name, error_message
         return main_value[:-1]  # Removing the whitespace character at the end
 
 
-def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_empty_string=False, has_Report_Items=True):
-    """This statement indicates a SUSHI call that returned no usage data but didn't contain a SUSHI error explaining the lack of data
-
-    Args:
-        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-        statistics_source_name (str): the name of the statistics source
-        is_empty_string (bool, optional): indicates if the SUSHI call returned an empty string; default is `False`
-        has_Report_Items (bool, optional): indicates if the data returned by the SUSHI call had a `Report_Items` section; default is `True`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if is_empty_string:
-        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} returned no data"
-    else:
-        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} returned no usage data"
-    
-    if has_Report_Items:
-        return main_value + "."
-    else:
-        return main_value + " because the SUSHI data didn't have a `Report_Items` section."
-
-
 def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
     """This statement indicates an attempter SUSHI call with an invalid date range.
 
@@ -400,17 +377,6 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
         str: the statement for outputting the arguments to logging
     """
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
-
-
-def reports_with_no_usage_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`, `raise NoSUSHIUsageDataError`, `raise NoSUSHIDataError`
-    """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.
-
-    In the pytest modules, the statements using this function are looking just for those SUSHI responses with neither data nor a SUSHI error, but this regex matches all return values that indicate no usage data was returned; having the `skip_test_due_to_SUSHI_error_regex()` comparison first in test functions means `failed_SUSHI_call_statement()` return values indicating no usage data are never compared to this regex.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
-    """
-    return re.compile(r"The call to the `.+` endpoint for .+ returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
 def skip_test_due_to_SUSHI_error_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`
@@ -2620,6 +2586,7 @@ class ConvertJSONDictToParquet:
         return f"Increase the `COUNTERData.{field}` max field length to {ceil(length * 1.1)}."
 
 
+#SECTION: Error Classes
 class InvalidAPIResponseError(Exception):
     """An error for when an API returns a value that doesn't contain the expected information.
 
@@ -2729,6 +2696,25 @@ class DatabaseInteractionError(Exception):
         super().__init__(f"There was a problem with a SQL operation: {self.message}")
 
 
+class DatabaseInteractionErrorWithFlashMessages(DatabaseInteractionError):
+    """A `DatabaseInteractionErrorWithFlashMessages` with an attribute for flash messages.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+        messages_to_flash (list): messages to display with Flask's flash feature
+    """
+    def __init__(self, message, messages_to_flash):
+        """The `DatabaseInteractionError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+            messages_to_flash (list): messages to display with Flask's flash feature
+        """
+        self.message = message
+        self.messages_to_flash = messages_to_flash
+        super().__init__(f"There was a problem with a SQL operation: {self.message}")
+
+
 class S3InteractionError(Exception):
     """An error for an unsuccessful S3 operation.
 
@@ -2744,4 +2730,23 @@ class S3InteractionError(Exception):
             message (str): information for creating the error message
         """
         self.message = message
+        super().__init__(f"There was a problem with a S3 operation: {self.message}")
+
+
+class S3InteractionErrorWithFlashMessages(S3InteractionError):
+    """A `S3InteractionError` with an attribute for flash messages.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+        messages_to_flash (list): messages to display with Flask's flash feature
+    """
+    def __init__(self, message, messages_to_flash):
+        """The `S3InteractionErrorWithFlashMessages` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        Args:
+            message (str): information for creating the error message
+            messages_to_flash (list): messages to display with Flask's flash feature
+        """
+        self.message = message
+        self.messages_to_flash = messages_to_flash
         super().__init__(f"There was a problem with a S3 operation: {self.message}")

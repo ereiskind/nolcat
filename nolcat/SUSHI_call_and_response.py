@@ -65,10 +65,17 @@ class SUSHICallAndResponse:
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
 
         Args:
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: the API call response (dict) or an error message (str); a list of the statements that should be flashed (list of str)
+            tuple: the API call response (dict); a list of the statements that should be flashed (list of str)
+        
+        Raises:
+            NoSUSHIDataError: if the call returns no content
+            DatabaseInteractionErrorWithFlashMessages: if the SQL query while saving the raw response fails
+            S3InteractionErrorWithFlashMessages: if a problem occurs while saving the raw response to S3
+            InvalidSUSHIResponseError: if the SUSHI call returns an error
+            NoSUSHIUsageDataError: if the call returns no SUSHI usage data
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
@@ -79,9 +86,9 @@ class SUSHICallAndResponse:
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
-            message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, is_empty_string=True)  #ALERT: `raise NoSUSHIDataError`
+            message = f"The call to {self.calling_to} for {self.call_path} returned an empty string."
             log.warning(message)
-            return (message, [message])
+            raise NoSUSHIDataError(self.call_path, self.calling_to, "the `API_response.text` is an empty string", [message])
         
         #Section: Convert Response to Python Data Types
         try:
@@ -89,25 +96,28 @@ class SUSHICallAndResponse:
         except Exception as error:
             message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
-            messages_to_flash = [message]
-            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)  #ALERT: Raises errors if a problem occurs
             messages_to_flash.append(flash_message)
-            if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
-                message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
-                log.error(message)
-                return (message, messages_to_flash)
-            return (f"{message[:-1]}, so the program {flash_message[0].lower()}{flash_message[1:]}", messages_to_flash)
+            try:
+                flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
+            except DatabaseInteractionError as error:
+                log.error(error)
+                raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
+            except S3InteractionError as error:
+                log.error(error)
+                raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
         
         if isinstance(API_response, Exception):
             message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
-            flash_message = self._save_raw_Response_text(API_response.text, bucket_path)  #ALERT: Raises errors if a problem occurs
             messages_to_flash.append(flash_message)
-            if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
-                message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
-                log.error(message)
-                return (message, messages_to_flash)
-            return (f"{message[:-1]}, so the program {flash_message[0].lower()}{flash_message[1:]}", messages_to_flash)
+            try:
+                flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
+            except DatabaseInteractionError as error:
+                log.error(error)
+                raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
+            except S3InteractionError as error:
+                log.error(error)
+                raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
         log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
@@ -128,9 +138,10 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)  #ALERT: `raise InvalidSUSHIResponseError`
+                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
-                    return (message, messages_to_flash)
+                    messages_to_flash.append(message)
+                    raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
             if API_response.get('Exception'):
@@ -152,9 +163,10 @@ class SUSHICallAndResponse:
                     messages_to_flash.append(statement)
                 log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
             if flash_message_list and SUSHI_exceptions:
-                message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)  #ALERT: `raise InvalidSUSHIResponseError`
+                message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
-                return (message, messages_to_flash)
+                messages_to_flash.append(message)
+                raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         if isinstance(API_response, list) or API_response.get('Message'):  # This structure is designed to enable reuse while not exposing any non-list values to the index operator
             if isinstance(API_response, list):
@@ -172,9 +184,10 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(flash_message_list)}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)  #ALERT: `raise InvalidSUSHIResponseError`
+                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
-                    return (message, messages_to_flash)
+                    messages_to_flash.append(message)
+                    raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
@@ -191,24 +204,18 @@ class SUSHICallAndResponse:
                 if messages_to_flash and SUSHI_error_flash_messages:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
-                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, message, no_usage_data=True)  #ALERT: `raise NoSUSHIUsageDataError`
+                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`, so the call returned no usage data."
                     log.warning(message)
-                    return (message, messages_to_flash)
-                elif messages_to_flash:
-                    if Report_Items_status == 0:
-                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)  #ALERT: `raise NoSUSHIUsageDataError`
-                    elif Report_Items_status == 'No `Report_Items` key':
-                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)  #ALERT: `raise NoSUSHIUsageDataError`
                     messages_to_flash.append(message)
-                    log.warning(message)
-                    return (message, messages_to_flash)
+                    raise InvalidSUSHIResponseError(message, messages_to_flash)
                 else:
                     if Report_Items_status == 0:
-                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)  #ALERT: `raise NoSUSHIUsageDataError`
+                        message = f"The call to {self.calling_to} for {self.call_path} returned no usage data."
                     elif Report_Items_status == 'No `Report_Items` key':
-                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)  #ALERT: `raise NoSUSHIUsageDataError`
+                        message = f"The call to {self.calling_to} for {self.call_path} returned no usage data because the SUSHI data didn't have a `Report_Items` section."
                     log.warning(message)
-                    return (message, [message])
+                    messages_to_flash.append(message)
+                    raise NoSUSHIUsageDataError(self.call_path, self.calling_to, message, messages_to_flash)
         
         #Section: Display to Stdout and Return `API_response`
         if custom_report_regex.search(self.call_path):
@@ -220,9 +227,7 @@ class SUSHICallAndResponse:
             log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
         if messages_to_flash:
             log.info(f"The messages to flash:\n{messages_to_flash}")
-            return (API_response, messages_to_flash)
-        else:
-            return (API_response, [])
+        return (API_response, messages_to_flash)
 
 
     def _make_API_call(self):
