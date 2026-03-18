@@ -823,7 +823,7 @@ class StatisticsSources(db.Model):
         #Section: Get API Call URL and Parameters
         self._log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)  #ALERT: `raise InvalidSUSHIDatesError`
+            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
             self._log.error(message)
             return (message, {'dates': [message]})
         SUSHI_info = self.fetch_SUSHI_information(code_of_practice)

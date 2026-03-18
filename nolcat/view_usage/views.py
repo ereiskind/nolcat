@@ -132,7 +132,7 @@ def use_predefined_SQL_query():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)  #ALERT: `raise InvalidSUSHIDatesError`
+            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))

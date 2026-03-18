@@ -2628,7 +2628,6 @@ class InvalidAPIResponseError(Exception):
     Attributes:
         self.message (str): a class attribute containing information to create the error message
     """
-    #ToDo: Revise use of this class and its subclasses; all possible instances originate from `SUSHICallAndResponse.make_SUSHI_call()`, which has only direct call to `SUSHICallAndResponse._make_API_call()`
     def __init__(self, message):
         """The `InvalidAPIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
@@ -2640,8 +2639,26 @@ class InvalidAPIResponseError(Exception):
 
 
 class InvalidSUSHIResponseError(InvalidAPIResponseError):
-    """An error for when SUSHI returns an invalid response."""
-    pass
+    """An error for when SUSHI returns an invalid response.
+
+    This class and its subclasses are used in `SUSHICallAndResponse.make_SUSHI_call()`.
+
+    Attributes:
+        self.message (str): a class attribute containing information to create the error message
+        messages_to_flash (list): messages to display with Flask's flash feature
+    """
+    def __init__(self, message, messages_to_flash):
+        """The `InvalidSUSHIResponseError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+
+        The `messages_to_flash` argument is used to pass messages to flash from the `SUSHICallAndResponse.make_SUSHI_call()` function to its calling function.
+
+        Args:
+            message (str): information for creating the error message
+            messages_to_flash (list): messages to display with Flask's flash feature
+        """
+        self.message = message
+        self.messages_to_flash = messages_to_flash
+        super().__init__(f"There was a problem with an API response: {self.message}")
 
 
 class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
@@ -2651,18 +2668,21 @@ class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
         call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         statistics_source_name (str): the name of the statistics source
         initial_error (str): the original error raised
+        messages_to_flash (list): messages to display with Flask's flash feature
     """
-    def __init__(self, call_path, statistics_source_name, initial_error):
+    def __init__(self, call_path, statistics_source_name, initial_error, messages_to_flash):
         """The `NoSUSHIUsageDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
         Args:
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
             statistics_source_name (str): the name of the statistics source
             initial_error (str): the original error raised
+            messages_to_flash (list): messages to display with Flask's flash feature
         """
         self.call_path = call_path
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
+        self.messages_to_flash = messages_to_flash
         super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`.")
 
 
@@ -2673,24 +2693,22 @@ class NoSUSHIDataError(InvalidSUSHIResponseError):
         call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         statistics_source_name (str): the name of the statistics source
         initial_error (str): the original error raised
+        messages_to_flash (list): messages to display with Flask's flash feature
     """
-    def __init__(self, call_path, statistics_source_name, initial_error):
+    def __init__(self, call_path, statistics_source_name, initial_error, messages_to_flash):
         """The `NoSUSHIUsageDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
         Args:
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
             statistics_source_name (str): the name of the statistics source
             initial_error (str): the original error raised
+            messages_to_flash (list): messages to display with Flask's flash feature
         """
         self.call_path = call_path
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
+        self.messages_to_flash = messages_to_flash
         super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`.")
-
-
-class InvalidSUSHIDatesError(InvalidSUSHIResponseError):
-    """An error for when SUSHI returns an error due to invalid dates."""
-    pass
 
 
 class DatabaseInteractionError(Exception):

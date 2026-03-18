@@ -716,12 +716,6 @@ digraph function_call_chains {
             style="rounded"
             color="#425563"
         }
-        subgraph cluster_InvalidSUSHIDatesError {
-            label="nolcat.nolcat_glue_job.InvalidSUSHIDatesError"
-            penwidth=5
-            style="rounded"
-            color="#425563"
-        }
         subgraph cluster_DatabaseInteractionError {
             label="nolcat.nolcat_glue_job.DatabaseInteractionError"
             penwidth=5

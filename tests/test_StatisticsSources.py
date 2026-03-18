@@ -395,7 +395,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     )
     assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
-    assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)  #ALERT: `raise InvalidSUSHIDatesError`
+    assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
     assert len(flash_message_list) == 1
 
 
