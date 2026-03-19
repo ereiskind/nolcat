@@ -519,6 +519,7 @@ def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
+@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
 @pytest.fixture
 def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.

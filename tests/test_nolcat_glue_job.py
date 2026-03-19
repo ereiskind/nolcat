@@ -6091,27 +6091,12 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
     S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
-    log.error(f"`S3_file_name`: {S3_file_name}")  #TEST: temp
-    assert isinstance(S3_file_name, str)
-    download_location = tmp_path / f"{JSON_report_path.stem}.parquet"
-    S3_file_name_path = urlsplit(S3_file_name).path
-    #TEST: temp
-    S3_prefix = S3_file_name_path.rpartition("/")[0] + "/"
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=S3_prefix,
-    )
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
-        bucket_contents.append(contents_dict['Key'])
-    if S3_file_name_path in bucket_contents:
-        log.warning(f"File `{S3_file_name_path}` in `{BUCKET_NAME}/{S3_prefix}`")
-    else:
-        log.error(f"Files in `{BUCKET_NAME}/{S3_prefix}`:\n{format_list_for_stdout(bucket_contents)}.")
-    #TEST: end temp
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.stem.startswith(JSON_report_path.stem)
+    download_location = tmp_path / S3_file_name.name
     s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
         Bucket=BUCKET_NAME,
-        Key=S3_file_name_path,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)
