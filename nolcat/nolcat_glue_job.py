@@ -1252,6 +1252,29 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
         log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
 
 
+def list_files_in_bucket_location(bucket_path):
+    """A function listing all the files in a particular S3 location.
+
+    This is functionally a wrapper for the `boto3.list_objects_v2()` which also handles the type juggling needed for input and the filtering of unneeded S3 metadata on output.
+
+    Args:
+        bucket_path (cloudpathlib.CloudPath): the S3 location which will have its contents listed
+
+    Returns:
+        list: the full name/location of all the files in the given S3 location (cloudpathlib.CloudPath)
+    """
+    log.info(f"Starting `list_files_in_bucket_location()` for the S3 location {bucket_path}.")
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=bucket_path.key + "/",
+    )
+    log.debug(f"Raw contents of `{bucket_path}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}")
+    files_in_bucket = []
+    for contents_dict in list_objects_response['Contents']:
+        files_in_bucket.append(CloudPath(contents_dict['Key']))
+    return files_in_bucket
+
+
 #SECTION: COUNTER Registry
 def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     """A function for getting the SUSHI URL for a given statistics source, represented by its COUNTER Registry ID.

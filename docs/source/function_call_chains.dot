@@ -669,6 +669,7 @@ digraph function_call_chains {
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
         save_unconverted_data_via_upload [shape="folder"]
+        list_files_in_bucket_location [shape="folder"]
         fetch_URL_from_COUNTER_Registry [shape="box"]
         subgraph cluster_ConvertJSONDictToParquet {
             label="nolcat.nolcat_glue_job.ConvertJSONDictToParquet"
@@ -754,6 +755,7 @@ digraph function_call_chains {
     update_database -> database_query_fail_statement
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
     save_unconverted_data_via_upload -> format_list_for_stdout
+    list_files_in_bucket_location -> format_list_for_stdout
     create_parquet -> _transform_R5_JSON
     create_parquet -> _transform_R5b1_JSON
     create_parquet -> save_unconverted_data_via_upload
@@ -1308,6 +1310,10 @@ digraph function_call_chains {
             style="dashed"
             shape="folder"
         ]
+        test_list_files_in_bucket_location [
+            style="dashed"
+            shape="folder"
+        ]
         test_fetch_URL_from_COUNTER_Registry [
             style="dashed"
             shape="box"
@@ -1357,18 +1363,6 @@ digraph function_call_chains {
             shape="box"
         ]
         test_create_parquet [
-            style="dashed"
-            shape="box"
-        ]
-        test_fetch_URL_from_COUNTER_Registry [
-            style="dashed"
-            shape="box"
-        ]
-        test_fetch_URL_from_COUNTER_Registry_for_specific_CoP [
-            style="dashed"
-            shape="box"
-        ]
-        test_fetch_URL_from_COUNTER_Registry_failure [
             style="dashed"
             shape="box"
         ]
@@ -1430,6 +1424,8 @@ digraph function_call_chains {
     file_name_stem_and_data -> most_recent_month_with_usage
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
+    test_list_files_in_bucket_location -> list_files_in_bucket_location
+    test_list_files_in_bucket_location -> format_list_for_stdout
     test_fetch_URL_from_COUNTER_Registry -> fetch_URL_from_COUNTER_Registry
     test_fetch_URL_from_COUNTER_Registry_for_specific_CoP -> fetch_URL_from_COUNTER_Registry
     test_fetch_URL_from_COUNTER_Registry_failure -> fetch_URL_from_COUNTER_Registry

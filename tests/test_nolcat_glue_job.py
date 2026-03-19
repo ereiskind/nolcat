@@ -616,6 +616,23 @@ def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     assert data == file_contents
 
 
+def test_list_files_in_bucket_location():
+    """Tests listing the files in a given S3 folder.
+
+    The specific S3 folder chosen has copies of the documents used to build NoLCAT's nginx image. It was chose because its contents rarely change and nothing about the file names/locations gives away sensitive information. Any other implementations of this repo will need to adjust the values `S3_location` and `files_in_S3_location`.
+    """
+    S3_location = CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx")
+    list_objects_response = list_files_in_bucket_location(S3_location)
+    files_in_S3_location = [
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/cnf-vars"),
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/Dockerfile"),
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/nginx.conf"),
+    ]
+    assert len(list_objects_response) == len(files_in_S3_location)
+    for file in files_in_S3_location:
+        assert file in list_objects_response
+
+
 #SECTION: COUNTER Registry Tests
 @pytest.fixture(params=[
     ('c976a8e4-ecc7-4c47-aff6-94d2fa3f996d', "5.1", "https://sitemaster.meridian.allenpress.com/sushi/r51/"),  # Has expired R5, testing removal of duplicated slash
