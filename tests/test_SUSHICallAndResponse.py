@@ -210,7 +210,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture  # Cannot use module scope due to scope mismatch
 def list_of_reports(SUSHI_credentials_fixture, caplog):
     """A fixture feeding the entered SUSHI data into the `COUNTER_reports_offered_by_statistics_source` function.
 
