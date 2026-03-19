@@ -1415,6 +1415,9 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> update_database_success_regex
     test_update_database_with_insert_statement -> engine
     dataframe_to_save_to_S3 -> unable_to_delete_test_file_in_S3_statement
+    dataframe_to_save_to_S3 -> list_files_in_bucket_location
+    dataframe_to_save_to_S3 -> parquet_file_name_regex
+    dataframe_to_save_to_S3 -> format_list_for_stdout
     test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
     test_save_dataframe_to_S3_bucket -> parquet_file_name_regex
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
@@ -1445,6 +1448,10 @@ digraph function_call_chains {
     JSON_dicts_with_metadata -> R5b1_JSON_0_DR_relation
     JSON_dicts_with_metadata -> R5b1_JSON_3_TR_relation
     JSON_dicts_with_metadata -> R5b1_JSON_3_IR_relation
+    JSON_dicts_with_metadata -> list_files_in_bucket_location
+    JSON_dicts_with_metadata -> parquet_file_name_regex
+    JSON_dicts_with_metadata -> unable_to_delete_test_file_in_S3_statement
+    JSON_dicts_with_metadata -> format_list_for_stdout
     test_create_parquet -> JSON_dicts_with_metadata
     test_create_parquet -> create_parquet
 

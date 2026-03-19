@@ -478,28 +478,21 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
             break
     log.info(f"Using test data from statistics source ID {statistics_source_ID} and report type {report_type} for `test_save_dataframe_to_S3_bucket()`.")
     yield (df, statistics_source_ID, report_type)
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
-    for contents_dict in list_objects_response['Contents']:
-        if parquet_file_name_regex.search(contents_dict) and contents_dict.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
-            possible_S3_file_names.append(contents_dict)
+    for file in files_in_bucket:
+        if parquet_file_name_regex.search(file) and file.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+            possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH.key + possible_S3_file_names[0],
+                Key=possible_S3_file_names[0].key,
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(possible_S3_file_names[0], error))
     else:
-        list_for_display = []
-        for contents_dict in list_objects_response['Contents']:
-            list_for_display.append(contents_dict)
-        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(list_for_display)}.")
+        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(files_in_bucket)}.")
 
 
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
@@ -6089,28 +6082,21 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         report_type = "IR"
         statistics_source_ID = 3
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
-    for contents_dict in list_objects_response['Contents']:
-        if parquet_file_name_regex.search(contents_dict) and contents_dict.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
-            possible_S3_file_names.append(contents_dict)
+    for file in files_in_bucket:
+        if parquet_file_name_regex.search(file) and file.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+            possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH.key + possible_S3_file_names[0],
+                Key=possible_S3_file_names[0].key,
             )
         except botocore.exceptions as error:
             log.error(unable_to_delete_test_file_in_S3_statement(possible_S3_file_names[0], error))
     else:
-        list_for_display = []
-        for contents_dict in list_objects_response['Contents']:
-            list_for_display.append(contents_dict)
-        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(list_for_display)}.")
+        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(files_in_bucket)}.")
 
 
 @pytest.mark.slow  # For IR tests

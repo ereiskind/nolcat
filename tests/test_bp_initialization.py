@@ -885,7 +885,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
 
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
-    list_objects_response = s3_client.list_objects_v2(
+    list_objects_response = s3_client.list_objects_v2(  #ALERT: Use `list_files_in_bucket_location()`
         Bucket=BUCKET_NAME,
         Prefix=TEST_NON_COUNTER_FILE_PATH,
     )

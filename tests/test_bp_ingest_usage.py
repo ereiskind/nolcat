@@ -407,7 +407,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
-    list_objects_response = s3_client.list_objects_v2(
+    list_objects_response = s3_client.list_objects_v2(  #ALERT: Switch to `list_files_in_bucket_location()`
         Bucket=BUCKET_NAME,
         Prefix=TEST_NON_COUNTER_FILE_PATH,
     )

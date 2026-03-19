@@ -293,7 +293,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
         pytest.skip(database_function_skip_statements(error_message, no_data=True))
     
-    list_objects_response = s3_client.list_objects_v2(
+    list_objects_response = s3_client.list_objects_v2(  #ALERT: Use `list_files_in_bucket_location()`
         Bucket=BUCKET_NAME,
         Prefix=TEST_COUNTER_FILE_PATH,
     )
