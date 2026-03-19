@@ -731,38 +731,6 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     return df
 
 
-def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
-    """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
-
-    Args:
-        statistics_source_name (str): the name of the statistics source
-        URL (str): the base URL for the SUSHI API call
-        credentials (dict): the SUSHI credentials for the API call
-    
-    Returns:
-        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
-    """
-    try:
-        with client:
-            response = SUSHICallAndResponse(
-                statistics_source_name,
-                URL,
-                "reports",
-                credentials
-            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
-    log.info(f"The call to reports for {statistics_source_name} was successful.")
-    response_as_list = [report for report in list(response[0].values())[0]]
-    list_of_reports = []
-    for report in response_as_list:
-        if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
-                list_of_reports.append(report["Report_ID"].upper())
-    log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
-    return list_of_reports
-
-
 def prepare_HTML_page_for_comparison(page_data):
     """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
 

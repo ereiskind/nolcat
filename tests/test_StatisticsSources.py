@@ -15,7 +15,6 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
-from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
@@ -117,10 +116,11 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture
-def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI_credentials_fixture, caplog):
-    """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
+def reports_offered_by_StatisticsSource_fixture(client, StatisticsSources_fixture, SUSHI_credentials_fixture, caplog):
+    """A fixture generating a list of all the customizable reports offered by the given StatisticsSources object.
 
     Args:
+        client (flask.testing.FlaskClient): a Flask test client
         StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
         SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
@@ -130,34 +130,29 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, SUSHI
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    yield COUNTER_reports_offered_by_statistics_source(
-        StatisticsSources_fixture.statistics_source_name,
-        SUSHI_credentials_fixture['URL'],
-        {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-    )
-
-
-@pytest.mark.dependency()
-def test_COUNTER_reports_offered_by_statistics_source(reports_offered_by_StatisticsSource_fixture, caplog):
-    """Tests creating list of available reports from a `/reports` SUSHI call.
-    
-    This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. To best test this function, the test is placed immediately after the instantiation of a fixture that exists to call the function in a test module that randomly selects SUSHI credentials to use. Since the fixture is generated dynamically from a randomly designated source, it cannot be compared to a static value, and dynamically retrieving the data for comparison would effectively be comparing the same code in two places; instead, this test checks various aspects of the data that will be true in all cases.
-
-    Args:
-        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
-    """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    assert isinstance(reports_offered_by_StatisticsSource_fixture, list)
-    assert 1 <= len(reports_offered_by_StatisticsSource_fixture) <= 4
-    for report in reports_offered_by_StatisticsSource_fixture:
-        assert re.fullmatch(r"[PDTI]R", report)
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                StatisticsSources_fixture.statistics_source_name,
+                SUSHI_credentials_fixture['URL'],
+                "reports",
+                {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    log.info(f"The call to reports for {StatisticsSources_fixture.statistics_source_name} was successful.")
+    response_as_list = [report for report in list(response[0].values())[0]]
+    list_of_reports = []
+    for report in response_as_list:
+        if "Report_ID" in list(report.keys()):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
+                list_of_reports.append(report["Report_ID"].upper())
+    log.info(f"{StatisticsSources_fixture.statistics_source_name} offers the following reports: {list_of_reports}.")
+    yield list_of_reports
 
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
-@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there aren't any matches.
     
@@ -180,7 +175,6 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
-@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
@@ -228,7 +222,6 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
 
 
 @pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
-@pytest.mark.dependency(depends=['test_COUNTER_reports_offered_by_statistics_source'])
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe.

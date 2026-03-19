@@ -7,7 +7,6 @@ import re
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
-from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.nolcat_glue_job import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
@@ -211,10 +210,11 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
 
 
 @pytest.fixture  # Cannot use module scope due to scope mismatch
-def list_of_reports(SUSHI_credentials_fixture, caplog):
-    """A fixture feeding the entered SUSHI data into the `COUNTER_reports_offered_by_statistics_source` function.
+def list_of_reports(client, SUSHI_credentials_fixture, caplog):
+    """A fixture generating a list of all the customizable reports offered by the given statistics source.
 
     Args:
+        client (flask.testing.FlaskClient): a Flask test client
         SUSHI_credentials_fixture (tuple): the URL and parameters dictionary needed to make a SUSHI call
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
@@ -224,11 +224,24 @@ def list_of_reports(SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    yield COUNTER_reports_offered_by_statistics_source(
-        "StatisticsSources.statistics_source_name",
-        URL,
-        SUSHI_credentials
-    )
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                "StatisticsSources.statistics_source_name",
+                URL,
+                "reports",
+                SUSHI_credentials,
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    response_as_list = [report for report in list(response[0].values())[0]]
+    list_of_reports = []
+    for report in response_as_list:
+        if "Report_ID" in list(report.keys()):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
+                list_of_reports.append(report["Report_ID"].upper())
+    log.info(f"`list_of_reports()` for {URL} yields {list_of_reports}.")
+    yield list_of_reports
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])
