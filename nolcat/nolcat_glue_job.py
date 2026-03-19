@@ -1312,16 +1312,25 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     
     if find_current_audit:
         currently_valid_release = [k for (k, v) in find_current_audit.items() if v=="Currently valid audit"]
+        expired_release = [k for (k, v) in find_current_audit.items() if v=="Audit expired"]
+        audit_in_progress_release = [k for (k, v) in find_current_audit.items() if v=="Audit in progress"]
         if len(currently_valid_release) == 1:
             for release_data in API_response['sushi_services']:
                 if release_data['counter_release'] == currently_valid_release[0]:
                     temp_URL = release_data['url']
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
-        elif len(currently_valid_release) == 0:
-            raise InvalidAPIResponseError("None of the codes of practice in the COUNTER Registry have a valid audit.")
-        else:
+        elif len(currently_valid_release) == 0 and len(expired_release) == 1 and len(audit_in_progress_release) == 1:
+            log.warning(f"COUNTER registry ID {registry_ID} is between codes of practice; the newer one, which is under audit, is being used.")
+            for release_data in API_response['sushi_services']:
+                if release_data['counter_release'] == audit_in_progress_release[0]:
+                    temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
+        elif len(currently_valid_release) > 1:
             raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
+        else:
+            raise InvalidAPIResponseError(f"The {registry_ID} in the COUNTER Registry has an issue with its codes of practice audit statuses, with {len(currently_valid_release)} valid audits, {len(expired_release)} expired audits, and {len(audit_in_progress_release)} audits in progress.")
     
     #Section: Format SUSHI URL
     parsed_URL = urlparse(temp_URL)
