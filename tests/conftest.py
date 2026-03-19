@@ -741,15 +741,17 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
     Returns:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
-    response = SUSHICallAndResponse(
-        statistics_source_name,
-        URL,
-        "reports",
-        credentials,
-    ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
-    if isinstance(response[0], str):
-        pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
-    log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                statistics_source_name,
+                URL,
+                "reports",
+                credentials
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    log.info(f"The call to reports for {statistics_source_name} was successful.")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:

@@ -845,7 +845,7 @@ class StatisticsSources(db.Model):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
                 # MathSciNet `status` endpoint returns HTTP status code 400
                 # Web of Science includes `Alerts` with information about most recent month with usage available
-            self._log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
+            self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
@@ -853,7 +853,7 @@ class StatisticsSources(db.Model):
             self._log.warning(message)
             return (message, all_flashed_statements)
         else:
-            self._log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
+            self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
             pass
 
 
@@ -899,7 +899,7 @@ class StatisticsSources(db.Model):
             ).make_SUSHI_call(bucket_path)
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-                self._log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
+                self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
                 all_available_reports = []
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
