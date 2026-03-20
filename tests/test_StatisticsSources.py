@@ -206,7 +206,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
     """A fixture with data to match for the next two tests.
 
-    The `test_harvest_single_report_with_partial_date_range()` needs to include a date range where some but not all of the data for the specified statistics source is loaded. The easiest way to ensure such a range is used is to have the range be the month used in `` and the preceding two months and for the report pulled to be the same. The month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` is used as the starting month to avoid being stopped by duplication check.
+    The `test_harvest_single_report_with_partial_date_range()` needs to include a date range where some but not all of the data for the specified statistics source is loaded. The easiest way to ensure such a range is used is to have the range be the month used in `test_harvest_single_report()` and the preceding two months and for the report pulled to be the same. The month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` is used as the starting month to avoid being stopped by duplication check.
 
     Args:
         most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
@@ -221,15 +221,15 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
     )
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
-def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
+def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
-        data_for_testing_harvest_single_report (tuple): a COUNTER R5 reports offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
+        data_for_testing_harvest_single_report (tuple): a COUNTER R5 report type offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
         SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
@@ -237,76 +237,75 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     report_to_check, begin_date = data_for_testing_harvest_single_report
     end_date = last_day_of_month(begin_date)
-    before = datetime.now()
-    with client:
-        error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
-            report_to_check,
-            SUSHI_credentials_fixture['URL'],
-            {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-            begin_date,
-            end_date,
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    after = datetime.now()
-    if isinstance(error_message, str) and skip_test_due_to_SUSHI_error_regex().match(error_message):
-        pytest.skip(database_function_skip_statements(error_message, SUSHI_error=True))
-    elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
-        pytest.skip(database_function_skip_statements(error_message, no_data=True))
-    #ToDo: Get `file_name` as name of file saved to S3
-    assert file_name.startswith(f"0_{report_to_check}_{before.year}-{before.month:02}-{before.day:02}T{before.hour:02}-{before.minute:02}-") and file_name.endswith(".parquet")
+    try:
+        with client:
+            S3_file_name, flash_message_list = StatisticsSources_fixture._harvest_single_report(
+                report_to_check,
+                SUSHI_credentials_fixture['URL'],
+                {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+                begin_date,
+                end_date,
+                bucket_path=TEST_COUNTER_FILE_PATH,
+            )
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(flash_message_list, list)
+    download_location = tmp_path / S3_file_name.name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=S3_file_name.key,
+        Filename=download_location,
+    )
+    log.warning(f"`download_location` (type {type(download_location)}): {download_location}")  #TEST: temp
+    assert download_location.is_file()
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
-def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
+def test_harvest_single_report_with_partial_date_range(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range ends with the month pulled in the test above; for efficiency, the date range only looks at three months total.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
-        data_for_testing_harvest_single_report (tuple): a COUNTER R5 reports offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
+        data_for_testing_harvest_single_report (tuple): a COUNTER R5 report type offered by the given statistics source (str); the month before the month in `test_harvest_R5_SUSHI_with_report_to_harvest()` (datetime.date)
         SUSHI_credentials_fixture (dict): a SUSHI credentials dictionary
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-
-    end_month, report_checked = data_for_testing_harvest_single_report
-    begin_date = end_month + relativedelta(months=-2)  #TEST: `TypeError: can only concatenate str (not "relativedelta") to str` implies `end_month` is str
+    report_to_check, end_month = data_for_testing_harvest_single_report
+    begin_date = end_month + relativedelta(months=-2)
     end_date = last_day_of_month(end_month)
-    for_timestamp = datetime.now()
-    with client:
-        error_message, flash_message_list = StatisticsSources_fixture._harvest_single_report(
-            report_checked,
-            SUSHI_credentials_fixture['URL'],
-            {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-            begin_date,
-            end_date,
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    if isinstance(error_message, str) and skip_test_due_to_SUSHI_error_regex().match(error_message):
-        pytest.skip(database_function_skip_statements(error_message, SUSHI_error=True))
-    elif isinstance(error_message, str) and reports_with_no_usage_regex().fullmatch(error_message):
-        pytest.skip(database_function_skip_statements(error_message, no_data=True))
-    
-    list_objects_response = s3_client.list_objects_v2(  #ALERT: Use `list_files_in_bucket_location()`
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
-    #ToDo: See if below works as way to confirm file in S3
-    matching_file_names = [file_name for file_name in bucket_contents if file_name.startswith(f"0_{report_checked}_{for_timestamp.year}-{for_timestamp.month:02}-{for_timestamp.day:02}T{for_timestamp.hour:02}-{for_timestamp.minute:02}-") and file_name.endswith(".parquet")]
-    assert len(matching_file_names) == 2
+    try:
+        with client:
+            S3_file_names, flash_message_list = StatisticsSources_fixture._harvest_single_report(
+                report_to_check,
+                SUSHI_credentials_fixture['URL'],
+                {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+                begin_date,
+                end_date,
+                bucket_path=TEST_COUNTER_FILE_PATH,
+            )
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    assert isinstance(S3_file_names, list)
     assert isinstance(flash_message_list, list)
+    for name in S3_file_names:
+        assert isinstance(name, CloudPath)
+        assert name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
+        download_location = tmp_path / name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`

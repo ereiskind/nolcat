@@ -1012,21 +1012,25 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
             start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: the parquet file(s) saved to S3 (str or list); a list of the statements that should be flashed (list of str)
+            tuple: the parquet file(s) saved to S3 (cloudpathlib.CloudPath or list); a list of the statements that should be flashed (list of str)
 
         Raises:
             NoSUSHIUsageDataError: if no SUSHI usage data is returned
+            InvalidSUSHIResponseError: if the SUSHI call returns an error
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, list):
-            if len(subset_of_months_to_harvest) == 0:
+        if isinstance(subset_of_months_to_harvest, str):
+            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
+            return (None, [message])
+        elif isinstance(subset_of_months_to_harvest, list):
+            if len(subset_of_months_to_harvest) == 0:  #ToDo: This is being left as not raising an error, returning null to represent no parquet files, since the `_check_if_data_in_database()` function will need to change to look in parquet files instead of querying MySQL
                 message = f"The database already has {report} usage for {self.statistics_source_name} for every month in the {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} date range."
                 self._log.info(message)
-                return (message, [message])
+                return (None, [message])
             else:
                 self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
                 complete_flash_message_list = []
@@ -1035,27 +1039,34 @@ class StatisticsSources(db.Model):
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
-                        self.statistics_source_name,
-                        SUSHI_URL,
-                        f"reports/{report.lower()}",
-                        SUSHI_parameters
-                    ).make_SUSHI_call(bucket_path)
+                    try:
+                        SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                            self.statistics_source_name,
+                            SUSHI_URL,
+                            f"reports/{report.lower()}",
+                            SUSHI_parameters
+                        ).make_SUSHI_call(bucket_path)
+                    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+                        #OLD: self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
+                        no_usage_returned_count += 1
+                        for e in error[3]:
+                            complete_flash_message_list.append(e)
+                        self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
+                        continue
+                    except InvalidSUSHIResponseError as error:
+                        message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        for e in error[1]:
+                            complete_flash_message_list.append(e)
+                        self._log.critical(message)
+                        raise InvalidSUSHIResponseError(message, complete_flash_message_list)
+                    except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
+                        self._log.critical(message)
+                        for e in error[1] + [message]:
+                            complete_flash_message_list.append(e)
+                        continue
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
-                    if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
-                        message = SUSHI_data_response + " " + f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
-                        self._log.warning(message)
-                        complete_flash_message_list.append(message)
-                        return (message, complete_flash_message_list)
-                    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-                        self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
-                        no_usage_returned_count += 1
-                        self._log.warning(SUSHI_data_response)
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    elif isinstance(SUSHI_data_response, str):
-                        self._log.warning(SUSHI_data_response)
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
                     try:
@@ -1077,29 +1088,29 @@ class StatisticsSources(db.Model):
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
-                self.statistics_source_name,
-                SUSHI_URL,
-                f"reports/{report.lower()}",
-                SUSHI_parameters
-            ).make_SUSHI_call(bucket_path)
-            if isinstance(SUSHI_data_response, str):
-                self._log.warning(SUSHI_data_response)
-                return (SUSHI_data_response, flash_message_list)
+            try:
+                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                    self.statistics_source_name,
+                    SUSHI_URL,
+                    f"reports/{report.lower()}",
+                    SUSHI_parameters
+                ).make_SUSHI_call(bucket_path)
+            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
+                for e in error[1] + [message]:
+                    flash_message_list.append(e)
+                self._log.critical(message)
+                raise InvalidSUSHIResponseError(message, flash_message_list)
             try:
                 S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
             except S3InteractionError as error:
                 flash_message_list.append(error)
-                raise S3InteractionError(error)  #ToDo: How to pass `flash_message_list`?
+                raise S3InteractionErrorWithFlashMessages(error, flash_message_list)
             if parquet_file_name_regex().fullmatch(S3_file_name):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
             return (S3_file_name, flash_message_list)
-
-        elif isinstance(subset_of_months_to_harvest, str):
-            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
-            return (message, [message])
 
 
     @hybrid_method
