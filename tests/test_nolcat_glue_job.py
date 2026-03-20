@@ -481,7 +481,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
     for file in files_in_bucket:
-        if parquet_file_name_regex().search(file) and file.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
             possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:
@@ -6085,7 +6085,7 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
     for file in files_in_bucket:
-        if parquet_file_name_regex().search(file) and file.startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
             possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:
