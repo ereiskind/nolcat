@@ -2680,7 +2680,7 @@ class NoSUSHIDataError(InvalidSUSHIResponseError):
         messages_to_flash (list): messages to display with Flask's flash feature
     """
     def __init__(self, call_path, statistics_source_name, initial_error, messages_to_flash):
-        """The `NoSUSHIUsageDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
+        """The `NoSUSHIDataError` constructor method, which sets the attribute values for each instance and uses them to generate the error message.
 
         Args:
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
