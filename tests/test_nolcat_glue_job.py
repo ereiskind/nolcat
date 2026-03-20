@@ -1,5 +1,5 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Failing 2026-02-27 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from filecmp import cmp
@@ -495,6 +495,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
         log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(files_in_bucket)}.")
 
 
+@pytest.mark.slow
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     """Tests saving a dataframe as a parquet file in a S3 bucket.
 
@@ -513,7 +514,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     assert S3_file_name.parent == TEST_COUNTER_FILE_PATH
     assert parquet_file_name_regex().fullmatch(S3_file_name.name)
     download_location = tmp_path / S3_file_name.name
-    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=S3_file_name.key,
         Filename=download_location,
@@ -595,7 +596,7 @@ def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.stem == file_name_stem
     download_location = tmp_path / S3_file_name.name
-    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=S3_file_name.key,
         Filename=download_location,
@@ -6116,7 +6117,7 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.stem.startswith(JSON_report_path.stem)
     download_location = tmp_path / S3_file_name.name
-    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
         Key=S3_file_name.key,
         Filename=download_location,

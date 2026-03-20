@@ -1141,8 +1141,6 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
     try:
         file_object = open(file, 'rb')
         log.debug(f"Successfully initialized {file_object} (type {type(file_object)}).")
-        log.error(f"`S3_file_name` (type {S3_file_name}): {S3_file_name}")  #TEST: Testing CloudPath
-        log.error(f"`S3_file_name.key` (type {S3_file_name.key}): {S3_file_name.key}")  #TEST: Testing CloudPath
         try:
             s3_client.upload_fileobj(
                 Fileobj=file_object,

@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Failing 2026-02-27 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from filecmp import cmp
@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 #Section: Collecting Annual COUNTER Usage Statistics
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.fixture(scope='module')
 def AUCT_fixture_for_SUSHI(engine):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
@@ -117,7 +117,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
     yield yield_object
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
@@ -177,7 +177,7 @@ def sample_FileStorage_object(path_to_sample_file):
     open_file_stream.close()
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
@@ -229,8 +229,8 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
     assert file_name == usage_file_path_in_database
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
+@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):
     """Test downloading a file in S3 to a local computer.
 
     Args:

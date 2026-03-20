@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2026-02-26 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 import json
@@ -221,7 +221,7 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
     )
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
 def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe.
@@ -257,7 +257,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, data_for_testi
     assert isinstance(flash_message_list, list)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
@@ -310,7 +310,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
@@ -336,7 +336,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
@@ -364,7 +364,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.
@@ -414,7 +414,7 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
     yield (begin_date, end_date)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
 def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_usage_statistics()`.
@@ -438,7 +438,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     )
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 @pytest.mark.slow
 def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):

@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2026-02-26 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from datetime import date
@@ -345,7 +345,7 @@ def FY2022_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp
+@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
 def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
