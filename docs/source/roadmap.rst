@@ -22,7 +22,6 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
 
   * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
-  * Update location of `nolcat.nolcat_glue_job.save_unconverted_data_via_upload()` within `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
   * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
   * For all functions above, adjust to anticipate no return value if successful
   * Adjust tests and function call chain diagram to correspond with above changes
@@ -31,13 +30,6 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Fix lack of cleanup in `tests.test_StatisticsSources.test_upload_historical_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
-* Create function to check S3 file existence and type with fuzzy matching
-
-  * Frame function in "nolcat/nolcat/nolcat_glue_job.py"
-  * Write code for checking if a timestamp is between two times, with bounds as `now()` calls before the SUSHI call and just before the file check
-  * Write function checking if S3 file with matching stats source ID and timestamp passing check above exists and returning its file type
-  * Have function read, output the content of, and delete the file if the type isn't parquet
-  * Write a test for this in "test_nolcat_glue_job.py"
 
 * Figure out how to move a dataframe to a step function
 
