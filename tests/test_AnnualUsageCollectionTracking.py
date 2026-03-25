@@ -195,25 +195,9 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
         S3_file_name = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(sample_FileStorage_object, bucket_path=TEST_NON_COUNTER_FILE_PATH)
 
     download_location = tmp_path / file_name
-    #TEST: temp
-    S3_file_name_path = urlsplit(S3_file_name).path
-    S3_prefix = S3_file_name_path.rpartition("/")[0] + "/"
-    list_objects_response = s3_client.list_objects_v2(
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Prefix=S3_prefix,
-    )
-    bucket_contents = []
-    print(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
-    for contents_dict in list_objects_response['Contents']:  #TEST: `KeyError: 'Contents'` despite log statements for `s3_client.list_objects_v2()` in `tests.conftest.get_name_of_parquet_file_saved_to_S3()` showing key exists
-        bucket_contents.append(contents_dict['Key'])
-    if S3_file_name_path in bucket_contents:
-        log.warning(f"File `{S3_file_name_path}` in `{BUCKET_NAME}/{S3_prefix}`")
-    else:
-        log.error(f"Files in `{BUCKET_NAME}/{S3_prefix}`:\n{format_list_for_stdout(bucket_contents)}.")
-    #TEST: end temp
-    s3_client.download_file(  #TEST: botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
-        Bucket=BUCKET_NAME,
-        Key=urlsplit(S3_file_name).path,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

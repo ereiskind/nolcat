@@ -1670,11 +1670,12 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            str: the name/location of the file successfully saved to S3
+            cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
 
         Raises:
             DatabaseInteractionError: if the SQL update statement fails
             S3InteractionError: if a problem occurs while saving the data to S3
+            ValueError: if the file type as determined by the file extension cannot be uploaded to S3
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` for the file {file}.")
         #Section: Create S3 File Name
@@ -1683,12 +1684,12 @@ class AnnualUsageCollectionTracking(db.Model):
         except:
             file_path = Path(file.filename)
         file_extension = file_path.suffix
-        if file_extension not in file_extensions_and_mimetypes().keys():  #ALERT: `raise some error`
+        if file_extension not in file_extensions_and_mimetypes().keys():
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             self._log.error(message)
-            return message
-        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
-        self._log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
+            raise ValueError(message)
+        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"
+        self._log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 location `{bucket_path}`"))
 
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
