@@ -309,33 +309,37 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
-def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
+def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe.
 
     Args:
         client (flask.testing.FlaskClient): a Flask test client
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
         most_recent_month_with_usage (tuple): `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data
+        reports_offered_by_StatisticsSource_fixture (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    with client:
-        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+    try:
+        with client:
+            flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
             most_recent_month_with_usage[0],
             most_recent_month_with_usage[1],
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
-    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
-    assert isinstance(flash_message_list, dict)
-    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    assert isinstance(flash_message_dict, dict)
+    assert flash_message_dict['status']
+    assert flash_message_dict['reports']
+    for report in reports_offered_by_StatisticsSource_fixture:
+        assert flash_message_dict[report]
+    #ToDo: Tear down test files
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
@@ -351,19 +355,22 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
-        begin_date,
-        end_date,
-        choice(reports_offered_by_StatisticsSource_fixture),
-        bucket_path=TEST_COUNTER_FILE_PATH,
-    )
-    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
-    assert isinstance(flash_message_list, dict)
-    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.now(timezone.utc).strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    report_being_called = choice(reports_offered_by_StatisticsSource_fixture)
+    try:
+        flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
+            begin_date,
+            end_date,
+            report_being_called,
+            bucket_path=TEST_COUNTER_FILE_PATH,
+        )
+    except InvalidSUSHIResponseError as error:
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+    assert isinstance(flash_message_dict, dict)
+    assert flash_message_dict['status']
+    assert flash_message_dict[report_being_called]
+    #ToDo: Tear down test files
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.
@@ -379,16 +386,15 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
     end_date = begin_date - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
     end_date = last_day_of_month(end_date)
-    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(
+    flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
         begin_date,
         end_date,
         choice(reports_offered_by_StatisticsSource_fixture),
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    assert isinstance(SUSHI_data_response, str)
-    assert isinstance(flash_message_list, dict)
-    assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
-    assert len(flash_message_list) == 1
+    assert isinstance(flash_message_dict, dict)
+    assert len(flash_message_dict) == 1
+    assert flash_message_dict['dates']
 
 
 #ToDo: Is a test for `_harvest_R5_SUSHI()` with a specified code of practice needed?

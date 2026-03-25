@@ -815,47 +815,40 @@ class StatisticsSources(db.Model):
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
             code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
-            tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         #Section: Get API Call URL and Parameters
         self._log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
+            message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             self._log.error(message)
-            return (message, {'dates': [message]})
+            return {'dates': [message]}
         SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        self._log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
-        all_flashed_statements = {}
+        return_statements = {}
         self._log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
-
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
-            self.statistics_source_name,
-            SUSHI_info['URL'],
-            "status",
-            SUSHI_parameters
-        ).make_SUSHI_call(bucket_path)
-        all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
-            # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
-                # MathSciNet `status` endpoint returns HTTP status code 400
-                # Web of Science includes `Alerts` with information about most recent month with usage available
-            self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
-            pass
-        #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
-        elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)  #ALERT: `raise InvalidSUSHIResponseError`
-            self._log.warning(message)
-            return (message, all_flashed_statements)
-        else:
-            self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
-            pass
-
+        try:
+            SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_info['URL'],
+                "status",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
+        except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error[0]}. SUSHI calls will *NOT* be made."
+            return_statements['status'] = flash_message_list
+            return_statements['STOP'] = []
+            for e in error[1] + [message]:
+                return_statements['STOP'].append(e)
+            self._log.warning(return_statements)
+            return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+        return_statements['status'] = flash_message_list
+        self._log.info(f"The call to `status` for {self.statistics_source_name} was successful.")
 
         #Section: Harvest Individual Report if Specified
         if isinstance(report_to_harvest, str):
@@ -869,35 +862,46 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "IR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
-            else:
-                message = "An invalid value was received from a fixed text field."
-                self._log.critical(message)
-                all_flashed_statements['CRITICAL'] = message
-                return (message, all_flashed_statements)
-            SUSHI_data_response, flash_message_list = self._harvest_single_report(
-                report_to_harvest,
-                SUSHI_info['URL'],
-                SUSHI_parameters,
-                usage_start_date,
-                usage_end_date,
-                bucket_path=bucket_path,
-            )
-            all_flashed_statements[report_to_harvest] = flash_message_list
-            if isinstance(SUSHI_data_response, str):
-                self._log.error(SUSHI_data_response)
-            return (SUSHI_data_response, all_flashed_statements)
+            try:
+                S3_file_name, flash_message_list = self._harvest_single_report(
+                    report_to_harvest,
+                    SUSHI_info['URL'],
+                    SUSHI_parameters,
+                    usage_start_date,
+                    usage_end_date,
+                    bucket_path=bucket_path,
+                )
+            except InvalidSUSHIResponseError as error:
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
+                return_statements[report_to_harvest] = flash_message_list
+                return_statements['STOP'] = []
+                for e in error[1] + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return_statements[report_to_harvest] = flash_message_list
+            return return_statements
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
             self._log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
-                self.statistics_source_name,
-                SUSHI_info['URL'],
-                "reports",
-                SUSHI_parameters
-            ).make_SUSHI_call(bucket_path)
-            all_flashed_statements['reports'] = flash_message_list
+            try:
+                SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                    self.statistics_source_name,
+                    SUSHI_info['URL'],
+                    "reports",
+                    SUSHI_parameters
+                ).make_SUSHI_call(bucket_path)
+            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error[0]}."
+                return_statements['reports'] = flash_message_list
+                return_statements['STOP'] = []
+                for e in error[1] + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
                 all_available_reports = []
@@ -907,13 +911,11 @@ class StatisticsSources(db.Model):
                             if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 self._log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
-            elif isinstance(SUSHI_reports_response, str):
-                self._log.warning(SUSHI_reports_response)
-                return (SUSHI_reports_response, all_flashed_statements)
             else:
-                message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response  is required:\n{SUSHI_reports_response}"
+                message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response is required:\n{SUSHI_reports_response}"
+                return_statements['STOP'] = [message]
                 self._log.error(message)
-                return (message, all_flashed_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
 
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
@@ -930,13 +932,10 @@ class StatisticsSources(db.Model):
             if len(not_represented_by_custom_report) > 0:  # Logging statement only appears if it would include content
                 self._log.debug(f"Standard reports lacking corresponding customizable reports provided by {self.statistics_source_name}: {not_represented_by_custom_report}.")
 
-
             #Section: Make Customizable Report SUSHI Calls
             #Subsection: Set Up Loop Through Customizable Reports
             for report_name in available_custom_reports:
-                all_flashed_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
-            custom_report_dataframes = []
-            complete_flash_message_list = []
+                return_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             no_usage_returned_count = 0
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
@@ -961,45 +960,42 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
                 if not re.search(r"/r5\d+/", SUSHI_info['URL']):
-                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # In R5.1, this is mandatory
+                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
-                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # This was removed after R5
+                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # Removed starting in R5
 
                 #Subsection: Make API Call(s)
-                SUSHI_data_response, flash_message_list = self._harvest_single_report(
-                    report_name,
-                    SUSHI_info['URL'],
-                    SUSHI_parameters,
-                    usage_start_date,
-                    usage_end_date,
-                    bucket_path=bucket_path,
-                )
-                all_flashed_statements[report_name] = flash_message_list
-                for item in flash_message_list:
-                    complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-                    self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
+                try:
+                    S3_file_name, flash_message_list = self._harvest_single_report(
+                        report_name,
+                        SUSHI_info['URL'],
+                        SUSHI_parameters,
+                        usage_start_date,
+                        usage_end_date,
+                        bucket_path=bucket_path,
+                    )
+                except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
                     self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
+                    return_statements[report_to_harvest] = flash_message_list
+                    for e in error[1] + [f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."]:
+                        return_statements[report_to_harvest].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                elif isinstance(SUSHI_data_response, str):
-                    self._log.error(SUSHI_data_response)
-                    return (SUSHI_data_response, all_flashed_statements)
-                if not SUSHI_data_response.empty:
-                    custom_report_dataframes.append(SUSHI_data_response)
+                except InvalidSUSHIResponseError as error:
+                    message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
+                    return_statements[report_to_harvest] = flash_message_list
+                    return_statements['STOP'] = []
+                    for e in error[1] + [message]:
+                        return_statements['STOP'].append(e)
+                    self._log.error(message)
+                    return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return_statements[report_to_harvest] = flash_message_list
+
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 self._log.warning(message)
-                return (message, all_flashed_statements)
-
-
-            #Section: Return a Single Dataframe
-            try:
-                return (pd.concat(custom_report_dataframes, ignore_index=True), all_flashed_statements)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            except ValueError as error:
-                message = f"The harvested reports couldn't be combined because of the error {error}."
-                self._log.error(message)
-                return (message, all_flashed_statements)
+                return_statements['All Reports'] = [message]
+            return return_statements
 
 
     @hybrid_method

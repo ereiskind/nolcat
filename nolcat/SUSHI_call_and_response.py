@@ -150,7 +150,7 @@ class SUSHICallAndResponse:
             elif API_response.get('Exceptions'):
                 for_debug = "Exceptions"
                 SUSHI_exception_statement = API_response['Exceptions']
-            elif API_response.get('Alert'):
+            elif API_response.get('Alert') and not (self.call_path == "status" and re.match(r"https?://.*clarivate.*\.\w{3}/", self.call_URL)):  # Web of Science `status` calls state most recent month with usage available in `Alerts`
                 for_debug = "Alert"
                 SUSHI_exception_statement = API_response['Alert']
             elif API_response.get('Alerts'):
