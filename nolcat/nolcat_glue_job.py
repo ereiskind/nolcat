@@ -1025,17 +1025,6 @@ def upload_file_to_S3_bucket_success_regex():
     return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
 
 
-def upload_nonstandard_usage_file_success_regex():
-    """This regex object matches the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.
-
-    The `re.DOTALL` flag is included because update statements include line breaks.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
-    """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+` and successfully performed the update (.+)\.", flags=re.DOTALL)
-
-
 #SUBSECTION: S3 Interaction Functions
 def file_extensions_and_mimetypes():
     """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.

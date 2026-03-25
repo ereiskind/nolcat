@@ -655,7 +655,6 @@ digraph function_call_chains {
         failed_upload_to_S3_statement [shape="box"]
         unable_to_delete_test_file_in_S3_statement [shape="box"]
         upload_file_to_S3_bucket_success_regex [shape="box"]
-        upload_nonstandard_usage_file_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
