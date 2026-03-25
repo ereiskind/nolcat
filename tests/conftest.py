@@ -519,7 +519,6 @@ def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp
 @pytest.fixture
 def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
@@ -535,18 +534,20 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"""
-            SELECT * FROM annualUsageCollectionTracking WHERE
-                usage_is_being_collected=true AND
-                is_COUNTER_compliant=false AND
-                collection_status='Collection not started' AND
-                usage_file_path IS NULL;
-        """,
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"""
+                SELECT * FROM annualUsageCollectionTracking WHERE
+                    usage_is_being_collected=true AND
+                    is_COUNTER_compliant=false AND
+                    collection_status='Collection not started' AND
+                    usage_file_path IS NULL;
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(database_function_skip_statements(record, False))
+    if isinstance(record, str):  #ToDo: Remove when `query_database()` raises exception when there's a problem
         pytest.skip(database_function_skip_statements(record, False))
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")
@@ -564,14 +565,14 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     )
     log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
-    file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_NON_COUNTER_FILE_PATH + file_name
+            Key=S3_file_name.key,
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+        log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
 
 
 @pytest.fixture
