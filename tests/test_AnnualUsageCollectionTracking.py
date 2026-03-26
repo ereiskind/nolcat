@@ -177,7 +177,6 @@ def sample_FileStorage_object(path_to_sample_file):
     open_file_stream.close()
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
