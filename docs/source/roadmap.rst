@@ -7,35 +7,20 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
-
-  * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
-
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()` to expect S3 file name as return value (`#ToDo: PARQUET IN S3--` notes changes for no return value); adjusting tests and function call chain diagram to correspond with changes *bold functions are non-test functions confirmed to still expect dataframe as return value*
+  * Adjust functions below to account for `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()` returning the S3 file name as a cloudpathlib.CloudPath object, adjusting tests and function call chain diagram to correspond with changes
 
-    * `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
-    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.StatisticsSources.test_collect_usage_statistics()`
-    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`
     * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
+    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.AUCT_fixture_for_SUSHI()`, `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
+    * `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
+    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.test_StatisticsSources.test_collect_usage_statistics()`, `tests.test_StatisticsSources.test_GET_request_for_harvest_SUSHI_statistics()`
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
+    * `nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()` with `tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()`
+    * `nolcat.view_usage.download_non_COUNTER_usage()` with `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()`
+    * `nolcat.ingest_usage.upload_non_COUNTER_reports()` with `tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`, `tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()`
 
-  * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
-  * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()`
-  * For all functions above, adjust to anticipate no return value if successful
-  * Adjust tests and function call chain diagram to correspond with above changes
-  * For all tests, get call chains and adjust caplog calls
-  * Confirm all tests still pass
-
-* Fix lack of cleanup in `tests.test_StatisticsSources.test_upload_historical_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
-* Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
-
-* Figure out how to move a dataframe to a step function
-
-  * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
-  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
-  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html (does `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.` need to be addressed?) (https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html can also be used, but `to_json()` output of string must be converted to dict with `json.loads()`)
+  * Confirm all tests still pass with working teardown
 
 * Move `nolcat.UploadCOUNTERReports` to Glue job
 
@@ -54,18 +39,24 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.UploadCOUNTERReports` output as parquet in S3
 
-  * Update second class made from `nolcat.UploadCOUNTERReports` to take in a JSON made from a dataframe and end with saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
-  * Get list of all calls to second class made from `nolcat.UploadCOUNTERReports`
-  * Adjust above calls to not expect return values
+  * Update second class made from `nolcat.UploadCOUNTERReports` to take in a JSON made from a dataframe and end with saving a parquet file to S3, returning cloudpathlib.CloudPath file name/location
   * Adjust function call chain diagram to correspond with above changes
   * Adjust tests and their relevant fixtures for changed calls to reflect changes
-  * Adjust function call chain diagram to correspond with above changes
-  * Add check for saved parquet or error file after call to second class made from `nolcat.UploadCOUNTERReports`
-  * List all functions in function call chains ending in a call to second class made from `nolcat.UploadCOUNTERReports`
-  * For all functions above, adjust to anticipate no return value if successful
-  * Adjust tests and function call chain diagram to correspond with above changes
+  * Adjust functions below to account for above changes, adjusting tests and function call chain diagram to correspond with changes
 
-* Move other functions and classes to be determined to "nolcat/nolcat/nolcat_glue_job.py" (adjusting call chain diagram, creating child loggers, and adjusting caplog calls as needed)
+    * `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` with `tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`, `tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()`
+    * Other functions as determined by function calls to second class made from `nolcat.UploadCOUNTERReports`
+
+  * Confirm all tests still pass with working teardown
+
+* Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
+* Finish having errors raise exceptions instead of returning specifically designated strings
+* Figure out how to move a dataframe to a step function
+
+  * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
+  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
+  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html (does `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.` need to be addressed?) (https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html can also be used, but `to_json()` output of string must be converted to dict with `json.loads()`)
+
 * Remove `nolcat.models.COUNTERData` class
 
   * Move sole class method to "nolcat/nolcat/nolcat_glue_job.py"
