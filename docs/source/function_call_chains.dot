@@ -1873,7 +1873,7 @@ digraph function_call_chains {
     test_upload_historical_non_COUNTER_usage -> client
     test_upload_historical_non_COUNTER_usage -> header_value
     test_upload_historical_non_COUNTER_usage -> files_for_test_upload_historical_non_COUNTER_usage
-
+    test_upload_historical_non_COUNTER_usage -> list_files_in_bucket_location
 
     subgraph cluster_test_bp_login {
         label="tests.test_bp_login"

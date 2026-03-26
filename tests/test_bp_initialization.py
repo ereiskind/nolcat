@@ -678,7 +678,6 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation[COUNTERData_relation_data.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant.
@@ -734,7 +733,6 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
     assert number_of_file_fields == df.shape[0]
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.fixture
 def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
     """A fixture which can be called multiple times capable of randomly selecting a file to use in testing `test_upload_historical_non_COUNTER_usage`, making a copy of that file with a name matching the naming convention, and returning the value appropriate for the file type for use in the `fields` dictionary of a MultipartEncoder instance.
@@ -768,7 +766,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
         log.debug(check_if_file_exists_statement(new_file))
-        for_removal.append(f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")  # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` changes the file name to the instance record's primary keys separated by an underscore, so that file name is what needs to be saved for removal from S3 
+        for_removal.append(TEST_NON_COUNTER_FILE_PATH / f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")
         return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
@@ -777,15 +775,14 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_NON_COUNTER_FILE_PATH + file
+                Key=file.key,
             )
-        except botocore.exceptions as error:
+        except botocore.exceptions.BotoCoreError as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):  #TEST: Loads multiple files into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/
+def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
     """Tests uploading the files with non-COUNTER usage statistics.
 
     Args:
@@ -885,17 +882,10 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
 
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
-    list_objects_response = s3_client.list_objects_v2(  #ALERT: Use `list_files_in_bucket_location()`
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_NON_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    files_in_bucket = []
-    bucket_contents = list_objects_response.get('Contents')
-    if bucket_contents:
-        for contents_dict in bucket_contents:
-            files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for file_name in files_in_bucket]
+    files_in_bucket = list_files_in_bucket_location(TEST_NON_COUNTER_FILE_PATH)
+    log.info(f"`list_of_files_in_S3`:\n{format_list_for_stdout(list_of_files_in_S3)}")  #TEST: temp
+    log.info(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")  #TEST: temp
+    if files_in_bucket:
         assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
         assert False  # Nothing in bucket

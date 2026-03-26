@@ -594,7 +594,7 @@ def upload_historical_non_COUNTER_usage(testing):
                 else:
                     log.debug(f"File successfully uploaded to {S3_file_name}")
                     files_uploaded += 1
-        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload}files.")
+        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload} files.")
         flash(flash_error_messages)
         return redirect(url_for('initialization.data_load_complete'))
     else:
