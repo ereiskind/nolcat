@@ -1195,7 +1195,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
 

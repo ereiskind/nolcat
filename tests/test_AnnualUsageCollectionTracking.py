@@ -50,6 +50,7 @@ def AUCT_fixture_for_SUSHI(engine):
     yield yield_object
 
 
+#TEST: @pytest.mark.skip("Has no effect on fixtures")
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
 def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.

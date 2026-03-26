@@ -375,7 +375,6 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency()
 def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):
     """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database.
@@ -471,7 +470,6 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
 def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database.
@@ -580,7 +578,6 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
     """Test creating the AUCT relation template CSV.
@@ -609,7 +606,6 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 @pytest.mark.slow
 def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):

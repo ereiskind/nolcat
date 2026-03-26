@@ -14,11 +14,11 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
     * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.AUCT_fixture_for_SUSHI()`, `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
     * `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
-    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.test_StatisticsSources.test_collect_usage_statistics()`, `tests.test_StatisticsSources.test_GET_request_for_harvest_SUSHI_statistics()`
+    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.test_StatisticsSources.test_collect_usage_statistics()`
     * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
     * `nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()` with `tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()`
-    * `nolcat.view_usage.download_non_COUNTER_usage()` with `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`, `tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()`
-    * `nolcat.ingest_usage.upload_non_COUNTER_reports()` with `tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`, `tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()`
+    * `nolcat.view_usage.download_non_COUNTER_usage()` with `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
+    * `nolcat.ingest_usage.upload_non_COUNTER_reports()` with `tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`
 
   * Confirm all tests still pass with working teardown
 

@@ -194,7 +194,6 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
     assert_frame_equal(match_result_df, df)
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data.
 
@@ -285,7 +284,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     assert HTML_file_page_title in POST_response.data
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
 
