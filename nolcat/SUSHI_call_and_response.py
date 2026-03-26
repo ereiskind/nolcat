@@ -79,10 +79,11 @@ class SUSHICallAndResponse:
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
-        API_response = self._make_API_call()
-        if isinstance(API_response, str):  # Meaning the SUSHI API call couldn't be made
-            log.error(API_response)
-            return (API_response, [API_response])
+        try:
+            API_response = self._make_API_call()
+        except InvalidAPIResponseError as error:
+            log.error(error)
+            raise InvalidAPIResponseError(error)
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
@@ -258,17 +259,17 @@ class SUSHICallAndResponse:
             except Timeout as error_after_timeout:
                 message = f"GET request to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
                 log.error(message)
-                return message
+                raise InvalidAPIResponseError(message)
             except Exception as error_after_timeout:
                 message = f"GET request to {self.calling_to} raised errors {error} and {error_after_timeout}."
                 log.error(message)
-                return message
+                raise InvalidAPIResponseError(message)
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             message = f"GET request to {self.calling_to} raised error {error}"
             log.error(message)
-            return message
+            raise InvalidAPIResponseError(message)
 
         log.info(f"GET request to {self.calling_to} at {self.call_path} successful.")
         return API_response
