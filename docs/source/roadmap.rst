@@ -11,7 +11,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Adjust functions below to account for `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()` returning the S3 file name as a cloudpathlib.CloudPath object, adjusting tests and function call chain diagram to correspond with changes
 
-    * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
     * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualUsageCollectionTracking.AUCT_fixture_for_SUSHI()`, `tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()`, `tests.test_AnnualUsageCollectionTracking.harvest_R5_SUSHI_result()`
     * `tests.test_StatisticsSources.harvest_R5_SUSHI_result()`
     * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.test_StatisticsSources.test_collect_usage_statistics()`

@@ -110,10 +110,9 @@ digraph function_call_chains {
     collect_fiscal_year_usage_statistics -> format_list_for_stdout
     collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
     collect_fiscal_year_usage_statistics -> database_query_fail_statement
-    collect_fiscal_year_usage_statistics -> add_data_success_and_update_database_fail_statement
     collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     collect_fiscal_year_usage_statistics -> update_database_success_regex
-    collect_fiscal_year_usage_statistics -> harvest_R5_SUSHI_success_statement
+    collect_fiscal_year_usage_statistics -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_annualStatistics {
@@ -298,7 +297,6 @@ digraph function_call_chains {
     collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
     collect_annual_usage_statistics -> database_query_fail_statement
-    collect_annual_usage_statistics -> add_data_success_and_update_database_fail_statement
     collect_annual_usage_statistics -> load_data_into_database_success_regex
     collect_annual_usage_statistics -> update_database_success_regex
     collect_annual_usage_statistics -> harvest_R5_SUSHI_success_statement
@@ -640,7 +638,6 @@ digraph function_call_chains {
         unable_to_get_updated_primary_key_values_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
         database_update_fail_statement [shape="box"]
-        add_data_success_and_update_database_fail_statement [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         update_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
@@ -726,7 +723,6 @@ digraph function_call_chains {
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
     list_folder_contents_statement -> format_list_for_stdout
     database_update_fail_statement -> remove_IDE_spacing_from_statement
-    add_data_success_and_update_database_fail_statement -> database_update_fail_statement
     create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
     query_database -> remove_IDE_spacing_from_statement
     first_new_PK_value -> query_database
@@ -2215,15 +2211,11 @@ digraph function_call_chains {
     FY2022_FiscalYears_object -> engine
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
-    test_collect_fiscal_year_usage_statistics -> query_database
     test_collect_fiscal_year_usage_statistics -> update_database
-    test_collect_fiscal_year_usage_statistics -> extract_value_from_single_value_df
-    test_collect_fiscal_year_usage_statistics -> database_function_skip_statements
-    test_collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
-    test_collect_fiscal_year_usage_statistics -> update_database_success_regex
     test_collect_fiscal_year_usage_statistics -> update_database_success_regex
     test_collect_fiscal_year_usage_statistics -> engine
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
+    test_collect_fiscal_year_usage_statistics -> list_files_in_bucket_location
 
 
     subgraph cluster_test_ResourceSources {

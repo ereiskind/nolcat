@@ -392,7 +392,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         self._log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
@@ -419,7 +419,7 @@ class FiscalYears(db.Model):
         )
         if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
-            return (message, [message])
+            return {'create AUCT object': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -437,16 +437,15 @@ class FiscalYears(db.Model):
         self._log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
 
         #Section: Collect Usage from Each Statistics Source
-        dfs = []
-        where_statements = []
-        all_flash_statements = {}
+        sections_of_UPDATE_statement = []
+        return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
             statistics_source_df = query_database(
                 query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
             if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
-                all_flash_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
+                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
@@ -454,53 +453,29 @@ class FiscalYears(db.Model):
                 statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
-            df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            for k, v in flash_statements.items():
-                all_flash_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
-            if isinstance(df, str):
+            dict_to_flash = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for k, v in dict_to_flash.items():
+                return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
+            if 'STOP' in dict_to_flash.keys():
                 continue
-            if not df.empty:
-                dfs.append(df)
-            where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
-            self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
+            sections_of_UPDATE_statement.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
+            self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} and FY {self.fiscal_year}.")
         
         #Section: Update Data in Database
-        if len(dfs) == 0:
-            message = f"None of the {len(AUCT_objects_to_collect)} statistics sources with SUSHI for FY {self.fiscal_year} returned any data."
-            self._log.warning(message)
-            all_flash_statements['No data'] = message
-            return (message, all_flash_statements)
-        df = pd.concat(dfs)
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            all_flash_statements['first_new_PK_value()'] = message
-            return (message, all_flash_statements)
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(load_result):
-            return (load_result, all_flash_statements)
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
-            WHERE {" OR ".join(where_statements)};
+            WHERE {" OR ".join(sections_of_UPDATE_statement)};
         """
         update_result = update_database(
             update_statement=update_statement,
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
+            message = f"While the SUSHI data was successfully uploaded to S3, the `annualUsageCollectionTracking` wasn't updated, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
-            all_flash_statements['update_database()'] = message
-            return (message, all_flash_statements)
-        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
+            return_statements['update_database()'] = message
+        return return_statements
 
 
 class AnnualStatistics(db.Model):

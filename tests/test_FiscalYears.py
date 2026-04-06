@@ -345,16 +345,20 @@ def FY2022_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
-def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
-    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
+def test_collect_fiscal_year_usage_statistics(engine, tmp_path, FY2022_FiscalYears_object, caplog):
+    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        FY2022_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object that matches this test's requirements
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
-    #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
-    # A random value is added at this point for greater variability in the testing
-    retrieval_codes = []
+    retrieval_codes = []  # A random value is used for the SUSHI call for greater variability in the testing
     with open(PATH_TO_CREDENTIALS_FILE()) as file:
         CSV_data = csv.DictReader(file)
         for statistics_source_credentials in CSV_data:
@@ -368,28 +372,23 @@ def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object,
     )
     if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
-    
-    #Section: Make Function Call
-    before_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(before_count, str):
-        pytest.skip(database_function_skip_statements(before_count, False))
-    before_count = extract_value_from_single_value_df(before_count)
-    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
-    if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
-        pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
-    after_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(after_count, str):
-        pytest.skip(database_function_skip_statements(after_count, False))
-    after_count = extract_value_from_single_value_df(after_count)
 
-    #Section: Assert Statements
-    assert before_count < after_count
-    assert load_data_into_database_success_regex().match(logging_statement)
-    assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_messages, dict)
+    dict_to_flash = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    assert isinstance(dict_to_flash, dict)
+    if 'STOP' in dict_to_flash.keys():
+        pytest.skip(f"The SUSHI call raised up to {len(dict_to_flash)} errors.")
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/11_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    log.error(f"`regex`: {regex}")  #TEST: temp
+    S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
+    #ToDo: Teardown of above files
