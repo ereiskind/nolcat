@@ -49,6 +49,11 @@ def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object, caplo
     """Tests getting the old ACRL 60b value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -59,6 +64,11 @@ def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object, caplog
     """Tests getting the old ACRL 63 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -69,6 +79,11 @@ def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61a value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -79,6 +94,11 @@ def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61b value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -89,6 +109,11 @@ def test_calculate_ARL_18(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 18 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -99,6 +124,11 @@ def test_calculate_ARL_19(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 19 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -109,6 +139,11 @@ def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 20 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
@@ -170,7 +205,15 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
 
 
 def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
+        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     #Section: Call Method

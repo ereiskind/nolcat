@@ -27,8 +27,8 @@ def test_flask_app_creation(app):
 def test_flask_client_creation(client):
     """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`.
 
-    Yields:
-        flask.testing.FlaskClient: a Flask test client
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
     """
     assert isinstance(client, flask.testing.FlaskClient)
     assert isinstance(client.__dict__['application'], flask.app.Flask)
@@ -49,8 +49,8 @@ def test_SQLAlchemy_engine_creation(engine):
 def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
 
-    Yields:
-        flask.testing.FlaskClient: a Flask test client
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
     """
     page = client.get('/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
@@ -70,8 +70,8 @@ def test_homepage(client):
 def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page.
 
-    Yields:
-        flask.testing.FlaskClient: a Flask test client
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
     """
     nonexistent_page = client.get('/404')
     GET_soup = BeautifulSoup(nonexistent_page.data, 'lxml')
@@ -91,7 +91,7 @@ def test_404_page(client):
 def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads.
 
-    Yields:
+    Args:
         client (flask.testing.FlaskClient): a Flask test client
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
     """

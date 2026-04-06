@@ -15,7 +15,6 @@ log = logging.getLogger(__name__)
 
 
 #Section: Collecting Annual COUNTER Usage Statistics
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 @pytest.fixture(scope='module')
 def AUCT_fixture_for_SUSHI(engine):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
