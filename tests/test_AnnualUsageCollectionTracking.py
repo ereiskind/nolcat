@@ -151,7 +151,6 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
     assert file_name == usage_file_path_in_database
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination):
     """Test downloading a file in S3 to a local computer.
 
@@ -166,6 +165,7 @@ def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, n
         bucket_path=TEST_NON_COUNTER_FILE_PATH,
         )
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
-    assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
+    assert isinstance(file_path, Path)
     assert file_path.is_file()
+    assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same

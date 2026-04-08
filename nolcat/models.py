@@ -1634,7 +1634,7 @@ class AnnualUsageCollectionTracking(db.Model):
             self._log.error(message)
             raise ValueError(message)
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"
-        self._log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 location `{bucket_path}`"))
+        self._log.debug(f"About to upload file {file_name} from WTForms FileField field {file_path.resolve()} to {bucket_path}.")
 
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
@@ -1675,28 +1675,31 @@ class AnnualUsageCollectionTracking(db.Model):
 
         Args:
             web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_NON_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_NON_COUNTER_FILE_PATH`
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
+        
+        Raises:
+            S3InteractionError: if the file isn't downloaded from S3 or can't be downloaded from TOP_NOLCAT_DIRECTORY
         """
-        self._log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path + self.usage_file_path}.")
+        self._log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path}/{self.usage_file_path}.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        self._log.debug(file_IO_statement(self.usage_file_path, f"S3 location `{BUCKET_NAME}/{bucket_path}`", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
-        s3_client.download_file(
-            Bucket=BUCKET_NAME,
-            Key=bucket_path + self.usage_file_path,
-            Filename=self.usage_file_path,
-        )
-        if self.usage_file_path in [str(p.name) for p in TOP_NOLCAT_DIRECTORY.iterdir()]:
-            temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path
-            temp_usage_file_path.rename(file_download_path)
-            self._log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
-            return file_download_path
-        else:
-            #ALERT: `raise S3InteractionError`
-            self._log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {TOP_NOLCAT_DIRECTORY}.")
-            return False
+        self._log.debug(f"About to download file {self.usage_file_path} from {bucket_path} to {TOP_NOLCAT_DIRECTORY.resolve()}.")
+        try:
+            s3_client.download_file(
+                Bucket=BUCKET_NAME,
+                Key=bucket_path.key + self.usage_file_path,
+                Filename=self.usage_file_path,
+            )
+        except botocore.exceptions.BotoCoreError as error:
+            message = f"The file {bucket_path}/{self.usage_file_path} wasn't downloaded because of the error {error}."
+            self._log.error(message)
+            raise S3InteractionError(message)
+        temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path
+        temp_usage_file_path.rename(file_download_path)
+        self._log.info(f"Successfully downloaded {self.usage_file_path} to {file_download_path.resolve()} in the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
+        return file_download_path
 
 
 class COUNTERData(db.Model):
