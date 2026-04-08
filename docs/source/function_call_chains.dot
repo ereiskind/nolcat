@@ -289,17 +289,14 @@ digraph function_call_chains {
         download_nonstandard_usage_file [shape="folder"]
     }
     collect_annual_usage_statistics -> _harvest_R5_SUSHI
-    collect_annual_usage_statistics -> first_new_PK_value
-    collect_annual_usage_statistics -> load_data_into_database
     collect_annual_usage_statistics -> query_database
     collect_annual_usage_statistics -> update_database
     collect_annual_usage_statistics -> initialize_relation_class_object_statement
-    collect_annual_usage_statistics -> unable_to_get_updated_primary_key_values_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
     collect_annual_usage_statistics -> database_query_fail_statement
-    collect_annual_usage_statistics -> load_data_into_database_success_regex
     collect_annual_usage_statistics -> update_database_success_regex
-    collect_annual_usage_statistics -> harvest_R5_SUSHI_success_statement
+    collect_annual_usage_statistics -> remove_IDE_spacing_from_statement
+    collect_annual_usage_statistics -> return_value_from_query_statement
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     upload_nonstandard_usage_file -> update_database
     upload_nonstandard_usage_file -> file_extensions_and_mimetypes
@@ -1466,11 +1463,6 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
-        harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking [
-            label="harvest_R5_SUSHI_result"
-            style="dotted"
-            shape="folder"
-        ]
         test_collect_annual_usage_statistics [
             style="dashed"
             shape="box"
@@ -1492,15 +1484,6 @@ digraph function_call_chains {
     AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
     AUCT_fixture_for_SUSHI -> database_function_skip_statements
     AUCT_fixture_for_SUSHI -> engine
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> _harvest_R5_SUSHI
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> make_SUSHI_call
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> query_database
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> unable_to_delete_test_file_in_S3_statement
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> upload_file_to_S3_bucket_success_regex
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> return_value_from_query_statement
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> database_function_skip_statements
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> engine
-    harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking -> AUCT_fixture_for_SUSHI
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
     test_collect_annual_usage_statistics -> query_database
     test_collect_annual_usage_statistics -> extract_value_from_single_value_df
@@ -1511,7 +1494,8 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> client
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
     test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
-    test_collect_annual_usage_statistics -> harvest_R5_SUSHI_result_in_test_AnnualUsageCollectionTracking
+    test_collect_annual_usage_statistics -> format_list_for_stdout
+    test_collect_annual_usage_statistics -> list_files_in_bucket_location
     sample_FileStorage_object -> path_to_sample_file
     test_upload_nonstandard_usage_file -> upload_nonstandard_usage_file
     test_upload_nonstandard_usage_file -> query_database
@@ -2311,8 +2295,7 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
-        harvest_R5_SUSHI_result_in_test_StatisticsSources [
-            label="harvest_R5_SUSHI_result"
+        harvest_R5_SUSHI_result [
             style="dotted"
             shape="box"
         ]
@@ -2392,16 +2375,16 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
     month_before_month_like_most_recent_month_with_usage -> last_day_of_month
     month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
-    harvest_R5_SUSHI_result_in_test_StatisticsSources -> _harvest_R5_SUSHI
-    harvest_R5_SUSHI_result_in_test_StatisticsSources -> StatisticsSources_fixture
-    harvest_R5_SUSHI_result_in_test_StatisticsSources -> month_before_month_like_most_recent_month_with_usage
+    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
+    harvest_R5_SUSHI_result -> StatisticsSources_fixture
+    harvest_R5_SUSHI_result -> month_before_month_like_most_recent_month_with_usage
     test_collect_usage_statistics -> collect_usage_statistics
     test_collect_usage_statistics -> load_data_into_database_success_regex
     test_collect_usage_statistics -> engine
     test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
     test_collect_usage_statistics -> StatisticsSources_fixture
     test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result_in_test_StatisticsSources
+    test_collect_usage_statistics -> harvest_R5_SUSHI_result
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database

@@ -49,99 +49,25 @@ def AUCT_fixture_for_SUSHI(engine):
     yield yield_object
 
 
-#TEST: @pytest.mark.skip("Has no effect on fixtures")
-@pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
-def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI):
-    """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
-
-    The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
-
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
-
-    Yields:
-        dataframe: a dataframe containing all of the R5 COUNTER data
-    """
-    # Cannot use `caplog` for `query_database()` due to scope mismatch
-
-    record = query_database(
-        query=f"""
-            SELECT
-                fiscalYears.start_date,
-                fiscalYears.end_date,
-                statisticsSources.statistics_source_ID,
-                statisticsSources.statistics_source_name,
-                statisticsSources.statistics_source_retrieval_code,
-                statisticsSources.vendor_ID
-            FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source}
-                AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};
-        """,
-        engine=engine,
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(record, False))
-    
-    start_date = record.at[0,'start_date']
-    end_date = record.at[0,'end_date']
-    StatisticsSources_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-        statistics_source_ID = int(record.at[0,'statistics_source_ID']),
-        statistics_source_name = str(record.at[0,'statistics_source_name']),
-        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']),
-        vendor_ID = int(record.at[0,'vendor_ID']),
-    )
-    log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
-    yield_object = StatisticsSources_object._harvest_R5_SUSHI(
-        start_date,
-        end_date,
-        bucket_path=TEST_COUNTER_FILE_PATH,
-    )[0]  #ToDo: PARQUET IN S3--This is df, which is now in S3
-    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
-    #ToDo: PARQUET IN S3--Set fixture to create parquet file in S3; determine how to keep it from combining with the file it should be compared to when both should have the same name
-    if isinstance(yield_object, str):
-        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object)
-        if file_name_match_object:
-            file_name = file_name_match_object.group(1)
-            try:
-                s3_client.delete_object(
-                    Bucket=BUCKET_NAME,
-                    Key=TEST_COUNTER_FILE_PATH + file_name
-                )
-            except botocore.exceptions as error:
-                log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
-        pytest.skip(f"Unable to create fixture because `_harvest_R5_SUSHI()` returned the errors {yield_object}.")
-    yield yield_object
-
-
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
 @pytest.mark.slow
-def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
+def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
-    The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
+    This test's module focuses on the `annualUsageCollectionTracking` relation, and thus this test focuses on the change to that relation made in the `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method. The content of the upload(s) to S3 are not part of this test.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
-        harvest_R5_SUSHI_result (dataframe): the response data of an identical SUSHI call
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     with client:
-        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=TEST_COUNTER_FILE_PATH)  #ToDo: PARQUET IN S3--no more `logging_statement`
-    log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
-    method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
-    # The test fails at this point because a failing condition here raises errors below
-    assert method_response_match_object is not None
-    assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_statements, dict)
+        flash_message_dict = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=TEST_COUNTER_FILE_PATH)
+    log.debug(f"The `collect_annual_usage_statistics()` response:\n{format_list_for_stdout(flash_message_dict)}")
+    assert isinstance(flash_message_dict, dict)
 
     database_update_check = query_database(
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
@@ -150,10 +76,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     if isinstance(database_update_check, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_update_check))
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
-
-    records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     assert database_update_check == "Collection complete"
-    #ToDo: PARQUET IN S3--Replace `assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])` with comparison of parquet file in S3 and file in S3 from fixture above
 
 
 #Section: Upload and Download Nonstandard Usage File

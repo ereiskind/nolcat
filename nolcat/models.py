@@ -1556,13 +1556,16 @@ class AnnualUsageCollectionTracking(db.Model):
     def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
+        
+        Raises:
+            DatabaseInteractionErrorWithFlashMessages: if the SQL update statement fails
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
@@ -1574,11 +1577,11 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(fiscal_year_data, "return requested values")
             self._log.warning(message)
-            return (fiscal_year_data, {"Before SUSHI": message})
+            return {'STOP': [message]}
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        self._log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        self._log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
@@ -1589,7 +1592,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(statistics_source_data, "return requested values")
             self._log.warning(message)
-            return (fiscal_year_data, {"Before SUSHI": message})
+            return {'STOP': [message]}
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
@@ -1599,26 +1602,14 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path=bucket_path)
-        if isinstance(df, str):
-            self._log.warning(df)
-            return (df, flash_statements)
-        self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], fiscal_year))
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            flash_statements['first_new_PK_value()'] = message
-            return (message, flash_statements)
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
+        return_dict = statistics_source._harvest_R5_SUSHI(
+            start_date,
+            end_date,
+            bucket_path=bucket_path,
         )
-        if not load_data_into_database_success_regex().fullmatch(load_result):
-            return (load_result, flash_statements)
+        if 'STOP' in return_dict.keys():
+            self._log.warning(return_dict)
+            return return_dict
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
@@ -1629,11 +1620,10 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
-            flash_statements['update_database()'] = message
-            return (message, flash_statements)
-        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", flash_statements)
+            raise DatabaseInteractionErrorWithFlashMessages(message, [message, return_dict])
+        return return_dict
 
 
     @hybrid_method
