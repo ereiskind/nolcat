@@ -453,10 +453,10 @@ class FiscalYears(db.Model):
                 statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
-            dict_to_flash = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            for k, v in dict_to_flash.items():
+            flash_message_dict = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for k, v in flash_message_dict.items():
                 return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
-            if 'STOP' in dict_to_flash.keys():
+            if 'STOP' in flash_message_dict.keys():
                 continue
             sections_of_UPDATE_statement.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
             self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} and FY {self.fiscal_year}.")
@@ -1127,8 +1127,6 @@ class StatisticsSources(db.Model):
     def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
-
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
@@ -1602,14 +1600,14 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        return_dict = statistics_source._harvest_R5_SUSHI(
+        flash_message_dict = statistics_source._harvest_R5_SUSHI(
             start_date,
             end_date,
             bucket_path=bucket_path,
         )
-        if 'STOP' in return_dict.keys():
-            self._log.warning(return_dict)
-            return return_dict
+        if 'STOP' in flash_message_dict.keys():
+            self._log.warning(flash_message_dict)
+            return flash_message_dict
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
@@ -1622,8 +1620,8 @@ class AnnualUsageCollectionTracking(db.Model):
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
-            raise DatabaseInteractionErrorWithFlashMessages(message, [message, return_dict])
-        return return_dict
+            raise DatabaseInteractionErrorWithFlashMessages(message, [message, flash_message_dict])
+        return flash_message_dict
 
 
     @hybrid_method

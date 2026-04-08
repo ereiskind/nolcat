@@ -416,10 +416,10 @@ def test_collect_fiscal_year_usage_statistics(engine, tmp_path, FY2022_FiscalYea
     if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
 
-    dict_to_flash = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
-    assert isinstance(dict_to_flash, dict)
-    if 'STOP' in dict_to_flash.keys():
-        pytest.skip(f"The SUSHI call raised up to {len(dict_to_flash)} errors.")
+    flash_message_dict = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    assert isinstance(flash_message_dict, dict)
+    if 'STOP' in flash_message_dict.keys():
+        pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
     regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/11_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
