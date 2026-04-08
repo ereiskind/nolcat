@@ -81,7 +81,7 @@ def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_
 
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/11_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + AUCT_fixture_for_SUSHI.AUCT_statistics_source + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
     log.error(f"`regex`: {regex}")  #TEST: temp
     S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
     assert 0 < len(S3_file_names) <= 4
