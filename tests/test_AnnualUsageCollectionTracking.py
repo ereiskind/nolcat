@@ -50,14 +50,13 @@ def AUCT_fixture_for_SUSHI(engine):
 
 
 @pytest.mark.slow
-def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, caplog):
+def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_for_SUSHI, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
-    
-    This test's module focuses on the `annualUsageCollectionTracking` relation, and thus this test focuses on the change to that relation made in the `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method. The content of the upload(s) to S3 are not part of this test.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
@@ -68,6 +67,8 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         flash_message_dict = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics(bucket_path=TEST_COUNTER_FILE_PATH)
     log.debug(f"The `collect_annual_usage_statistics()` response:\n{format_list_for_stdout(flash_message_dict)}")
     assert isinstance(flash_message_dict, dict)
+    if 'STOP' in flash_message_dict.keys():
+        pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
 
     database_update_check = query_database(
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
@@ -77,6 +78,21 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         pytest.skip(database_function_skip_statements(database_update_check))
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
     assert database_update_check == "Collection complete"
+
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/11_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    log.error(f"`regex`: {regex}")  #TEST: temp
+    S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
 
 
 #Section: Upload and Download Nonstandard Usage File
