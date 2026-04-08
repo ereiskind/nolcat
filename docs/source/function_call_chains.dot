@@ -196,10 +196,6 @@ digraph function_call_chains {
     _check_if_data_in_database -> return_value_from_query_statement
     _check_if_data_in_database -> database_query_fail_statement
     collect_usage_statistics -> _harvest_R5_SUSHI
-    collect_usage_statistics -> first_new_PK_value
-    collect_usage_statistics -> load_data_into_database
-    collect_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    collect_usage_statistics -> harvest_R5_SUSHI_success_statement
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -2291,18 +2287,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        month_before_month_like_most_recent_month_with_usage [
-            style="dotted"
-            shape="box"
-        ]
-        harvest_R5_SUSHI_result [
-            style="dotted"
-            shape="box"
-        ]
-        test_collect_usage_statistics [
-            style="dashed"
-            shape="box"
-        ]
         test_add_note_in_test_StatisticsSources [
             label="test_add_note"
             style="dashed"
@@ -2373,18 +2357,6 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
-    month_before_month_like_most_recent_month_with_usage -> last_day_of_month
-    month_before_month_like_most_recent_month_with_usage -> most_recent_month_with_usage
-    harvest_R5_SUSHI_result -> _harvest_R5_SUSHI
-    harvest_R5_SUSHI_result -> StatisticsSources_fixture
-    harvest_R5_SUSHI_result -> month_before_month_like_most_recent_month_with_usage
-    test_collect_usage_statistics -> collect_usage_statistics
-    test_collect_usage_statistics -> load_data_into_database_success_regex
-    test_collect_usage_statistics -> engine
-    test_collect_usage_statistics -> match_direct_SUSHI_harvest_result
-    test_collect_usage_statistics -> StatisticsSources_fixture
-    test_collect_usage_statistics -> month_before_month_like_most_recent_month_with_usage
-    test_collect_usage_statistics -> harvest_R5_SUSHI_result
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database

@@ -1127,6 +1127,8 @@ class StatisticsSources(db.Model):
     def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
+        This is effectively a wrapper to use `_harvest_R5_SUSHI()` as a public method.
+
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
@@ -1135,36 +1137,16 @@ class StatisticsSources(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         self._log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
-        df, flash_statements = self._harvest_R5_SUSHI(
+        return self._harvest_R5_SUSHI(
             usage_start_date,
             usage_end_date,
             report_to_harvest,
             code_of_practice,
             bucket_path,
         )
-        if isinstance(df, str):
-            self._log.warning(df)
-            return (df, flash_statements)
-        else:
-            self._log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[0]))
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            flash_statements['first_new_PK_value()'] = message
-            return (message, flash_statements)
-        self._log.debug(f"The dataframe after adjusting the index:\n{df}")
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        return (load_result, flash_statements)
 
 
     @hybrid_method
