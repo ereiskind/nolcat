@@ -238,8 +238,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-@pytest.mark.skip("Function needs to be updated for switch to parquet.")  #TEST: temp--Active on 2026-03-20
-def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
+def test_harvest_SUSHI_statistics(engine, client, tmp_path, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data must be valid COUNTER Registry ID values; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
@@ -247,6 +246,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
         most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
         header_value (dict): HTTP header data
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
@@ -261,9 +261,9 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     )
     if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
-    primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
+    primary_key_choice = choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
     form_input = {
-        'statistics_source': choice(primary_key_list),
+        'statistics_source': primary_key_choice,
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
@@ -272,7 +272,22 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: PARQUET IN S3--This creates a parquet file in S3; the file needs to be checked for and then removed
+    )
+    
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + primary_key_choice + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    log.error(f"`regex`: {regex}")  #TEST: temp
+    S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')

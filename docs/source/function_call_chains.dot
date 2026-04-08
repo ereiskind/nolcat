@@ -1664,6 +1664,7 @@ digraph function_call_chains {
     test_harvest_SUSHI_statistics -> client
     test_harvest_SUSHI_statistics -> header_value
     test_harvest_SUSHI_statistics -> most_recent_month_with_usage
+    test_harvest_SUSHI_statistics -> list_files_in_bucket_location
     test_GET_request_for_upload_non_COUNTER_reports -> upload_non_COUNTER_reports
     test_GET_request_for_upload_non_COUNTER_reports -> create_AUCT_SelectField_options
     test_GET_request_for_upload_non_COUNTER_reports -> query_database
