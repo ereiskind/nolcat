@@ -11,7 +11,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Adjust functions below to account for `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet.create_parquet()` returning the S3 file name as a cloudpathlib.CloudPath object, adjusting tests and function call chain diagram to correspond with changes
 
-    * `nolcat.view_usage.download_non_COUNTER_usage()` with `tests.test_bp_view_usage.test_download_non_COUNTER_usage()`
     * `nolcat.ingest_usage.upload_non_COUNTER_reports()` with `tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`
 
   * Confirm all tests still pass with working teardown
