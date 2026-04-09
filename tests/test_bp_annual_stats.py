@@ -1,5 +1,5 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from bs4 import BeautifulSoup
@@ -12,7 +12,13 @@ log = logging.getLogger(__name__)
 
 
 def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     page = client.get('/annual_stats/')

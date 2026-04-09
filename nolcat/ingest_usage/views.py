@@ -187,25 +187,17 @@ def harvest_SUSHI_statistics(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(  #ToDo: PARQUET IN S3--if a problem that stops harvest happens, dict will have key 'STOP' with value describing problem
-                begin_date,
-                end_date,
-                report_to_harvest,
-                code_of_practice,
-                bucket_path,
-            )
-            log.info(result_message)
-            if [item for sublist in flash_messages.values() for item in sublist]:
-                flash(flash_messages)
-            else:  # So success message shows instead of a lack of error messages
-                flash(result_message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"The SUSHI call raised {error}."
-            log.warning(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        flash_message_dict = statistics_source.collect_usage_statistics(
+            begin_date,
+            end_date,
+            report_to_harvest,
+            code_of_practice,
+            bucket_path,
+        )
+        if 'STOP' in flash_message_dict.keys():
+            log.warning(f"SUSHI harvesting interrupted: {flash_message_dict['STOP']}")
+        flash(flash_message_dict)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -300,13 +292,13 @@ def upload_non_COUNTER_reports(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
-        if upload_nonstandard_usage_file_success_regex().match(response) is None:
-            #ToDo: Do any other actions need to be taken?
-            log.error(response)
-            flash(response)
+        try:
+            S3_file_name = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        except Exception as error:
+            log.error(error)
+            flash(error)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully."
+        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully to {S3_file_name}."
         log.debug(message)
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))

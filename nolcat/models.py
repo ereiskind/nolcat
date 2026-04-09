@@ -392,7 +392,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and functions raising statements and the list of the statements that should be flashed raised by each report and function (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         self._log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
@@ -419,7 +419,7 @@ class FiscalYears(db.Model):
         )
         if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
-            return (message, [message])
+            return {'create AUCT object': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -437,16 +437,15 @@ class FiscalYears(db.Model):
         self._log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
 
         #Section: Collect Usage from Each Statistics Source
-        dfs = []
-        where_statements = []
-        all_flash_statements = {}
+        sections_of_UPDATE_statement = []
+        return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
             statistics_source_df = query_database(
                 query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
                 engine=db.engine,
             )
             if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
-                all_flash_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
+                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
@@ -454,53 +453,29 @@ class FiscalYears(db.Model):
                 statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
                 vendor_ID=statistics_source_df.at[0,'vendor_ID'],
             )
-            df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            for k, v in flash_statements.items():
-                all_flash_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
-            if isinstance(df, str):
+            flash_message_dict = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for k, v in flash_message_dict.items():
+                return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
+            if 'STOP' in flash_message_dict.keys():
                 continue
-            if not df.empty:
-                dfs.append(df)
-            where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
-            self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
+            sections_of_UPDATE_statement.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
+            self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} and FY {self.fiscal_year}.")
         
         #Section: Update Data in Database
-        if len(dfs) == 0:
-            message = f"None of the {len(AUCT_objects_to_collect)} statistics sources with SUSHI for FY {self.fiscal_year} returned any data."
-            self._log.warning(message)
-            all_flash_statements['No data'] = message
-            return (message, all_flash_statements)
-        df = pd.concat(dfs)
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            all_flash_statements['first_new_PK_value()'] = message
-            return (message, all_flash_statements)
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        if not load_data_into_database_success_regex().fullmatch(load_result):
-            return (load_result, all_flash_statements)
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
-            WHERE {" OR ".join(where_statements)};
+            WHERE {" OR ".join(sections_of_UPDATE_statement)};
         """
         update_result = update_database(
             update_statement=update_statement,
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
+            message = f"While the SUSHI data was successfully uploaded to S3, the `annualUsageCollectionTracking` wasn't updated, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
-            all_flash_statements['update_database()'] = message
-            return (message, all_flash_statements)
-        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
+            return_statements['update_database()'] = message
+        return return_statements
 
 
 class AnnualStatistics(db.Model):
@@ -815,47 +790,40 @@ class StatisticsSources(db.Model):
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
             code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
-            tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         #Section: Get API Call URL and Parameters
         self._log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)  #ALERT: `raise InvalidSUSHIDatesError`
+            message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             self._log.error(message)
-            return (message, {'dates': [message]})
+            return {'dates': [message]}
         SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        self._log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
-        all_flashed_statements = {}
+        return_statements = {}
         self._log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
-
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
-            self.statistics_source_name,
-            SUSHI_info['URL'],
-            "status",
-            SUSHI_parameters
-        ).make_SUSHI_call(bucket_path)
-        all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
-            # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
-                # MathSciNet `status` endpoint returns HTTP status code 400
-                # Web of Science includes `Alerts` with information about most recent month with usage available
-            self._log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
-            pass
-        #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
-        elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)  #ALERT: `raise InvalidSUSHIResponseError`
-            self._log.warning(message)
-            return (message, all_flashed_statements)
-        else:
-            self._log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
-            pass
-
+        try:
+            SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+                self.statistics_source_name,
+                SUSHI_info['URL'],
+                "status",
+                SUSHI_parameters
+            ).make_SUSHI_call(bucket_path)
+        except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error[0]}. SUSHI calls will *NOT* be made."
+            return_statements['status'] = flash_message_list
+            return_statements['STOP'] = []
+            for e in error[1] + [message]:
+                return_statements['STOP'].append(e)
+            self._log.warning(return_statements)
+            return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+        return_statements['status'] = flash_message_list
+        self._log.info(f"The call to `status` for {self.statistics_source_name} was successful.")
 
         #Section: Harvest Individual Report if Specified
         if isinstance(report_to_harvest, str):
@@ -869,37 +837,48 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "IR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
-            else:
-                message = "An invalid value was received from a fixed text field."
-                self._log.critical(message)
-                all_flashed_statements['CRITICAL'] = message
-                return (message, all_flashed_statements)
-            SUSHI_data_response, flash_message_list = self._harvest_single_report(
-                report_to_harvest,
-                SUSHI_info['URL'],
-                SUSHI_parameters,
-                usage_start_date,
-                usage_end_date,
-                bucket_path=bucket_path,
-            )
-            all_flashed_statements[report_to_harvest] = flash_message_list
-            if isinstance(SUSHI_data_response, str):
-                self._log.error(SUSHI_data_response)
-            return (SUSHI_data_response, all_flashed_statements)
+            try:
+                S3_file_name, flash_message_list = self._harvest_single_report(
+                    report_to_harvest,
+                    SUSHI_info['URL'],
+                    SUSHI_parameters,
+                    usage_start_date,
+                    usage_end_date,
+                    bucket_path=bucket_path,
+                )
+            except InvalidSUSHIResponseError as error:
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
+                return_statements[report_to_harvest] = flash_message_list
+                return_statements['STOP'] = []
+                for e in error[1] + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return_statements[report_to_harvest] = flash_message_list
+            return return_statements
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
             self._log.debug(f"Making a call for the `reports` endpoint.")
-            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
-                self.statistics_source_name,
-                SUSHI_info['URL'],
-                "reports",
-                SUSHI_parameters
-            ).make_SUSHI_call(bucket_path)
-            all_flashed_statements['reports'] = flash_message_list
+            try:
+                SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                    self.statistics_source_name,
+                    SUSHI_info['URL'],
+                    "reports",
+                    SUSHI_parameters
+                ).make_SUSHI_call(bucket_path)
+            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error[0]}."
+                return_statements['reports'] = flash_message_list
+                return_statements['STOP'] = []
+                for e in error[1] + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-                self._log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
+                self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
                 all_available_reports = []
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
@@ -907,13 +886,11 @@ class StatisticsSources(db.Model):
                             if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 self._log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
-            elif isinstance(SUSHI_reports_response, str):
-                self._log.warning(SUSHI_reports_response)
-                return (SUSHI_reports_response, all_flashed_statements)
             else:
-                message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response  is required:\n{SUSHI_reports_response}"
+                message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response is required:\n{SUSHI_reports_response}"
+                return_statements['STOP'] = [message]
                 self._log.error(message)
-                return (message, all_flashed_statements)
+                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
 
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
@@ -930,13 +907,10 @@ class StatisticsSources(db.Model):
             if len(not_represented_by_custom_report) > 0:  # Logging statement only appears if it would include content
                 self._log.debug(f"Standard reports lacking corresponding customizable reports provided by {self.statistics_source_name}: {not_represented_by_custom_report}.")
 
-
             #Section: Make Customizable Report SUSHI Calls
             #Subsection: Set Up Loop Through Customizable Reports
             for report_name in available_custom_reports:
-                all_flashed_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
-            custom_report_dataframes = []
-            complete_flash_message_list = []
+                return_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             no_usage_returned_count = 0
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
@@ -961,45 +935,42 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
                 if not re.search(r"/r5\d+/", SUSHI_info['URL']):
-                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # In R5.1, this is mandatory
+                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
-                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # This was removed after R5
+                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # Removed starting in R5
 
                 #Subsection: Make API Call(s)
-                SUSHI_data_response, flash_message_list = self._harvest_single_report(
-                    report_name,
-                    SUSHI_info['URL'],
-                    SUSHI_parameters,
-                    usage_start_date,
-                    usage_end_date,
-                    bucket_path=bucket_path,
-                )
-                all_flashed_statements[report_name] = flash_message_list
-                for item in flash_message_list:
-                    complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-                    self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
+                try:
+                    S3_file_name, flash_message_list = self._harvest_single_report(
+                        report_name,
+                        SUSHI_info['URL'],
+                        SUSHI_parameters,
+                        usage_start_date,
+                        usage_end_date,
+                        bucket_path=bucket_path,
+                    )
+                except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
                     self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
+                    return_statements[report_to_harvest] = flash_message_list
+                    for e in error[1] + [f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."]:
+                        return_statements[report_to_harvest].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                elif isinstance(SUSHI_data_response, str):
-                    self._log.error(SUSHI_data_response)
-                    return (SUSHI_data_response, all_flashed_statements)
-                if not SUSHI_data_response.empty:
-                    custom_report_dataframes.append(SUSHI_data_response)
+                except InvalidSUSHIResponseError as error:
+                    message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
+                    return_statements[report_to_harvest] = flash_message_list
+                    return_statements['STOP'] = []
+                    for e in error[1] + [message]:
+                        return_statements['STOP'].append(e)
+                    self._log.error(message)
+                    return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return_statements[report_to_harvest] = flash_message_list
+
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 self._log.warning(message)
-                return (message, all_flashed_statements)
-
-
-            #Section: Return a Single Dataframe
-            try:
-                return (pd.concat(custom_report_dataframes, ignore_index=True), all_flashed_statements)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            except ValueError as error:
-                message = f"The harvested reports couldn't be combined because of the error {error}."
-                self._log.error(message)
-                return (message, all_flashed_statements)
+                return_statements['All Reports'] = [message]
+            return return_statements
 
 
     @hybrid_method
@@ -1012,113 +983,105 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
             start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: an error message, if applicable (str or null); a list of the statements that should be flashed (list of str)
+            tuple: the parquet file(s) saved to S3 (cloudpathlib.CloudPath or list); a list of the statements that should be flashed (list of str)
+
+        Raises:
+            NoSUSHIUsageDataError: if no SUSHI usage data is returned
+            InvalidSUSHIResponseError: if the SUSHI call returns an error
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, list):
-            if len(subset_of_months_to_harvest) == 0:
+        if isinstance(subset_of_months_to_harvest, str):
+            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
+            return (None, [message])
+        elif isinstance(subset_of_months_to_harvest, list):
+            if len(subset_of_months_to_harvest) == 0:  #ToDo: This is being left as not raising an error, returning null to represent no parquet files, since the `_check_if_data_in_database()` function will need to change to look in parquet files instead of querying MySQL
                 message = f"The database already has {report} usage for {self.statistics_source_name} for every month in the {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} date range."
                 self._log.info(message)
-                return (message, [message])
+                return (None, [message])
             else:
                 self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
                 complete_flash_message_list = []
+                S3_file_name_list = []
                 no_usage_returned_count = 0
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
-                    SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
-                        self.statistics_source_name,
-                        SUSHI_URL,
-                        f"reports/{report.lower()}",
-                        SUSHI_parameters
-                    ).make_SUSHI_call(bucket_path)
+                    try:
+                        SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                            self.statistics_source_name,
+                            SUSHI_URL,
+                            f"reports/{report.lower()}",
+                            SUSHI_parameters
+                        ).make_SUSHI_call(bucket_path)
+                    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+                        #OLD: self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
+                        no_usage_returned_count += 1
+                        for e in error[3]:
+                            complete_flash_message_list.append(e)
+                        self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
+                        continue
+                    except InvalidSUSHIResponseError as error:
+                        message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        for e in error[1]:
+                            complete_flash_message_list.append(e)
+                        self._log.critical(message)
+                        raise InvalidSUSHIResponseError(message, complete_flash_message_list)
+                    except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
+                        self._log.critical(message)
+                        for e in error[1] + [message]:
+                            complete_flash_message_list.append(e)
+                        continue
                     for item in flash_message_list:
                         complete_flash_message_list.append(item)
-                    if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?[\n\s].+[\n\s]API calls to .+ have stopped and no other calls will be made\.", SUSHI_data_response):
-                        message = SUSHI_data_response + " " + f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
-                        self._log.warning(message)
-                        complete_flash_message_list.append(message)
-                        return (message, complete_flash_message_list)
-                    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-                        self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
-                        no_usage_returned_count += 1
-                        self._log.warning(SUSHI_data_response)
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    elif isinstance(SUSHI_data_response, str):
-                        self._log.warning(SUSHI_data_response)
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
-                    if df:
-                        message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
-                        self._log.warning(message)
-                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
-                        logging_message = save_unconverted_data_via_upload(
-                            SUSHI_data_response,
-                            file_name_stem,
-                            bucket_path,
-                        )
-                        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-                            message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
-                            self._log.critical(message)
-                        else:
-                            message = message + " " + logging_message
-                            self._log.debug(message)
-                        complete_flash_message_list.append(message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    try:
+                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
+                    except S3InteractionError as error:
+                        complete_flash_message_list.append(error)
+                        continue  # Raising an error here would keep any other reports from being pulled and processed
+                    S3_file_name_list.append(S3_file_name)
+                    if parquet_file_name_regex().fullmatch(S3_file_name):
+                        self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
                     else:
-                        self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 successful.")
-                        return (None, complete_flash_message_list)
+                        self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = no_data_returned_by_SUSHI_statement(report.lower(), self.statistics_source_name)  #ALERT: `raise NoSUSHIUsageDataError`
-                    self._log.warning(message)
-                    return (message, complete_flash_message_list)
+                    raise NoSUSHIUsageDataError(report.lower(), self.statistics_source_name, "all months returned no usage")
+                return (S3_file_name_list, complete_flash_message_list)
 
         elif subset_of_months_to_harvest is None:
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
-                self.statistics_source_name,
-                SUSHI_URL,
-                f"reports/{report.lower()}",
-                SUSHI_parameters
-            ).make_SUSHI_call(bucket_path)
-            if isinstance(SUSHI_data_response, str):
-                self._log.warning(SUSHI_data_response)
-                return (SUSHI_data_response, flash_message_list)
-            df = ConvertJSONDictToDataframe(SUSHI_data_response, report, self.statistics_source_ID).create_dataframe()
-            if df:
-                message = f"Saving the JSON-like dictionary of {report} for {self.statistics_source_name} as a parquet file in S3 raised {df}"
-                self._log.warning(message)
-                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
-                logging_message = save_unconverted_data_via_upload(
-                    SUSHI_data_response,
-                    file_name_stem,
-                    bucket_path,
-                )
-                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-                    message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
-                    self._log.critical(message)
-                else:
-                    message = message + " " + logging_message
-                    self._log.debug(message)
-                flash_message_list.append(message)
-                return (message, flash_message_list)
+            try:
+                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                    self.statistics_source_name,
+                    SUSHI_URL,
+                    f"reports/{report.lower()}",
+                    SUSHI_parameters
+                ).make_SUSHI_call(bucket_path)
+            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
+                for e in error[1] + [message]:
+                    flash_message_list.append(e)
+                self._log.critical(message)
+                raise InvalidSUSHIResponseError(message, flash_message_list)
+            try:
+                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
+            except S3InteractionError as error:
+                flash_message_list.append(error)
+                raise S3InteractionErrorWithFlashMessages(error, flash_message_list)
+            if parquet_file_name_regex().fullmatch(S3_file_name):
+                self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
-                self._log.info(f"Saving the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 successful.")
-                return (None, flash_message_list)
-
-        elif isinstance(subset_of_months_to_harvest, str):
-            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
-            return (message, [message])
+                self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
+            return (S3_file_name, flash_message_list)
 
 
     @hybrid_method
@@ -1164,7 +1127,7 @@ class StatisticsSources(db.Model):
     def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None, code_of_practice=None, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
+        This is effectively a wrapper to use `_harvest_R5_SUSHI()` as a public method.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
@@ -1174,36 +1137,16 @@ class StatisticsSources(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
         """
         self._log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
-        df, flash_statements = self._harvest_R5_SUSHI(
+        return self._harvest_R5_SUSHI(
             usage_start_date,
             usage_end_date,
             report_to_harvest,
             code_of_practice,
             bucket_path,
         )
-        if isinstance(df, str):
-            self._log.warning(df)
-            return (df, flash_statements)
-        else:
-            self._log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[0]))
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            flash_statements['first_new_PK_value()'] = message
-            return (message, flash_statements)
-        self._log.debug(f"The dataframe after adjusting the index:\n{df}")
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        return (load_result, flash_statements)
 
 
     @hybrid_method
@@ -1593,13 +1536,16 @@ class AnnualUsageCollectionTracking(db.Model):
     def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
+        
+        Raises:
+            DatabaseInteractionErrorWithFlashMessages: if the SQL update statement fails
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
@@ -1611,11 +1557,11 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(fiscal_year_data, "return requested values")
             self._log.warning(message)
-            return (fiscal_year_data, {"Before SUSHI": message})
+            return {'STOP': [message]}
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        self._log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        self._log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
@@ -1626,7 +1572,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(statistics_source_data, "return requested values")
             self._log.warning(message)
-            return (fiscal_year_data, {"Before SUSHI": message})
+            return {'STOP': [message]}
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
@@ -1636,26 +1582,14 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
-        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date, bucket_path=bucket_path)
-        if isinstance(df, str):
-            self._log.warning(df)
-            return (df, flash_statements)
-        self._log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], fiscal_year))
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:  #ALERT: `except DatabaseInteractionError`
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            self._log.warning(message)
-            flash_statements['first_new_PK_value()'] = message
-            return (message, flash_statements)
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
+        flash_message_dict = statistics_source._harvest_R5_SUSHI(
+            start_date,
+            end_date,
+            bucket_path=bucket_path,
         )
-        if not load_data_into_database_success_regex().fullmatch(load_result):
-            return (load_result, flash_statements)
+        if 'STOP' in flash_message_dict.keys():
+            self._log.warning(flash_message_dict)
+            return flash_message_dict
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
@@ -1666,11 +1600,10 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
-            flash_statements['update_database()'] = message
-            return (message, flash_statements)
-        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", flash_statements)
+            raise DatabaseInteractionErrorWithFlashMessages(message, [message, flash_message_dict])
+        return flash_message_dict
 
 
     @hybrid_method
@@ -1682,7 +1615,12 @@ class AnnualUsageCollectionTracking(db.Model):
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
 
         Returns:
-            str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
+            cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
+
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
+            S3InteractionError: if a problem occurs while saving the data to S3
+            ValueError: if the file type as determined by the file extension cannot be uploaded to S3
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` for the file {file}.")
         #Section: Create S3 File Name
@@ -1694,24 +1632,24 @@ class AnnualUsageCollectionTracking(db.Model):
         if file_extension not in file_extensions_and_mimetypes().keys():
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             self._log.error(message)
-            return message
-        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
-        self._log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 location `{BUCKET_NAME}/{bucket_path}`"))
+            raise ValueError(message)
+        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"
+        self._log.debug(f"About to upload file {file_name} from WTForms FileField field {file_path.resolve()} to {bucket_path}.")
 
         #Section: Use Temp File to Upload File to S3
         temp_file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / f'temp{file_extension}'
         file.save(temp_file_path)
-        logging_message = upload_file_to_S3_bucket(
-            temp_file_path,
-            file_name,
-            bucket_path,
-        )
-        temp_file_path.unlink()
-        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-            message = failed_upload_to_S3_statement(file_name, logging_message)
-            self._log.critical(message)
-            return message
-        self._log.debug(logging_message)
+        try:
+            S3_file_name = upload_file_to_S3_bucket(
+                temp_file_path,
+                file_name,
+                bucket_path,
+            )
+        except S3InteractionError as error:
+            raise S3InteractionError(error)
+        finally:
+            temp_file_path.unlink()
+        self._log.debug(f"File {S3_file_name} successfully loaded to S3.")
         
         #Section: Update `collection_status` in Database
         update_statement = f"""
@@ -1726,12 +1664,9 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
-            self._log.warning(message)
-            return message
-        message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
-        self._log.info(message)
-        return message
+            raise DatabaseInteractionError(f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}")
+        self._log.info(f"Successfully updated `annualUsageCollectionTracking.usage_file_path` to {file_name} and `annualUsageCollectionTracking.collection_status` to 'Collection complete'.")
+        return S3_file_name
     
 
     @hybrid_method
@@ -1740,34 +1675,37 @@ class AnnualUsageCollectionTracking(db.Model):
 
         Args:
             web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_NON_COUNTER_FILE_PATH`
+            bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_NON_COUNTER_FILE_PATH`
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
+        
+        Raises:
+            S3InteractionError: if the file isn't downloaded from S3 or can't be downloaded from TOP_NOLCAT_DIRECTORY
         """
-        self._log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path + self.usage_file_path}.")
+        self._log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path}/{self.usage_file_path}.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        self._log.debug(file_IO_statement(self.usage_file_path, f"S3 location `{BUCKET_NAME}/{bucket_path}`", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
-        s3_client.download_file(
-            Bucket=BUCKET_NAME,
-            Key=bucket_path + self.usage_file_path,
-            Filename=self.usage_file_path,
-        )
-        if self.usage_file_path in [str(p.name) for p in TOP_NOLCAT_DIRECTORY.iterdir()]:
-            temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path
-            temp_usage_file_path.rename(file_download_path)
-            self._log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
-            return file_download_path
-        else:
-            #ALERT: `raise S3InteractionError`
-            self._log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {TOP_NOLCAT_DIRECTORY}.")
-            return False
+        self._log.debug(f"About to download file {self.usage_file_path} from {bucket_path} to {TOP_NOLCAT_DIRECTORY.resolve()}.")
+        try:
+            s3_client.download_file(
+                Bucket=BUCKET_NAME,
+                Key=bucket_path.key + self.usage_file_path,
+                Filename=self.usage_file_path,
+            )
+        except botocore.exceptions.BotoCoreError as error:
+            message = f"The file {bucket_path}/{self.usage_file_path} wasn't downloaded because of the error {error}."
+            self._log.error(message)
+            raise S3InteractionError(message)
+        temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path
+        temp_usage_file_path.rename(file_download_path)
+        self._log.info(f"Successfully downloaded {self.usage_file_path} to {file_download_path.resolve()} in the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
+        return file_download_path
 
 
 class COUNTERData(db.Model):
     """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
 
-    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToDataframe` to be updated at the same time.
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToParquet` to be updated at the same time.
 
     Attributes:
         self.COUNTER_data_ID (int): the primary key

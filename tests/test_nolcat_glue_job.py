@@ -1,16 +1,16 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from filecmp import cmp
 from random import choice
-from datetime import timedelta
+from urllib.parse import urlsplit
+from random import randrange
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
-from conftest import get_name_of_parquet_file_saved_to_S3
 from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 
@@ -99,6 +99,7 @@ def test_return_string_of_dataframe_info():
     })
     assert return_string_of_dataframe_info(two) == "<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 3 entries, 0 to 2\nData columns (total 3 columns):\n #   Column  Non-Null Count  Dtype  \n---  ------  --------------  -----  \n 0   int     3 non-null      int64  \n 1   string  3 non-null      string \n 2   Bool    2 non-null      boolean\ndtypes: boolean(1), int64(1), string(1)\nmemory usage: 186.0 bytes\n"
 
+
 def test_format_list_for_stdout_with_list():
     """Test pretty printing a list by adding a line break between each item."""
     assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
@@ -108,6 +109,9 @@ def test_format_list_for_stdout_with_generator(create_COUNTERData_workbook_iterd
     """Test pretty printing a list created by a generator object by adding a line break between each item.
     
     The assert statements, which look for every file that should be in the created string and then check that there are only that many items in the string, is used to compensate for `iterdir()` not outputting the files in an exact order.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
     """
     result = format_list_for_stdout(create_COUNTERData_workbook_iterdir_list)
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2017.xlsx" in result
@@ -257,6 +261,10 @@ def test_load_data_into_database(engine, vendors_relation):
     """Tests loading data into a relation.
 
     Testing the helper function for loading data into the database also confirms that the database and program are connected.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        vendors_relation (dataframe): a relation of test data
     """
     result = load_data_into_database(
         df=vendors_relation,
@@ -274,6 +282,10 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        statisticsSources_relation (dataframe): a relation of test data
     """
     df_dtypes = {
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
@@ -335,6 +347,10 @@ def test_query_database(engine, vendors_relation):
     """Tests getting data from the database through a SQL query.
 
     This test performs a `SELECT *` query on the relation that had data loaded into it in the previous test, confirming that the function works and that the database and program are connected to allow CRUD operations.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        vendors_relation (dataframe): a relation of test data
     """
     retrieved_vendors_data = query_database(
         query="SELECT * FROM vendors;",
@@ -347,7 +363,11 @@ def test_query_database(engine, vendors_relation):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_first_new_PK_value(client):
-    """Tests the retrieval of a relation's next primary key value."""
+    """Tests the retrieval of a relation's next primary key value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         assert first_new_PK_value('vendors') == 8
 
@@ -357,7 +377,12 @@ def test_first_new_PK_value(client):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database(engine, client):
-    """Tests updating data in the database through a SQL update statement."""
+    """Tests updating data in the database through a SQL update statement.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         update_result = update_database(
             update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
@@ -392,7 +417,12 @@ def test_update_database(engine, client):
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database_with_insert_statement(engine, client):
-    """Tests adding records to the database through a SQL insert statement."""
+    """Tests adding records to the database through a SQL insert statement.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     with client:
         update_result = update_database(
             update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
@@ -433,7 +463,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     """Creates a dataframe for use in `test_save_dataframe_to_S3_bucket()` and deletes it when the test is complete.
 
     Args:
-        COUNTERData_relation (dataframe): a dataframe of test data
+        COUNTERData_relation (dataframe): a dataframe of all the COUNTER test data
     
     Yields:
         tuple: a dataframe of test data (dataframe); the test data statistics source ID of the data in the dataframe (int); the report type of the data in the dataframe (str)
@@ -447,77 +477,73 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
         if not df.empty:
             break
     log.info(f"Using test data from statistics source ID {statistics_source_ID} and report type {report_type} for `test_save_dataframe_to_S3_bucket()`.")
-    before = datetime.now()
     yield (df, statistics_source_ID, report_type)
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(
-        before,
-        after,
-        statistics_source_ID,
-        report_type,
-    )
-    if file_name:
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    possible_S3_file_names = []
+    for file in files_in_bucket:
+        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+            possible_S3_file_names.append(file)
+    if len(possible_S3_file_names) == 1:
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH + file_name,
+                Key=possible_S3_file_names[0].key,
             )
         except botocore.exceptions as error:
-            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+            log.error(unable_to_delete_test_file_in_S3_statement(possible_S3_file_names[0], error))
     else:
-        log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
+        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(files_in_bucket)}.")
 
 
+@pytest.mark.slow
 def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
-    """Tests saving a dataframe as a parquet file in a S3 bucket."""
+    """Tests saving a dataframe as a parquet file in a S3 bucket.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        dataframe_to_save_to_S3 (tuple): test data from `COUNTERData` matching a given statistics source ID and report type; that statistics source ID; that report type
+    """
     df, statistics_source_ID, report_type = dataframe_to_save_to_S3
-    before = datetime.now()
-    result = save_dataframe_to_S3_bucket(
+    S3_file_name = save_dataframe_to_S3_bucket(
         df,
         statistics_source_ID,
         report_type,
         TEST_COUNTER_FILE_PATH,
     )
-    assert result is None
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.parent == TEST_COUNTER_FILE_PATH
+    assert parquet_file_name_regex().fullmatch(S3_file_name.name)
+    download_location = tmp_path / S3_file_name.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     df_from_parquet = pd.read_parquet(download_location)
     assert_frame_equal(df.reset_index(drop=True), df_from_parquet)
 
 
-def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_file_to_S3_bucket(tmp_path, path_to_sample_file, remove_test_file_from_COUNTER_S3_folder):
     """Tests uploading files to a S3 bucket.
     
     TEST_COUNTER_FILE_PATH is used to match with the fixtures creating and removing the file.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        remove_test_file_from_COUNTER_S3_folder (None): removes a file loaded into `TEST_COUNTER_FILE_PATH` in S3
     """
-    logging_message = upload_file_to_S3_bucket(
+    S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         path_to_sample_file.name,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    assert path_to_sample_file.name in bucket_contents
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.name == path_to_sample_file.name
     download_location = tmp_path / path_to_sample_file.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)
@@ -532,14 +558,14 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
 
     Args:
         request (dict or str): the contents of the file that will be saved to S3
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
 
     Yields:
         tuple: the stem of the name under which the file will be saved in S3 (str); the data that will be in the file saved to S3 (dict or str)
     """
     data = request.param
     log.debug(f"In `file_name_stem_and_data()`, the `data` is {data}.")
-    file_name_stem = f"{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
-    log.info(f"In `file_name_stem_and_data()`, the `file_name_stem` is {file_name_stem}.")
+    file_name_stem = f"{randrange(11)}_report-{choice(('P', 'D', 'T', 'I'))}R_{most_recent_month_with_usage[0].strftime('%Y-%m')}_{most_recent_month_with_usage[1].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"  # This is the format used for usage reports, which are the most frequently type of saved report
     yield (file_name_stem, data)
     if isinstance(data, dict):
         file_name = file_name_stem + '.json'
@@ -548,34 +574,57 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_COUNTER_FILE_PATH + file_name
+            Key=TEST_COUNTER_FILE_PATH.key + file_name
         )
-    except botocore.exceptions as error:
+    except botocore.exceptions.BotoCoreError as error:
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
-def test_save_unconverted_data_via_upload(file_name_stem_and_data):
-    """Tests saving data that can't be transformed for loading into the database to a file in S3."""
+def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
+    """Tests saving data that can't be transformed for loading into the database to a file in S3.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        file_name_stem_and_data (tuple): the file name stem; the file contents
+    """
     file_name_stem, data = file_name_stem_and_data
-    logging_message = save_unconverted_data_via_upload(
+    S3_file_name = save_unconverted_data_via_upload(
         data=data,
         file_name_stem=file_name_stem,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
-    list_objects_response = s3_client.list_objects_v2(
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.stem == file_name_stem
+    download_location = tmp_path / S3_file_name.name
+    s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
+        Key=S3_file_name.key,
+        Filename=download_location,
     )
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(TEST_COUNTER_FILE_PATH, "") for file_name in bucket_contents]
-    if isinstance(data, dict):
-        assert f"{file_name_stem}.json" in bucket_contents
-    else:
-        assert f"{file_name_stem}.txt" in bucket_contents
+    with open(download_location, encoding='utf-8') as f:
+        if isinstance(data, dict):
+            file_contents = json.load(f)
+        else:
+            file_contents = f.read()
+    log.debug(f"The contents of `{S3_file_name}` (type {type(file_contents)}):\n{file_contents}")
+    assert data == file_contents
+
+
+def test_list_files_in_bucket_location():
+    """Tests listing the files in a given S3 folder.
+
+    The specific S3 folder chosen has copies of the documents used to build NoLCAT's nginx image. It was chose because its contents rarely change and nothing about the file names/locations gives away sensitive information. Any other implementations of this repo will need to adjust the values `S3_location` and `files_in_S3_location`.
+    """
+    S3_location = CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx")
+    list_objects_response = list_files_in_bucket_location(S3_location)
+    files_in_S3_location = [
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/cnf-vars"),
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/Dockerfile"),
+        CloudPath(f"s3://{BUCKET_NAME}/nolcat/sysadmin/docker/nginx/nginx.conf"),
+    ]
+    assert len(list_objects_response) == len(files_in_S3_location)
+    for file in files_in_S3_location:
+        assert file in list_objects_response
 
 
 #SECTION: COUNTER Registry Tests
@@ -593,6 +642,9 @@ def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
     
     Regex taken from https://stackoverflow.com/a/3809435.
+
+    Args:
+        request (tuple): COUNTER registry ID; COUNTER CoP; SUSHI URL matching registry ID and CoP
     """
     registry_ID, expected_code_of_practice, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
@@ -611,6 +663,9 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
     
     Regex taken from https://stackoverflow.com/a/3809435.
+
+    Args:
+        request (tuple): COUNTER registry ID; SUSHI URL matching registry ID
     """
     registry_ID, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
@@ -629,7 +684,7 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
 
 
-#SECTION: `ConvertJSONDictToDataframe()` Tests
+#SECTION: `ConvertJSONDictToParquet()` Tests
 @pytest.fixture
 def R5_JSON_3_PR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_PR.json` JSON."""
@@ -5971,7 +6026,7 @@ def R5b1_JSON_3_IR_relation():
     "R5b1_IR",
 ])
 def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relation, R5_JSON_3_TR_relation, R5_JSON_3_IR_relation, R5b1_JSON_3_PR_relation, R5b1_JSON_0_DR_relation, R5b1_JSON_3_TR_relation, R5b1_JSON_3_IR_relation):
-    """A parameterized fixture function with the data for testing `ConvertJSONDictToDataframe().create_dataframe()` for all COUNTER R5 report types and minor releases.
+    """A parameterized fixture function with the data for testing `ConvertJSONDictToParquet().create_parquet()` for all COUNTER R5 report types and minor releases.
 
     Args:
         request (str): description of the use case
@@ -5988,7 +6043,6 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         tuple: the location of the JSON being converted to a dataframe (pathlib.Path); the report type of the JSON being converted to a dataframe (str); the statistics source ID of the JSON being converted to a dataframe (int); the dataframe resulting from the conversion (dataframe)
     """
     JSON_report_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data'
-    before = datetime.now()
     if request.param == "R5_PR":
         JSON_report_path = JSON_report_path / 'R5_COUNTER_JSONs_for_tests' / '3_PR.json'
         report_type = "PR"
@@ -6029,41 +6083,43 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         report_type = "IR"
         statistics_source_ID = 3
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
-    after = datetime.now()
-    file_name = get_name_of_parquet_file_saved_to_S3(
-        before,
-        after,
-        statistics_source_ID,
-        report_type,
-    )
-    if file_name:
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    possible_S3_file_names = []
+    for file in files_in_bucket:
+        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+            possible_S3_file_names.append(file)
+    if len(possible_S3_file_names) == 1:
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_COUNTER_FILE_PATH + file_name,
+                Key=possible_S3_file_names[0].key,
             )
         except botocore.exceptions as error:
-            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+            log.error(unable_to_delete_test_file_in_S3_statement(possible_S3_file_names[0], error))
     else:
-        log.error(f"Unable to find a file to delete in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`")
+        log.error(f"The following files from `{TEST_COUNTER_FILE_PATH}` were compared to the parquet file name regex and the file name information known in the fixture, but no match could be found:\n{format_list_for_stdout(files_in_bucket)}.")
 
 
 @pytest.mark.slow  # For IR tests
-def test_create_dataframe(tmp_path, JSON_dicts_with_metadata, caplog):
-    """Tests converting JSONs as Python dicts to dataframes."""
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToDataframe')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
+def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
+    """Tests converting JSONs as Python dicts to dataframes.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        JSON_dicts_with_metadata (tuple): the location of the JSON being converted to a dataframe; the report type; the statistics source ID; the dataframe resulting from the conversion
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
-    before = datetime.now()
-    df = ConvertJSONDictToDataframe(dict_from_JSON, report_type, statistics_source_ID).create_dataframe(test=True)
-    after = datetime.now()
-    assert df is None
-    file_name = get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type)
-    download_location = tmp_path / file_name
+    S3_file_name = ConvertJSONDictToParquet(dict_from_JSON, report_type, statistics_source_ID).create_parquet(test=True)
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.stem.startswith(JSON_report_path.stem)
+    download_location = tmp_path / S3_file_name.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)

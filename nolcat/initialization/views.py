@@ -586,17 +586,16 @@ def upload_historical_non_COUNTER_usage(testing):
                     log.error(message)
                     flash(message)
                     return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
-                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
-                if upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                    log.debug(response)
-                    files_uploaded += 1
-                elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
-                    log.warning(response)
-                    flash_error_messages[file['usage_file'].filename] = response
+                try:
+                    S3_file_name = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
+                except Exception as error:
+                    log.error(error)
+                    flash_error_messages[file['usage_file'].filename] = error
                 else:
-                    log.warning(response)
-                    flash_error_messages[file['usage_file'].filename] = response
-        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload}files.")
+                    log.debug(f"File successfully uploaded to {S3_file_name}")
+                    files_uploaded += 1
+        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload} files.")
+        flash(flash_error_messages)
         return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)

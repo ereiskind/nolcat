@@ -16,6 +16,7 @@ Test modules are designed to be run from the root folder with the command `pytho
   * Pytest has a built-in argument for saving logging to a file, but it saves only the logging; the session2file extension copies the complete pytest output to stdout, including the stack trace.
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
+* To run a single test, end the command with the module containing the file, two colons, and the name of the test
 
 Working with the Database Within the Container
 ==============================================
@@ -140,7 +141,7 @@ Create `ConvertJSONDictToDataframe` Test Fixtures
 
 Test Data Parquet Files
 -----------------------
-With the transition to AWS and using parquet to store COUNTER usage data, the ETL flow was changed so once the transformation was complete, the resulting dataframe was loaded/saved as a parquet file to S3. The tests needed to change accordingly. The parquet files themselves needed for tests are saved in "\\tests\\data\\COUNTER_parquet_files_for_tests", they will need to be moved to the S3 location identified by the `TEST_COUNTER_FILE_PATH` constant for the tests to run properly.
+With the transition to AWS and using parquet to store COUNTER usage data, the ETL flow was changed so once the transformation from JSON or Excel to dataframe is complete, the resulting dataframe is loaded/saved as a parquet file to S3. The tests needed to change accordingly.
 
 Transaction Rollbacks
 =====================

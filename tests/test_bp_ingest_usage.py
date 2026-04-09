@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2026-02-20 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from random import choice
@@ -21,7 +21,11 @@ log = logging.getLogger(__name__)
 
 
 def test_ingest_usage_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/ingest_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -40,7 +44,16 @@ def test_ingest_usage_homepage(client):
 @pytest.mark.dependency()
 @pytest.mark.slow
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
-    """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
+    """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTERData_relation (dataframe): a relation of test data
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
@@ -81,6 +94,12 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
     
     This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
@@ -147,6 +166,10 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
     """Tests pulling a set number of records from the `COUNTERData` relation and modifying them so they match the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
     
     This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. The function is tested here because the immediately preceding test function loads exactly seven records into the `COUNTERData` relation, and so if it passes, the won't fail due to the last records in `COUNTERData` not containing the expected data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     df = match_direct_SUSHI_harvest_result(engine, 7, caplog)
@@ -172,7 +195,13 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
-    """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
+    """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
@@ -209,10 +238,18 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
+def test_harvest_SUSHI_statistics(engine, client, tmp_path, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data must be valid COUNTER Registry ID values; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
+        header_value (dict): HTTP header data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
@@ -224,9 +261,9 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     )
     if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
-    primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
+    primary_key_choice = choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
     form_input = {
-        'statistics_source': choice(primary_key_list),
+        'statistics_source': primary_key_choice,
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
@@ -235,7 +272,22 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         follow_redirects=True,
         headers=header_value,
         data=form_input,
-    )  #ToDo: PARQUET IN S3--This creates a parquet file in S3; the file needs to be checked for and then removed
+    )
+    
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + primary_key_choice + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    log.error(f"`regex`: {regex}")  #TEST: temp
+    S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -248,7 +300,13 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
-    """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
+    """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
     
@@ -303,7 +361,17 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
 
 
 def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
-    """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
+    """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
@@ -340,7 +408,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully to", prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Successful Database Update
     df = query_database(
@@ -351,24 +419,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_NON_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    files_in_bucket = []
-    bucket_contents = list_objects_response.get('Contents')
-    if bucket_contents:
-        for contents_dict in bucket_contents:
-            files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for name in files_in_bucket]
-        assert file_name in files_in_bucket
-    else:
-        assert False  # Nothing in bucket
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / file_name
+    files_in_bucket = list_files_in_bucket_location(S3_file_name)
+    assert file_name in files_in_bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_NON_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

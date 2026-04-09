@@ -10,6 +10,7 @@ from datetime import timedelta
 from random import choice
 import re
 import html
+from urllib.parse import urlsplit
 from sqlalchemy import create_engine
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
@@ -471,8 +472,8 @@ def path_to_sample_file(request):
 
 
 @pytest.fixture
-def remove_file_from_S3(path_to_sample_file):
-    """Removes a file loaded into S3.
+def remove_test_file_from_COUNTER_S3_folder(path_to_sample_file):
+    """Removes a file loaded into `TEST_COUNTER_FILE_PATH` in S3.
 
     The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
 
@@ -482,14 +483,39 @@ def remove_file_from_S3(path_to_sample_file):
     Yields:
         None
     """
-    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
+    log.debug(f"Removing the copy of the file at {path_to_sample_file} in {TEST_COUNTER_FILE_PATH} from S3.")
+    S3_file_name = TEST_COUNTER_FILE_PATH / path_to_sample_file.name
     yield None
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_COUNTER_FILE_PATH + path_to_sample_file.name
+            Key=S3_file_name.key,
         )
-    except botocore.exceptions as error:
+    except botocore.exceptions.BotoCoreError as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
+
+
+@pytest.fixture
+def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
+    """Removes a file loaded into `TEST_NON_COUNTER_FILE_PATH` in S3.
+
+    The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+
+    Yields:
+        None
+    """
+    log.debug(f"Removing the copy of the file at {path_to_sample_file} in {TEST_NON_COUNTER_FILE_PATH} from S3.")
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / path_to_sample_file.name
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+        )
+    except botocore.exceptions.BotoCoreError as error:
         log.error(unable_to_delete_test_file_in_S3_statement(path_to_sample_file.name, error))
 
 
@@ -508,18 +534,20 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"""
-            SELECT * FROM annualUsageCollectionTracking WHERE
-                usage_is_being_collected=true AND
-                is_COUNTER_compliant=false AND
-                collection_status='Collection not started' AND
-                usage_file_path IS NULL;
-        """,
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"""
+                SELECT * FROM annualUsageCollectionTracking WHERE
+                    usage_is_being_collected=true AND
+                    is_COUNTER_compliant=false AND
+                    collection_status='Collection not started' AND
+                    usage_file_path IS NULL;
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(database_function_skip_statements(record, False))
+    if isinstance(record, str):  #ToDo: Remove when `query_database()` raises exception when there's a problem
         pytest.skip(database_function_skip_statements(record, False))
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")
@@ -537,14 +565,14 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     )
     log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
-    file_name = f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / f"{yield_object.AUCT_statistics_source}_{yield_object.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_NON_COUNTER_FILE_PATH + file_name
+            Key=S3_file_name.key,
         )
     except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+        log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
 
 
 @pytest.fixture
@@ -585,35 +613,34 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
 
 
 @pytest.fixture
-def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):  #TEST: Loads one file into s3://ec2.sandbox.lib.fsu.edu/nolcat/usage/test/raw_vendor_reports/ on two `path_to_sample_file` parameters
     """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
 
     Args:
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
         non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+        download_destination (pathlib.Path): a path to the destination for downloaded files
 
     Yields:
         pathlib.Path: an absolute file path to a randomly selected file with a copy temporarily uploaded to S3
     """
-    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
-    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 location `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}`"))
-    logging_message = upload_file_to_S3_bucket(
+    log.debug(f"The AUCT object is {non_COUNTER_AUCT_object_after_upload}")
+    log.debug(f"About to upload file {non_COUNTER_AUCT_object_after_upload.usage_file_path} from {path_to_sample_file.resolve()} to {TEST_NON_COUNTER_FILE_PATH}.")
+    S3_file_name = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
         bucket_path=TEST_NON_COUNTER_FILE_PATH,
     )
-    log.debug(logging_message)
-    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):  #ALERT: `except S3InteractionError`
-        pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield path_to_sample_file
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=TEST_NON_COUNTER_FILE_PATH + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+            Key=S3_file_name.key,
         )
-    except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
-    Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
+    except botocore.exceptions.BotoCoreError as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
+    finally:
+        Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
@@ -705,36 +732,6 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     return df
 
 
-def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
-    """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
-
-    Args:
-        statistics_source_name (str): the name of the statistics source
-        URL (str): the base URL for the SUSHI API call
-        credentials (dict): the SUSHI credentials for the API call
-    
-    Returns:
-        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
-    """
-    response = SUSHICallAndResponse(
-        statistics_source_name,
-        URL,
-        "reports",
-        credentials,
-    ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
-    if isinstance(response[0], str):
-        pytest.skip(f"The SUSHI call for the list of reports raised the error {response[0]}.")
-    log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
-    response_as_list = [report for report in list(response[0].values())[0]]
-    list_of_reports = []
-    for report in response_as_list:
-        if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
-                list_of_reports.append(report["Report_ID"].upper())
-    log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
-    return list_of_reports
-
-
 def prepare_HTML_page_for_comparison(page_data):
     """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
 
@@ -746,51 +743,6 @@ def prepare_HTML_page_for_comparison(page_data):
     """
     log.info(f"`page_data` is:\n{page_data}")
     return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
-
-
-def get_name_of_parquet_file_saved_to_S3(before, after, statistics_source_ID, report_type):
-    """A test helper function returning the name of a parquet file saved to S3 during a test.
-
-    Args:
-        before (datetime.datetime): a timestamp from before the tested function ran
-        after (datetime.datetime): a timestamp from before the tested function ran
-        statistics_source_ID (int): the primary key value of the statistics source the usage data is from (the `StatisticsSources.statistics_source_ID` attribute)
-        report_type (str): the two-letter abbreviation for the report the usage data is from
-
-    Returns:
-        str: the name of the file
-    """
-    possible_timestamps = []
-    diff = after - before
-    for n in range(diff.seconds+1):
-        possible_timestamps.append(before+timedelta(n))
-    possible_file_names = [f"{statistics_source_ID}_{report_type}_{timestamp.year}-{timestamp.month:02}-{timestamp.day:02}T{timestamp.hour:02}-{timestamp.minute:02}-{timestamp.second:02}.parquet" for timestamp in possible_timestamps]
-    log.debug(f"`possible_file_names`:\n{format_list_for_stdout(possible_file_names[:10])}")
-
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{TEST_COUNTER_FILE_PATH}", "") for file_name in bucket_contents]
-    log.debug(f"Files in `{BUCKET_NAME}/{TEST_COUNTER_FILE_PATH}`:\n{format_list_for_stdout(bucket_contents)}.")
-    file_name = set(bucket_contents) & set(possible_file_names)
-    try:
-        return list(file_name)[0]
-    except IndexError:
-        parquet_file_names_in_bucket = [file for file in bucket_contents if parquet_file_name_regex().fullmatch(file)]
-        possible_name_matches = []
-        for file_name in parquet_file_names_in_bucket:
-            if "-" in file_name:
-                name_sans_seconds, x, seconds_and_file_extension = file_name.rpartition("-")
-                file_extension = seconds_and_file_extension.split(".")[1]
-                for possible_file_name in possible_file_names:
-                    if possible_file_name.startswith(name_sans_seconds) and possible_file_name.endswith(file_extension):
-                        possible_name_matches.append(file_name)
-        return possible_name_matches[0]
 
 
 #Section: Replacement Classes
