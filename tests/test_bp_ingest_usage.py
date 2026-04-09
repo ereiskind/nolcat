@@ -360,7 +360,6 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-@pytest.mark.skip("Function needs to be updated for switch to CloudPath.")  #TEST: temp--Active on 2026-03-20
 def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record.
 
@@ -420,24 +419,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
-    list_objects_response = s3_client.list_objects_v2(  #ALERT: Switch to `list_files_in_bucket_location()`
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_NON_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    files_in_bucket = []
-    bucket_contents = list_objects_response.get('Contents')
-    if bucket_contents:
-        for contents_dict in bucket_contents:
-            files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for name in files_in_bucket]
-        assert file_name in files_in_bucket
-    else:
-        assert False  # Nothing in bucket
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / file_name
+    files_in_bucket = list_files_in_bucket_location(S3_file_name)
+    assert file_name in files_in_bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=TEST_NON_COUNTER_FILE_PATH + file_name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

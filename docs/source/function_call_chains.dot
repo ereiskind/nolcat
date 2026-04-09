@@ -296,9 +296,7 @@ digraph function_call_chains {
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     upload_nonstandard_usage_file -> update_database
     upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    upload_nonstandard_usage_file -> file_IO_statement
     upload_nonstandard_usage_file -> update_database_success_regex
-    download_nonstandard_usage_file -> file_IO_statement
 
 
     subgraph cluster_COUNTERData {
@@ -622,7 +620,6 @@ digraph function_call_chains {
         skip_test_due_to_SUSHI_error_regex [shape="box"]
         Flask_error_statement [shape="box"]
         database_function_skip_statements [shape="box"]
-        file_IO_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
         database_query_fail_statement [shape="box"]
@@ -1159,7 +1156,6 @@ digraph function_call_chains {
     non_COUNTER_AUCT_object_after_upload -> database_function_skip_statements
     non_COUNTER_AUCT_object_after_upload -> engine
     non_COUNTER_file_to_download_from_S3 -> upload_file_to_S3_bucket
-    non_COUNTER_file_to_download_from_S3 -> file_IO_statement
     non_COUNTER_file_to_download_from_S3 -> unable_to_delete_test_file_in_S3_statement
     non_COUNTER_file_to_download_from_S3 -> download_destination
     non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
@@ -1680,6 +1676,7 @@ digraph function_call_chains {
     test_upload_non_COUNTER_reports -> non_COUNTER_AUCT_object_before_upload
     test_upload_non_COUNTER_reports -> header_value
     test_upload_non_COUNTER_reports -> prepare_HTML_page_for_comparison
+    test_upload_non_COUNTER_reports -> list_files_in_bucket_location
 
 
     subgraph cluster_test_bp_initialization {
