@@ -60,7 +60,6 @@ digraph erd_and_classes {
         //Attributes
         vendor_ID [shape="note"]
         vendor_name
-        alma_vendor_code
 
         //Methods
         state_data_types_in_vendors [
@@ -308,15 +307,12 @@ digraph erd_and_classes {
         COUNTER_report_files
 
         // Methods
-        create_dataframe_in_UploadCOUNTERReports [
-            shape="Mrecord"
-            label="create_dataframe"
-        ]
+        create_dataframe [shape="Mrecord"]
     }
 
 
-    subgraph cluster_ConvertJSONDictToDataframe {
-        label="CLASS: ConvertJSONDictToDataframe"
+    subgraph cluster_ConvertJSONDictToParquet {
+        label="CLASS: ConvertJSONDictToParquet"
 
         // Attributes
         SUSHI_JSON_dictionary
@@ -324,10 +320,7 @@ digraph erd_and_classes {
         statistics_source_ID
 
         // Methods
-        create_dataframe_in_ConvertJSONDictToDataframe [
-            shape="Mrecord"
-            label="create_dataframe"
-        ]
+        create_parquet [shape="Mrecord"]
         _transform_R5_JSON [shape="Mrecord"]
         _transform_R5b1_JSON [shape="Mrecord"]
         _serialize_dates [shape="Mrecord"]

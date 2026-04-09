@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from pathlib import Path
@@ -355,7 +355,11 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
 
 #Section: Tests
 def test_GET_request_for_collect_FY_and_vendor_data(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/initialization/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -372,8 +376,24 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_annualStatistics_CSV_file, annualStatistics_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):
+    """Tests uploading CSVs with data in the `fiscalYears`, `annualStatistics`, `vendors`, and `vendorNotes` relations and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_fiscalYears_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        fiscalYears_relation (dataframe): a relation of test data
+        create_annualStatistics_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        annualStatistics_relation (dataframe): a relation of test data
+        create_vendors_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        vendors_relation (dataframe): a relation of test data
+        create_vendorNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        vendorNotes_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
@@ -400,7 +420,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='fiscal_year_ID',
     )
-    if isinstance(fiscalYears_relation_data, str):
+    if isinstance(fiscalYears_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
@@ -411,7 +431,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index=['fiscal_year_ID', 'question'],
     )
-    if isinstance(annualStatistics_relation_data, str):
+    if isinstance(annualStatistics_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
     annualStatistics_relation_data = change_single_field_dataframe_into_series(annualStatistics_relation_data)
     annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
@@ -421,7 +441,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(vendors_relation_data, str):
+    if isinstance(vendors_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(vendors_relation_data))
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
@@ -430,7 +450,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         engine=engine,
         index='vendor_notes_ID',
     )
-    if isinstance(vendorNotes_relation_data, str):
+    if isinstance(vendorNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
@@ -446,13 +466,31 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert HTML_file_page_title in POST_response.data
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_series_equal(annualStatistics_relation_data, annualStatistics_relation)
-    assert_frame_equal(vendors_relation_data, vendors_relation)
+    assert_series_equal(change_single_field_dataframe_into_series(vendors_relation_data), vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):
+    """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_statisticsSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsSources_relation (dataframe): a relation of test data
+        create_statisticsSourceNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsSourceNotes_relation (dataframe): a relation of test data
+        create_resourceSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        resourceSources_relation (dataframe): a relation of test data
+        create_resourceSourceNotes_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        resourceSourceNotes_relation (dataframe): a relation of test data
+        create_statisticsResourceSources_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        statisticsResourceSources_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     #Section: Submit Forms via HTTP POST
@@ -480,17 +518,16 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='statistics_source_ID',
     )
-    if isinstance(statisticsSources_relation_data, str):
+    if isinstance(statisticsSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
-    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
     statisticsSourceNotes_relation_data = query_database(
         query="SELECT * FROM statisticsSourceNotes;",
         engine=engine,
         index='statistics_source_notes_ID',
     )
-    if isinstance(statisticsSourceNotes_relation_data, str):
+    if isinstance(statisticsSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
@@ -500,7 +537,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='resource_source_ID',
     )
-    if isinstance(resourceSources_relation_data, str):
+    if isinstance(resourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(resourceSources_relation_data))
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
@@ -510,7 +547,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index='resource_source_notes_ID',
     )
-    if isinstance(resourceSourceNotes_relation_data, str):
+    if isinstance(resourceSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
@@ -520,7 +557,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    if isinstance(statisticsResourceSources_relation_data, str):
+    if isinstance(statisticsResourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
@@ -543,7 +580,14 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
-    """Test creating the AUCT relation template CSV."""
+    """Test creating the AUCT relation template CSV.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        create_blank_annualUsageCollectionTracking_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        blank_annualUsageCollectionTracking_data_types (dict): the `astype` argument for `annualUsageCollectionTracking`
+    """
     page = client.get('/initialization/initialization-page-3')
     AUCT_template_df = pd.read_csv(
         TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'initialize_annualUsageCollectionTracking.csv',
@@ -564,8 +608,20 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 @pytest.mark.slow
-def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
-    """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_COUNTERData_workbook_iterdir_list, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):
+    """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        header_value (dict): HTTP header data
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        create_annualUsageCollectionTracking_CSV_file (CSV): a CSV file corresponding to a relation in the test data, which is called directly in the test
+        annualUsageCollectionTracking_relation (dataframe): a relation of test data
+        COUNTERData_relation (dataframe): a relation of test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
@@ -588,7 +644,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         engine=engine,
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
-    if isinstance(annualUsageCollectionTracking_relation_data, str):
+    if isinstance(annualUsageCollectionTracking_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
@@ -597,7 +653,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         engine=engine,
         index="COUNTER_data_ID",
     )
-    if isinstance(COUNTERData_relation_data, str):
+    if isinstance(COUNTERData_relation_data, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
@@ -620,7 +676,12 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
-    """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
+    """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
@@ -659,7 +720,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
         """,
         engine=db.engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
 
     assert page.status == "200 OK"
@@ -701,7 +762,7 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         new_file = tmp_path / f"{AUCT_option[0][0]}_{AUCT_option[1][-4:]}{file.suffix}"
         copy(file, new_file)
         log.debug(check_if_file_exists_statement(new_file))
-        for_removal.append(f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")  # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` changes the file name to the instance record's primary keys separated by an underscore, so that file name is what needs to be saved for removal from S3 
+        for_removal.append(TEST_NON_COUNTER_FILE_PATH / f"{AUCT_option[0][0]}_{AUCT_option[0][1]}{new_file.suffix}")
         return (new_file.name, open(new_file, 'rb'))
 
     yield _files_for_test_upload_historical_non_COUNTER_usage
@@ -710,15 +771,22 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
         try:
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
-                Key=TEST_NON_COUNTER_FILE_PATH + file
+                Key=file.key,
             )
-        except botocore.exceptions as error:
+        except botocore.exceptions.BotoCoreError as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
-def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
-    """Tests uploading the files with non-COUNTER usage statistics."""
+def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_test_upload_historical_non_COUNTER_usage, caplog):
+    """Tests uploading the files with non-COUNTER usage statistics.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        files_for_test_upload_historical_non_COUNTER_usage (dict): a valid `MultipartEncoder.fields` argument using a randomly selected file
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
@@ -745,7 +813,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
         """,
         engine=db.engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = {f"usage_files-{i}-usage_file": AUCT_options for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields)}
@@ -797,7 +865,7 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
             query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             pytest.skip(database_function_skip_statements(df))
         collection_status_and_file_path.append((
             df.at[0,'collection_status'],
@@ -810,17 +878,10 @@ def test_upload_historical_non_COUNTER_usage(engine, client, header_value, files
 
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=TEST_NON_COUNTER_FILE_PATH,
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{TEST_NON_COUNTER_FILE_PATH}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    files_in_bucket = []
-    bucket_contents = list_objects_response.get('Contents')
-    if bucket_contents:
-        for contents_dict in bucket_contents:
-            files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [file_name.replace(f"{TEST_NON_COUNTER_FILE_PATH}", "") for file_name in files_in_bucket]
+    files_in_bucket = list_files_in_bucket_location(TEST_NON_COUNTER_FILE_PATH)
+    log.info(f"`list_of_files_in_S3`:\n{format_list_for_stdout(list_of_files_in_S3)}")  #TEST: temp
+    log.info(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")  #TEST: temp
+    if files_in_bucket:
         assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
         assert False  # Nothing in bucket

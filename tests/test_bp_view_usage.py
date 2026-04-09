@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from random import choice
@@ -45,7 +45,11 @@ def test_set_encoding():
 
 
 def test_view_usage_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/view_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -62,7 +66,13 @@ def test_view_usage_homepage(client):
 
 
 def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
-    """Tests running a user-written SQL query against the database and returning a CSV download."""
+    """Tests running a user-written SQL query against the database and returning a CSV download.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+    """
     form_input = {
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
         'open_in_Excel': False,
@@ -79,7 +89,16 @@ def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
 
 
 def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
-    """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
+    """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     query_options = choice((
@@ -122,7 +141,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
         query=query_options[1],
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype(COUNTERData.state_data_types())
 
@@ -148,7 +167,7 @@ def start_query_wizard_form_data(engine, caplog):
         query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
         engine=engine,
     )
-    if isinstance(df, str):
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
     yield {
@@ -160,7 +179,13 @@ def start_query_wizard_form_data(engine, caplog):
 
 
 def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
-    """Tests the submission of the report type and date range to the query wizard."""
+    """Tests the submission of the report type and date range to the query wizard.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        start_query_wizard_form_data (dict): form input for the form on "query-wizard-start.html"
+    """
     POST_response = client.post(
         '/view_usage/query-wizard',
         headers=header_value,
@@ -174,6 +199,11 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
     """Tests that the query wizard accepts the report type and date range and redirects to the page showing the appropriate form.
     
     Because the function begin tested gets its input from the `start_query_wizard()` route function, the function being tested is accessed through a redirect from that route function. The same form input data is used as when testing that function for efficiency and to reduce the number of places the error could possibly originate if this test fails.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        start_query_wizard_form_data (dict): form input for the form on "query-wizard-start.html"
     """
     POST_response = client.post(
         '/view_usage/query-wizard',
@@ -260,7 +290,16 @@ def PR_parameters(request):
 
 
 def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        PR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = PR_parameters
@@ -288,7 +327,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -398,7 +437,16 @@ def DR_parameters(request):
 
 
 def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        DR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = DR_parameters
@@ -426,7 +474,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -765,7 +813,16 @@ def TR_parameters(request):
 
 
 def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        TR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = TR_parameters
@@ -793,7 +850,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -1087,7 +1144,16 @@ def IR_parameters(request):
 
 
 def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        IR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = IR_parameters
@@ -1115,7 +1181,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         query=query,
         engine=engine,
     )
-    if isinstance(database_df, str):
+    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
@@ -1130,7 +1196,13 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
-    """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
+    """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
  
     page = client.get(
@@ -1165,7 +1237,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
             """,
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
+    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
@@ -1179,6 +1251,12 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form.
     
     The fixtures creating the annualUsageCollectionTracking instance called and creating the file that will be downloaded from S3 are separate, so the file extension, which is derived from the former, may not match the file, which comes from the latter.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+        non_COUNTER_file_to_download_from_S3 (pathlib.Path): an absolute file path to a randomly selected file that's also been temporarily uploaded to S3
     """
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method

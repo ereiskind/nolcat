@@ -16,6 +16,7 @@ Test modules are designed to be run from the root folder with the command `pytho
   * Pytest has a built-in argument for saving logging to a file, but it saves only the logging; the session2file extension copies the complete pytest output to stdout, including the stack trace.
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
+* To run a single test, end the command with the module containing the file, two colons, and the name of the test
 
 Working with the Database Within the Container
 ==============================================
@@ -140,7 +141,7 @@ Create `ConvertJSONDictToDataframe` Test Fixtures
 
 Test Data Parquet Files
 -----------------------
-With the transition to AWS and using parquet to store COUNTER usage data, the ETL flow was changed so once the transformation was complete, the resulting dataframe was loaded/saved as a parquet file to S3. The tests needed to change accordingly. The parquet files themselves needed for tests are saved in "\\tests\\data\\COUNTER_parquet_files_for_tests", they will need to be moved to the S3 location identified by the `TEST_COUNTER_FILE_PATH` constant for the tests to run properly.
+With the transition to AWS and using parquet to store COUNTER usage data, the ETL flow was changed so once the transformation from JSON or Excel to dataframe is complete, the resulting dataframe is loaded/saved as a parquet file to S3. The tests needed to change accordingly.
 
 Transaction Rollbacks
 =====================
@@ -173,160 +174,6 @@ The preferred setup for testing database interactions involves performing all te
   * `test_SUSHICallAndResponse`
   * `test_UploadCOUNTERReports`
   * `test_Vendors`
-
-SUSHI Variations
-****************
-Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the `SUSHICallAndResponse` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
-
-* ABC-CLIO Databases
-
-  * Requiring a requestor ID and an API key
-
-* Adam Matthew
-
-  * `Service_Active` field in `status` call doesn't contain underscore
-  * `status` call always has `Alerts` key at top level with list value that seems to always be empty
-  * Errors are listed in the `Exceptions` key, which is nested under the `Report_Header` key
-  * Related to above, `SUSHICallAndResponse._handle_SUSHI_exceptions()` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
-  * No TR offered
-  * `reports` call is successful even if credentials are bad
-
-* Akademiai Kiado
-
-  * No DR offered
-  * No IR offered
-
-* Alexander Street Press
-
-  * Times out
-
-* Allen Press/Pinnacle Hosting
-
-* `HTTPSConnectionPool` error caused by urllib3 `NewConnectionError` (`Failed to establish a new connection: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond'`)
-
-* Ambrose Digital Streaming Video
-* American Association for the Advancement of Science (AAAS)
-
-  * Error responses use 4XX HTTP status code
-  * Errors are listed in the `Exception` key, which is nested under the `Report_Header` key
-
-* AMS (American Meteorological Society) Journals Online
-
-  * `SSLCertVerificationError` caused by hostname and certificate domain mismatch
-
-* BioScientifica
-
-  * Dates 2021-06 to 2022-06 have no data
-
-* Brepols Online
-
-  * Contains unicode characters `ç` and `É`
-  * Errors are under the `Exception` key, which is on the same level as the report keys
-  * Error responses use 4XX HTTP status code
-
-* Brill Books and Journals
-
-  * No DR offered
-  * No IR offered
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Brill Scholarly Editions
-* China National Knowledge Infrastructure (CNKI)
-* Cochrane
-* Columbia International Affairs Online (CIAO)
-
-  * Requiring a requestor ID and an API key
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Company of Biologists
-
-  * Requiring a requestor ID and an API key
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* de Gruyter
-
-  * Requires a `platform` parameter
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Duke University Press
-
-  * `status` call always has `Alerts` key at top level with list value that seems to always be empty
-  * Downloads a JSON
-  * No DR offered
-  * Contains custom report forms with report IDs starting "CR_"
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Duxiu Knowledge Search Database
-* Ebook Central
-* EBSCOhost
-* Érudit
-* Films on Demand
-
-  * Requiring a requestor ID and an API key
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Gale Cengage Learning
-* HighWire
-* J-STAGE
-
-  * Requiring only a customer ID
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* JSTOR
-* Loeb Classical Library
-
-  * Requires a `platform` parameter
-  * No TR offered
-  * No IR offered
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Lyell Collection
-* MathSciNet
-
-  * `reports` call is successful even if credentials are bad
-  * Error responses use 4XX HTTP status code
-  * `status` call always results in 404 HTTP status code
-  * 4XX pages display in browser with formatting
-
-* Morgan & Claypool
-* OECD iLibrary
-
-  * `Service_Active` field in `status` call is all lowercase
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* Portland Press
-
-  * Requiring a requestor ID and an API key
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
-
-* ProQuest
-* Rockefeller University Press
-
-  * Requiring a requestor ID and an API key
-
-* Royal Society of Chemistry
-
-  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block contained within a list
-
-* SAGE Journals
-* SAGE/CQ Press
-* Sciendo
-
-  * Requires a `platform` parameter
-
-* Taylor & Francis
-* Taylor & Francis eJournals
-* University of California Press
-
-  * Requiring a requestor ID and an API key
-
-* Web of Science
-
-Internally Inconsistent
-=======================
-These vendors show internal inconsistencies in testing:
-
-* Adam Matthew: `status` call always has a top-level `Alerts` key, but `handle_SUSHI_exceptions` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call
 
 nginx Logging
 *************

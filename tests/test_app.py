@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2026-02-13 ##########
+########## Passing 2026-03-20 ##########
 
 import pytest
 from bs4 import BeautifulSoup
@@ -15,27 +15,43 @@ log = logging.getLogger(__name__)
 
 #Section: Test Flask Factory Pattern
 def test_flask_app_creation(app):
-    """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
+    """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`.
+
+    Args:
+        app (flask.Flask): a Flask object
+    """
     assert isinstance(app, flask.app.Flask)
     assert app.__dict__['name'] == 'nolcat.app'
 
 
 def test_flask_client_creation(client):
-    """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
+    """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     assert isinstance(client, flask.testing.FlaskClient)
     assert isinstance(client.__dict__['application'], flask.app.Flask)
     assert client.__dict__['application'].__dict__['name'] == 'nolcat.app'
 
 
 def test_SQLAlchemy_engine_creation(engine):
-    """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
+    """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    """
     assert isinstance(engine, sqlalchemy.engine.base.Engine)
     assert isinstance(engine.__dict__['url'], sqlalchemy.engine.url.URL)
     assert str(engine.__dict__['url']) == f'mysql://{DATABASE_USERNAME}:***@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'  # The `sqlalchemy.engine.url.URL` changes the password to `***` for stdout
 
 
 def test_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -52,7 +68,11 @@ def test_homepage(client):
 
 
 def test_404_page(client):
-    """Tests that the unassigned route '/404' goes to the 404 page."""
+    """Tests that the unassigned route '/404' goes to the 404 page.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     nonexistent_page = client.get('/404')
     GET_soup = BeautifulSoup(nonexistent_page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -69,7 +89,12 @@ def test_404_page(client):
 
 
 def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
-    """Tests the route enabling file downloads."""
+    """Tests the route enabling file downloads.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+    """
     page = client.get(
         f'/download/{path_to_sample_file}',
         follow_redirects=True,
