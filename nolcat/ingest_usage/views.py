@@ -52,7 +52,7 @@ def upload_COUNTER_data():
                 else:
                     messages_to_flash = []
             except Exception as error:
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -73,7 +73,7 @@ def upload_COUNTER_data():
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:
+            except Exception as error:  #ALERT: `except DatabaseInteractionError`
                 message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
                 log.warning(message)
                 messages_to_flash.append(message)
@@ -107,7 +107,7 @@ def upload_COUNTER_data():
                     update_statement=statement,
                     engine=db.engine,
                 )
-                if not update_database_success_regex().fullmatch(update_result):
+                if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
                     message = database_update_fail_statement(statement)
                     log.warning(message)
                     messages_to_flash.append(message)   
@@ -143,7 +143,7 @@ def harvest_SUSHI_statistics(testing):
             query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
             engine=db.engine,
         )
-        if isinstance(statistics_source_options, str):
+        if isinstance(statistics_source_options, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(statistics_source_options))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
@@ -153,20 +153,24 @@ def harvest_SUSHI_statistics(testing):
             query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
             statistics_source_ID = int(df.at[0,'statistics_source_ID']),
             statistics_source_name = str(df.at[0,'statistics_source_name']),
-            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']),
             vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
         log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
+        if form.code_of_practice.data == 'null':
+            code_of_practice = None
+        else:
+            code_of_practice = form.code_of_practice.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
@@ -183,24 +187,17 @@ def harvest_SUSHI_statistics(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        try:
-            result_message, flash_messages = statistics_source.collect_usage_statistics(  #ToDo: PARQUET IN S3--if a problem that stops harvest happens, dict will have key 'STOP' with value describing problem
-                begin_date,
-                end_date,
-                report_to_harvest,
-                bucket_path,
-            )
-            log.info(result_message)
-            if [item for sublist in flash_messages.values() for item in sublist]:
-                flash(flash_messages)
-            else:  # So success message shows instead of a lack of error messages
-                flash(result_message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"The SUSHI call raised {error}."
-            log.warning(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        flash_message_dict = statistics_source.collect_usage_statistics(
+            begin_date,
+            end_date,
+            report_to_harvest,
+            code_of_practice,
+            bucket_path,
+        )
+        if 'STOP' in flash_message_dict.keys():
+            log.warning(f"SUSHI harvesting interrupted: {flash_message_dict['STOP']}")
+        flash(flash_message_dict)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -241,7 +238,7 @@ def upload_non_COUNTER_reports(testing):
             """,
             engine=db.engine,
         )
-        if isinstance(non_COUNTER_files_needed, str):
+        if isinstance(non_COUNTER_files_needed, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
@@ -271,7 +268,7 @@ def upload_non_COUNTER_reports(testing):
             """,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(
@@ -295,13 +292,13 @@ def upload_non_COUNTER_reports(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
-        if upload_nonstandard_usage_file_success_regex().match(response) is None:
-            #ToDo: Do any other actions need to be taken?
-            log.error(response)
-            flash(response)
+        try:
+            S3_file_name = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data, bucket_path)
+        except Exception as error:
+            log.error(error)
+            flash(error)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully."
+        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully to {S3_file_name}."
         log.debug(message)
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))

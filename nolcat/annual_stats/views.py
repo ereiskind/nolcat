@@ -23,7 +23,7 @@ def annual_stats_homepage():
             query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
             engine=db.engine,
         )
-        if isinstance(fiscal_year_options, str):
+        if isinstance(fiscal_year_options, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(fiscal_year_options))
             return abort(404)
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
@@ -58,7 +58,7 @@ def show_fiscal_year_details(PK):
             query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID={PK};",
             engine=db.engine,
         )
-        if isinstance(fiscal_year_details, str):
+        if isinstance(fiscal_year_details, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(fiscal_year_details))
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
@@ -68,7 +68,7 @@ def show_fiscal_year_details(PK):
             engine=db.engine,
             index='AUCT_statistics_source',
         )
-        if isinstance(fiscal_year_reporting, str):
+        if isinstance(fiscal_year_reporting, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(fiscal_year_reporting))
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())

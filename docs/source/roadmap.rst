@@ -2,62 +2,14 @@ NoLCAT Development Roadmap
 ##########################
 This page contains all the current to-dos and possible plans for the NoLCAT program.
 
-To Investigate
-**************
-This is a list of issues encountered over the course of development that require further investigation.
-
-* A ScienceDirect SUSHI call returned `401 Client Error: Unauthorized for url`; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
-* J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
-* Morgan & Claypool raised `HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))`
-* Certificate issues raising errors with
-
-  * *Allen Press/Pinnacle Hosting*: `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`
-  * *Grain Science Library*: `HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))`
-  * *Adam matthew*: `HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))`
-  * *Sciendo*: `HTTPSConnectionPool(host='ams.degruyter.com', port=443): Max retries exceeded with url: /rest/COUNTER/v5/status?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fb5414a4520>: Failed to establish a new connection: [Errno -2] Name or service not known'))`
-
 Planned Iterations
 ******************
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Develop `nolcat.nolcat.models.COUNTERData` relation to parquet file transformer
+* Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
-  * Run `SELECT statistics_source_ID, report_type, usage_date, report_creation_date FROM COUNTERData GROUP BY statistics_source_ID, report_type, usage_date, report_creation_date;` on production data to confirm available production data and find out what parquet files need to be created
-
-* Save `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe` output as parquet in S3
-
-  * Adjust calls to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()` to not expect return values (#ToDo: PARQUET IN S3--); adjusting tests and function call chain diagram to correspond with changes
-
-    * `nolcat.models.StatisticsSources._harvest_single_report()` with `tests.test_StatisticsSources.test_harvest_single_report()`, `tests.test_StatisticsSources.test_harvest_single_report_with_partial_date_range()`
-    * `nolcat.models.StatisticsSources._harvest_R5_SUSHI()` with `tests.StatisticsSources.test_harvest_R5_SUSHI()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()`, `tests.StatisticsSources.test_harvest_R5_SUSHI_with_invalid_dates()`, `tests.StatisticsSources.harvest_R5_SUSHI_result()`, `tests.test_AnnualStatisticsCollectionTracking.harvest_R5_SUSHI_result()`
-    * `nolcat.models.StatisticsSources.collect_usage_statistics()` with `tests.StatisticsSources.test_collect_usage_statistics()`
-    * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()` with `tests.test_AnnualStatisticsCollectionTracking.test_collect_annual_usage_statistics()`
-    * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()` with `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`
-    * `nolcat.ingest_usage.harvest_SUSHI_statistics()` with `tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()`
-    * `nolcat.models.StatisticsSources.` with `tests.StatisticsSources.()`, `tests.StatisticsSources.()`
-
-  * Add check for saved parquet or error file after call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
-  * List all functions in function call chains ending in a call to `nolcat.nolcat_glue_job.ConvertJSONDictsToDataframe.create_dataframe()`
-  * For all functions above, adjust to anticipate no return value if successful
-  * Adjust tests and function call chain diagram to correspond with above changes
-  * For all tests, get call chains and adjust caplog calls
-  * Confirm all tests still pass
-
-* Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
-* Create function to check S3 file existence and type with fuzzy matching
-
-  * Frame function in "nolcat/nolcat/nolcat_glue_job.py"
-  * Write code for checking if a timestamp is between two times, with bounds as `now()` calls before the SUSHI call and just before the file check
-  * Write function checking if S3 file with matching stats source ID and timestamp passing check above exists and returning its file type
-  * Have function read, output the content of, and delete the file if the type isn't parquet
-  * Write a test for this in "test_nolcat_glue_job.py"
-
-* Figure out how to move a dataframe to a step function
-
-  * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
-  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
-  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html (does `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.` need to be addressed?) (https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html can also be used, but `to_json()` output of string must be converted to dict with `json.loads()`)
+  * Confirm all tests still pass with working teardown
 
 * Move `nolcat.UploadCOUNTERReports` to Glue job
 
@@ -76,18 +28,24 @@ Move Code to Glue Jobs and Data to Parquet
 
 * Save `nolcat.UploadCOUNTERReports` output as parquet in S3
 
-  * Update second class made from `nolcat.UploadCOUNTERReports` to take in a JSON made from a dataframe and end with saving a parquet file to S3 (confirm S3 file name can be created at saving and can include stats source ID and report creation timestamp)
-  * Get list of all calls to second class made from `nolcat.UploadCOUNTERReports`
-  * Adjust above calls to not expect return values
+  * Update second class made from `nolcat.UploadCOUNTERReports` to take in a JSON made from a dataframe and end with saving a parquet file to S3, returning cloudpathlib.CloudPath file name/location
   * Adjust function call chain diagram to correspond with above changes
   * Adjust tests and their relevant fixtures for changed calls to reflect changes
-  * Adjust function call chain diagram to correspond with above changes
-  * Add check for saved parquet or error file after call to second class made from `nolcat.UploadCOUNTERReports`
-  * List all functions in function call chains ending in a call to second class made from `nolcat.UploadCOUNTERReports`
-  * For all functions above, adjust to anticipate no return value if successful
-  * Adjust tests and function call chain diagram to correspond with above changes
+  * Adjust functions below to account for above changes, adjusting tests and function call chain diagram to correspond with changes
 
-* Move other functions and classes to be determined to "nolcat/nolcat/nolcat_glue_job.py" (adjusting call chain diagram, creating child loggers, and adjusting caplog calls as needed)
+    * `nolcat.initialization.collect_AUCT_and_historical_COUNTER_data()` with `tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`, `tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()`
+    * Other functions as determined by function calls to second class made from `nolcat.UploadCOUNTERReports`
+
+  * Confirm all tests still pass with working teardown
+
+* Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
+* Finish having errors raise exceptions instead of returning specifically designated strings
+* Figure out how to move a dataframe to a step function
+
+  * Data passed from flask to step functions must be in JSON format, but data types <class 'werkzeug.datastructures.file_storage.FileStorage'>, <class 'openpyxl.workbook.workbook.Workbook'>, <class 'openpyxl.worksheet._read_only.ReadOnlyWorksheet'>, and <class 'pandas.core.frame.DataFrame'> aren't JSON serializable, so files with tabular data must be converted to JSON to be passed to a step function and reverted to a dataframe once in a Glue job
+  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html changes a dataframe into a JSON
+  * JSONs can be turned back into dataframes with https://pandas.pydata.org/docs/reference/api/pandas.read_json.html (does `FutureWarning: Passing literal json to 'read_json' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.` need to be addressed?) (https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html or https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_records.html can also be used, but `to_json()` output of string must be converted to dict with `json.loads()`)
+
 * Remove `nolcat.models.COUNTERData` class
 
   * Move sole class method to "nolcat/nolcat/nolcat_glue_job.py"
@@ -206,6 +164,7 @@ Iteration 6: Miscellaneous
 * Create CSS class for flashed messages
 * Add FSU Libraries wordmark as link to library homepage in footer
 * Consolidate `nolcat.models.StatisticsSources._check_if_data_in_database()` and `nolcat.app.check_if_data_already_in_COUNTERData()`
+* Convert error catches by returning strings to returning Python exception classes
 
 Iteration 7: Interact with Host File System
 ============================================
@@ -253,11 +212,6 @@ Iteration: Display Data Visualization of Usage Data Requests in Browser
 =======================================================================
 * Make final decision between Plotly/Dash and Bokeh
 * Change dataframes displayed as tables in browser to data visualizations
-
-Iteration: Get SUSHI Credentials from Alma
-==========================================
-* Add way to determine if data should be fetched from Alma or the JSON file at the beginning of `nolcat.models.StatisticsSources.fetch_SUSHI_information()`
-* Write "Retrieve Data from Alma" subsection of `nolcat.models.StatisticsSources.fetch_SUSHI_information()`
 
 Iteration: Add User Accounts to Restrict Access
 ===============================================
