@@ -1077,7 +1077,7 @@ class StatisticsSources(db.Model):
             except S3InteractionError as error:
                 flash_message_list.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, flash_message_list)
-            if parquet_file_name_regex().fullmatch(S3_file_name):
+            if parquet_file_name_regex().fullmatch(str(S3_file_name)):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")

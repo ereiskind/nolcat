@@ -373,7 +373,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])
-@pytest.mark.xfail(raises=AssertionError)
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
 def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, StatisticsSource_instance_name, caplog):
     """Tests that a SUSHI call with invalid credentials returns an error.
     
