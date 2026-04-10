@@ -1210,7 +1210,7 @@ def list_files_in_bucket_location(bucket_path):
         Bucket=BUCKET_NAME,
         Prefix=bucket_path.key + "/",
     )
-    log.debug(f"Raw contents of `{bucket_path}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}")
+    log.info(f"Raw contents of `{bucket_path}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}")
     files_in_bucket = []
     for contents_dict in list_objects_response['Contents']:
         files_in_bucket.append(CloudPath(f"s3://{BUCKET_NAME}/{contents_dict['Key']}"))
