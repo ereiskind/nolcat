@@ -1,5 +1,5 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2026-03-20 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
 from bs4 import BeautifulSoup

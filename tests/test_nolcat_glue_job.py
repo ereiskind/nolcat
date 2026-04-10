@@ -1,10 +1,9 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-03-20 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
 from filecmp import cmp
 from random import choice
-from urllib.parse import urlsplit
 from random import randrange
 from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal

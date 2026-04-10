@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2026-03-20 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
 import json
@@ -258,7 +258,6 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
         Key=S3_file_name.key,
         Filename=download_location,
     )
-    log.warning(f"`download_location` (type {type(download_location)}): {download_location}")  #TEST: temp
     assert download_location.is_file()
 
 

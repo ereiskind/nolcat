@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2026-03-20 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
 from pathlib import Path
@@ -879,8 +879,6 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]
     files_in_bucket = list_files_in_bucket_location(TEST_NON_COUNTER_FILE_PATH)
-    log.info(f"`list_of_files_in_S3`:\n{format_list_for_stdout(list_of_files_in_S3)}")  #TEST: temp
-    log.info(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")  #TEST: temp
     if files_in_bucket:
         assert files_in_bucket.sort() == list_of_files_in_S3.sort()
     else:
