@@ -1271,6 +1271,40 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
+                #TEST: temp
+                try:
+                    log.error(f"`find_current_audit` (type {type(find_current_audit)}): {find_current_audit}")
+                except Exception as e:
+                    log.error(f"Printing `find_current_audit` raised {e}")
+                try:
+                    log.error(f"`release_data` (type {type(release_data)}): {release_data}")
+                except Exception as e:
+                    log.error(f"Printing `release_data` raised {e}")
+                try:
+                    log.error(f"`release_data['last_audit']` (type {type(release_data['last_audit'])}): {release_data['last_audit']}")
+                except Exception as e:
+                    log.error(f"Printing `release_data['last_audit']` raised {e}")
+                try:
+                    log.error(f"`release_data['last_audit']['counter_release']` (type {type(release_data['last_audit']['counter_release'])}): {release_data['last_audit']['counter_release']}")
+                except Exception as e:
+                    log.error(f"Printing `release_data['last_audit']['counter_release']` raised {e}")
+                try:
+                    log.error(f"`release_data['last_audit']['audit_status']` (type {type(release_data['last_audit']['audit_status'])}): {release_data['last_audit']['audit_status']}")
+                except Exception as e:
+                    log.error(f"Printing `release_data['last_audit']['audit_status']` raised {e}")
+                try:
+                    log.error(f"`find_current_audit[release_data]` (type {type(find_current_audit[release_data])}): {find_current_audit[release_data]}")
+                except Exception as e:
+                    log.error(f"Printing `find_current_audit[release_data]` raised {e}")
+                try:
+                    log.error(f"`find_current_audit[release_data['last_audit']]` (type {type(find_current_audit[release_data['last_audit']])}): {find_current_audit[release_data['last_audit']]}")
+                except Exception as e:
+                    log.error(f"Printing `find_current_audit[release_data['last_audit']]` raised {e}")
+                try:
+                    log.error(f"`find_current_audit[release_data['last_audit']['counter_release']]` (type {type(find_current_audit[release_data['last_audit']['counter_release']])}): {find_current_audit[release_data['last_audit']['counter_release']]}")
+                except Exception as e:
+                    log.error(f"Printing `find_current_audit[release_data['last_audit']['counter_release']]` raised {e}")
+                #TEST: end temp
                 find_current_audit[release_data['last_audit']['counter_release']] = release_data['last_audit']['audit_status']
                 log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:

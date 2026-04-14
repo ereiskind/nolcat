@@ -1686,6 +1686,11 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` for S3 file {bucket_path}/{self.usage_file_path}.")
         file_download_path = web_app_download_folder / self.usage_file_path
         self._log.debug(f"About to download file {self.usage_file_path} from {bucket_path} to {TOP_NOLCAT_DIRECTORY.resolve()}.")
+        #TEST: temp
+        self._log.error(f"`bucket_path.key + self.usage_file_path` (type {type(bucket_path.key + self.usage_file_path)}): {bucket_path.key + self.usage_file_path}")
+        self._log.error(f"`self.usage_file_path` (type {type(self.usage_file_path)}): {self.usage_file_path}")
+        self._log.error(f"Files in `{bucket_path}`:\n{format_list_for_stdout(list_files_in_bucket_location(bucket_path))}")
+        #TEST: end temp
         try:
             s3_client.download_file(
                 Bucket=BUCKET_NAME,

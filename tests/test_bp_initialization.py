@@ -769,10 +769,12 @@ def files_for_test_upload_historical_non_COUNTER_usage(tmp_path, caplog):
 
     for file in for_removal:
         try:
+            log.error(f"Starting deletion of file {file} in fixture `files_for_test_upload_historical_non_COUNTER_usage()`")  #TEST: temp
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
                 Key=file.key,
             )
+            log.error(f"Finished deletion of file {file} in fixture `files_for_test_upload_historical_non_COUNTER_usage()`")  #TEST: temp
         except botocore.exceptions.BotoCoreError as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file.name, error))
 
