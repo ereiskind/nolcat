@@ -12,6 +12,7 @@ from dateutil import parser
 from copy import deepcopy
 from datetime import datetime
 from math import ceil
+import html
 import requests
 from urllib.parse import urlparse
 from sqlalchemy import log as SQLAlchemy_log
@@ -2545,6 +2546,54 @@ class ConvertJSONDictToParquet:
             str: the logging statement
         """
         return f"Increase the `COUNTERData.{field}` max field length to {ceil(length * 1.1)}."
+
+
+#SECTION: Functions for Testing
+def prepare_HTML_page_for_comparison(page_data):
+    """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
+
+    Args:
+        page_data (bytes): the content of a page returned by a HTTP request
+
+    Returns:
+        str: the page content as a Unicode string
+    """
+    return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
+
+
+class _fileAttribute:
+    """Enables the `_file` attribute of the `mock_FileStorage_object.stream` attribute.
+
+    Attributes:
+        self._file (str): The absolute file path for the COUNTER report being uploaded
+    """
+    def __init__(self, file_path):
+        """The constructor method for `_fileAttribute`, which instantiates the string of the absolute file path for the COUNTER report being uploaded."""
+        self._file = str(file_path)
+
+
+class mock_FileStorage_object:
+    """A replacement for a Werkzeug FileStorage object.
+
+    Some class constructors, functions, and methods use an individual or a list of Werkzeug FileStorage objects--the `data` attribute of a WTForms FileField or MultipleFileField object respectively--as an argument. When a list of Werkzeug FileStorage object(s) created with the FileStorage constructor in a fixture is used, however, the _io.BytesIO object returned by the `.stream._file` attribute often raises a `File is not a zip file` error in OpenPyXL's `load_workbook()` function. With the same files encapsulated in the same classes raising an error depending on their source, it could not be determined how to prevent the FileStorage object(s) created in the fixture from raising the error. As an alternative, this class was created; it has the attributes of the Werkzeug FileStorage object needed for the tests its used in, so it works the same way in the method, but it features the absolute file path as a string instead of a _io.BytesIO object to avoid the `File is not a zip file` error.
+
+    Attributes:
+        self.stream (_fileAttribute._file): The intermediary attribute for the absolute file path for the COUNTER report being uploaded
+        self.filename (str): The name of the file of the COUNTER report being uploaded
+    """
+    def __init__(self, file_path):
+        """The constructor method for `mock_FileStorage_object`, which instantiates the attributes `stream` and `filename` based on the absolute file path for the COUNTER report being uploaded.
+
+        Args:
+            file_path (pathlib.Path): The absolute file path for the COUNTER report being uploaded
+        """
+        self.stream = _fileAttribute(file_path.absolute())
+        self.filename = file_path.name
+
+
+    def __repr__(self):
+        """The printable representation of a `mock_FileStorage_object` instance."""
+        return f"<__main__.mock_FileStorage_object {{'stream._file': '{self.stream._file}', 'filename': '{self.filename}'}}>"
 
 
 #SECTION: Error Classes

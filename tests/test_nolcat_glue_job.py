@@ -9,7 +9,6 @@ from pandas.testing import assert_series_equal
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from conftest import prepare_HTML_page_for_comparison
 from nolcat.nolcat_glue_job import *
 from nolcat.models import *
 
@@ -165,7 +164,7 @@ def test_format_ISSN():
 def test_prepare_HTML_page_for_comparison():
     """Tests creating an Unicode string from HTML page data.
     
-    The function being tested here is in the "tests/conftest.py" file; as it's the only function from that file with a test, it was placed here with other helper function tests.
+    This function is at the end of the "nolcat/nolcat_glue_job.py" file but is here with other helper function tests for organizational purposes.
     """
     assert prepare_HTML_page_for_comparison(b'<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Ingest Usage</title>\n</head>\n<body>\n    <h1>Ingest Usage Homepage</h1>\n\n    \n        \n            <p>[{&#39;DR&#39;: [], &#39;IR&#39;: [], &#39;PR&#39;: [], &#39;reports&#39;: [], &#39;status&#39;: []}]</p>\n        \n    \n\n    <ul>\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\n    </ul>\n\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\n</body>\n</html>') == '<!DOCTYPE html>\\n<html lang="en">\\n<head>\\n    <meta charset="UTF-8">\\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\\n    <title>Ingest Usage</title>\\n</head>\\n<body>\\n    <h1>Ingest Usage Homepage</h1>\\n\\n    \\n        \\n            <p>[{\'DR\': [], \'IR\': [], \'PR\': [], \'reports\': [], \'status\': []}]</p>\\n        \\n    \\n\\n    <ul>\\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\\n    </ul>\\n\\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\\n</body>\\n</html>'
 
