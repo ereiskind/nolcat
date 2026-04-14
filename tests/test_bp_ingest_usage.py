@@ -238,16 +238,68 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(engine, client, tmp_path, most_recent_month_with_usage, header_value, caplog):
-    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
-    
-    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data must be valid COUNTER Registry ID values; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+@pytest.fixture
+def select_statistics_source_ID(engine, caplog):
+    """Selects a value from the statisticsSources relation to use in `test_bp_ingest_usage.test_collect_annual_usage_statistics()`.
+
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` value used in the test data must be valid COUNTER Registry ID values; for testing purposes, any statisticsSources record with a valid statistics_source_retrieval_code can be used. The selection of the record's PK is in a fixture so the selected value can also be passed to `test_bp_ingest_usage.S3_regex_and_teardown()`.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        int: the primary key of a statisticsSources record
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    df = query_database(
+        query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        engine=engine,
+    )
+    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        pytest.skip(database_function_skip_statements(df))
+    yield choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
+
+
+@pytest.fixture
+def S3_regex_and_teardown(select_statistics_source_ID):
+    """Creates a regex matching the S3 files created when `test_bp_ingest_usage.test_collect_annual_usage_statistics()` runs and handles teardown for those same files.
+
+    Args:
+        select_statistics_source_ID (int): the primary key of a statisticsSources record
+
+    Yields:
+        re.compile: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+    """
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + select_statistics_source_ID + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    log.error(f"`regex`: {regex}")  #TEST: temp
+    yield regex
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    for file_name in [file for file in files_in_bucket if regex.fullmatch(str(file))]:
+        try:
+            log.error(f"Starting deletion of file {file_name} in fixture `S3_regex_and_teardown()`")  #TEST: temp
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=file_name.key,
+            )
+            log.error(f"Finished deletion of file {file_name} in fixture `S3_regex_and_teardown()`")  #TEST: temp
+        except botocore.exceptions.BotoCoreError as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+
+
+def test_harvest_SUSHI_statistics(client, tmp_path, most_recent_month_with_usage, select_statistics_source_ID, S3_regex_and_teardown, header_value, caplog):
+    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
+    
+    Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+
+    Args:
         client (flask.testing.FlaskClient): a Flask test client
         tmp_path (pathlib.Path): a temporary directory created just for running tests
         most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
+        select_statistics_source_ID (int): the primary key of a statisticsSources record
+        S3_regex_and_teardown (re.compile): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
         header_value (dict): HTTP header data
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
@@ -255,15 +307,8 @@ def test_harvest_SUSHI_statistics(engine, client, tmp_path, most_recent_month_wi
     caplog.set_level(logging.INFO, logger='nolcat.models')
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
-    df = query_database(
-        query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df))
-    primary_key_choice = choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
     form_input = {
-        'statistics_source': primary_key_choice,
+        'statistics_source': select_statistics_source_ID,
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
@@ -275,10 +320,7 @@ def test_harvest_SUSHI_statistics(engine, client, tmp_path, most_recent_month_wi
     )
     
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
-    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + primary_key_choice + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
-    log.error(f"`regex`: {regex}")  #TEST: temp
-    S3_file_names = [file for file in files_in_bucket if regex.fullmatch(str(file))]
+    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown.fullmatch(str(file))]
     assert 0 < len(S3_file_names) <= 4
     for S3_file_name in S3_file_names:
         download_location = tmp_path / S3_file_name.name
