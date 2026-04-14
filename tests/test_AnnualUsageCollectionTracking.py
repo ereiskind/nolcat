@@ -60,7 +60,7 @@ def S3_regex_and_teardown(AUCT_fixture_for_SUSHI):
         re.compile: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
     """
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + AUCT_fixture_for_SUSHI.AUCT_statistics_source + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + str(AUCT_fixture_for_SUSHI.AUCT_statistics_source) + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
     log.error(f"`regex`: {regex}")  #TEST: temp
     yield regex
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
