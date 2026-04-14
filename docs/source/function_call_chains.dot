@@ -661,6 +661,8 @@ digraph function_call_chains {
             _extraction_complete_logging_statement [shape="box"]
             _increase_field_length_logging_statement [shape="box"]
         }
+        prepare_HTML_page_for_comparison [shape="box"]
+        remove_file_from_S3 [shape="folder"]
         subgraph cluster_InvalidAPIResponseError {
             label="nolcat.nolcat_glue_job.InvalidAPIResponseError"
             penwidth=5
@@ -1095,7 +1097,6 @@ digraph function_call_chains {
             shape="box"
         ]
         match_direct_SUSHI_harvest_result [shape="box"]
-        prepare_HTML_page_for_comparison [shape="box"]
     }
     app -> configure_logging
     app -> create_app
@@ -2362,6 +2363,7 @@ digraph function_call_chains {
     test_harvest_single_report -> StatisticsSources_fixture
     test_harvest_single_report -> SUSHI_credentials_fixture_in_test_StatisticsSources
     test_harvest_single_report -> data_for_testing_harvest_single_report
+    test_harvest_single_report -> remove_file_from_S3
     test_harvest_single_report_with_partial_date_range -> _harvest_single_report
     test_harvest_single_report_with_partial_date_range -> client
     test_harvest_single_report_with_partial_date_range -> StatisticsSources_fixture

@@ -2595,6 +2595,26 @@ def prepare_HTML_page_for_comparison(page_data):
     return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
 
 
+def remove_file_from_S3(S3_file_name):
+    """A test helper function (used because fixture functions cannot take arguments in the test function) removing a file from S3.
+
+    This function provides teardown functionality for tests covering functions which generate the name/location of the file saved to S3.
+
+    Args:
+        S3_file_name (cloudpathlib.CloudPath): the name/location of the file to be removed from S3
+
+    Returns:
+        None
+    """
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+        )
+    except botocore.exceptions.BotoCoreError as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(S3_file_name, error))
+
+
 class _fileAttribute:
     """Enables the `_file` attribute of the `mock_FileStorage_object.stream` attribute.
 

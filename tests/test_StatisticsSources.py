@@ -259,6 +259,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
         Filename=download_location,
     )
     assert download_location.is_file()
+    remove_file_from_S3(S3_file_name)
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
