@@ -679,7 +679,7 @@ def most_recent_month_with_usage(caplog):
     yield (begin_date, end_date)
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def valid_COUNTER_retrieval_code():
     """Provides a random, valid retrieval COUNTER Registry IDs.
 
