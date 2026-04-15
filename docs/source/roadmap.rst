@@ -39,6 +39,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Confirm all tests still pass with working teardown
 
 * Determine if testing in Glue is needed, and if so, save parameters to use for tests to test files
+* Consolidate `nolcat.models.StatisticsSources._check_if_data_in_database()` and `nolcat.app.check_if_data_already_in_COUNTERData()` into single function using parquet files
 * Finish having errors raise exceptions instead of returning specifically designated strings
 * Figure out how to move a dataframe to a step function
 
@@ -68,8 +69,6 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.models.FiscalYears.calculate_ARL_18()`
     * `nolcat.models.FiscalYears.calculate_ARL_19()`
     * `nolcat.models.FiscalYears.calculate_ARL_20()`
-    * `nolcat.models.StatisticsSources._check_if_data_in_database()`
-    * `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()`
     * `nolcat.view_usage.use_predefined_SQL_query()`
     * `nolcat.view_usage.construct_PR_query_with_wizard()`
     * `nolcat.view_usage.construct_DR_query_with_wizard()`
@@ -86,7 +85,6 @@ Move Code to Glue Jobs and Data to Parquet
     * `tests.test_bp_view_usage.DR_parameters()`
     * `tests.test_bp_view_usage.TR_parameters()`
     * `tests.test_bp_view_usage.IR_parameters()`
-    * `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
 
   * Look out for fuzzy matching methods for strings in parquet files--current `(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
 
@@ -163,8 +161,6 @@ Iteration 6: Miscellaneous
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Add FSU Libraries wordmark as link to library homepage in footer
-* Consolidate `nolcat.models.StatisticsSources._check_if_data_in_database()` and `nolcat.app.check_if_data_already_in_COUNTERData()`
-* Convert error catches by returning strings to returning Python exception classes
 
 Iteration 7: Interact with Host File System
 ============================================
