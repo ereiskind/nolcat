@@ -461,7 +461,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
 
     #Section: Confirm Successful S3 Upload
     S3_file_name = TEST_NON_COUNTER_FILE_PATH / file_name
-    files_in_bucket = list_files_in_bucket_location(S3_file_name)
+    files_in_bucket = list_files_in_bucket_location(CloudPath(S3_file_name.key))
     assert file_name in files_in_bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
