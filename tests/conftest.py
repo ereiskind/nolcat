@@ -680,18 +680,15 @@ def most_recent_month_with_usage(caplog):
 
 
 @pytest.fixture
-def valid_COUNTER_retrieval_code(caplog):
+def valid_COUNTER_retrieval_code():
     """Provides a random, valid retrieval COUNTER Registry IDs.
 
     Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing.
 
-    Args:
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
-
     Yields:
         str: a COUNTER Registry ID
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    # Cannot use `caplog` for `fetch_URL_from_COUNTER_Registry()` due to scope mismatch
     retrieval_codes = []
     with open(PATH_TO_CREDENTIALS_FILE()) as file:
         CSV_data = csv.DictReader(file)
