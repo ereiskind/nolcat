@@ -120,7 +120,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -174,7 +174,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -233,7 +233,7 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
                 SUSHI_credentials,
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
@@ -269,7 +269,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -301,7 +301,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -333,7 +333,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -365,7 +365,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)

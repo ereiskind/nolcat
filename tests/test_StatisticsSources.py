@@ -128,7 +128,7 @@ def reports_offered_by_StatisticsSource_fixture(client, StatisticsSources_fixtur
                 {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     log.info(f"The call to reports for {StatisticsSources_fixture.statistics_source_name} was successful.")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
@@ -237,7 +237,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
@@ -282,7 +282,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(S3_file_names, list)
     assert isinstance(messages_to_flash, list)
     for name in S3_file_names:
@@ -320,7 +320,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(flash_message_dict, dict)
     assert flash_message_dict['status']
     assert flash_message_dict['reports']
@@ -352,7 +352,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error[0]}")
+        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(flash_message_dict, dict)
     assert flash_message_dict['status']
     assert flash_message_dict[report_being_called]

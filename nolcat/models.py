@@ -816,9 +816,9 @@ class StatisticsSources(db.Model):
             ).make_SUSHI_call(bucket_path)
         except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
             message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error.message}. SUSHI calls will *NOT* be made."
-            return_statements['status'] = flash_message_list
+            return_statements['status'] = error.message
             return_statements['STOP'] = []
-            for e in error[1] + [message]:
+            for e in error.messages_to_flash + [message]:
                 return_statements['STOP'].append(e)
             self._log.warning(return_statements)
             return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
@@ -847,10 +847,10 @@ class StatisticsSources(db.Model):
                     bucket_path=bucket_path,
                 )
             except InvalidSUSHIResponseError as error:
-                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
-                return_statements[report_to_harvest] = flash_message_list
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
+                return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = []
-                for e in error[1] + [message]:
+                for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
@@ -869,10 +869,10 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error[0]}."
-                return_statements['reports'] = flash_message_list
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error.message}."
+                return_statements['reports'] = error.message
                 return_statements['STOP'] = []
-                for e in error[1] + [message]:
+                for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
@@ -952,15 +952,15 @@ class StatisticsSources(db.Model):
                 except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
                     self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
-                    return_statements[report_to_harvest] = flash_message_list
-                    for e in error[1] + [f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."]:
+                    return_statements[report_to_harvest] = error.message
+                    for e in error.messages_to_flash + [f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
                         return_statements[report_to_harvest].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 except InvalidSUSHIResponseError as error:
-                    message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error[0]}."
-                    return_statements[report_to_harvest] = flash_message_list
+                    message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
+                    return_statements[report_to_harvest] = error.message
                     return_statements['STOP'] = []
-                    for e in error[1] + [message]:
+                    for e in error.messages_to_flash + [message]:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
@@ -1020,20 +1020,20 @@ class StatisticsSources(db.Model):
                     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
                         #OLD: self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                         no_usage_returned_count += 1
-                        for e in error[3]:
+                        for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
                     except InvalidSUSHIResponseError as error:
-                        message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
-                        for e in error[1]:
+                        message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         self._log.critical(message)
                         raise InvalidSUSHIResponseError(message, all_messages_to_flash)
                     except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
+                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
                         self._log.critical(message)
-                        for e in error[1] + [message]:
+                        for e in error.messages_to_flash + [message]:
                             all_messages_to_flash.append(e)
                         continue
                     for item in messages_to_flash:
@@ -1067,8 +1067,8 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
-                for e in error[1] + [message]:
+                message = f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
+                for e in error.messages_to_flash + [message]:
                     messages_to_flash.append(e)
                 self._log.critical(message)
                 raise InvalidSUSHIResponseError(message, messages_to_flash)
