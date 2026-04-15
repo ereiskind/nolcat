@@ -570,12 +570,10 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
     else:
         file_name = file_name_stem + '.txt'
     try:
-        log.error(f"Started deletion of file {TEST_COUNTER_FILE_PATH.key + file_name} in fixture `file_name_stem_and_data()`")  #TEST: temp
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
             Key=TEST_COUNTER_FILE_PATH.key + "/" + file_name
         )
-        log.error(f"Finished deletion of file {TEST_COUNTER_FILE_PATH.key + file_name} in fixture `file_name_stem_and_data()`")  #TEST: temp
     except botocore.exceptions.BotoCoreError as error:
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 

@@ -337,7 +337,6 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     assert flash_message_dict['reports']
     for report in reports_offered_by_StatisticsSource_fixture:
         assert flash_message_dict[report]
-    #ToDo: Tear down test files
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -368,7 +367,6 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert isinstance(flash_message_dict, dict)
     assert flash_message_dict['status']
     assert flash_message_dict[report_being_called]
-    #ToDo: Tear down test files
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
