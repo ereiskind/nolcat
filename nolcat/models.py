@@ -808,7 +808,7 @@ class StatisticsSources(db.Model):
 
         #Section: Confirm SUSHI API Functionality
         try:
-            SUSHI_status_response, flash_message_list = SUSHICallAndResponse(
+            SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
                 self.statistics_source_name,
                 SUSHI_info['URL'],
                 "status",
@@ -822,7 +822,7 @@ class StatisticsSources(db.Model):
                 return_statements['STOP'].append(e)
             self._log.warning(return_statements)
             return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-        return_statements['status'] = flash_message_list
+        return_statements['status'] = messages_to_flash
         self._log.info(f"The call to `status` for {self.statistics_source_name} was successful.")
 
         #Section: Harvest Individual Report if Specified
@@ -838,7 +838,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
             try:
-                S3_file_name, flash_message_list = self._harvest_single_report(
+                S3_file_name, messages_to_flash = self._harvest_single_report(
                     report_to_harvest,
                     SUSHI_info['URL'],
                     SUSHI_parameters,
@@ -854,7 +854,7 @@ class StatisticsSources(db.Model):
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-            return_statements[report_to_harvest] = flash_message_list
+            return_statements[report_to_harvest] = messages_to_flash
             return return_statements
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
@@ -862,7 +862,7 @@ class StatisticsSources(db.Model):
             #Subsection: Make API Call
             self._log.debug(f"Making a call for the `reports` endpoint.")
             try:
-                SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(
+                SUSHI_reports_response, messages_to_flash = SUSHICallAndResponse(
                     self.statistics_source_name,
                     SUSHI_info['URL'],
                     "reports",
@@ -876,7 +876,7 @@ class StatisticsSources(db.Model):
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-            return_statements['reports'] = flash_message_list
+            return_statements['reports'] = messages_to_flash
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
                 all_available_reports = []
@@ -941,7 +941,7 @@ class StatisticsSources(db.Model):
 
                 #Subsection: Make API Call(s)
                 try:
-                    S3_file_name, flash_message_list = self._harvest_single_report(
+                    S3_file_name, messages_to_flash = self._harvest_single_report(
                         report_name,
                         SUSHI_info['URL'],
                         SUSHI_parameters,
@@ -964,7 +964,7 @@ class StatisticsSources(db.Model):
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-                return_statements[report_to_harvest] = flash_message_list
+                return_statements[report_to_harvest] = messages_to_flash
 
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
@@ -1004,14 +1004,14 @@ class StatisticsSources(db.Model):
                 return (None, [message])
             else:
                 self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
-                complete_flash_message_list = []
+                all_messages_to_flash = []
                 S3_file_name_list = []
                 no_usage_returned_count = 0
                 for month_to_harvest in subset_of_months_to_harvest:
                     SUSHI_parameters['begin_date'] = month_to_harvest
                     SUSHI_parameters['end_date'] = last_day_of_month(month_to_harvest)
                     try:
-                        SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                        SUSHI_data_response, messages_to_flash = SUSHICallAndResponse(
                             self.statistics_source_name,
                             SUSHI_URL,
                             f"reports/{report.lower()}",
@@ -1021,29 +1021,29 @@ class StatisticsSources(db.Model):
                         #OLD: self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                         no_usage_returned_count += 1
                         for e in error[3]:
-                            complete_flash_message_list.append(e)
+                            all_messages_to_flash.append(e)
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
                     except InvalidSUSHIResponseError as error:
                         message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                         for e in error[1]:
-                            complete_flash_message_list.append(e)
+                            all_messages_to_flash.append(e)
                         self._log.critical(message)
-                        raise InvalidSUSHIResponseError(message, complete_flash_message_list)
+                        raise InvalidSUSHIResponseError(message, all_messages_to_flash)
                     except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                         message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
                         self._log.critical(message)
                         for e in error[1] + [message]:
-                            complete_flash_message_list.append(e)
+                            all_messages_to_flash.append(e)
                         continue
-                    for item in flash_message_list:
-                        complete_flash_message_list.append(item)
+                    for item in messages_to_flash:
+                        all_messages_to_flash.append(item)
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
                     try:
                         S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
                     except S3InteractionError as error:
-                        complete_flash_message_list.append(error)
+                        all_messages_to_flash.append(error)
                         continue  # Raising an error here would keep any other reports from being pulled and processed
                     S3_file_name_list.append(S3_file_name)
                     if parquet_file_name_regex().fullmatch(S3_file_name):
@@ -1053,14 +1053,14 @@ class StatisticsSources(db.Model):
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     raise NoSUSHIUsageDataError(report.lower(), self.statistics_source_name, "all months returned no usage")
-                return (S3_file_name_list, complete_flash_message_list)
+                return (S3_file_name_list, all_messages_to_flash)
 
         elif subset_of_months_to_harvest is None:
             self._log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for the full date range of {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
             try:
-                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(
+                SUSHI_data_response, messages_to_flash = SUSHICallAndResponse(
                     self.statistics_source_name,
                     SUSHI_URL,
                     f"reports/{report.lower()}",
@@ -1069,20 +1069,19 @@ class StatisticsSources(db.Model):
             except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                 message = error[0] + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error[0]}"
                 for e in error[1] + [message]:
-                    flash_message_list.append(e)
+                    messages_to_flash.append(e)
                 self._log.critical(message)
-                raise InvalidSUSHIResponseError(message, flash_message_list)
+                raise InvalidSUSHIResponseError(message, messages_to_flash)
             try:
                 S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
             except S3InteractionError as error:
-                flash_message_list.append(error)
-                raise S3InteractionErrorWithFlashMessages(error, flash_message_list)
+                messages_to_flash.append(error)
+                raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
             if parquet_file_name_regex().fullmatch(str(S3_file_name)):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
-            log.error(f"`flash_message_list` (type {type(flash_message_list)}): {flash_message_list}")  #TEST: temp
-            return (S3_file_name, flash_message_list)
+            return (S3_file_name, messages_to_flash)
 
 
     @hybrid_method
