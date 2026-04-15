@@ -273,17 +273,14 @@ def S3_regex_and_teardown(select_statistics_source_ID):
     """
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
     regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + select_statistics_source_ID + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
-    log.error(f"`regex`: {regex}")  #TEST: temp
     yield regex
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     for file_name in [file for file in files_in_bucket if regex.fullmatch(str(file))]:
         try:
-            log.error(f"Starting deletion of file {file_name} in fixture `S3_regex_and_teardown()`")  #TEST: temp
             s3_client.delete_object(
                 Bucket=BUCKET_NAME,
                 Key=file_name.key,
             )
-            log.error(f"Finished deletion of file {file_name} in fixture `S3_regex_and_teardown()`")  #TEST: temp
         except botocore.exceptions.BotoCoreError as error:
             log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 

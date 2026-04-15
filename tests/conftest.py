@@ -549,7 +549,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     if isinstance(record, str):  #ToDo: Remove when `query_database()` raises exception when there's a problem
         pytest.skip(database_function_skip_statements(record, False))
     if record.empty:
-        pytest.skip("The query returned an empty dataframe. Rerun this test module.")
+        pytest.skip("The query returned an empty dataframe. Rerun this test module.")  #ToDo: This often happens when 'test_AnnualUsageCollectionTracking.py' is run after 'test_bp_ingest_usage.py'--find out why
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],

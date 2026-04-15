@@ -753,6 +753,7 @@ class StatisticsSources(db.Model):
                         if isinstance(credentials['URL'], Exception):
                             return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
                 
+                    self._log.error(f"`statistics_source_credentials` (type {type(statistics_source_credentials)}):\n{statistics_source_credentials}")  #TEST: temp
                     if code_of_practice == "5" and statistics_source_credentials['customer_ID'] is not None:
                         if statistics_source_credentials.get('alt_customer_ID'):
                             credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
