@@ -578,9 +578,9 @@ def upload_historical_non_COUNTER_usage(testing):
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
                 if testing == "":
-                    bucket_path = PRODUCTION_COUNTER_FILE_PATH
+                    bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
                 elif testing == "test":
-                    bucket_path = TEST_COUNTER_FILE_PATH
+                    bucket_path = TEST_NON_COUNTER_FILE_PATH
                 else:
                     message = f"The dynamic route featured the invalid value {testing}."
                     log.error(message)
