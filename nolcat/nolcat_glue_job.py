@@ -1271,41 +1271,10 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
             else:
-                #TEST: temp
-                try:
-                    log.error(f"`find_current_audit` (type {type(find_current_audit)}): {find_current_audit}")
-                except Exception as e:
-                    log.error(f"Printing `find_current_audit` raised {e}")
-                try:
-                    log.error(f"`release_data` (type {type(release_data)}): {release_data}")
-                except Exception as e:
-                    log.error(f"Printing `release_data` raised {e}")
-                try:
-                    log.error(f"`release_data['last_audit']` (type {type(release_data['last_audit'])}): {release_data['last_audit']}")
-                except Exception as e:
-                    log.error(f"Printing `release_data['last_audit']` raised {e}")
-                try:
-                    log.error(f"`release_data['last_audit']['counter_release']` (type {type(release_data['last_audit']['counter_release'])}): {release_data['last_audit']['counter_release']}")
-                except Exception as e:
-                    log.error(f"Printing `release_data['last_audit']['counter_release']` raised {e}")
-                try:
-                    log.error(f"`release_data['last_audit']['audit_status']` (type {type(release_data['last_audit']['audit_status'])}): {release_data['last_audit']['audit_status']}")
-                except Exception as e:
-                    log.error(f"Printing `release_data['last_audit']['audit_status']` raised {e}")
-                try:
-                    log.error(f"`find_current_audit[release_data]` (type {type(find_current_audit[release_data])}): {find_current_audit[release_data]}")
-                except Exception as e:
-                    log.error(f"Printing `find_current_audit[release_data]` raised {e}")
-                try:
-                    log.error(f"`find_current_audit[release_data['last_audit']]` (type {type(find_current_audit[release_data['last_audit']])}): {find_current_audit[release_data['last_audit']]}")
-                except Exception as e:
-                    log.error(f"Printing `find_current_audit[release_data['last_audit']]` raised {e}")
-                try:
-                    log.error(f"`find_current_audit[release_data['last_audit']['counter_release']]` (type {type(find_current_audit[release_data['last_audit']['counter_release']])}): {find_current_audit[release_data['last_audit']['counter_release']]}")
-                except Exception as e:
-                    log.error(f"Printing `find_current_audit[release_data['last_audit']['counter_release']]` raised {e}")
-                #TEST: end temp
-                find_current_audit[release_data['last_audit']['counter_release']] = release_data['last_audit']['audit_status']
+                if release_data['last_audit']:
+                    find_current_audit[release_data['last_audit']['counter_release']] = release_data['last_audit']['audit_status']
+                else:
+                    find_current_audit[release_data['counter_release']] = "No audit"                
                 log.debug(f"Audit statuses: {format_list_for_stdout(find_current_audit)}")
     else:
         raise InvalidAPIResponseError("The COUNTER Registry didn't return a URL.")
@@ -1313,24 +1282,29 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     if find_current_audit:
         currently_valid_release = [k for (k, v) in find_current_audit.items() if v=="Currently valid audit"]
         expired_release = [k for (k, v) in find_current_audit.items() if v=="Audit expired"]
-        audit_in_progress_release = [k for (k, v) in find_current_audit.items() if v=="Audit in progress"]
+        audit_not_current = [k for (k, v) in find_current_audit.items() if v=="Audit in progress" or v=="No audit"]
         if len(currently_valid_release) == 1:
             for release_data in API_response['sushi_services']:
                 if release_data['counter_release'] == currently_valid_release[0]:
                     temp_URL = release_data['url']
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
-        elif len(currently_valid_release) == 0 and len(expired_release) == 1 and len(audit_in_progress_release) == 1:
-            log.warning(f"COUNTER registry ID {registry_ID} is between codes of practice; the newer one, which is under audit, is being used.")
+        elif len(currently_valid_release) == 0 and (len(expired_release) == 1 or len(audit_not_current) == 1):
+            if len(expired_release) >= 1 and len(audit_not_current) == 1:
+                log.warning(f"COUNTER registry ID {registry_ID} is between codes of practice; the newer one, which either hasn't been audited or is in the process of an audit, is being used.")
+            elif len(currently_valid_release) == 0 and len(audit_not_current) == 1:
+                log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which either hasn't been audited or is in the process of an audit; that CoP is being used.")
+            elif len(expired_release) == 1 and len(audit_not_current) == 0:
+                log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which has an expired audit; that CoP is being used.")
             for release_data in API_response['sushi_services']:
-                if release_data['counter_release'] == audit_in_progress_release[0]:
+                if release_data['counter_release'] == audit_not_current[0]:
                     temp_URL = release_data['url']
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
         elif len(currently_valid_release) > 1:
             raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
         else:
-            raise InvalidAPIResponseError(f"The {registry_ID} in the COUNTER Registry has an issue with its codes of practice audit statuses, with {len(currently_valid_release)} valid audits, {len(expired_release)} expired audits, and {len(audit_in_progress_release)} audits in progress.")
+            raise InvalidAPIResponseError(f"The {registry_ID} in the COUNTER Registry has an issue with its codes of practice audit statuses, with {len(currently_valid_release)} valid audits, {len(expired_release)} expired audits, and at least {len(audit_not_current)} audits in progress.")
     
     #Section: Format SUSHI URL
     parsed_URL = urlparse(temp_URL)
