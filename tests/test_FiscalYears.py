@@ -410,12 +410,13 @@ def S3_regex_and_teardown():
 
 
 @pytest.mark.slow
-def test_collect_fiscal_year_usage_statistics(engine, tmp_path, FY2022_FiscalYears_object, S3_regex_and_teardown, caplog):
+def test_collect_fiscal_year_usage_statistics(engine, tmp_path, valid_COUNTER_retrieval_code, FY2022_FiscalYears_object, S3_regex_and_teardown, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         tmp_path (pathlib.Path): a temporary directory created just for running tests
+        valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
         FY2022_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object that matches this test's requirements
         S3_regex_and_teardown (re.compile): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
@@ -423,16 +424,8 @@ def test_collect_fiscal_year_usage_statistics(engine, tmp_path, FY2022_FiscalYea
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
-    retrieval_codes = []  # A random value is used for the SUSHI call for greater variability in the testing
-    with open(PATH_TO_CREDENTIALS_FILE()) as file:
-        CSV_data = csv.DictReader(file)
-        for statistics_source_credentials in CSV_data:
-            if statistics_source_credentials['statistics_source_retrieval_code']:
-                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
-                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
-
     update_result = update_database(
-        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{str(choice(retrieval_codes))}' WHERE statistics_source_ID=11;",
+        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
         engine=engine,
     )
     if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`

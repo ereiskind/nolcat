@@ -1096,6 +1096,10 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
+        valid_COUNTER_retrieval_code [
+            style="dotted"
+            shape="box"
+        ]
         match_direct_SUSHI_harvest_result [shape="box"]
     }
     app -> configure_logging
@@ -1162,6 +1166,8 @@ digraph function_call_chains {
     non_COUNTER_file_to_download_from_S3 -> path_to_sample_file
     non_COUNTER_file_to_download_from_S3 -> non_COUNTER_AUCT_object_after_upload
     most_recent_month_with_usage -> last_day_of_month
+    valid_COUNTER_retrieval_code -> PATH_TO_CREDENTIALS_FILE
+    valid_COUNTER_retrieval_code -> fetch_URL_from_COUNTER_Registry
     match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
     match_direct_SUSHI_harvest_result -> query_database
     match_direct_SUSHI_harvest_result -> database_function_skip_statements
@@ -2222,6 +2228,7 @@ digraph function_call_chains {
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
     test_collect_fiscal_year_usage_statistics -> list_files_in_bucket_location
     test_collect_fiscal_year_usage_statistics -> S3_regex_and_teardown_in_test_fiscalYears
+    test_collect_fiscal_year_usage_statistics -> valid_COUNTER_retrieval_code
 
 
     subgraph cluster_test_ResourceSources {
@@ -2332,12 +2339,7 @@ digraph function_call_chains {
         ]
     }
     current_month_like_most_recent_month_with_usage -> last_day_of_month
-    StatisticsSources_fixture -> PATH_TO_CREDENTIALS_FILE
-    StatisticsSources_fixture -> query_database
-    StatisticsSources_fixture -> extract_value_from_single_value_df
-    StatisticsSources_fixture -> database_function_skip_statements
-    StatisticsSources_fixture -> engine
-    StatisticsSources_fixture -> most_recent_month_with_usage
+    StatisticsSources_fixture -> valid_COUNTER_retrieval_code
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information

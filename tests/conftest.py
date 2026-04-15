@@ -679,6 +679,36 @@ def most_recent_month_with_usage(caplog):
     yield (begin_date, end_date)
 
 
+@pytest.fixture
+def valid_COUNTER_retrieval_code(caplog):
+    """Provides a random, valid retrieval COUNTER Registry IDs.
+
+    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing.
+
+    Args:
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        str: a COUNTER Registry ID
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    retrieval_codes = []
+    with open(PATH_TO_CREDENTIALS_FILE()) as file:
+        CSV_data = csv.DictReader(file)
+        for statistics_source_credentials in CSV_data:
+            if statistics_source_credentials['statistics_source_retrieval_code']:
+                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
+    valid_retrieval_codes = []
+    for code in retrieval_codes:
+        try:
+            if fetch_URL_from_COUNTER_Registry(code):
+                valid_retrieval_codes.append(code)
+        except:
+            pass
+    yield str(choice(valid_retrieval_codes))
+
+
 #Section: Test Helper Functions
 def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.

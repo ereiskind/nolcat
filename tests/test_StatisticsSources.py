@@ -38,29 +38,18 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture():
+def StatisticsSources_fixture(valid_COUNTER_retrieval_code):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file.
+
+    Args:
+        valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
     # Cannot use `caplog` for `query_database()` due to scope mismatch
-    retrieval_codes = []
-    with open(PATH_TO_CREDENTIALS_FILE()) as file:
-        CSV_data = csv.DictReader(file)
-        for statistics_source_credentials in CSV_data:
-            if statistics_source_credentials['statistics_source_retrieval_code']:
-                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
-                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
-    valid_retrieval_codes = []  # If there isn't a valid audit on the randomly selected COUNTER registry ID, most of the module's tests are skipped
-    for code in retrieval_codes:
-        try:
-            if fetch_URL_from_COUNTER_Registry(code):
-                valid_retrieval_codes.append(code)
-        except:
-            pass
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = choice([  # If the name isn't in the database, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; using the names of the statistics sources associated with COUNTER in the test data is a further hedge against problems
@@ -68,7 +57,7 @@ def StatisticsSources_fixture():
             "EBSCOhost",
             "Duke UP",
         ]),
-        statistics_source_retrieval_code = str(choice(valid_retrieval_codes)),
+        statistics_source_retrieval_code = valid_COUNTER_retrieval_code,
         vendor_ID = 0,
     )
     log.warning(f"The statistics source retrieval code being used is {yield_object.statistics_source_retrieval_code}.")  # The level is `warning` so it always displays, ensuring the SUSHI credentials source can be determined in the event that the tests don't pass because of problems on the vendor side
