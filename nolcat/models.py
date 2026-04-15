@@ -815,7 +815,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
         except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error[0]}. SUSHI calls will *NOT* be made."
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error.message}. SUSHI calls will *NOT* be made."
             return_statements['status'] = flash_message_list
             return_statements['STOP'] = []
             for e in error[1] + [message]:
