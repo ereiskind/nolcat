@@ -174,15 +174,6 @@ def non_COUNTER_file_name_regex():
     return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
 
 
-def parquet_file_name_regex():
-    """A regex for the naming convention of parquet usage files containing COUNTER data in S3.
-    
-    Returns:
-        re.Pattern: the regex object
-    """
-    return re.compile(r"(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2}T\d{2}\-\d{2}\-\d{2})|(NULL))\.parquet")
-
-
 def empty_string_regex():
     """A regex for matching empty strings and whitespace-only strings.
 

@@ -47,15 +47,6 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
 
 
-def test_parquet_file_name_regex():
-    """Tests matching the regex object to file names."""
-    assert parquet_file_name_regex().fullmatch("1_IR_2019-01-01T00-00-00.parquet") is not None
-    assert parquet_file_name_regex().fullmatch("100_DR_NULL.parquet") is not None
-    assert parquet_file_name_regex().fullmatch("55_PR_NULL.parquet") is not None
-    assert parquet_file_name_regex().fullmatch("99_PR1_NULL.parquet") is not None
-    assert parquet_file_name_regex().fullmatch("999_DR_2024-12-31T23-59-59.parquet") is not None
-
-
 def test_empty_string_regex():
     """Tests matching the regex object to empty and whitespace-only strings."""
     assert empty_string_regex().fullmatch("") is not None
@@ -478,8 +469,9 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     yield (df, statistics_source_ID, report_type)
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + {statistics_source_ID} + "_" + {report_type} + "_" + {date.today().strftime('%Y-%m-%d')} + r'T\d{2}-\d{2}-\d{2}\.parquet')
     for file in files_in_bucket:
-        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+        if regex.fullmatch(str(file)):
             possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:
@@ -510,7 +502,7 @@ def test_save_dataframe_to_S3_bucket(tmp_path, dataframe_to_save_to_S3):
     )
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.parent == TEST_COUNTER_FILE_PATH
-    assert parquet_file_name_regex().fullmatch(S3_file_name.name)
+    assert re.fullmatch(r'(\d+)_(\w{2}\d?)_((\d{4}\-\d{2}\-\d{2}T\d{2}\-\d{2}\-\d{2})|(NULL))\.parquet', S3_file_name.name)
     download_location = tmp_path / S3_file_name.name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
@@ -6083,8 +6075,9 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + {statistics_source_ID} + "_" + {report_type} + "_" + {date.today().strftime('%Y-%m-%d')} + r'T\d{2}-\d{2}-\d{2}\.parquet')
     for file in files_in_bucket:
-        if parquet_file_name_regex().search(str(file)) and str(file).startswith(f"{TEST_COUNTER_FILE_PATH}/{statistics_source_ID}_{report_type}_{date.today().strftime('%Y-%m-%d')}"):
+        if regex.fullmatch(str(file)):
             possible_S3_file_names.append(file)
     if len(possible_S3_file_names) == 1:
         try:

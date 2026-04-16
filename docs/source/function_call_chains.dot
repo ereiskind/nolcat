@@ -190,7 +190,6 @@ digraph function_call_chains {
     _harvest_single_report -> make_SUSHI_call
     _harvest_single_report -> create_parquet
     _harvest_single_report -> last_day_of_month
-    _harvest_single_report -> parquet_file_name_regex
     _check_if_data_in_database -> query_database
     _check_if_data_in_database -> extract_value_from_single_value_df
     _check_if_data_in_database -> return_value_from_query_statement
@@ -605,7 +604,6 @@ digraph function_call_chains {
         ISSN_regex [shape="box"]
         ISBN_regex [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
-        parquet_file_name_regex [shape="box"]
         empty_string_regex [shape="box"]
         proprietary_ID_regex [shape="box"]
         author_regex [shape="box"]
@@ -1398,10 +1396,8 @@ digraph function_call_chains {
     test_update_database_with_insert_statement -> engine
     dataframe_to_save_to_S3 -> unable_to_delete_test_file_in_S3_statement
     dataframe_to_save_to_S3 -> list_files_in_bucket_location
-    dataframe_to_save_to_S3 -> parquet_file_name_regex
     dataframe_to_save_to_S3 -> format_list_for_stdout
     test_save_dataframe_to_S3_bucket -> dataframe_to_save_to_S3
-    test_save_dataframe_to_S3_bucket -> parquet_file_name_regex
     test_upload_file_to_S3_bucket -> upload_file_to_S3_bucket
     test_upload_file_to_S3_bucket -> path_to_sample_file
     test_upload_file_to_S3_bucket -> remove_test_file_from_COUNTER_S3_folder
@@ -1431,7 +1427,6 @@ digraph function_call_chains {
     JSON_dicts_with_metadata -> R5b1_JSON_3_TR_relation
     JSON_dicts_with_metadata -> R5b1_JSON_3_IR_relation
     JSON_dicts_with_metadata -> list_files_in_bucket_location
-    JSON_dicts_with_metadata -> parquet_file_name_regex
     JSON_dicts_with_metadata -> unable_to_delete_test_file_in_S3_statement
     JSON_dicts_with_metadata -> format_list_for_stdout
     test_create_parquet -> JSON_dicts_with_metadata

@@ -1047,7 +1047,7 @@ class StatisticsSources(db.Model):
                         all_messages_to_flash.append(error)
                         continue  # Raising an error here would keep any other reports from being pulled and processed
                     S3_file_name_list.append(S3_file_name)
-                    if parquet_file_name_regex().fullmatch(S3_file_name):
+                    if isinstance(S3_file_name, CloudPath):
                         self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
                     else:
                         self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
@@ -1078,7 +1078,7 @@ class StatisticsSources(db.Model):
             except S3InteractionError as error:
                 messages_to_flash.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
-            if parquet_file_name_regex().fullmatch(str(S3_file_name)):
+            if isinstance(S3_file_name, CloudPath):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
