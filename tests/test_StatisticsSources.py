@@ -210,6 +210,7 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
     )
 
 
+@pytest.mark.dependency
 @pytest.mark.slow
 def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe.
