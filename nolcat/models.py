@@ -763,9 +763,9 @@ class StatisticsSources(db.Model):
                     try:
                         SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
                             self.statistics_source_name,
-                            #self.fetch_SUSHI_information(code_of_practice)['URL'],
+                            credentials['URL'],
                             "status",
-                            #{key: value for key, value in self.fetch_SUSHI_information(code_of_practice).items() if key != "URL"}
+                            {k: v for k, v in credentials.items() if k != "URL"},
                         ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
                     except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                         self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code}.")
