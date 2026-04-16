@@ -469,7 +469,7 @@ def dataframe_to_save_to_S3(COUNTERData_relation):
     yield (df, statistics_source_ID, report_type)
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + statistics_source_ID + "_" + report_type + "_" + date.today().strftime('%Y-%m-%d') + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + str(statistics_source_ID) + "_" + report_type + "_" + date.today().strftime('%Y-%m-%d') + r'T\d{2}-\d{2}-\d{2}\.parquet')
     for file in files_in_bucket:
         if regex.fullmatch(str(file)):
             possible_S3_file_names.append(file)
@@ -6075,7 +6075,7 @@ def JSON_dicts_with_metadata(request, R5_JSON_3_PR_relation, R5_JSON_0_DR_relati
         yield (JSON_report_path, report_type, statistics_source_ID, R5b1_JSON_3_IR_relation)
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     possible_S3_file_names = []
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + statistics_source_ID + "_" + report_type + "_" + date.today().strftime('%Y-%m-%d') + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + str(statistics_source_ID) + "_" + report_type + "_" + date.today().strftime('%Y-%m-%d') + r'T\d{2}-\d{2}-\d{2}\.parquet')
     for file in files_in_bucket:
         if regex.fullmatch(str(file)):
             possible_S3_file_names.append(file)
