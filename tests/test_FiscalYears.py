@@ -410,11 +410,12 @@ def S3_regex_and_teardown():
 
 
 @pytest.mark.slow
-def test_collect_fiscal_year_usage_statistics(engine, tmp_path, valid_COUNTER_retrieval_code, FY2022_FiscalYears_object, S3_regex_and_teardown, caplog):
+def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path, valid_COUNTER_retrieval_code, FY2022_FiscalYears_object, S3_regex_and_teardown, caplog):
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
         tmp_path (pathlib.Path): a temporary directory created just for running tests
         valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
         FY2022_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object that matches this test's requirements
@@ -424,10 +425,11 @@ def test_collect_fiscal_year_usage_statistics(engine, tmp_path, valid_COUNTER_re
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
-    update_result = update_database(
-        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
-        engine=engine,
-    )
+    with client:
+        update_result = update_database(
+            update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
+            engine=engine,
+        )
     if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
         pytest.skip("Unable to add statistics source retrieval code to relevant record.")
 
