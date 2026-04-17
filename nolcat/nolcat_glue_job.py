@@ -1370,6 +1370,7 @@ class ConvertJSONDictToParquet:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
                 self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                self._log.error(f"`self.report_type`: {self.report_type}")  #TEST: temp
                 file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                 if test:
                     bucket_path = TEST_COUNTER_FILE_PATH
@@ -1392,6 +1393,7 @@ class ConvertJSONDictToParquet:
                 df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
                 self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                self._log.error(f"`self.report_type`: {self.report_type}")  #TEST: temp
                 file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
                 if test:
                     bucket_path = TEST_COUNTER_FILE_PATH
@@ -2364,6 +2366,17 @@ class ConvertJSONDictToParquet:
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
+        #TEST: temp
+        self._log.error(f"`report_type`: {report_type}")
+        try:
+            self._log.error(f"`second_iteration_key_list` (type {type(second_iteration_key_list)}): {second_iteration_key_list}")
+        except Exception as e:
+            self._log.error(f"Printing `second_iteration_key_list` raised {e}")
+        try:
+            self._log.error(f"`third_iteration_key_list` (type {type(third_iteration_key_list)}): {third_iteration_key_list}")
+        except Exception as e:
+            self._log.error(f"Printing `third_iteration_key_list` raised {e}")
+        #TEST: end temp
         if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
             list_of_records = report_items_list
         elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
