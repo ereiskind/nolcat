@@ -948,10 +948,13 @@ class StatisticsSources(db.Model):
                     self._log.warning(f"The {report_name} report for {self.statistics_source_name} isn't recognized as a customizable report. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
-                if not re.search(r"/r5\d+/", SUSHI_info['URL']):
+                self._log.error(f"`SUSHI_info['URL']`: {SUSHI_info['URL']}")  #TEST: temp
+                self._log.error(f"`re.search(r'/r5\d+/', SUSHI_info['URL'])`: {re.search(r'/r5\d+/', SUSHI_info['URL'])}")  #TEST: temp
+                if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                     SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
                         SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # Removed starting in R5
+                self._log.error(f"`SUSHI_parameters`: {format_list_for_stdout(SUSHI_parameters)}")  #TEST: temp
 
                 #Subsection: Make API Call(s)
                 try:
@@ -978,6 +981,7 @@ class StatisticsSources(db.Model):
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                self._log.error(f"{S3_file_name} successfully returned to `_harvest_R5_SUSHI()`")  #TEST: temp
                 return_statements[report_to_harvest] = messages_to_flash
 
             if len(available_custom_reports) == no_usage_returned_count:
