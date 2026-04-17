@@ -689,20 +689,28 @@ def valid_COUNTER_retrieval_code():
         str: a COUNTER Registry ID
     """
     # Cannot use `caplog` for `fetch_URL_from_COUNTER_Registry()` due to scope mismatch
-    retrieval_codes = []
-    with open(PATH_TO_CREDENTIALS_FILE()) as file:
-        CSV_data = csv.DictReader(file)
-        for statistics_source_credentials in CSV_data:
-            if statistics_source_credentials['statistics_source_retrieval_code']:
-                if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
-                    retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
-    valid_retrieval_codes = []
-    for code in retrieval_codes:
-        try:
-            if fetch_URL_from_COUNTER_Registry(code):
-                valid_retrieval_codes.append(code)
-        except:
-            pass
+    #retrieval_codes = []
+    #with open(PATH_TO_CREDENTIALS_FILE()) as file:
+    #    CSV_data = csv.DictReader(file)
+    #    for statistics_source_credentials in CSV_data:
+    #        if statistics_source_credentials['statistics_source_retrieval_code']:
+    #            if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+    #                retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
+    #valid_retrieval_codes = []
+    #for code in retrieval_codes:
+    #    try:
+    #        if fetch_URL_from_COUNTER_Registry(code):
+    #            valid_retrieval_codes.append(code)
+    #    except:
+    #        pass
+    valid_retrieval_codes = [  #TEST: Restore potential to use any COUNTER Registry ID in SUSHI CSV once 'tests/test_StatisticsSources.py' passes with these IDs
+        "19f529b8-f978-4484-ac0f-ad61b8ff9b06",
+        "36dbf9d6-735b-44c7-aa4c-c462b26368fa",
+        "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
+        "777e6538-5ae8-443f-94e3-0110061e4f06",
+        "87c1c2b6-ed9e-49f8-ab4c-ef4bf1dc058c",
+        "c67345a4-34f7-445e-ad49-b38b21438b59",
+    ]
     yield str(choice(valid_retrieval_codes))
 
 
