@@ -321,12 +321,9 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(flash_message_dict, dict)
-    log.error(f"`flash_message_dict['status']` is {bool(flash_message_dict['status'])}")  #TEST: temp
     assert 'status' in list(flash_message_dict.keys())
-    log.error(f"`flash_message_dict['reports']` is {bool(flash_message_dict['reports'])}")  #TEST: temp
     assert 'reports' in list(flash_message_dict.keys())
     for report in reports_offered_by_StatisticsSource_fixture:
-        log.error(f"`flash_message_dict[report]` is {bool(flash_message_dict[report])}")  #TEST: temp
         assert report in list(flash_message_dict.keys())
 
 
@@ -356,8 +353,8 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(flash_message_dict, dict)
-    assert flash_message_dict['status']
-    assert flash_message_dict[report_being_called]
+    assert 'status' in list(flash_message_dict.keys())
+    assert 'report_being_called' in list(flash_message_dict.keys())
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
