@@ -853,7 +853,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['include_parent_details'] = "True"
             if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                 SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
-                if report_name == "TR":
+                if report_to_harvest == "TR":
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
 
             try:
