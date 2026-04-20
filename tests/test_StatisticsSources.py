@@ -354,7 +354,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
-    assert 'report_being_called' in list(flash_message_dict.keys())
+    assert report_being_called in list(flash_message_dict.keys())
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
