@@ -953,14 +953,10 @@ class StatisticsSources(db.Model):
                     self._log.warning(f"The {report_name} report for {self.statistics_source_name} isn't recognized as a customizable report. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
-                self._log.error(f"`self.statistics_source_retrieval_code`: {self.statistics_source_retrieval_code}")  #TEST: temp
-                self._log.error(f"`SUSHI_info['URL']`: {SUSHI_info['URL']}")  #TEST: temp
-                self._log.error(f"`re.search(r'/r5\d+/', SUSHI_info['URL'])`: {re.search(r'/r5\d+/', SUSHI_info['URL'])}")  #TEST: temp
                 if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
                         SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
-                self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
                 #Subsection: Make API Call(s)
                 try:
