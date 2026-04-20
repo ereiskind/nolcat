@@ -274,7 +274,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
     end_date = last_day_of_month(end_month)
     try:
         with client:
-            S3_file_names, messages_to_flash = StatisticsSources_fixture._harvest_single_report(
+            S3_file_name, messages_to_flash = StatisticsSources_fixture._harvest_single_report(
                 report_to_check,
                 SUSHI_credentials_fixture['URL'],
                 {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
@@ -284,18 +284,16 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
             )
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
-    assert isinstance(S3_file_names, list)
+    assert isinstance(S3_file_name, CloudPath)
+    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
-    for name in S3_file_names:
-        assert isinstance(name, CloudPath)
-        assert name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
-        download_location = tmp_path / name.name
-        s3_client.download_file(
-            Bucket=BUCKET_NAME,
-            Key=name.key,
-            Filename=download_location,
-        )
-        assert download_location.is_file()
+    download_location = tmp_path / S3_file_name.name
+    s3_client.download_file(
+        Bucket=BUCKET_NAME,
+        Key=S3_file_name.key,
+        Filename=download_location,
+    )
+    assert download_location.is_file()
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
