@@ -842,6 +842,8 @@ class StatisticsSources(db.Model):
         #Section: Harvest Individual Report if Specified
         if isinstance(report_to_harvest, str):
             self._log.info(f"Harvesting just a {report_to_harvest} report.")
+            self._log.error(f"`SUSHI_info['URL']`: {SUSHI_info['URL']}")  #TEST: temp
+            self._log.error(f"`re.search(r'/r5\d+/', SUSHI_info['URL'])`: {re.search(r'/r5\d+/', SUSHI_info['URL'])}")  #TEST: temp
             if report_to_harvest == "PR":
                 SUSHI_parameters['attributes_to_show'] = "Access_Method"
             elif report_to_harvest == "DR":
@@ -855,6 +857,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                 if report_to_harvest == "TR":
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
+            self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
             try:
                 S3_file_name, messages_to_flash = self._harvest_single_report(
