@@ -843,14 +843,19 @@ class StatisticsSources(db.Model):
         if isinstance(report_to_harvest, str):
             self._log.info(f"Harvesting just a {report_to_harvest} report.")
             if report_to_harvest == "PR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method"
             elif report_to_harvest == "DR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method"
             elif report_to_harvest == "TR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Section_Type"
             elif report_to_harvest == "IR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
-                SUSHI_parameters["include_parent_details"] = "True"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                SUSHI_parameters['include_parent_details'] = "True"
+            if not re.search(r'/r5\d+/', SUSHI_info['URL']):
+                SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
+                if report_name == "TR":
+                    SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
+
             try:
                 S3_file_name, messages_to_flash = self._harvest_single_report(
                     report_to_harvest,
@@ -935,14 +940,14 @@ class StatisticsSources(db.Model):
                     del SUSHI_parameters["include_parent_details"]
                 
                 if report_name == "PR":
-                    SUSHI_parameters["attributes_to_show"] = "Access_Method"
+                    SUSHI_parameters['attributes_to_show'] = "Access_Method"
                 elif report_name == "DR":
-                    SUSHI_parameters["attributes_to_show"] = "Access_Method"
+                    SUSHI_parameters['attributes_to_show'] = "Access_Method"
                 elif report_name == "TR":
-                    SUSHI_parameters["attributes_to_show"] = "Access_Method|YOP|Access_Type"
+                    SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type"
                 elif report_name == "IR":
-                    SUSHI_parameters["attributes_to_show"] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
-                    SUSHI_parameters["include_parent_details"] = "True"
+                    SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                    SUSHI_parameters['include_parent_details'] = "True"
                 else:
                     #ToDo: Allow for standard reports not matching an available customizable report to be pulled
                     self._log.warning(f"The {report_name} report for {self.statistics_source_name} isn't recognized as a customizable report. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")
@@ -952,9 +957,9 @@ class StatisticsSources(db.Model):
                 self._log.error(f"`SUSHI_info['URL']`: {SUSHI_info['URL']}")  #TEST: temp
                 self._log.error(f"`re.search(r'/r5\d+/', SUSHI_info['URL'])`: {re.search(r'/r5\d+/', SUSHI_info['URL'])}")  #TEST: temp
                 if not re.search(r'/r5\d+/', SUSHI_info['URL']):
-                    SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Data_Type"  # Mandatory starting in R5.1
+                    SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
-                        SUSHI_parameters["attributes_to_show"] = SUSHI_parameters["attributes_to_show"] + "|Section_Type"  # Removed starting in R5
+                        SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
                 self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
                 #Subsection: Make API Call(s)
