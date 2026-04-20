@@ -1102,9 +1102,10 @@ class StatisticsSources(db.Model):
                 messages_to_flash.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
             if isinstance(S3_file_name, CloudPath):
-                self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
+                self._log.error(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")  #TEST: temp level; reset to `info`
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
+            self._log.error(f"`_harvest_single_report()` about to return {S3_file_name} and {messages_to_flash}")  #TEST: temp
             return (S3_file_name, messages_to_flash)
 
 
