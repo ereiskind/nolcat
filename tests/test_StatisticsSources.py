@@ -339,7 +339,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: temp caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     report_being_called = choice(reports_offered_by_StatisticsSource_fixture)
