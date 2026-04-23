@@ -1370,8 +1370,12 @@ class ConvertJSONDictToParquet:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
                 self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
-                self._log.error(f"`self.report_type`: {self.report_type}")  #TEST: temp
-                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
+                for d in self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']:
+                    if d['Name'] == "Begin_Date":
+                        begin_date = d['Value'][:-3]
+                    elif d['Name'] == "End_Date":
+                        end_date = d['Value'][:-3]
+                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{begin_date}_{end_date}_{datetime.now().strftime(AWS_timestamp_format())}"
                 if test:
                     bucket_path = TEST_COUNTER_FILE_PATH
                 else:
@@ -1393,8 +1397,7 @@ class ConvertJSONDictToParquet:
                 df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
                 self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
-                self._log.error(f"`self.report_type`: {self.report_type}")  #TEST: temp
-                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['begin_date'].strftime('%Y-%m')}_{self.SUSHI_JSON_dictionary['end_date'].strftime('%Y-%m')}_{datetime.now().strftime(AWS_timestamp_format())}"
+                file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']['Begin_Date'][:-3]}_{self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']['End_Date'][:-3]}_{datetime.now().strftime(AWS_timestamp_format())}"
                 if test:
                     bucket_path = TEST_COUNTER_FILE_PATH
                 else:
