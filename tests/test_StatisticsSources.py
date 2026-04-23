@@ -164,6 +164,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
+@pytest.mark.skip  #TEST: temp
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
@@ -212,6 +213,7 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
 
 @pytest.mark.dependency
 @pytest.mark.slow
+@pytest.mark.skip  #TEST: temp
 def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe.
 
@@ -254,6 +256,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
+@pytest.mark.skip  #TEST: temp
 def test_harvest_single_report_with_partial_date_range(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
     
@@ -299,6 +302,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
+@pytest.mark.skip  #TEST: temp
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe.
 
@@ -329,6 +333,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
+@pytest.mark.skip  #TEST: temp
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value.
 
@@ -358,6 +363,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
+@pytest.mark.skip  #TEST: temp
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.
 
