@@ -931,8 +931,10 @@ class StatisticsSources(db.Model):
             for report_name in available_custom_reports:
                 return_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             no_usage_returned_count = 0
+            self._log.error(f"TESTING: `available_custom_reports`: {available_custom_reports}")  #TEST: temp
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
+                self._log.error(f"TESTING: tarting SUSHI calls to {self.statistics_source_name} for report {report_name}.")  #TEST: temp
                 self._log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
 
                 #Subsection: Add Parameters for Customizable Report Type
@@ -983,9 +985,10 @@ class StatisticsSources(db.Model):
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-                self._log.error(f"Returned {S3_file_name} and {format_list_for_stdout(messages_to_flash)}")  #TEST: temp
+                self._log.error(f"TESTING: `_harvest_single_report` returned {S3_file_name} and {messages_to_flash}")  #TEST: temp
                 return_statements[report_to_harvest] = messages_to_flash
 
+            self._log.error(f"TESTING: `for custom_report in available_custom_reports:` complete")  #TEST: temp
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 self._log.warning(message)
@@ -1101,7 +1104,6 @@ class StatisticsSources(db.Model):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
-            self._log.error(f"About to return {S3_file_name} and {format_list_for_stdout(messages_to_flash)}")  #TEST: temp
             return (S3_file_name, messages_to_flash)
 
 
