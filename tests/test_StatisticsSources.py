@@ -248,8 +248,8 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
         Key=S3_file_name.key,
         Filename=download_location,
     )
+    remove_file_from_S3(S3_file_name)  # If placed after final assert statement, test isn't recognized by its dependencies
     assert download_location.is_file()
-    #remove_file_from_S3(S3_file_name)
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
