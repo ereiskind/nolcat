@@ -983,6 +983,7 @@ class StatisticsSources(db.Model):
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                self._log.error(f"Returned {S3_file_name} and {format_list_for_stdout(messages_to_flash)}")  #TEST: temp
                 return_statements[report_to_harvest] = messages_to_flash
 
             if len(available_custom_reports) == no_usage_returned_count:
@@ -1100,6 +1101,7 @@ class StatisticsSources(db.Model):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
+            self._log.error(f"About to return {S3_file_name} and {format_list_for_stdout(messages_to_flash)}")  #TEST: temp
             return (S3_file_name, messages_to_flash)
 
 
