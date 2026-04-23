@@ -1,8 +1,4 @@
-import logging
 from datetime import date
-import calendar
-from pathlib import Path
-import re
 from ast import literal_eval
 from flask import render_template
 from flask import request
@@ -10,14 +6,11 @@ from flask import redirect
 from flask import url_for
 from flask import abort
 from flask import flash
-import pandas as pd
 from MySQLdb._mysql import escape_string  # `MySQLdb` in requirements.txt as `mysqlclient`
 
 from . import bp
 from .forms import *
-from ..app import *
 from ..models import *
-from ..statements import *
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +87,7 @@ def run_custom_SQL_query():
             query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection: https://stackoverflow.com/a/71604821
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
@@ -139,7 +132,7 @@ def use_predefined_SQL_query():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
+            message = f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
@@ -236,7 +229,7 @@ def use_predefined_SQL_query():
             query=query,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -276,7 +269,7 @@ def start_query_wizard():
             query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
             engine=db.engine,
         )
-        if isinstance(fiscal_year_options, str):
+        if isinstance(fiscal_year_options, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(fiscal_year_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
@@ -292,7 +285,7 @@ def start_query_wizard():
                 query=f"SELECT start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={form.fiscal_year.data};",
                 engine=db.engine,
             )
-            if isinstance(fiscal_year_dates, str):
+            if isinstance(fiscal_year_dates, str):  #ALERT: `except DatabaseInteractionError`
                 flash(database_query_fail_statement(fiscal_year_dates))
                 return redirect(url_for('view_usage.view_usage_homepage'))
             begin_date = fiscal_year_dates['start_date'][0].isoformat()
@@ -331,7 +324,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
-            flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
+            flash(f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which would have resulted in an error when querying the database. Please correct the dates and try again.")
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
             flash_statement = "The usage data being requested includes COUNTER Release 4 data for all usage"
@@ -442,7 +435,7 @@ def construct_PR_query_with_wizard():
             query=query,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -559,7 +552,7 @@ def construct_DR_query_with_wizard():
             query=query,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -742,7 +735,7 @@ def construct_TR_query_with_wizard():
             query=query,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -973,7 +966,7 @@ def construct_IR_query_with_wizard():
             query=query,
             engine=db.engine,
         )
-        if isinstance(df, str):
+        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -1037,7 +1030,7 @@ def download_non_COUNTER_usage(testing):
             """,
             engine=db.engine,
         )
-        if isinstance(file_download_options, str):
+        if isinstance(file_download_options, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(file_download_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
@@ -1060,7 +1053,7 @@ def download_non_COUNTER_usage(testing):
             """,
             engine=db.engine,
         )
-        if isinstance(AUCT_object, str):
+        if isinstance(AUCT_object, str):  #ALERT: `except DatabaseInteractionError`
             flash(database_query_fail_statement(AUCT_object))
             return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
@@ -1082,9 +1075,9 @@ def download_non_COUNTER_usage(testing):
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
         if testing == "":
-            bucket_path = PATH_WITHIN_BUCKET
+            bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
         elif testing == "test":
-            bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+            bucket_path = TEST_NON_COUNTER_FILE_PATH
         else:
             message = f"The dynamic route featured the invalid value {testing}."
             log.error(message)

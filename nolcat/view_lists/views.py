@@ -1,17 +1,12 @@
-import logging
 from flask import render_template
 from flask import request
 from flask import abort
 from flask import redirect
 from flask import url_for
-from flask import flash
-import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import *
 from ..models import *
-from ..statements import *
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +36,7 @@ def view_lists_homepage(list):
     #     query=SQL_query,
     #     engine=db.engine,
     # )
-    # if isinstance(df, str):
+    # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
     #     flash(database_query_fail_statement(df))
     #     return abort(404)
     # df = df.astype({dict setting correct dtypes})
@@ -69,6 +64,7 @@ def view_list_record(list, PK):
         #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
         #     engine=db.engine,
         # )
+        #ALERT: `except DatabaseInteractionError`
         #ToDo: df = df.astype({dict setting correct dtypes})
         return "render_template('view_lists/view-record.html', form=form)"
     # elif form.validate_on_submit():
@@ -106,7 +102,7 @@ def edit_list_record(list, PK):
             #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
             #     engine=db.engine,
             # )
-            # if isinstance(df, str):
+            # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
             #     flash(database_query_fail_statement(df))
             #     return redirect(url_for(view_lists.view_lists_homepage))
             # df = df.astype({dict setting correct dtypes})

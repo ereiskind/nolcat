@@ -1,23 +1,25 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
-import logging
-from pathlib import Path
-import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
-from nolcat.statements import *
+from nolcat.nolcat_glue_job import *
 from nolcat.annual_stats import *
 
 log = logging.getLogger(__name__)
 
 
 def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     
     page = client.get('/annual_stats/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
@@ -38,7 +40,7 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
         query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
         engine=engine,
     )
-    if isinstance(db_select_field_options, str):
+    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
@@ -56,7 +58,6 @@ def test_GET_request_for_show_fiscal_year_details():
 
 def test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm():
     """Tests requesting an annual report."""
-    # caplog.set_level(logging.INFO, logger='nolcat.app')  # For annual statistics calculation methods
     #ToDo: Write test
     pass
 

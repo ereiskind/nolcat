@@ -1,21 +1,23 @@
 """Tests the routes in the `login` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2026-04-09 ##########
 
 import pytest
 import logging
-from pathlib import Path
-import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.login import *
 
 log = logging.getLogger(__name__)
 
 
 def test_login_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/login/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title

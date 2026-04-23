@@ -1,19 +1,22 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## No tests written 2025-09-29 ##########
+########## No tests written 2026-04-09 ##########
 
 import pytest
-import logging
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
+from nolcat.nolcat_glue_job import *
 from nolcat.view_lists import *
 
 log = logging.getLogger(__name__)
 
 
 def test_view_lists_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
 
     #page = client.get('/view_lists/')  #ToDo: Add variable route element
