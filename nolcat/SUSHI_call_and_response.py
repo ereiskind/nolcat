@@ -293,6 +293,10 @@ class SUSHICallAndResponse:
                 API_response = json.loads(API_response.content.decode('utf-8'))
             except Exception as error:
                 log.debug(f"`json.loads()` on `requests.Response` raised {error}")
+        if isinstance(API_response, list) and self.call_path == "reports":
+            API_response = {'reports': API_response}
+        elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
+            API_response = API_response[0]
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         #if self.call_path == "reports":
