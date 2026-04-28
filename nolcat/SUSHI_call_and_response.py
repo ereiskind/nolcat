@@ -378,7 +378,7 @@ class SUSHICallAndResponse:
         #        log.error(message)
         #        return (json.JSONDecodeError(message), [message])
         
-        log.info(f"SUSHI data converted to {repr(type(API_response))}.")
+        log.info(f"SUSHI data converted to {type(API_response)}.")
         log.debug(self._stdout_API_response_based_on_size(API_response))
         return (API_response, [])
     
