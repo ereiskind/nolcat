@@ -4,10 +4,12 @@
 import pytest
 from datetime import date
 import re
+import csv
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.nolcat_glue_job import *
+from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 log = logging.getLogger(__name__)
@@ -35,19 +37,18 @@ def SUSHI_credentials_fixture():
     URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     if isinstance(URL, Exception):
         pytest.exit(URL)
-    #ToDo: Get credential values from CSV
-    customer_id = input("Enter the SUSHI customer ID: ")
-    requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
-    api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
-    platform = input("Enter the SUSHI platform or just press enter if none exists: ")
-
-    SUSHI_credentials = dict(customer_id = customer_id)
-    if requestor_id != "":
-        SUSHI_credentials['requestor_id'] = requestor_id
-    if api_key != "":
-        SUSHI_credentials['api_key'] = api_key
-    if platform != "":
-        SUSHI_credentials['platform'] = platform
+    with open(PATH_TO_CREDENTIALS_FILE()) as file:
+        CSV_data = csv.DictReader(file)
+        for statistics_source_credentials in CSV_data:
+            if statistics_source_credentials['statistics_source_retrieval_code'] == registry_ID:
+                # Possible alternate credentials aren't checked
+                SUSHI_credentials = {'customer_id': statistics_source_credentials['customer_ID']}
+                if statistics_source_credentials.get('requestor_ID'):
+                    SUSHI_credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
+                if statistics_source_credentials.get('API_key'):
+                    SUSHI_credentials['api_key'] = statistics_source_credentials['API_key']
+                if statistics_source_credentials.get('platform'):
+                    SUSHI_credentials['platform']  = statistics_source_credentials['platform']
     
     SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
         "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
