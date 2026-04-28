@@ -284,7 +284,15 @@ class SUSHICallAndResponse:
         Returns:
             tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
         """
-        log.info("Starting `_convert_Response_to_JSON()`.")  #ToDo: Can this be cleaned up by using `requests.Response.json()` and other conversions from `fetch_URL_from_COUNTER_Registry()`?
+        log.info("Starting `_convert_Response_to_JSON()`.")
+        try:
+            API_response = API_response.json()
+        except Exception as error:
+            log.debug(f"`requests.Response.json()` raised {error}")
+            try:
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            except Exception as error:
+                log.debug(f"`json.loads()` on `requests.Response` raised {error}")
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         #if self.call_path == "reports":
