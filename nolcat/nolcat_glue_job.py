@@ -2670,7 +2670,9 @@ class InvalidSUSHIResponseError(InvalidAPIResponseError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with an API response: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with an API response: {self.message}"
 
 
 class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
@@ -2695,7 +2697,9 @@ class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`.")
+    
+    def __str__(self):
+        return f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`."
 
 
 class NoSUSHIDataError(InvalidSUSHIResponseError):
@@ -2720,7 +2724,9 @@ class NoSUSHIDataError(InvalidSUSHIResponseError):
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`.")
+    
+    def __str__(self):
+        return f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`."
 
 
 class DatabaseInteractionError(Exception):
@@ -2757,7 +2763,9 @@ class DatabaseInteractionErrorWithFlashMessages(DatabaseInteractionError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with a SQL operation: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with a SQL operation: {self.message}"
 
 
 class S3InteractionError(Exception):
@@ -2794,4 +2802,6 @@ class S3InteractionErrorWithFlashMessages(S3InteractionError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with a S3 operation: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with a S3 operation: {self.message}"
