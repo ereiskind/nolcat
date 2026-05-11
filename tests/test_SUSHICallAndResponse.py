@@ -159,29 +159,33 @@ def SUSHI_credentials_fixture():
                 if statistics_source_credentials.get('platform'):
                     SUSHI_credentials['platform']  = statistics_source_credentials['platform']
     
-    SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
-        "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
-        formats=[
-            '%Y%m', # yyyymm
-            '%m-%Y', # mm-yyyy
-            '%m/%Y', # mm/yyyy
-            '%Y-%m', # yyyy-mm
-            '%Y/%m', # yyyy/mm
-        ]
-    )
-    SUSHI_credentials['end_date'] = date.min # This ensures that the while loop runs at least once
-    while SUSHI_credentials['end_date'] < SUSHI_credentials['begin_date']:
-        SUSHI_credentials['end_date'] = pyinputplus.inputDate(
-            f"Please enter the year and month for the last month of stats collection; this must be the same as or after {SUSHI_credentials['begin_date'].strftime('%Y-%m')}. The month must be two digits and the year must be four digits. ",
-            formats=[
-                '%Y%m', # yyyymm
-                '%m-%Y', # mm-yyyy
-                '%m/%Y', # mm/yyyy
-                '%Y-%m', # yyyy-mm
-                '%Y/%m', # yyyy/mm
-            ]
-        )
-    SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
+    #TEST: temp
+    #SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
+    #    "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
+    #    formats=[
+    #        '%Y%m', # yyyymm
+    #        '%m-%Y', # mm-yyyy
+    #        '%m/%Y', # mm/yyyy
+    #        '%Y-%m', # yyyy-mm
+    #        '%Y/%m', # yyyy/mm
+    #    ]
+    #)
+    #SUSHI_credentials['end_date'] = date.min # This ensures that the while loop runs at least once
+    #while SUSHI_credentials['end_date'] < SUSHI_credentials['begin_date']:
+    #    SUSHI_credentials['end_date'] = pyinputplus.inputDate(
+    #        f"Please enter the year and month for the last month of stats collection; this must be the same as or after {SUSHI_credentials['begin_date'].strftime('%Y-%m')}. The month must be two digits and the year must be four digits. ",
+    #        formats=[
+    #            '%Y%m', # yyyymm
+    #            '%m-%Y', # mm-yyyy
+    #            '%m/%Y', # mm/yyyy
+    #            '%Y-%m', # yyyy-mm
+    #            '%Y/%m', # yyyy/mm
+    #        ]
+    #    )
+    #SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
+    SUSHI_credentials['begin_date'] = date(2025, 10, 1)
+    SUSHI_credentials['end_date'] = date(2026, 3, 31)
+    #TEST: end temp
 
     yield (URL, SUSHI_credentials)
 
