@@ -142,6 +142,7 @@ def SUSHI_credentials_fixture():
         "fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",
     ])
     #registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
+    log.error(f"`registry_ID`: {registry_ID}")
     #TEST: end temp
     URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     if isinstance(URL, Exception):
