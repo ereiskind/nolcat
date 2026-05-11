@@ -235,6 +235,8 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidSUSHIResponseError as error:
+        log.error(f"`type(error)`: {type(error)}")  #TEST: temp
+        log.error(f"`error`: {error}")  #TEST: temp
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
