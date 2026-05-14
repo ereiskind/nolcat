@@ -97,7 +97,7 @@ def configure_logging(app):
         None: no return value is needed, so the default `None` is used
     """
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.WARNING,  #TEST: temp, reset to `INFO`
         format="[%(asctime)s] %(name)s::%(lineno)d - %(message)s",  # "[timestamp] module name::line number - error message"
         datefmt="%Y-%m-%d %H:%M:%S",
         encoding="utf-8",
