@@ -45,7 +45,7 @@ def SUSHI_credentials_fixture():
         "19f529b8-f978-4484-ac0f-ad61b8ff9b06",
         "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
         "1db3607b-3046-4e78-84b7-69e1c46fdb96",
-        "20db7a04-3830-4530-82bb-77261e7d708a",
+        "20db7a04-3830-4530-82bb-77261e7d708a",  # Raised error in COUNTER URL collection that's now repaired
         "216dfdc9-d477-499b-a4be-2e94401b587a",
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",
         "28a08a22-5811-4a52-9596-cb9eac770e74",
@@ -55,7 +55,7 @@ def SUSHI_credentials_fixture():
         "2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",
         "303d7b33-8c1d-4d63-9810-15012c0200c6",
         "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
-        "335608df-e4d2-46ad-bd89-fb3683035441",
+        #"335608df-e4d2-46ad-bd89-fb3683035441",  # Killed at `[2026-05-14 15:19:08] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing due to successful request. You must re-request this report to receive data. Please allow 1 hour for processing before retrying.. Try the call again later.`
         "3435e5a7-eb36-46f8-8e8e-c7368310d879",
         "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
         "36d1e996-028c-4c72-8d45-84ba79cdf456",
@@ -79,7 +79,7 @@ def SUSHI_credentials_fixture():
         "60c7aa79-272d-4610-8ad5-c399bd938c8e",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "64beeb39-6f5e-4642-96d0-fc46c4856c26",
-        "6809e99d-211e-403d-be12-bbbd871883ba",
+        #"6809e99d-211e-403d-be12-bbbd871883ba",  # Killed at `[2026-05-14 15:25:23] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "6839b3e4-1a57-413e-9b3f-9faa4df06d54",
         "6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
         "6f9530b9-6ece-446d-ac59-8c67d08927c3",
@@ -92,7 +92,7 @@ def SUSHI_credentials_fixture():
         #"7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",  # [2026-05-14 13:32:32] nolcat.SUSHI_call_and_response::160 - The report has an `Alerts` key on the same level as `Report_Header` containing a single exception or a list of exceptions: [{'Date_Time': '2025-02-28T00:00:00Z', 'Alert': 'Report providers MUST be compliant by Feburary 2025 for delivery of reports starting with January 2025 usage'}, {'Date_Time': '2025-05-01T00:00:00Z', 'Alert': 'Report providers MUST offer R5-compliant reports until April 2025 for delivery of reports up to and including March 2025 usage'}].
         "819c19e4-7956-4990-b11d-602d08fdae81",
         "81b01046-eb27-40e6-a855-bd84a9a03c89",
-        "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
+        #"8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",  # Killed at `[2026-05-14 15:15:53] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "8700fafb-1c6f-4481-975e-b93f4d8bd6ad",
         "87c1c2b6-ed9e-49f8-ab4c-ef4bf1dc058c",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
@@ -125,7 +125,6 @@ def SUSHI_credentials_fixture():
         "c67345a4-34f7-445e-ad49-b38b21438b59",
         "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",
         "da757bb5-4a5e-449b-9434-81eb33cfc696",
-        "dd585e77-6351-4548-b679-f2d337d15cdb",
         "dedcfe80-7f4f-4d32-9c88-098b5cbc160c",
         "e193087c-543b-4c9c-939c-a70be149987e",
         "e1e34750-71c7-4baf-9a14-c5a1598dd982",
