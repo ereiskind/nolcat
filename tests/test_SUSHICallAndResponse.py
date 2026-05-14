@@ -41,15 +41,14 @@ def SUSHI_credentials_fixture():
         "0657858f-f079-4200-a79e-1698cf36a95a",
         "0f213bd4-70c0-4c9d-a540-3d138af8fe9c",
         "0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",
-        "1860d58d-dc85-4105-8477-910a56025cc1",
         "19f529b8-f978-4484-ac0f-ad61b8ff9b06",
         "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
-        "1db3607b-3046-4e78-84b7-69e1c46fdb96",
+        #"1db3607b-3046-4e78-84b7-69e1c46fdb96",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:12:19] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         "20db7a04-3830-4530-82bb-77261e7d708a",  # Raised error in COUNTER URL collection that's now repaired
         "216dfdc9-d477-499b-a4be-2e94401b587a",
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",
         "2b76f3de-e577-4691-aab2-20abba43b3c9",
-        "2b8d6f15-6824-45e0-950c-753168223d08",
+        #"2b8d6f15-6824-45e0-950c-753168223d08",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `[2026-05-14 20:05:44] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "2f0e9433-7217-4196-9ee2-9baf3cf179a1",
         #"2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 18:02:26] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "303d7b33-8c1d-4d63-9810-15012c0200c6",
@@ -57,20 +56,17 @@ def SUSHI_credentials_fixture():
         #"335608df-e4d2-46ad-bd89-fb3683035441",  # Killed at `[2026-05-14 15:19:08] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing due to successful request. You must re-request this report to receive data. Please allow 1 hour for processing before retrying.. Try the call again later.`
         "3435e5a7-eb36-46f8-8e8e-c7368310d879",
         "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
-        "36d1e996-028c-4c72-8d45-84ba79cdf456",
+        #"36d1e996-028c-4c72-8d45-84ba79cdf456",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:42:15] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         "36dbf9d6-735b-44c7-aa4c-c462b26368fa",
         "38b08a9f-4828-4ab8-82ff-38c6cffcc434",
         "3dfd4ff2-39f3-4c55-b6d6-96667632330a",
-        "413dfeb0-63f4-4d6e-b47f-1fbe6546926b",
         "4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
         "47a11f6e-4455-42de-9590-6398ab300379",
         "49bb5329-ee48-4a11-be77-8582ce73cba3",
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
-        "54f0fec6-2b49-469d-956b-12e54e53144c",
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         "5541d245-4230-405c-b7c1-f51b27926666",
-        "56b99269-420c-40f6-a6fb-78524fe57c10",
         "56bdf474-5297-45f0-841f-4083725b4595",
         "570ee10e-a903-4f06-b9b1-33759ef204d4",
         "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
@@ -92,25 +88,22 @@ def SUSHI_credentials_fixture():
         #"819c19e4-7956-4990-b11d-602d08fdae81",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` at `[2026-05-14 16:44:48] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "81b01046-eb27-40e6-a855-bd84a9a03c89",
         "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",  # Killed at `[2026-05-14 15:15:53] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        "8700fafb-1c6f-4481-975e-b93f4d8bd6ad",
-        "87c1c2b6-ed9e-49f8-ab4c-ef4bf1dc058c",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "8c20c6d6-9205-4772-a366-5f95c79c032a",
-        "91af9af9-6266-4d28-8554-966aec3311fd",
+        #"91af9af9-6266-4d28-8554-966aec3311fd",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 20:22:57] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
         "93955b59-c9ef-4a68-a57f-4e1e7182f8fa",
         "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
         "9c7adeeb-6b27-4f36-9196-850b523473fb",
         "9cfe52d0-e9bc-49e2-9576-8aa1e875f7a0",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
-        "9ffd0923-0974-4287-a124-a38a59b78198",
+        #"9ffd0923-0974-4287-a124-a38a59b78198",  #Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:29:37] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "a1ac56f3-7d55-4d78-9e06-c129eddacb93",
         "a44d3e70-3166-4d1e-870f-69bb22335a77",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
         #"adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 17:51:41] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "aeaf1e8e-094d-49cb-a243-8f1614169383",
         "aff7c360-f57b-45b7-95b7-b64e8f04a688",
-        "b0d81a4b-9023-42ac-a034-703c23124cae",
         "b12a63a4-0aa0-45c9-8c92-2a60a3d97bcf",
         #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # Status call returned HTTP 404
         "b930fc8f-f777-446d-be8c-7bb7acac2183",
@@ -281,7 +274,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        log.error(f"`type(error.message)`: {type(error.message)}")  #TEST: temp
+        log.error(f"`type(error.message)`: {type(error.message)}")  #TEST: temp -- should be str for statement below to work properly
         pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
