@@ -184,8 +184,7 @@ def SUSHI_credentials_fixture():
     SUSHI_credentials['end_date'] = date(2026, 3, 31)
     #TEST: end temp
 
-    #TEST: yield (URL, SUSHI_credentials)
-    yield (URL, SUSHI_credentials, registry_ID)  #TEST: temp
+    yield (URL, SUSHI_credentials)
 
 
 @pytest.fixture
@@ -222,9 +221,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
-    log.error(f"`registry_ID`: {registry_ID}")  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     try:
         with client:
             response = SUSHICallAndResponse(
@@ -253,8 +250,7 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSourc
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse(
             StatisticsSource_instance_name,
@@ -281,8 +277,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     try:
         with client:
             response = SUSHICallAndResponse(
@@ -309,8 +304,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     with client:
         response = SUSHICallAndResponse(
             StatisticsSource_instance_name,
@@ -348,8 +342,7 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     try:
         with client:
             response = SUSHICallAndResponse(
@@ -383,8 +376,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "PR" not in list_of_reports:
         pytest.skip("PR not offered by this statistics source.")
     try:
@@ -416,8 +408,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "DR" not in list_of_reports:
         pytest.skip("DR not offered by this statistics source.")
     try:
@@ -449,8 +440,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "TR" not in list_of_reports:
         pytest.skip("TR not offered by this statistics source.")
     try:
@@ -482,8 +472,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "IR" not in list_of_reports:
         pytest.skip("IR not offered by this statistics source.")
     try:
@@ -516,8 +505,7 @@ def test_call_with_invalid_credentials(client, SUSHI_credentials_fixture, Statis
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    #TEST: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    URL, SUSHI_credentials, registry_ID = SUSHI_credentials_fixture  #TEST: temp
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     with client:
         response = SUSHICallAndResponse(
