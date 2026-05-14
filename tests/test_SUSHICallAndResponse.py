@@ -48,11 +48,10 @@ def SUSHI_credentials_fixture():
         "20db7a04-3830-4530-82bb-77261e7d708a",  # Raised error in COUNTER URL collection that's now repaired
         "216dfdc9-d477-499b-a4be-2e94401b587a",
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",
-        "28a08a22-5811-4a52-9596-cb9eac770e74",
         "2b76f3de-e577-4691-aab2-20abba43b3c9",
         "2b8d6f15-6824-45e0-950c-753168223d08",
         "2f0e9433-7217-4196-9ee2-9baf3cf179a1",
-        "2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",
+        #"2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 18:02:26] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "303d7b33-8c1d-4d63-9810-15012c0200c6",
         "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
         #"335608df-e4d2-46ad-bd89-fb3683035441",  # Killed at `[2026-05-14 15:19:08] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing due to successful request. You must re-request this report to receive data. Please allow 1 hour for processing before retrying.. Try the call again later.`
@@ -79,20 +78,20 @@ def SUSHI_credentials_fixture():
         "60c7aa79-272d-4610-8ad5-c399bd938c8e",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "64beeb39-6f5e-4642-96d0-fc46c4856c26",
-        #"6809e99d-211e-403d-be12-bbbd871883ba",  # Killed at `[2026-05-14 15:25:23] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
+        "6809e99d-211e-403d-be12-bbbd871883ba",  # Killed at `[2026-05-14 15:25:23] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "6839b3e4-1a57-413e-9b3f-9faa4df06d54",
         "6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
         "6f9530b9-6ece-446d-ac59-8c67d08927c3",
         "70846dfc-1a3a-4615-88e1-d624acd71163",
-        "71f5c132-7509-4469-841f-334da840ea01",
+        #"71f5c132-7509-4469-841f-334da840ea01",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `[2026-05-14 17:09:40] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "741ebb85-02ad-4ad0-ae4f-8b268f528cb0",
         "76ce8454-29f6-43c4-8d1a-aaeb34bc8a1a",
         "777e6538-5ae8-443f-94e3-0110061e4f06",
         "7a59353f-c8cf-4069-891c-0c403323496a",
         #"7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",  # [2026-05-14 13:32:32] nolcat.SUSHI_call_and_response::160 - The report has an `Alerts` key on the same level as `Report_Header` containing a single exception or a list of exceptions: [{'Date_Time': '2025-02-28T00:00:00Z', 'Alert': 'Report providers MUST be compliant by Feburary 2025 for delivery of reports starting with January 2025 usage'}, {'Date_Time': '2025-05-01T00:00:00Z', 'Alert': 'Report providers MUST offer R5-compliant reports until April 2025 for delivery of reports up to and including March 2025 usage'}].
-        "819c19e4-7956-4990-b11d-602d08fdae81",
+        #"819c19e4-7956-4990-b11d-602d08fdae81",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` at `[2026-05-14 16:44:48] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "81b01046-eb27-40e6-a855-bd84a9a03c89",
-        #"8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",  # Killed at `[2026-05-14 15:15:53] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
+        "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",  # Killed at `[2026-05-14 15:15:53] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "8700fafb-1c6f-4481-975e-b93f4d8bd6ad",
         "87c1c2b6-ed9e-49f8-ab4c-ef4bf1dc058c",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
@@ -100,7 +99,6 @@ def SUSHI_credentials_fixture():
         "91af9af9-6266-4d28-8554-966aec3311fd",
         "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
         "93955b59-c9ef-4a68-a57f-4e1e7182f8fa",
-        "9915287a-b1b5-43eb-be89-38fd118322e6",
         "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
         "9c7adeeb-6b27-4f36-9196-850b523473fb",
         "9cfe52d0-e9bc-49e2-9576-8aa1e875f7a0",
@@ -109,15 +107,14 @@ def SUSHI_credentials_fixture():
         "a1ac56f3-7d55-4d78-9e06-c129eddacb93",
         "a44d3e70-3166-4d1e-870f-69bb22335a77",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
-        "adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",
+        #"adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 17:51:41] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "aeaf1e8e-094d-49cb-a243-8f1614169383",
         "aff7c360-f57b-45b7-95b7-b64e8f04a688",
         "b0d81a4b-9023-42ac-a034-703c23124cae",
         "b12a63a4-0aa0-45c9-8c92-2a60a3d97bcf",
-        "b2b2736c-2cb9-48ec-91f4-870336acfb1c",
+        #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # Status call returned HTTP 404
         "b930fc8f-f777-446d-be8c-7bb7acac2183",
         "bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
-        "c230a459-4a07-49eb-8d9f-96adeb2a762d",
         "c305c44c-e97c-491c-8c62-404a9482ad63",
         "c47393d0-95d8-4c32-8488-2dec65cd98d7",
         "c517aed2-5e9d-4f6b-9c0b-b6249e522568",
@@ -131,8 +128,7 @@ def SUSHI_credentials_fixture():
         "e7653717-21b0-4254-a49d-201654d333c9",
         "eb725161-bdba-4913-991d-203d260a6b36",
         "ed68c07f-1b69-45e4-9ee1-f675a923c448",
-        "ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
-        "f370697b-6baf-4c4c-bf1a-9610f6ffc284",
+        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ee4dbcd0-e6ca-49c8-aca1-759eae5f624f in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
         "f947a7dd-a67f-4037-a62a-72c614b76b09",
         "fc0690dc-a7f8-4dcc-8f7d-3f5685075a17",
