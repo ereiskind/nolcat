@@ -220,6 +220,26 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`type(error)`: {type(error)}")
+        try:
+            log.error(f"`error.__dict__`: {error.__dict__}")
+        except:
+            pass
+        try:
+            log.error(f"`vars(error)`: {vars(error)}")
+        except:
+            pass
+        try:
+            log.error(f"`repr(error)`: {repr(error)}")
+        except:
+            pass
+        try:
+            log.error(f"`type(error.message)`: {type(error.message)}")
+            log.error(f"`error.message`: {error.message}")
+        except:
+            pass
+        #TEST: end temp
         pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
@@ -276,9 +296,23 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
     except InvalidAPIResponseError as error:
         #TEST: temp
         log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`type(error.message)`: {type(error.message)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        try:
+            log.error(f"`error.__dict__`: {error.__dict__}")
+        except:
+            pass
+        try:
+            log.error(f"`vars(error)`: {vars(error)}")
+        except:
+            pass
+        try:
+            log.error(f"`repr(error)`: {repr(error)}")
+        except:
+            pass
+        try:
+            log.error(f"`type(error.message)`: {type(error.message)}")
+            log.error(f"`error.message`: {error.message}")
+        except:
+            pass
         #TEST: end temp
         pytest.skip(error.message)  #TEST: Need a string for skip message
     assert isinstance(response, tuple)
