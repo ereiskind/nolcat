@@ -216,22 +216,21 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
         #TEST: temp
-        log.error(f"`type(error)`: {type(error)}")
+        # `type(error)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
+        # `vars(error)`: {'message': InvalidAPIResponseError('There was a problem with an API response: GET request to ProQuest raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports')}
+        # `type(error.message)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
+        # `error.message`: There was a problem with an API response: GET request to ProQuest raised error 400Client Error: Bad Request for url: https://utppublishing.com/r51/reports
         try:
-            log.error(f"`error.__dict__`: {error.__dict__}")
+            log.error(f"`error.message.message`: {error.message.message}")
+            log.error(f"`type(error.message.message)`: {type(error.message.message)}")
         except:
             pass
         try:
-            log.error(f"`vars(error)`: {vars(error)}")
+            log.error(f"`error.message.__dict__`: {error.message.__dict__}")
         except:
             pass
         try:
-            log.error(f"`repr(error)`: {repr(error)}")
-        except:
-            pass
-        try:
-            log.error(f"`type(error.message)`: {type(error.message)}")
-            log.error(f"`error.message`: {error.message}")
+            log.error(f"`vars(error.message)`: {vars(error.message)}")
         except:
             pass
         #TEST: end temp
@@ -290,22 +289,21 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
         #TEST: temp
-        log.error(f"`type(error)`: {type(error)}")
+        # `type(error)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
+        # `vars(error)`: {'message': InvalidAPIResponseError('There was a problem with an API response: GET request to ProQuest raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports')}
+        # `type(error.message)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
+        # `error.message`: There was a problem with an API response: GET request to ProQuest raised error 400Client Error: Bad Request for url: https://utppublishing.com/r51/reports
         try:
-            log.error(f"`error.__dict__`: {error.__dict__}")
+            log.error(f"`error.message.message`: {error.message.message}")
+            log.error(f"`type(error.message.message)`: {type(error.message.message)}")
         except:
             pass
         try:
-            log.error(f"`vars(error)`: {vars(error)}")
+            log.error(f"`error.message.__dict__`: {error.message.__dict__}")
         except:
             pass
         try:
-            log.error(f"`repr(error)`: {repr(error)}")
-        except:
-            pass
-        try:
-            log.error(f"`type(error.message)`: {type(error.message)}")
-            log.error(f"`error.message`: {error.message}")
+            log.error(f"`vars(error.message)`: {vars(error.message)}")
         except:
             pass
         #TEST: end temp
