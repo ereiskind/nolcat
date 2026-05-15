@@ -36,83 +36,93 @@ def SUSHI_credentials_fixture():
     #TEST: temp
     from random import choice
     registry_ID = choice([
-        "002f6967-f617-445c-b7cd-0c1e2bdf72c0",  # AttributeError: 'NoSUSHIDataError' object has no attribute 'message'
-        "0657858f-f079-4200-a79e-1698cf36a95a",
         "0f213bd4-70c0-4c9d-a540-3d138af8fe9c",
-        #"0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 18:24:56] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
-        #"1db3607b-3046-4e78-84b7-69e1c46fdb96",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:12:19] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
-        "20db7a04-3830-4530-82bb-77261e7d708a",  # Raised error in COUNTER URL collection that's now repaired
+        "20db7a04-3830-4530-82bb-77261e7d708a",
         "216dfdc9-d477-499b-a4be-2e94401b587a",
-        #"27258001-c4ff-4f56-aa0b-a27c37bb921d",  # requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports
-        #"2b76f3de-e577-4691-aab2-20abba43b3c9",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 19:31:25] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        #"2b8d6f15-6824-45e0-950c-753168223d08",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `[2026-05-14 20:05:44] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "2f0e9433-7217-4196-9ee2-9baf3cf179a1",
-        #"2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 18:02:26] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        "303d7b33-8c1d-4d63-9810-15012c0200c6",
         "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
-        #"335608df-e4d2-46ad-bd89-fb3683035441",  # Killed at `[2026-05-14 15:19:08] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing due to successful request. You must re-request this report to receive data. Please allow 1 hour for processing before retrying.. Try the call again later.`
         "3435e5a7-eb36-46f8-8e8e-c7368310d879",
         "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
-        #"36d1e996-028c-4c72-8d45-84ba79cdf456",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:42:15] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
-        #"38b08a9f-4828-4ab8-82ff-38c6cffcc434",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 21:15:31] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "3dfd4ff2-39f3-4c55-b6d6-96667632330a",
         "4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
-        #"47a11f6e-4455-42de-9590-6398ab300379",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
-        #"49bb5329-ee48-4a11-be77-8582ce73cba3",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 20:02:03] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
-        "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         "5541d245-4230-405c-b7c1-f51b27926666",
-        #"56bdf474-5297-45f0-841f-4083725b4595",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `[2026-05-15 19:03:40] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
-        #"570ee10e-a903-4f06-b9b1-33759ef204d4",  # `reports` call in `test_PR_call_validity` returned HTTP 500 but tests on `reports` calls returned HTTP 200
         "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
-        #"609c6759-f1a4-4f53-a142-603fa3385b9d",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 19:34:24] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "60c7aa79-272d-4610-8ad5-c399bd938c8e",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "64beeb39-6f5e-4642-96d0-fc46c4856c26",
-        "6809e99d-211e-403d-be12-bbbd871883ba",  # Killed at `[2026-05-14 15:25:23] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
+        "6809e99d-211e-403d-be12-bbbd871883ba",
         "6839b3e4-1a57-413e-9b3f-9faa4df06d54",
-        #"6f0e112f-34fb-40c0-a3b0-23a34dfacddd",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
         "6f9530b9-6ece-446d-ac59-8c67d08927c3",
         "70846dfc-1a3a-4615-88e1-d624acd71163",
-        #"71f5c132-7509-4469-841f-334da840ea01",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `[2026-05-14 17:09:40] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        #"76ce8454-29f6-43c4-8d1a-aaeb34bc8a1a",  # Reports call returned HTTP 401
         "7a59353f-c8cf-4069-891c-0c403323496a",
-        #"7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",  # [2026-05-14 13:32:32] nolcat.SUSHI_call_and_response::160 - The report has an `Alerts` key on the same level as `Report_Header` containing a single exception or a list of exceptions: [{'Date_Time': '2025-02-28T00:00:00Z', 'Alert': 'Report providers MUST be compliant by Feburary 2025 for delivery of reports starting with January 2025 usage'}, {'Date_Time': '2025-05-01T00:00:00Z', 'Alert': 'Report providers MUST offer R5-compliant reports until April 2025 for delivery of reports up to and including March 2025 usage'}].
-        #"819c19e4-7956-4990-b11d-602d08fdae81",  # Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` at `[2026-05-14 16:44:48] nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "81b01046-eb27-40e6-a855-bd84a9a03c89",
-        #"8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",  # Killed at `[2026-05-14 15:15:53] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
+        "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
-        #"8c20c6d6-9205-4772-a366-5f95c79c032a",  # Killed during `tests/test_SUSHICallAndResponse.py::test_reports_call` on `[2026-05-14 21:26:02] nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again. and the flash message reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again..`
-        #"91af9af9-6266-4d28-8554-966aec3311fd",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 20:22:57] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
         "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
         "9c7adeeb-6b27-4f36-9196-850b523473fb",
         "9cfe52d0-e9bc-49e2-9576-8aa1e875f7a0",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
-        #"9ffd0923-0974-4287-a124-a38a59b78198",  #Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 19:29:37] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
-        #"adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-14 17:51:41] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        #"aeaf1e8e-094d-49cb-a243-8f1614169383",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The aeaf1e8e-094d-49cb-a243-8f1614169383 in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
-        #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # Status call returned HTTP 404
-        "b930fc8f-f777-446d-be8c-7bb7acac2183",
-        #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",  # Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `[2026-05-15 18:21:43] nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
-        "c47393d0-95d8-4c32-8488-2dec65cd98d7",
+        "335608df-e4d2-46ad-bd89-fb3683035441",
         "c517aed2-5e9d-4f6b-9c0b-b6249e522568",
         "c67345a4-34f7-445e-ad49-b38b21438b59",
-        "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",
-        #"da757bb5-4a5e-449b-9434-81eb33cfc696",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 19:06:15] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        #"dedcfe80-7f4f-4d32-9c88-098b5cbc160c",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 17:46:36] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        #"e193087c-543b-4c9c-939c-a70be149987e",  # Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `[2026-05-15 19:54:01] nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "e1e34750-71c7-4baf-9a14-c5a1598dd982",
         "e7653717-21b0-4254-a49d-201654d333c9",
         "eb725161-bdba-4913-991d-203d260a6b36",
-        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ee4dbcd0-e6ca-49c8-aca1-759eae5f624f in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
         "f947a7dd-a67f-4037-a62a-72c614b76b09",
-        "fc0690dc-a7f8-4dcc-8f7d-3f5685075a17",
-        #"fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
+        "570ee10e-a903-4f06-b9b1-33759ef204d4",
+        "7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",
+        "002f6967-f617-445c-b7cd-0c1e2bdf72c0",
+        ### requests.exceptions.HTTPError: 400 Client Error: Bad Request for url
+        #"27258001-c4ff-4f56-aa0b-a27c37bb921d",
+        ### GET request to ... raised error 401 Client Error: Unauthorized for url:
+        #"76ce8454-29f6-43c4-8d1a-aaeb34bc8a1a",
+        #"c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",
+        ### requests.exceptions.HTTPError: 404
+        "b2b2736c-2cb9-48ec-91f4-870336acfb1c",
+        ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
+        #"47a11f6e-4455-42de-9590-6398ab300379",
+        #"6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
+        #"fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",
+        ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
+        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
+        #"aeaf1e8e-094d-49cb-a243-8f1614169383",
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
+        #"2b8d6f15-6824-45e0-950c-753168223d08",
+        #"56bdf474-5297-45f0-841f-4083725b4595",
+        #"819c19e4-7956-4990-b11d-602d08fdae81",
+        #"b930fc8f-f777-446d-be8c-7bb7acac2183",
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_reports_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again. and the flash message reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again..`
+        #"8c20c6d6-9205-4772-a366-5f95c79c032a",  
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates.`
+        #"0657858f-f079-4200-a79e-1698cf36a95a",
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
+        #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",  
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
+        "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
+        #"0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",
+        #"2b76f3de-e577-4691-aab2-20abba43b3c9",
+        #"2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",
+        #"303d7b33-8c1d-4d63-9810-15012c0200c6",
+        #"38b08a9f-4828-4ab8-82ff-38c6cffcc434",
+        #"49bb5329-ee48-4a11-be77-8582ce73cba3",
+        #"609c6759-f1a4-4f53-a142-603fa3385b9d",
+        #"71f5c132-7509-4469-841f-334da840ea01",
+        #"91af9af9-6266-4d28-8554-966aec3311fd",
+        #"9ffd0923-0974-4287-a124-a38a59b78198",
+        #"adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",
+        #"da757bb5-4a5e-449b-9434-81eb33cfc696",
+        #"dedcfe80-7f4f-4d32-9c88-098b5cbc160c",
+        #"e193087c-543b-4c9c-939c-a70be149987e",
+        ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
+        #"1db3607b-3046-4e78-84b7-69e1c46fdb96",
+        #"36d1e996-028c-4c72-8d45-84ba79cdf456",
     ])
     #registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
     #TEST: end temp
