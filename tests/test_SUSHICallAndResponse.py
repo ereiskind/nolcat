@@ -213,26 +213,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        # `type(error)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
-        # `vars(error)`: {'message': InvalidAPIResponseError('There was a problem with an API response: GET request to ProQuest raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports')}
-        # `type(error.message)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
-        # `error.message`: There was a problem with an API response: GET request to ProQuest raised error 400Client Error: Bad Request for url: https://utppublishing.com/r51/reports
-        try:
-            log.error(f"`error.message.message`: {error.message.message}")
-            log.error(f"`type(error.message.message)`: {type(error.message.message)}")
-        except:
-            pass
-        try:
-            log.error(f"`error.message.__dict__`: {error.message.__dict__}")
-        except:
-            pass
-        try:
-            log.error(f"`vars(error.message)`: {vars(error.message)}")
-        except:
-            pass
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -286,26 +267,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        # `type(error)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
-        # `vars(error)`: {'message': InvalidAPIResponseError('There was a problem with an API response: GET request to ProQuest raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports')}
-        # `type(error.message)`: <class 'nolcat.nolcat_glue_job.InvalidAPIResponseError'>
-        # `error.message`: There was a problem with an API response: GET request to ProQuest raised error 400Client Error: Bad Request for url: https://utppublishing.com/r51/reports
-        try:
-            log.error(f"`error.message.message`: {error.message.message}")
-            log.error(f"`type(error.message.message)`: {type(error.message.message)}")
-        except:
-            pass
-        try:
-            log.error(f"`error.message.__dict__`: {error.message.__dict__}")
-        except:
-            pass
-        try:
-            log.error(f"`vars(error.message)`: {vars(error.message)}")
-        except:
-            pass
-        #TEST: end temp
-        pytest.skip(error.message)  #TEST: Need a string for skip message
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -370,7 +332,7 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
                 SUSHI_credentials,
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
@@ -406,7 +368,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -438,7 +400,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -470,7 +432,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -502,7 +464,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
