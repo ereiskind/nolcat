@@ -36,15 +36,10 @@ def SUSHI_credentials_fixture():
     #TEST: temp
     from random import choice
     registry_ID = choice([
-        "0f213bd4-70c0-4c9d-a540-3d138af8fe9c",
         "20db7a04-3830-4530-82bb-77261e7d708a",
-        "216dfdc9-d477-499b-a4be-2e94401b587a",
-        "2f0e9433-7217-4196-9ee2-9baf3cf179a1",
         "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
         "3435e5a7-eb36-46f8-8e8e-c7368310d879",
-        "3dfd4ff2-39f3-4c55-b6d6-96667632330a",
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
-        "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
         "5541d245-4230-405c-b7c1-f51b27926666",
         "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
@@ -57,15 +52,12 @@ def SUSHI_credentials_fixture():
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
         "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
-        "9c7adeeb-6b27-4f36-9196-850b523473fb",
-        "9cfe52d0-e9bc-49e2-9576-8aa1e875f7a0",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
         "335608df-e4d2-46ad-bd89-fb3683035441",
         "c517aed2-5e9d-4f6b-9c0b-b6249e522568",
         "c67345a4-34f7-445e-ad49-b38b21438b59",
         "e1e34750-71c7-4baf-9a14-c5a1598dd982",
-        "e7653717-21b0-4254-a49d-201654d333c9",
         "eb725161-bdba-4913-991d-203d260a6b36",
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
         "f947a7dd-a67f-4037-a62a-72c614b76b09",
@@ -77,6 +69,7 @@ def SUSHI_credentials_fixture():
         ### GET request to ... raised error 401 Client Error: Unauthorized for url:
         #"76ce8454-29f6-43c4-8d1a-aaeb34bc8a1a",
         #"c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",
+        #"3dfd4ff2-39f3-4c55-b6d6-96667632330a",
         ### requests.exceptions.HTTPError: 404
         "b2b2736c-2cb9-48ec-91f4-870336acfb1c",
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
@@ -94,13 +87,14 @@ def SUSHI_credentials_fixture():
         #"b930fc8f-f777-446d-be8c-7bb7acac2183",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_reports_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again. and the flash message reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again..`
         #"8c20c6d6-9205-4772-a366-5f95c79c032a",
+        #"4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates.`
         #"0657858f-f079-4200-a79e-1698cf36a95a",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
         #"1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
-        "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
+        #"5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         #"0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",
         #"2b76f3de-e577-4691-aab2-20abba43b3c9",
