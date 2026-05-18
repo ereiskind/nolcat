@@ -98,11 +98,11 @@ def SUSHI_credentials_fixture():
         #"819c19e4-7956-4990-b11d-602d08fdae81",
         #"b930fc8f-f777-446d-be8c-7bb7acac2183",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_reports_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again. and the flash message reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again..`
-        #"8c20c6d6-9205-4772-a366-5f95c79c032a",  
+        #"8c20c6d6-9205-4772-a366-5f95c79c032a",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates.`
         #"0657858f-f079-4200-a79e-1698cf36a95a",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
-        #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",  
+        #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
