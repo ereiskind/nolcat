@@ -217,13 +217,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
-        #TEST: end temp
-        pytest.skip(error)
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
     assert isinstance(response, tuple)
@@ -279,13 +273,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
-        #TEST: end temp
-        pytest.skip(error)
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
     assert isinstance(response, tuple)
