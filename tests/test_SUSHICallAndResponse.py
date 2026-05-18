@@ -37,28 +37,22 @@ def SUSHI_credentials_fixture():
     from random import choice
     registry_ID = choice([
         "0f213bd4-70c0-4c9d-a540-3d138af8fe9c",
-        "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
         "20db7a04-3830-4530-82bb-77261e7d708a",
         "216dfdc9-d477-499b-a4be-2e94401b587a",
         "2f0e9433-7217-4196-9ee2-9baf3cf179a1",
         "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
         "3435e5a7-eb36-46f8-8e8e-c7368310d879",
-        "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
         "3dfd4ff2-39f3-4c55-b6d6-96667632330a",
-        "4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
         "5541d245-4230-405c-b7c1-f51b27926666",
         "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
-        "60c7aa79-272d-4610-8ad5-c399bd938c8e",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "64beeb39-6f5e-4642-96d0-fc46c4856c26",
         "6809e99d-211e-403d-be12-bbbd871883ba",
-        "6839b3e4-1a57-413e-9b3f-9faa4df06d54",
         "6f9530b9-6ece-446d-ac59-8c67d08927c3",
         "70846dfc-1a3a-4615-88e1-d624acd71163",
         "7a59353f-c8cf-4069-891c-0c403323496a",
-        "81b01046-eb27-40e6-a855-bd84a9a03c89",
         "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
@@ -89,6 +83,7 @@ def SUSHI_credentials_fixture():
         #"47a11f6e-4455-42de-9590-6398ab300379",
         #"6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
         #"fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",
+        #"34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
         #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
         #"aeaf1e8e-094d-49cb-a243-8f1614169383",
@@ -103,6 +98,7 @@ def SUSHI_credentials_fixture():
         #"0657858f-f079-4200-a79e-1698cf36a95a",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         #"bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
+        #"1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
@@ -120,6 +116,8 @@ def SUSHI_credentials_fixture():
         #"da757bb5-4a5e-449b-9434-81eb33cfc696",
         #"dedcfe80-7f4f-4d32-9c88-098b5cbc160c",
         #"e193087c-543b-4c9c-939c-a70be149987e",
+        #"4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
+        #"81b01046-eb27-40e6-a855-bd84a9a03c89",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         #"1db3607b-3046-4e78-84b7-69e1c46fdb96",
         #"36d1e996-028c-4c72-8d45-84ba79cdf456",
