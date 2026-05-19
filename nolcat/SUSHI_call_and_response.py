@@ -190,7 +190,7 @@ class SUSHICallAndResponse:
                 log.debug("Report has no data; checking to see why and if existing flash statements from SUSHI errors provide an explanation.")
                 SUSHI_error_flash_messages = []
                 for message in messages_to_flash:
-                    if '3030' in message or '3031' in message or '3032' in message:
+                    if ('3030' in message or '3031' in message or '3032' in message) and message is not None:
                         SUSHI_error_flash_messages.append(message)
                         
                 if messages_to_flash and SUSHI_error_flash_messages:
