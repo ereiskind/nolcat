@@ -97,15 +97,18 @@ class SUSHICallAndResponse:
         except Exception as error:
             message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
-            messages_to_flash.append(flash_message)
+            messages_to_flash = [message]
             try:
                 flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             except DatabaseInteractionError as error:
                 log.error(error)
+                messages_to_flash.append(flash_message)
                 raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
             except S3InteractionError as error:
                 log.error(error)
+                messages_to_flash.append(flash_message)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
+            messages_to_flash.append(flash_message)
         
         if isinstance(API_response, Exception):
             message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
@@ -134,15 +137,6 @@ class SUSHICallAndResponse:
                     SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
                 log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-                if messages_to_flash:
-                    #TEST: temp
-                    log.error(f"`type(messages_to_flash)`: {type(messages_to_flash)}")
-                    log.error(f"`len(messages_to_flash)`: {len(messages_to_flash)}")
-                    log.error(f"`messages_to_flash`: {messages_to_flash}")
-                    #TEST: end temp
-                    for statement in messages_to_flash:
-                        messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
                 if messages_to_flash and SUSHI_exceptions:
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
@@ -164,15 +158,6 @@ class SUSHICallAndResponse:
                 SUSHI_exception_statement = API_response['Alerts']
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-            if messages_to_flash:
-                #TEST: temp
-                log.error(f"`type(messages_to_flash)`: {type(messages_to_flash)}")
-                log.error(f"`len(messages_to_flash)`: {len(messages_to_flash)}")
-                log.error(f"`messages_to_flash`: {messages_to_flash}")
-                #TEST: end temp
-                for statement in messages_to_flash:
-                    messages_to_flash.append(statement)
-                log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
             if messages_to_flash and SUSHI_exceptions:
                 message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
@@ -190,15 +175,6 @@ class SUSHICallAndResponse:
             if for_debug:
                 log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
-                if messages_to_flash:
-                    #TEST: temp
-                    log.error(f"`type(messages_to_flash)`: {type(messages_to_flash)}")
-                    log.error(f"`len(messages_to_flash)`: {len(messages_to_flash)}")
-                    log.error(f"`messages_to_flash`: {messages_to_flash}")
-                    #TEST: end temp
-                    for statement in messages_to_flash:
-                        messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
                 if messages_to_flash and SUSHI_exceptions:
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
