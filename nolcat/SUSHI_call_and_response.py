@@ -184,14 +184,17 @@ class SUSHICallAndResponse:
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
                 log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 if messages_to_flash:
+                    log.error("in `if messages_to_flash:`")  #TEST: temp
                     for statement in messages_to_flash:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
                 if messages_to_flash and SUSHI_exceptions:
+                    log.error("in `if messages_to_flash and SUSHI_exceptions:`")  #TEST: temp
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
                     messages_to_flash.append(message)
                     raise InvalidSUSHIResponseError(message, messages_to_flash)
+            log.error("at end of `if isinstance(API_response, list) or API_response.get('Message'):`")  #TEST: temp
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
