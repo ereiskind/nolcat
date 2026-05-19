@@ -260,8 +260,19 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
         pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidAPIResponseError as error:
+    except InvalidSUSHIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
+        #TEST: end temp
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -326,15 +337,20 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
                 SUSHI_credentials,
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
+    except InvalidSUSHIResponseError as error:
         #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
         #TEST: end temp
-        pytest.skip(error)
-    except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
@@ -370,15 +386,20 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
+    except InvalidSUSHIResponseError as error:
         #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
         #TEST: end temp
-        pytest.skip(error)
-    except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -410,15 +431,20 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
+    except InvalidSUSHIResponseError as error:
         #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
         #TEST: end temp
-        pytest.skip(error)
-    except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -450,15 +476,20 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
+    except InvalidSUSHIResponseError as error:
         #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
         #TEST: end temp
-        pytest.skip(error)
-    except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -490,15 +521,20 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
+    except InvalidSUSHIResponseError as error:
         #TEST: temp
-        log.error(f"`error`: {error}")
-        log.error(f"`type(error)`: {type(error)}")
-        log.error(f"`error.__dict__`: {error.__dict__}")
-        log.error(f"`vars(error)`: {vars(error)}")
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        log.error(f"`error.message.message` (type {type(error.message.message)}): {error.message.message}")
         #TEST: end temp
-        pytest.skip(error)
-    except InvalidAPIResponseError as error:
         pytest.skip(error.message.message)
+    except InvalidAPIResponseError as error:
+        #TEST: temp
+        log.error(f"`error` (type {type(error)}): {error}")
+        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
+        #TEST: end temp
+        pytest.skip(error.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
