@@ -38,17 +38,14 @@ def SUSHI_credentials_fixture():
     registry_ID = choice([
         "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",  # Previously HTTP 401
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",  # Previously HTTP 400
-        "463357e2-7abc-4c2b-9c51-b15c58f01281",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",  # SUSHI error 2000; credentials changed
-        "8c20c6d6-9205-4772-a366-5f95c79c032a",  # SUSHI error 2000; credentials changed
+        "8c20c6d6-9205-4772-a366-5f95c79c032a",  # tests/test_SUSHICallAndResponse.py::test_call_with_invalid_credentials - KeyError: 'Report_Items'
         "6809e99d-211e-403d-be12-bbbd871883ba",
         "7a59353f-c8cf-4069-891c-0c403323496a",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
-        "335608df-e4d2-46ad-bd89-fb3683035441",
-        "eb725161-bdba-4913-991d-203d260a6b36",
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
         ### GET request to ... raised error 404 Client Error:  for url:
         #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",
@@ -81,19 +78,16 @@ def SUSHI_credentials_fixture():
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
-        "0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",
         "38b08a9f-4828-4ab8-82ff-38c6cffcc434",
         "49bb5329-ee48-4a11-be77-8582ce73cba3",
         "609c6759-f1a4-4f53-a142-603fa3385b9d",
         "71f5c132-7509-4469-841f-334da840ea01",
         "91af9af9-6266-4d28-8554-966aec3311fd",
-        "9ffd0923-0974-4287-a124-a38a59b78198",
         "adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",
         "da757bb5-4a5e-449b-9434-81eb33cfc696",
         "dedcfe80-7f4f-4d32-9c88-098b5cbc160c",
         "e193087c-543b-4c9c-939c-a70be149987e",
         "4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
-        "81b01046-eb27-40e6-a855-bd84a9a03c89",
         "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         "1db3607b-3046-4e78-84b7-69e1c46fdb96",
