@@ -291,7 +291,7 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
                 or report["Report_ID"].startswith("Silverchair:CR_")  # Silverchair custom report
                 or report["Report_ID"].startswith("sciencedirect:")  # Elsevier custom report
                 or report["Report_ID"].startswith("OUP:")  # Oxford custom report
-                #or report["Report_ID"].startswith("LL_C")  # ??? custom report
+                or report["Report_ID"].startswith("LL_CR")  # Infobase custom report
             ):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
