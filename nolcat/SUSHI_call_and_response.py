@@ -184,10 +184,11 @@ class SUSHICallAndResponse:
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
                 log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 if messages_to_flash:
-                    log.error("in `if messages_to_flash:`")  #TEST: temp
+                    log.error(f"in `if messages_to_flash:`; `messages_to_flash` len is {len(messages_to_flash)}")  #TEST: temp
                     for statement in messages_to_flash:
+                        log.error(f"Appending {statement} to `messages_to_flash`")  #TEST: temp
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
+                    log.error(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")  #TEST: temp level, reset to `debug`
                 if messages_to_flash and SUSHI_exceptions:
                     log.error("in `if messages_to_flash and SUSHI_exceptions:`")  #TEST: temp
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
