@@ -547,7 +547,7 @@ class SUSHICallAndResponse:
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         
         #Subsection: Handle Errors Only Needing Flash Message
-        if error_code == '3030' or error_code == '3032' or error_code == '3040':
+        if error_code == '1030' or error_code == '3030' or error_code == '3032' or error_code == '3040' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
             if error_code == '3032' or error_code == '3040':
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
                 df = query_database(
