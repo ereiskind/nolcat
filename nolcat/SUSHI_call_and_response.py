@@ -134,6 +134,7 @@ class SUSHICallAndResponse:
                     SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
                 log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
+                log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 if messages_to_flash:
                     for statement in messages_to_flash:
                         messages_to_flash.append(statement)
@@ -159,6 +160,7 @@ class SUSHICallAndResponse:
                 SUSHI_exception_statement = API_response['Alerts']
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
+            log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
             if messages_to_flash:
                 for statement in messages_to_flash:
                     messages_to_flash.append(statement)
@@ -180,6 +182,7 @@ class SUSHICallAndResponse:
             if for_debug:
                 log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
+                log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 if messages_to_flash:
                     for statement in messages_to_flash:
                         messages_to_flash.append(statement)
@@ -442,35 +445,43 @@ class SUSHICallAndResponse:
         log.info(f"Starting `_handle_SUSHI_exceptions()` for error(s) {error_contents}.")
         if error_contents is None:
             log.info("This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+            log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
             return (None, None)
         elif isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
                 log.info("This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+                log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 return (None, None)
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error_contents)
+            log.error("Just after `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
             flash_message = report_type + flash_message
             if isinstance(SUSHI_exception, str):
                 SUSHI_exception = report_type + SUSHI_exception
             log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {SUSHI_exception} and the flash message {flash_message}.")
+            log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
             return (SUSHI_exception, [flash_message])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
                 log.info("This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+                log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 return (None, None)
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
                 SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error_contents[0])
+                log.error("Just after `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
                 flash_message = report_type + flash_message
                 if isinstance(SUSHI_exception, str):
                     SUSHI_exception = report_type + SUSHI_exception
                 log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {SUSHI_exception} and the flash message {flash_message}.")
+                log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 return (SUSHI_exception, [flash_message])
             else:
                 flash_messages_list = []
                 errors_list = set()  # A set automatically dedupes as items are added
                 for error in error_contents:
                     SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error)
+                    log.error("Just after `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
                     flash_message = report_type + flash_message
                     flash_messages_list.append(flash_message)
                     if SUSHI_exception:
@@ -479,12 +490,15 @@ class SUSHICallAndResponse:
                 if len(errors_list) == 1:  # One error indicating API calls should stop
                     return_value = (errors_list.pop(), flash_messages_list)
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
+                    log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                     return return_value
                 elif len(errors_list) > 1:  # Multiple errors indicating API calls should stop
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{format_list_for_stdout(flash_messages_list)}")
+                    log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                     return (f"All of the following errors were raised:\n{format_list_for_stdout(errors_list)}", flash_messages_list)
                 else:  # API calls should continue
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{format_list_for_stdout(flash_messages_list)}")
+                    log.error("Just before `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                     return (None, flash_messages_list)
         else:
             message = f"SUSHI error handling method for a {report_type} accepted {repr(type(error_contents))} data, which is an invalid type."
@@ -533,6 +547,7 @@ class SUSHICallAndResponse:
         if error_contents.get('Message') is None:
             message = f" had no key `Message`; this is not a standard error message and thus isn't being managed as such."
             log.debug(message)
+            log.error("Just before `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
             return (None, message)
         error_code = errors_and_codes.get(error_contents['Message'])
         if error_code is None:
@@ -543,10 +558,12 @@ class SUSHICallAndResponse:
                 try:
                     message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
                     log.error(message)
+                    log.error("Just before `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
                     return (message, message)
                 except Exception as error:
                     message = f" had the error message {error_contents}, but trying to match it to a known COUNTER error raised the error {error}."
                     log.error(message)
+                    log.error("Just before `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
                     return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
@@ -580,6 +597,7 @@ class SUSHICallAndResponse:
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
+            log.error("Just before `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
             return (None, message)
 
         #Subsection: Handle Errors Stopping API Calls
@@ -590,6 +608,7 @@ class SUSHICallAndResponse:
         elif error_code == '3020' :
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
         log.error(message)
+        log.error("Just before `_evaluate_individual_SUSHI_exception()` returns")  #TEST: temp
         return (message, message)
     
 
