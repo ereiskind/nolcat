@@ -36,8 +36,6 @@ def SUSHI_credentials_fixture():
     #TEST: temp
     from random import choice
     registry_ID = choice([
-        "20db7a04-3830-4530-82bb-77261e7d708a",
-        "3293c6c6-3ced-491b-ad5d-47ce565dcdcb",
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
         "5541d245-4230-405c-b7c1-f51b27926666",
         "5c6cf954-7dc4-4986-b14f-dc3b752608ce",
@@ -49,25 +47,22 @@ def SUSHI_credentials_fixture():
         "7a59353f-c8cf-4069-891c-0c403323496a",
         "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
-        "91e3d8ee-445c-4cb6-bd1f-17b1c12f12b6",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
         "335608df-e4d2-46ad-bd89-fb3683035441",
-        "c517aed2-5e9d-4f6b-9c0b-b6249e522568",
         "c67345a4-34f7-445e-ad49-b38b21438b59",
         "eb725161-bdba-4913-991d-203d260a6b36",
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
         "f947a7dd-a67f-4037-a62a-72c614b76b09",
-        "7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",
-        "002f6967-f617-445c-b7cd-0c1e2bdf72c0",
         ### requests.exceptions.HTTPError: 400 Client Error: Bad Request for url
         #"27258001-c4ff-4f56-aa0b-a27c37bb921d",
         ### GET request to ... raised error 401 Client Error: Unauthorized for url:
         #"76ce8454-29f6-43c4-8d1a-aaeb34bc8a1a",
         #"c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",
         #"3dfd4ff2-39f3-4c55-b6d6-96667632330a",
-        ### requests.exceptions.HTTPError: 404
-        "b2b2736c-2cb9-48ec-91f4-870336acfb1c",
+        #"20db7a04-3830-4530-82bb-77261e7d708a",
+        ### GET request to ... raised error 404 Client Error:  for url:
+        #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
         #"47a11f6e-4455-42de-9590-6398ab300379",
         #"6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
@@ -76,6 +71,8 @@ def SUSHI_credentials_fixture():
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
         #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
         #"aeaf1e8e-094d-49cb-a243-8f1614169383",
+        ### SKIPPED (The `reports` call test is being skipped because the `API_response.text` is an empty string)
+        #"002f6967-f617-445c-b7cd-0c1e2bdf72c0",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] can not be recognized.. and the flash message status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] cannot be recognized...`
         #"3435e5a7-eb36-46f8-8e8e-c7368310d879",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
@@ -84,6 +81,7 @@ def SUSHI_credentials_fixture():
         #"819c19e4-7956-4990-b11d-602d08fdae81",
         #"b930fc8f-f777-446d-be8c-7bb7acac2183",
         #"9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
+        #"7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_reports_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again. and the flash message reports request raised error 2000: Requestor Not Authorized to Access Service due to invalid requestor_id.. Check and Update the credentials in the R5 SUSHI credentials CSV, then try the call again..`
         #"8c20c6d6-9205-4772-a366-5f95c79c032a",
         #"4da3d0d2-2be6-49d4-a12e-b5063c9854dc",
