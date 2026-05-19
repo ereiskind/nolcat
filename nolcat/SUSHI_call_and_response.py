@@ -125,7 +125,7 @@ class SUSHICallAndResponse:
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
         #ToDo: For error 3060: InvalidReportFilter Value, redo the call without the invalid filters
         if API_response.get('Report_Header') and isinstance(API_response.get('Report_Header'), dict):  # Checks that the `Report_Header` key exists and that its value is a dict (any other data type would cause an error in the sequence of `get` methods below)
-            if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
+            if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):
                 if API_response.get('Report_Header').get('Exception'):
                     for_debug = "Exception"
                     SUSHI_exception_statement = API_response['Report_Header']['Exception']
@@ -136,16 +136,20 @@ class SUSHICallAndResponse:
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
                 log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
                 if messages_to_flash:
+                    log.error(f"in `if messages_to_flash:`; `messages_to_flash` len is {len(messages_to_flash)}")  #TEST: temp
                     for statement in messages_to_flash:
+                        log.error(f"Appending {statement} to `messages_to_flash`")  #TEST: temp
                         messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
+                    log.error(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")  #TEST: temp level, reset to `debug`
                 if messages_to_flash and SUSHI_exceptions:
+                    log.error("in `if messages_to_flash and SUSHI_exceptions:`")  #TEST: temp
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
                     messages_to_flash.append(message)
                     raise InvalidSUSHIResponseError(message, messages_to_flash)
+                log.error("at end of `if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):`")  #TEST: temp
 
-        if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
+        if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):
             if API_response.get('Exception'):
                 for_debug = "Exception"
                 SUSHI_exception_statement = API_response['Exception']
@@ -162,14 +166,18 @@ class SUSHICallAndResponse:
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             log.error("Just after `_handle_SUSHI_exceptions()` returns")  #TEST: temp
             if messages_to_flash:
+                log.error(f"in `if messages_to_flash:`; `messages_to_flash` len is {len(messages_to_flash)}")  #TEST: temp
                 for statement in messages_to_flash:
+                    log.error(f"Appending {statement} to `messages_to_flash`")  #TEST: temp
                     messages_to_flash.append(statement)
-                log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
+                log.error(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")  #TEST: temp level, reset to `debug`
             if messages_to_flash and SUSHI_exceptions:
+                log.error("in `if messages_to_flash and SUSHI_exceptions:`")  #TEST: temp
                 message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
                 messages_to_flash.append(message)
                 raise InvalidSUSHIResponseError(message, messages_to_flash)
+            log.error("at end of `if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):`")  #TEST: temp
 
         if isinstance(API_response, list) or API_response.get('Message'):  # This structure is designed to enable reuse while not exposing any non-list values to the index operator
             if isinstance(API_response, list):
