@@ -38,60 +38,36 @@ def SUSHI_credentials_fixture():
     registry_ID = choice([
         "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",  # Previously HTTP 401
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",  # Previously HTTP 400
-        "618759fd-bd3e-4617-a0d1-ccbe06c22171",
+        "b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # Previously HTTP 404
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",  # SUSHI error 2000; credentials changed
         "8c20c6d6-9205-4772-a366-5f95c79c032a",  # tests/test_SUSHICallAndResponse.py::test_call_with_invalid_credentials - KeyError: 'Report_Items'
-        "6809e99d-211e-403d-be12-bbbd871883ba",
+        "f89d2141-9ec0-4bfc-8d77-7abca78b761f",  # Needs `platform` parameter value
+        "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "7a59353f-c8cf-4069-891c-0c403323496a",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
-        "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
-        ### GET request to ... raised error 404 Client Error:  for url:
-        #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",
-        ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
-        #"47a11f6e-4455-42de-9590-6398ab300379",
-        #"6f0e112f-34fb-40c0-a3b0-23a34dfacddd",
-        #"fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",
-        #"34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
-        #"64beeb39-6f5e-4642-96d0-fc46c4856c26",
-        #"70846dfc-1a3a-4615-88e1-d624acd71163",
-        ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
-        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
-        #"aeaf1e8e-094d-49cb-a243-8f1614169383",
-        ### SKIPPED (The `reports` call test is being skipped because the `API_response.text` is an empty string)
-        #"002f6967-f617-445c-b7cd-0c1e2bdf72c0",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] can not be recognized.. and the flash message status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] cannot be recognized...`
-        #"3435e5a7-eb36-46f8-8e8e-c7368310d879",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_status_call` on `nolcat.SUSHI_call_and_response::487 - `_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.//status had no key `Message`; this is not a standard error message and thus isn't being managed as such.`
         "2b8d6f15-6824-45e0-950c-753168223d08",
         "56bdf474-5297-45f0-841f-4083725b4595",
         "819c19e4-7956-4990-b11d-602d08fdae81",
         "b930fc8f-f777-446d-be8c-7bb7acac2183",
-        "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates.`
         "0657858f-f079-4200-a79e-1698cf36a95a",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         "5541d245-4230-405c-b7c1-f51b27926666",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3020: Invalid Date Arguments. Adjust the date range, splitting it up into two calls with date ranges contained within a calendaryear if necessary, then try the call again.`
-        #"570ee10e-a903-4f06-b9b1-33759ef204d4",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3031: Usage Not Ready for Requested Dates due to last date processed is 2026-01-31. Try the call again later.`
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "38b08a9f-4828-4ab8-82ff-38c6cffcc434",
         "49bb5329-ee48-4a11-be77-8582ce73cba3",
-        "609c6759-f1a4-4f53-a142-603fa3385b9d",
         "71f5c132-7509-4469-841f-334da840ea01",
         "91af9af9-6266-4d28-8554-966aec3311fd",
         "adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",
-        "da757bb5-4a5e-449b-9434-81eb33cfc696",
         "dedcfe80-7f4f-4d32-9c88-098b5cbc160c",
         "e193087c-543b-4c9c-939c-a70be149987e",
-        "4549ba3a-728e-4cdb-a86f-0d84ba9cc96b",
-        "8370854d-5e3e-4bd7-9ea4-b06c07bf5bee",
-        ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
         "1db3607b-3046-4e78-84b7-69e1c46fdb96",
         "36d1e996-028c-4c72-8d45-84ba79cdf456",
+        #"570ee10e-a903-4f06-b9b1-33759ef204d4",  # nolcat.SUSHI_call_and_response::592 -  request raised error 3020: Invalid Date Arguments. Adjust the date range, splitting it up into two calls with date ranges contained within a calendaryear if necessary, then try the call again.
+        #"3435e5a7-eb36-46f8-8e8e-c7368310d879",  # nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] can not be recognized.. and the flash message status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] cannot be recognized...
+        #"002f6967-f617-445c-b7cd-0c1e2bdf72c0",  # SKIPPED (The `reports` call test is being skipped because the `API_response.text` is an empty string)
+        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",  # SKIPPED (f"The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.") -- R5 audit failed
+        #"aeaf1e8e-094d-49cb-a243-8f1614169383",  # SKIPPED (f"The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.") -- R5 audit failed
     ])
     #registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
     #TEST: end temp
