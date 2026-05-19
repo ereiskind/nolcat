@@ -1241,7 +1241,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     i += 1
                 API_response = json.loads(modified_API_response)
             except:
-                raise json.JSONDecodeError("The API response couldn't be converted into a Python dict.") 
+                raise json.JSONDecodeError("The API response couldn't be converted into a Python dict.")
 
     #Section: Extract SUSHI URL
     if API_response.get('sushi_services') and API_response['sushi_services'] != []:
