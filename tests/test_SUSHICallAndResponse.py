@@ -37,25 +37,19 @@ def SUSHI_credentials_fixture():
     from random import choice
     registry_ID = choice([
         "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",  # Previously HTTP 401
-        "3dfd4ff2-39f3-4c55-b6d6-96667632330a",  # Previously HTTP 401; credentials changed
-        "20db7a04-3830-4530-82bb-77261e7d708a",  # Previously HTTP 401; credentials changed
         "27258001-c4ff-4f56-aa0b-a27c37bb921d",  # Previously HTTP 400
         "463357e2-7abc-4c2b-9c51-b15c58f01281",
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
         "4da3d0d2-2be6-49d4-a12e-b5063c9854dc",  # SUSHI error 2000; credentials changed
         "8c20c6d6-9205-4772-a366-5f95c79c032a",  # SUSHI error 2000; credentials changed
         "6809e99d-211e-403d-be12-bbbd871883ba",
-        "6f9530b9-6ece-446d-ac59-8c67d08927c3",
-        "70846dfc-1a3a-4615-88e1-d624acd71163",
         "7a59353f-c8cf-4069-891c-0c403323496a",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
         "9e34f261-315a-48a3-92ca-9af70c5e099a",
         "a8cead1d-6432-4fc6-8e0a-e5a8461dfccb",
         "335608df-e4d2-46ad-bd89-fb3683035441",
-        "c67345a4-34f7-445e-ad49-b38b21438b59",
         "eb725161-bdba-4913-991d-203d260a6b36",
         "f89d2141-9ec0-4bfc-8d77-7abca78b761f",
-        "f947a7dd-a67f-4037-a62a-72c614b76b09",
         ### GET request to ... raised error 404 Client Error:  for url:
         #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The COUNTER Registry didn't return a URL.
@@ -64,6 +58,7 @@ def SUSHI_credentials_fixture():
         #"fcffa2da-0cf6-4d6a-ab52-f2c6efc8f8d2",
         #"34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
         #"64beeb39-6f5e-4642-96d0-fc46c4856c26",
+        #"70846dfc-1a3a-4615-88e1-d624acd71163",
         ### nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.
         #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",
         #"aeaf1e8e-094d-49cb-a243-8f1614169383",
@@ -77,12 +72,9 @@ def SUSHI_credentials_fixture():
         "819c19e4-7956-4990-b11d-602d08fdae81",
         "b930fc8f-f777-446d-be8c-7bb7acac2183",
         "9a2d940d-dcee-4f0c-b86c-18b72df9d9d9",
-        "7c7bdde7-7acf-42c3-a3b8-8f24a9dad614",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates.`
         "0657858f-f079-4200-a79e-1698cf36a95a",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 1011: Report Queued for Processing. Try the call again later.`
-        "bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
-        "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
         "5541d245-4230-405c-b7c1-f51b27926666",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_PR_call_validity` on `nolcat.SUSHI_call_and_response::592 -  request raised error 3020: Invalid Date Arguments. Adjust the date range, splitting it up into two calls with date ranges contained within a calendaryear if necessary, then try the call again.`
         #"570ee10e-a903-4f06-b9b1-33759ef204d4",
@@ -90,9 +82,6 @@ def SUSHI_credentials_fixture():
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         ### Killed during `tests/test_SUSHICallAndResponse.py::test_DR_call_validity` at `nolcat.SUSHI_call_and_response::582 -  request raised error 3030: No Usage Available for Requested Dates due to requested data between 2025-10-01 and2026-03-31.`
         "0ffedf0a-37a5-44fb-8564-e8d0b7b6d855",
-        "2b76f3de-e577-4691-aab2-20abba43b3c9",
-        "2f5ec015-04d7-4bf2-8504-81f0bff9bfa7",
-        "303d7b33-8c1d-4d63-9810-15012c0200c6",
         "38b08a9f-4828-4ab8-82ff-38c6cffcc434",
         "49bb5329-ee48-4a11-be77-8582ce73cba3",
         "609c6759-f1a4-4f53-a142-603fa3385b9d",
