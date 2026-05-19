@@ -166,11 +166,7 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -228,11 +224,7 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -301,11 +293,7 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
@@ -345,11 +333,7 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -385,11 +369,7 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -425,11 +405,7 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -465,11 +441,7 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
     except InvalidSUSHIResponseError as error:
         pytest.skip(error.message)
     except InvalidAPIResponseError as error:
-        #TEST: temp
-        log.error(f"`error` (type {type(error)}): {error}")
-        log.error(f"`error.message` (type {type(error.message)}): {error.message}")
-        #TEST: end temp
-        pytest.skip(error.message)
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
