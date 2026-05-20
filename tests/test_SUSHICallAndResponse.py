@@ -39,19 +39,12 @@ def SUSHI_credentials_fixture():
         "c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",  # Previously HTTP 401
         #"27258001-c4ff-4f56-aa0b-a27c37bb921d",  # SKIPPED (GET request to ProQuest raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports?...)
         #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # SKIPPED (GET request to ... raised error 404 Client Error:  for url: https://sushi.ebscohost.com/R5/st...)
-        "8c20c6d6-9205-4772-a366-5f95c79c032a",  # tests/test_SUSHICallAndResponse.py::test_call_with_invalid_credentials - KeyError: 'Report_Items'
         #"f89d2141-9ec0-4bfc-8d77-7abca78b761f",  # SKIPPED (The call to ... for reports consisted of nothing but an exception block. No further SUSHI calls will be made to ....) -- Needs `platform` parameter value
         "618759fd-bd3e-4617-a0d1-ccbe06c22171",
-        "7a59353f-c8cf-4069-891c-0c403323496a",
         #"9e34f261-315a-48a3-92ca-9af70c5e099a",  # SKIPPED (GET request to ... raised error 403 Client Error: Forbidden for url: https://sitemaster.pubs....)
-        "2b8d6f15-6824-45e0-950c-753168223d08",
         "56bdf474-5297-45f0-841f-4083725b4595",
-        "b930fc8f-f777-446d-be8c-7bb7acac2183",
-        "0657858f-f079-4200-a79e-1698cf36a95a",
-        "5541d245-4230-405c-b7c1-f51b27926666",
         "5511ea8a-0c66-4ac8-ae8c-512b50ff3d17",
         "38b08a9f-4828-4ab8-82ff-38c6cffcc434",
-        "adccc1b0-f93d-43eb-9df5-a2d8bfbb25df",
         #"570ee10e-a903-4f06-b9b1-33759ef204d4",  # nolcat.SUSHI_call_and_response::592 -  request raised error 3020: Invalid Date Arguments. Adjust the date range, splitting it up into two calls with date ranges contained within a calendaryear if necessary, then try the call again.
         #"3435e5a7-eb36-46f8-8e8e-c7368310d879",  # nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] can not be recognized.. and the flash message status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] cannot be recognized...
         #"002f6967-f617-445c-b7cd-0c1e2bdf72c0",  # SKIPPED (The `reports` call test is being skipped because the `API_response.text` is an empty string)
