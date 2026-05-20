@@ -1241,7 +1241,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     i += 1
                 API_response = json.loads(modified_API_response)
             except:
-                raise json.JSONDecodeError("The API response couldn't be converted into a Python dict.") 
+                raise json.JSONDecodeError("The API response couldn't be converted into a Python dict.")
 
     #Section: Extract SUSHI URL
     if API_response.get('sushi_services') and API_response['sushi_services'] != []:
@@ -1280,18 +1280,24 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
                     temp_URL = release_data['url']
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
-        elif len(currently_valid_release) == 0 and (len(expired_release) == 1 or len(audit_not_current) == 1):
-            if len(expired_release) >= 1 and len(audit_not_current) == 1:
+        elif len(currently_valid_release) == 0 and len(audit_not_current) == 1:
+            if len(expired_release) >= 1:
                 log.warning(f"COUNTER registry ID {registry_ID} is between codes of practice; the newer one, which either hasn't been audited or is in the process of an audit, is being used.")
-            elif len(currently_valid_release) == 0 and len(audit_not_current) == 1:
+            else:
                 log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which either hasn't been audited or is in the process of an audit; that CoP is being used.")
-            elif len(expired_release) == 1 and len(audit_not_current) == 0:
-                log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which has an expired audit; that CoP is being used.")
             for release_data in API_response['sushi_services']:
                 if release_data['counter_release'] == audit_not_current[0]:
                     temp_URL = release_data['url']
                     URL_CoP = release_data['counter_release']
                     log.debug(f"{temp_URL} returned by COUNTER Registry.")
+        elif len(currently_valid_release) == 0 and len(expired_release) == 1 and len(audit_not_current) == 0:
+            log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which has an expired audit; that CoP is being used.")
+            for release_data in API_response['sushi_services']:
+                log.error(f"`release_data` (type {type(release_data)}): {release_data}")
+                #TEST: `if release_data['counter_release'] == audit_not_current[0]:` raises error because `audit_not_current` is empty
+                    #temp_URL = release_data['url']
+                    #URL_CoP = release_data['counter_release']
+                    #log.debug(f"{temp_URL} returned by COUNTER Registry.")
         elif len(currently_valid_release) > 1:
             raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
         else:
@@ -2670,7 +2676,9 @@ class InvalidSUSHIResponseError(InvalidAPIResponseError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with an API response: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with an API response: {self.message}"
 
 
 class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
@@ -2695,7 +2703,9 @@ class NoSUSHIUsageDataError(InvalidSUSHIResponseError):
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`.")
+    
+    def __str__(self):
+        return f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no usage data because of the error `{self.initial_error}`."
 
 
 class NoSUSHIDataError(InvalidSUSHIResponseError):
@@ -2720,7 +2730,9 @@ class NoSUSHIDataError(InvalidSUSHIResponseError):
         self.statistics_source_name = statistics_source_name
         self.initial_error = initial_error
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`.")
+    
+    def __str__(self):
+        return f"The call to the `{self.call_path}` endpoint for {self.statistics_source_name} returned no data because of the error `{self.initial_error}`."
 
 
 class DatabaseInteractionError(Exception):
@@ -2757,7 +2769,9 @@ class DatabaseInteractionErrorWithFlashMessages(DatabaseInteractionError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with a SQL operation: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with a SQL operation: {self.message}"
 
 
 class S3InteractionError(Exception):
@@ -2794,4 +2808,6 @@ class S3InteractionErrorWithFlashMessages(S3InteractionError):
         """
         self.message = message
         self.messages_to_flash = messages_to_flash
-        super().__init__(f"There was a problem with a S3 operation: {self.message}")
+    
+    def __str__(self):
+        return f"There was a problem with a S3 operation: {self.message}"

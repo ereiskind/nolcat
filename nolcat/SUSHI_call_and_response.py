@@ -93,39 +93,31 @@ class SUSHICallAndResponse:
         
         #Section: Convert Response to Python Data Types
         try:
-            API_response, messages_to_flash = self._convert_Response_to_JSON(API_response)  # If there aren't any messages to flash, an empty list is initialized
-        except Exception as error:
-            message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
-            log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
-            messages_to_flash.append(flash_message)
+            API_response = self._convert_Response_to_JSON(API_response)
+        except json.JSONDecodeError as error:
+            message = error + f" Because the requests.Response object couldn't be converted to native Python data types, the requests.Response.text value is being saved to a file instead."
+            log.error(message)
+            messages_to_flash = [message]
             try:
                 flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             except DatabaseInteractionError as error:
                 log.error(error)
+                messages_to_flash.append(error)
                 raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
             except S3InteractionError as error:
                 log.error(error)
+                messages_to_flash.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
-        
-        if isinstance(API_response, Exception):
-            message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
-            log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
             messages_to_flash.append(flash_message)
-            try:
-                flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
-            except DatabaseInteractionError as error:
-                log.error(error)
-                raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
-            except S3InteractionError as error:
-                log.error(error)
-                raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
-        log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
+            log.error("The raw API response was saved as text via `()`")  #ToDo: Should there be a `return` here?
+        messages_to_flash = []
+        log.debug(f"The API response is a {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
         #ToDo: For error 3060: InvalidReportFilter Value, redo the call without the invalid filters
         if API_response.get('Report_Header') and isinstance(API_response.get('Report_Header'), dict):  # Checks that the `Report_Header` key exists and that its value is a dict (any other data type would cause an error in the sequence of `get` methods below)
-            if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
+            if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):
                 if API_response.get('Report_Header').get('Exception'):
                     for_debug = "Exception"
                     SUSHI_exception_statement = API_response['Report_Header']['Exception']
@@ -134,17 +126,13 @@ class SUSHICallAndResponse:
                     SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
                 log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-                if messages_to_flash:
-                    for statement in messages_to_flash:
-                        messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
                 if messages_to_flash and SUSHI_exceptions:
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
                     messages_to_flash.append(message)
                     raise InvalidSUSHIResponseError(message, messages_to_flash)
 
-        if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
+        if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):
             if API_response.get('Exception'):
                 for_debug = "Exception"
                 SUSHI_exception_statement = API_response['Exception']
@@ -159,10 +147,6 @@ class SUSHICallAndResponse:
                 SUSHI_exception_statement = API_response['Alerts']
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-            if messages_to_flash:
-                for statement in messages_to_flash:
-                    messages_to_flash.append(statement)
-                log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
             if messages_to_flash and SUSHI_exceptions:
                 message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
@@ -180,15 +164,13 @@ class SUSHICallAndResponse:
             if for_debug:
                 log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
-                if messages_to_flash:
-                    for statement in messages_to_flash:
-                        messages_to_flash.append(statement)
-                    log.debug(f"Added the following items to `messages_to_flash`:\n{format_list_for_stdout(messages_to_flash)}")
-                if messages_to_flash and SUSHI_exceptions:
+                if SUSHI_exceptions:
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
-                    log.warning(message)
-                    messages_to_flash.append(message)
-                    raise InvalidSUSHIResponseError(message, messages_to_flash)
+                else:
+                    message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
+                log.warning(message)
+                messages_to_flash.append(message)
+                raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
@@ -199,7 +181,7 @@ class SUSHICallAndResponse:
                 log.debug("Report has no data; checking to see why and if existing flash statements from SUSHI errors provide an explanation.")
                 SUSHI_error_flash_messages = []
                 for message in messages_to_flash:
-                    if '3030' in message or '3031' in message or '3032' in message:
+                    if ('3030' in message or '3031' in message or '3032' in message) and message is not None:
                         SUSHI_error_flash_messages.append(message)
                         
                 if messages_to_flash and SUSHI_error_flash_messages:
@@ -282,97 +264,32 @@ class SUSHICallAndResponse:
             API_response (requests.Response): the response returned by the SUSHI API call
         
         Returns:
-            tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
+            dict: the API call response as a dict using native Python data types
+        
+        Raises:
+            json.JSONDecodeError: if the requests.Response JSON cannot be converted into a Python dict
         """
-        log.info("Starting `_convert_Response_to_JSON()`.")  #ToDo: Can this be cleaned up by using `requests.Response.json()` and other conversions from `fetch_URL_from_COUNTER_Registry()`?
-        #Section: Convert Text Attributes for Calls to `reports` Endpoint
-        # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
-        if self.call_path == "reports":
-            if isinstance(API_response.text, str):
-                try:
-                    log.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
-                    API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-                except Exception as error:
-                    message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
-                    log.error(message)
-                    return (SyntaxError(error), [message])
-            elif isinstance(API_response.text, list):
-                try:
-                    log.debug("The returned text is in list format and is the list of reports.")
-                    API_response = json.loads(API_response.content.decode('utf-8'))
-                except Exception as error:
-                    message = f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}."
-                    log.error(message)
-                    return (json.JSONDecodeError(error), [message])
-            else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
+        log.info("Starting `_convert_Response_to_JSON()`.")
+        try:
+            API_response = API_response.json()
+        except Exception as error:
+            message = f"`requests.Response.json()` raised {error}"
+            log.info(message)
+            try:
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            except json.JSONDecodeError as error:
+                message = message + f"; `json.loads()` on `requests.Response` raised {error}"
                 log.error(message)
-                return (json.JSONDecodeError(message), [message])
-                
-            if isinstance(API_response, list):
-                if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
-                    message = failed_SUSHI_call_statement("reports", self.calling_to, API_response)  #ALERT: `raise InvalidSUSHIResponseError`
-                    log.error(message)
-                    return (ValueError(message), [message])
-                log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
-                API_response = dict(reports = API_response)
-            else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
-                log.error(message)
-                return (json.JSONDecodeError(message), [message])
+                raise json.JSONDecodeError("When trying to convert the API response to a Python dict, " + message)
         
-        #Section: Convert Text Attributes for Calls to Other Endpoints
-        else:
-            if isinstance(API_response.text, str):
-                log.debug("The returned text was read from a downloaded JSON file.")
-                try:
-                    API_response = json.loads(API_response.content.decode('utf-8'))
-                except:  # This will transform values that don't decode as JSONs (generally lists)
-                    try:
-                        API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-                    except Exception as error:
-                        message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
-                        log.error(message)
-                        return (SyntaxError(error), [message])
-                
-                if isinstance(API_response, dict):
-                    log.debug("The returned text was converted to a dictionary.")
-                
-                elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
-                    log.debug("The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
-                    API_response = API_response[0]
-                
-                else:
-                    message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."
-                    log.error(message)
-                    return (json.JSONDecodeError(message), [message])
-            
-            elif isinstance(API_response.text, dict):
-                try:
-                    log.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
-                    API_response = json.loads(API_response.content.decode('utf-8'))
-                except Exception as error:
-                    message = f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}."
-                    log.error(message)
-                    return (json.JSONDecodeError(error), [message])
-            
-            elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
-                try:
-                    log.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
-                    API_response = json.loads(API_response[0].content.decode('utf-8'))
-                except Exception as error:
-                    message = f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}."
-                    log.error(message)
-                    return (json.JSONDecodeError(error), [message])
-            
-            else:
-                message = f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
-                log.error(message)
-                return (json.JSONDecodeError(message), [message])
+        if isinstance(API_response, list) and self.call_path == "reports":
+            API_response = {'reports': API_response}
+        elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
+            API_response = API_response[0]
         
-        log.info(f"SUSHI data converted to {repr(type(API_response))}.")
+        log.info(f"SUSHI data converted to {type(API_response)}.")
         log.debug(self._stdout_API_response_based_on_size(API_response))
-        return (API_response, [])
+        return API_response
     
 
     def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
@@ -544,7 +461,7 @@ class SUSHICallAndResponse:
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         
         #Subsection: Handle Errors Only Needing Flash Message
-        if error_code == '3030' or error_code == '3032' or error_code == '3040':
+        if error_code == '1030' or error_code == '3030' or error_code == '3032' or error_code == '3040' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
             if error_code == '3032' or error_code == '3040':
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
                 df = query_database(

@@ -1,13 +1,15 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2026-04-17 ##########
+########## Passing 2026-05-20 ##########
 
 import pytest
 from datetime import date
 import re
+import csv
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.nolcat_glue_job import *
+from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 log = logging.getLogger(__name__)
@@ -35,19 +37,18 @@ def SUSHI_credentials_fixture():
     URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     if isinstance(URL, Exception):
         pytest.exit(URL)
-    #ToDo: Get credential values from CSV
-    customer_id = input("Enter the SUSHI customer ID: ")
-    requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")
-    api_key = input("Enter the SUSHI API key or just press enter if none exists: ")
-    platform = input("Enter the SUSHI platform or just press enter if none exists: ")
-
-    SUSHI_credentials = dict(customer_id = customer_id)
-    if requestor_id != "":
-        SUSHI_credentials['requestor_id'] = requestor_id
-    if api_key != "":
-        SUSHI_credentials['api_key'] = api_key
-    if platform != "":
-        SUSHI_credentials['platform'] = platform
+    with open(PATH_TO_CREDENTIALS_FILE()) as file:
+        CSV_data = csv.DictReader(file)
+        for statistics_source_credentials in CSV_data:
+            if statistics_source_credentials['statistics_source_retrieval_code'] == registry_ID:
+                # Possible alternate credentials aren't checked
+                SUSHI_credentials = {'customer_id': statistics_source_credentials['customer_ID']}
+                if statistics_source_credentials.get('requestor_ID'):
+                    SUSHI_credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
+                if statistics_source_credentials.get('API_key'):
+                    SUSHI_credentials['api_key'] = statistics_source_credentials['API_key']
+                if statistics_source_credentials.get('platform'):
+                    SUSHI_credentials['platform']  = statistics_source_credentials['platform']
     
     SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
         "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
@@ -119,8 +120,12 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 "status",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -173,8 +178,12 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 "reports",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -204,7 +213,13 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?(sciencedirect:)?[PpDdTtIi]?[Rr](_\wJ?\d)?", report["Report_ID"]):
+            if (
+                re.fullmatch(r"[PpDdTtIi]?[Rr](_\wJ?\d)?", report["Report_ID"])
+                or report["Report_ID"].startswith("Silverchair:CR_")  # Silverchair custom report
+                or report["Report_ID"].startswith("sciencedirect:")  # Elsevier custom report
+                or report["Report_ID"].startswith("OUP:")  # Oxford custom report
+                or report["Report_ID"].startswith("LL_CR")  # Infobase custom report
+            ):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
@@ -232,8 +247,12 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
                 "reports",
                 SUSHI_credentials,
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
@@ -268,8 +287,12 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 "reports/pr",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -300,8 +323,12 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 "reports/dr",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -332,8 +359,12 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 "reports/tr",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -364,8 +395,12 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 "reports/ir",
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
     except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+        pytest.skip(error.message)
+    except InvalidAPIResponseError as error:
+        pytest.skip(error.message.message)
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
