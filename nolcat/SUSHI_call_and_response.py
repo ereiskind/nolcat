@@ -93,36 +93,25 @@ class SUSHICallAndResponse:
         
         #Section: Convert Response to Python Data Types
         try:
-            API_response, messages_to_flash = self._convert_Response_to_JSON(API_response)  # If there aren't any messages to flash, an empty list is initialized
-        except Exception as error:
-            message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
-            log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
+            API_response = self._convert_Response_to_JSON(API_response)
+        except json.JSONDecodeError as error:
+            message = error + f" Because the requests.Response object couldn't be converted to native Python data types, the requests.Response.text value is being saved to a file instead."
+            log.error(message)
             messages_to_flash = [message]
             try:
                 flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
             except DatabaseInteractionError as error:
                 log.error(error)
-                messages_to_flash.append(flash_message)
+                messages_to_flash.append(error)
                 raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
             except S3InteractionError as error:
                 log.error(error)
-                messages_to_flash.append(flash_message)
+                messages_to_flash.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
             messages_to_flash.append(flash_message)
-        
-        if isinstance(API_response, Exception):
-            message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
-            log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
-            messages_to_flash.append(flash_message)
-            try:
-                flash_message = self._save_raw_Response_text(API_response.text, bucket_path)
-            except DatabaseInteractionError as error:
-                log.error(error)
-                raise DatabaseInteractionErrorWithFlashMessages(error, messages_to_flash)
-            except S3InteractionError as error:
-                log.error(error)
-                raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
-        log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
+            log.error("The raw API response was saved as text via `()`")  #ToDo: Should there be a `return` here?
+        messages_to_flash = []
+        log.debug(f"The API response is a {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
