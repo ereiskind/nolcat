@@ -33,23 +33,7 @@ def SUSHI_credentials_fixture():
     Yields:
         tuple: the URL and parameters dictionary needed to make a SUSHI call
     """
-    #TEST: temp
-    from random import choice
-    registry_ID = choice([
-        #"c976a8e4-ecc7-4c47-aff6-94d2fa3f996d",  # SKIPPED (GET request to ... raised error 401 Client Error: Unauthorized for url: https://sushi5.scholarlyiq.com/counter/r51/reports?...)
-        #"27258001-c4ff-4f56-aa0b-a27c37bb921d",  # SKIPPED (GET request to ... raised error 400 Client Error: Bad Request for url: https://utppublishing.com/r51/reports?...)
-        #"b2b2736c-2cb9-48ec-91f4-870336acfb1c",  # SKIPPED (GET request to ... raised error 404 Client Error:  for url: https://sushi.ebscohost.com/R5/st...)
-        #"f89d2141-9ec0-4bfc-8d77-7abca78b761f",  # SKIPPED (The call to ... for reports consisted of nothing but an exception block. No further SUSHI calls will be made to ....) -- Needs `platform` parameter value
-        #"618759fd-bd3e-4617-a0d1-ccbe06c22171",  # nolcat.nolcat_glue_job.InvalidAPIResponseError: There was a problem with an API response: The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 2 expired audits, and at least 0 audits in progress.
-        #"9e34f261-315a-48a3-92ca-9af70c5e099a",  # SKIPPED (GET request to ... raised error 403 Client Error: Forbidden for url: https://sitemaster.pubs....)
-        #"570ee10e-a903-4f06-b9b1-33759ef204d4",  # nolcat.SUSHI_call_and_response::592 -  request raised error 3020: Invalid Date Arguments. Adjust the date range, splitting it up into two calls with date ranges contained within a calendaryear if necessary, then try the call again.
-        #"3435e5a7-eb36-46f8-8e8e-c7368310d879",  # nolcat.SUSHI_call_and_response::455 - `_evaluate_individual_SUSHI_exception()` raised the error status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] can not be recognized.. and the flash message status request raised error 3050: Parameter Not Recognized in this Context due to [customer_id, api_key, begin_date, end_date] cannot be recognized...
-        #"002f6967-f617-445c-b7cd-0c1e2bdf72c0",  # SKIPPED (The `reports` call test is being skipped because the `API_response.text` is an empty string)
-        #"ee4dbcd0-e6ca-49c8-aca1-759eae5f624f",  # SKIPPED (f"The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.") -- R5 audit failed
-        #"aeaf1e8e-094d-49cb-a243-8f1614169383",  # SKIPPED (f"The ... in the COUNTER Registry has an issue with its codes of practice audit statuses, with 0 valid audits, 0 expired audits, and at least 0 audits in progress.") -- R5 audit failed
-    ])
-    #registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
-    #TEST: end temp
+    registry_ID = input("\nEnter the COUNTER Registry ID of the statistics source to check: ")
     URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     if isinstance(URL, Exception):
         pytest.exit(URL)
@@ -66,33 +50,29 @@ def SUSHI_credentials_fixture():
                 if statistics_source_credentials.get('platform'):
                     SUSHI_credentials['platform']  = statistics_source_credentials['platform']
     
-    #TEST: temp
-    #SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
-    #    "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
-    #    formats=[
-    #        '%Y%m', # yyyymm
-    #        '%m-%Y', # mm-yyyy
-    #        '%m/%Y', # mm/yyyy
-    #        '%Y-%m', # yyyy-mm
-    #        '%Y/%m', # yyyy/mm
-    #    ]
-    #)
-    #SUSHI_credentials['end_date'] = date.min # This ensures that the while loop runs at least once
-    #while SUSHI_credentials['end_date'] < SUSHI_credentials['begin_date']:
-    #    SUSHI_credentials['end_date'] = pyinputplus.inputDate(
-    #        f"Please enter the year and month for the last month of stats collection; this must be the same as or after {SUSHI_credentials['begin_date'].strftime('%Y-%m')}. The month must be two digits and the year must be four digits. ",
-    #        formats=[
-    #            '%Y%m', # yyyymm
-    #            '%m-%Y', # mm-yyyy
-    #            '%m/%Y', # mm/yyyy
-    #            '%Y-%m', # yyyy-mm
-    #            '%Y/%m', # yyyy/mm
-    #        ]
-    #    )
-    #SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
-    SUSHI_credentials['begin_date'] = date(2025, 10, 1)
-    SUSHI_credentials['end_date'] = date(2026, 3, 31)
-    #TEST: end temp
+    SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
+        "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
+        formats=[
+            '%Y%m', # yyyymm
+            '%m-%Y', # mm-yyyy
+            '%m/%Y', # mm/yyyy
+            '%Y-%m', # yyyy-mm
+            '%Y/%m', # yyyy/mm
+        ]
+    )
+    SUSHI_credentials['end_date'] = date.min # This ensures that the while loop runs at least once
+    while SUSHI_credentials['end_date'] < SUSHI_credentials['begin_date']:
+        SUSHI_credentials['end_date'] = pyinputplus.inputDate(
+            f"Please enter the year and month for the last month of stats collection; this must be the same as or after {SUSHI_credentials['begin_date'].strftime('%Y-%m')}. The month must be two digits and the year must be four digits. ",
+            formats=[
+                '%Y%m', # yyyymm
+                '%m-%Y', # mm-yyyy
+                '%m/%Y', # mm/yyyy
+                '%Y-%m', # yyyy-mm
+                '%Y/%m', # yyyy/mm
+            ]
+        )
+    SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
 
     yield (URL, SUSHI_credentials)
 
