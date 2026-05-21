@@ -298,7 +298,6 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
-@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
