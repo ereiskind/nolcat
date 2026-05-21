@@ -293,6 +293,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
         Key=S3_file_name.key,
         Filename=download_location,
     )
+    remove_file_from_S3(S3_file_name)  # If placed after final assert statement, test isn't recognized by its dependencies
     assert download_location.is_file()
 
 
