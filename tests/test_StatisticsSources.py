@@ -321,12 +321,15 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         )
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
-    log.error(f"`flash_message_dict`:\n{format_list_for_stdout(flash_message_dict)}")  #TEST: temp
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
     for report in reports_offered_by_StatisticsSource_fixture:
         assert report in list(flash_message_dict.keys())
+        #TEST: temp
+        like_file_name = f'0_{report}_{str(datetime.now())}.parquet'
+        log.error(f"Like the file name (type {type(TEST_COUNTER_FILE_PATH / like_file_name)}): {TEST_COUNTER_FILE_PATH / like_file_name}")
+        #TEST: end temp
 
 
 @pytest.mark.skip  #TEST: temp
