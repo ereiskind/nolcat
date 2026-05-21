@@ -13,6 +13,7 @@ from copy import deepcopy
 from datetime import datetime
 from math import ceil
 import html
+from datetime import timedelta
 import requests
 from urllib.parse import urlparse
 from sqlalchemy import log as SQLAlchemy_log
@@ -210,6 +211,24 @@ def AWS_timestamp_format():
         str: Python datetime format code
     """
     return '%Y-%m-%dT%H-%M-%S'
+
+
+def get_datetime_sequence(start, end):
+    """Creates a list of all the datetimes between two other datetimes.
+
+    The datetimes are separated in seconds as the smallest unit in the AWS timestamp format. The function is copied from https://stackoverflow.com/a/40815941.
+
+    Args:
+        start (datetime.datetime): the first datetime in the sequence
+        end (datetime.datetime): the last datetime in the sequence
+
+    Yields:
+        generator: all the datetimes between two other datetimes
+    """
+    current = start
+    while current <= end:
+        yield current
+        current += timedelta(seconds=1)
 
 
 #SUBSECTION: Formatting Changes

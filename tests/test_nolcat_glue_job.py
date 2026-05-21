@@ -61,6 +61,26 @@ def test_AWS_timestamp_format():
     assert datetime(1999, 11, 27, 13, 18, 27).strftime(AWS_timestamp_format()) == "1999-11-27T13-18-27"
 
 
+def test_get_datetime_sequence():
+    """Tests the creation of a sequence of datetimes with a known start and end datetime.
+
+    The sample data, just like the function it tests, is from https://stackoverflow.com/a/40815941.
+    """
+    start = datetime(2016, 10, 15, 12, 15, 57)
+    end = datetime(2016, 10, 15, 12, 16, 2)
+    result_list = []
+    for dt in get_datetime_sequence(start, end):
+        result_list.append(dt)
+    assert result_list == [
+        datetime(2016, 10, 15, 12, 15, 57),
+        datetime(2016, 10, 15, 12, 15, 58),
+        datetime(2016, 10, 15, 12, 15, 59),
+        datetime(2016, 10, 15, 12, 16, 0),
+        datetime(2016, 10, 15, 12, 16, 1),
+        datetime(2016, 10, 15, 12, 16, 2),
+    ]
+
+
 def test_return_string_of_dataframe_info():
     """Tests returning a string version of `DataFrame.info()` for logging statements."""
     one = pd.DataFrame(

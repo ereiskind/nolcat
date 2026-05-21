@@ -609,6 +609,7 @@ digraph function_call_chains {
         proprietary_ID_regex [shape="box"]
         author_regex [shape="box"]
         AWS_timestamp_format [shape="box"]
+        get_datetime_sequence [shape="box"]
         return_string_of_dataframe_info [shape="box"]
         format_list_for_stdout [shape="box"]
         remove_IDE_spacing_from_statement [shape="box"]
@@ -1195,6 +1196,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_get_datetime_sequence [
+            style="dashed"
+            shape="box"
+        ]
         test_non_COUNTER_file_name_regex [
             style="dashed"
             shape="box"
@@ -1352,6 +1357,7 @@ digraph function_call_chains {
     test_ISSN_regex -> ISSN_regex
     test_ISBN_regex -> ISBN_regex
     test_AWS_timestamp_format -> AWS_timestamp_format
+    test_get_datetime_sequence -> get_datetime_sequence
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
     test_empty_string_regex -> empty_string_regex
     test_return_string_of_dataframe_info -> return_string_of_dataframe_info
