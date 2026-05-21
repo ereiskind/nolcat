@@ -164,7 +164,6 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
-@pytest.mark.skip  #TEST: temp
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
