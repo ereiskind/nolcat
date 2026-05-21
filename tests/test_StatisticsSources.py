@@ -321,6 +321,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         )
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+    log.error(f"`flash_message_dict`:\n{format_list_for_stdout(flash_message_dict)}")  #TEST: temp
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
