@@ -126,11 +126,13 @@ class SUSHICallAndResponse:
                     SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
                 log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-                if messages_to_flash and SUSHI_exceptions:
+                if SUSHI_exceptions:
                     message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
-                    log.warning(message)
-                    messages_to_flash.append(message)
-                    raise InvalidSUSHIResponseError(message, messages_to_flash)
+                else:
+                    message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
+                log.warning(message)
+                messages_to_flash.append(message)
+                raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):
             if API_response.get('Exception'):
@@ -147,11 +149,13 @@ class SUSHICallAndResponse:
                 SUSHI_exception_statement = API_response['Alerts']
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-            if messages_to_flash and SUSHI_exceptions:
+            if SUSHI_exceptions:
                 message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
-                log.warning(message)
-                messages_to_flash.append(message)
-                raise InvalidSUSHIResponseError(message, messages_to_flash)
+            else:
+                message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
+            log.warning(message)
+            messages_to_flash.append(message)
+            raise InvalidSUSHIResponseError(message, messages_to_flash)
 
         if isinstance(API_response, list) or API_response.get('Message'):  # This structure is designed to enable reuse while not exposing any non-list values to the index operator
             if isinstance(API_response, list):
@@ -187,7 +191,10 @@ class SUSHICallAndResponse:
                 if messages_to_flash and SUSHI_error_flash_messages:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
-                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`, so the call returned no usage data."
+                    if SUSHI_exceptions:
+                        message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`, so the call returned no usage data."
+                    else:
+                        message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
                     messages_to_flash.append(message)
                     raise InvalidSUSHIResponseError(message, messages_to_flash)
