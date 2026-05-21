@@ -773,15 +773,15 @@ class StatisticsSources(db.Model):
                             credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
                         if statistics_source_credentials.get('alt_requestor_ID'):
                             credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
-                        else:
+                        elif credentials.get('requestor_id'):
                             del credentials['requestor_id']
                         if statistics_source_credentials.get('alt_API_key'):
                             credentials['api_key'] = statistics_source_credentials['alt_API_key']
-                        else:
+                        elif credentials.get('api_key'):
                             del credentials['api_key']
                         if statistics_source_credentials.get('alt_platform'):
                             credentials['platform'] = statistics_source_credentials['alt_platform']
-                        else:
+                        elif credentials.get('platform'):
                             del credentials['platform']  
 
         #Section: Return Data in Requested Format
