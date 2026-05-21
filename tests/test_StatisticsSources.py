@@ -327,7 +327,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     for report in reports_offered_by_StatisticsSource_fixture:
         assert report in list(flash_message_dict.keys())
         #TEST: temp
-        like_file_name = f'0_{report}_{str(datetime.now())}.parquet'
+        like_file_name = f'0_{report}_{datetime.now().strftime(AWS_timestamp_format())}.parquet'
         log.error(f"Like the file name (type {type(TEST_COUNTER_FILE_PATH / like_file_name)}): {TEST_COUNTER_FILE_PATH / like_file_name}")
         #TEST: end temp
 
