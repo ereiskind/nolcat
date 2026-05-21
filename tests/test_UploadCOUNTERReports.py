@@ -28,6 +28,7 @@ def sample_COUNTER_report_workbook(create_COUNTERData_workbook_iterdir_list):
     yield [mock_FileStorage_object(choice(create_COUNTERData_workbook_iterdir_list))]
 
 
+@pytest.mark.slow
 def test_create_dataframe_from_single_workbook(sample_COUNTER_report_workbook, workbooks_and_relations):
     """Tests transforming an Excel workbook with tabular COUNTER data into a dataframe.
 
