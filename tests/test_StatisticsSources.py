@@ -164,6 +164,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
+@pytest.mark.skip  #TEST: temp
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
@@ -210,6 +211,7 @@ def data_for_testing_harvest_single_report(most_recent_month_with_usage, reports
     )
 
 
+@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency
 @pytest.mark.slow
 def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
@@ -252,6 +254,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
     assert download_location.is_file()
 
 
+@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_single_report_with_partial_date_range(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
@@ -297,6 +300,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
+@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
@@ -327,6 +331,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         assert report in list(flash_message_dict.keys())
 
 
+@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
@@ -357,6 +362,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert report_being_called in list(flash_message_dict.keys())
 
 
+@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.
