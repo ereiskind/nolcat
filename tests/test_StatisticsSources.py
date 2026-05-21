@@ -252,7 +252,6 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
     assert download_location.is_file()
 
 
-@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_single_report_with_partial_date_range(client, tmp_path, StatisticsSources_fixture, data_for_testing_harvest_single_report, SUSHI_credentials_fixture, caplog):
