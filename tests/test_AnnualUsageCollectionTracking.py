@@ -33,7 +33,6 @@ def AUCT_fixture_for_SUSHI(engine):
     )
     if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
         pytest.skip(database_function_skip_statements(record, False))
-    log.error(f"`record` (type {type(record)}):\n{record}")  #TEST: temp
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -46,6 +45,7 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
+    log.error(f"`yield_object` (type {type(yield_object)}):\n{yield_object}")  #TEST: temp
     log.warning(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))  # This is set at `warning` to show the retrieval code
     yield yield_object
 
