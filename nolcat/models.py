@@ -973,20 +973,20 @@ class StatisticsSources(db.Model):
                 except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
                     self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
-                    return_statements[report_to_harvest] = error.message
-                    for e in error.messages_to_flash + [f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
-                        return_statements[report_to_harvest].append(e)
+                    return_statements[report_name] = error.message
+                    for e in error.messages_to_flash + [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
+                        return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 except InvalidSUSHIResponseError as error:
-                    message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
-                    return_statements[report_to_harvest] = error.message
+                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
+                    return_statements[report_name] = error.message
                     return_statements['STOP'] = []
                     for e in error.messages_to_flash + [message]:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
                 self._log.error(f"TESTING: `_harvest_single_report` returned {S3_file_name} and {messages_to_flash}")  #TEST: temp
-                return_statements[report_to_harvest] = messages_to_flash
+                return_statements[report_name] = messages_to_flash
 
             self._log.error(f"TESTING: `for custom_report in available_custom_reports:` complete")  #TEST: temp
             if len(available_custom_reports) == no_usage_returned_count:
