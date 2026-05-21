@@ -1091,7 +1091,8 @@ class StatisticsSources(db.Model):
                 ).make_SUSHI_call(bucket_path)
             except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                 message = f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
-                for e in error.messages_to_flash + [message]:
+                messages_to_flash = [message]
+                for e in error.messages_to_flash:
                     messages_to_flash.append(e)
                 self._log.critical(message)
                 raise InvalidSUSHIResponseError(message, messages_to_flash)
