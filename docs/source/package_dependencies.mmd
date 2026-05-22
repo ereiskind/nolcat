@@ -1,0 +1,29 @@
+---
+title: Package Dependencies
+config:
+    theme: 'base'
+    themeVariables:
+        primaryColor: '#ffffff'
+        primaryTextColor: '#101820'
+        lineColor: '#101820'
+---
+%% Flask packages: `@{shape: cloud}`
+
+
+flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C:::used_by_AWS@{shape: flag, label: "File Handling"}
+    C -->|One| D[Laptop]:::used_by_flask
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+    c1-->a2
+    one:::requirements --> two
+    three:::used_in_code --> two
+    two --> c2
+
+
+    classDef requirements fill:#782f40,stroke-width:5px,stroke:#ffc72c,color:#ffffff;
+    classDef used_in_code stroke-width:5px,stroke:#ffc72c;
+    classDef used_by_flask stroke-width:5px,stroke:#425563;
+    classDef used_by_AWS stroke-width:5px,stroke:#5cb8b2;
+    

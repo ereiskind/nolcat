@@ -1,0 +1,34 @@
+---
+title: Class Diagram
+config:
+    theme: 'base'
+    themeVariables:
+        primaryColor: '#ffffff'
+        primaryTextColor: '#101820'
+        lineColor: '#101820'
+---
+
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    class Animal{
+        +int age
+        +String gender
+        +isMammal()
+        +mate()
+    }
+    class Duck{
+      +String beakColor
+      +swim()
+      +quack()
+    }
+    class Fish:::blueprint{
+      -int sizeInFeet
+      -canEat()
+    }
+    class Zebra:::relation{
+      +bool is_wild
+      +run()
+    }
+    classDef relation fill:#ceb888;

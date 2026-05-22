@@ -1,0 +1,38 @@
+---
+title: Function Call Chains
+config:
+    theme: 'base'
+    themeVariables:
+        primaryColor: '#ffffff'
+        primaryTextColor: '#101820'
+        lineColor: '#101820'
+---
+%% Route functions: `@{shape: cloud}`
+%% Function connecting to S3: `@{shape: h-cyl}`
+%% Function connecting to MySQL: `@{shape: cyl}`
+
+flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C:::blueprint_test@{shape: flag, label: "File Handling"}
+    C -->|One| D[Laptop]:::blueprint
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+    c1-->a2
+    subgraph one [test]
+        a1-->a2
+    end
+    subgraph two
+        b1-->b2
+    end
+    subgraph three
+        c1-->c2
+    end
+    one:::relation --> two
+    three:::relation_test --> two
+    two --> c2
+
+
+    classDef relation fill:#ceb888,stroke-width:5px,stroke:#ffc72c;
+    classDef relation_test fill:#ceb888,stroke-width:2px;
+    classDef blueprint fill:#782f40,stroke-width:5px,stroke:#a6192e,color:#ffffff;
+    classDef blueprint_test fill:#782f40,stroke-width:2px,color:#ffffff;
