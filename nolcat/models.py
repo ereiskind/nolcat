@@ -854,6 +854,7 @@ class StatisticsSources(db.Model):
             if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                 SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                 if report_to_harvest == "TR":
+                    self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
 
             try:
@@ -956,6 +957,7 @@ class StatisticsSources(db.Model):
                 if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
+                        self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                         SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
 
                 #Subsection: Make API Call(s)
