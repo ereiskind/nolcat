@@ -2394,7 +2394,17 @@ class ConvertJSONDictToParquet:
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
-        self._log.error(f"TESTING {report_type}: Before `if` block")  #TEST: temp
+        #TEST: temp
+        self._log.error(f"TESTING {report_type}: Before `if` block")
+        try:
+            self._log.error(f"`second_iteration_key_list` (type {type(second_iteration_key_list)}): {second_iteration_key_list}")
+        except Exception as e:
+            self._log.error(f"`second_iteration_key_list` to stdout raised {e}")
+        try:
+            self._log.error(f"`third_iteration_key_list` (type {type(third_iteration_key_list)}): {third_iteration_key_list}")
+        except Exception as e:
+            self._log.error(f"`third_iteration_key_list` to stdout raised {e}")
+        #TEST: end temp
         if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
             self._log.error(f"TESTING {report_type}: In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
             list_of_records = report_items_list
