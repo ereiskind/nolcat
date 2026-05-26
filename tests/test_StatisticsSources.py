@@ -312,6 +312,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
+    before = datetime.now()
     try:
         with client:
             flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
@@ -321,15 +322,20 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         )
     except InvalidSUSHIResponseError as error:
         pytest.skip(f"Skipping test because of problem with SUSHI: {error.message}")
+    after = datetime.now()
+    possible_S3_file_names = []
+    for dt in get_datetime_sequence(before, after):
+        possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report}_{dt.strftime(AWS_timestamp_format())}.parquet")
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    #TEST: temp
+    log.error(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")
+    log.error(f"`possible_S3_file_names`:\n{format_list_for_stdout(possible_S3_file_names)}")
+    #TEST: end temp
     for report in reports_offered_by_StatisticsSource_fixture:
         assert report in list(flash_message_dict.keys())
-        #TEST: temp
-        like_file_name = f'0_{report}_{datetime.now().strftime(AWS_timestamp_format())}.parquet'
-        log.error(f"Like the file name (type {type(TEST_COUNTER_FILE_PATH / like_file_name)}): {TEST_COUNTER_FILE_PATH / like_file_name}")
-        #TEST: end temp
 
 
 @pytest.mark.skip  #TEST: temp
