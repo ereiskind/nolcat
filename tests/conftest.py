@@ -683,7 +683,7 @@ def most_recent_month_with_usage(caplog):
 def valid_COUNTER_retrieval_code():
     """Provides a random, valid retrieval COUNTER Registry IDs.
 
-    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing.
+    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing. COUNTER Registry IDs that lead to 'Report Queued for Processing' (error 1011) are also filtered out, as those sources will always cause skips in later tests.
 
     Yields:
         str: a COUNTER Registry ID
@@ -696,6 +696,12 @@ def valid_COUNTER_retrieval_code():
             if statistics_source_credentials['statistics_source_retrieval_code']:
                 if not statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
                     retrieval_codes.append(statistics_source_credentials['statistics_source_retrieval_code'])
+    queue_for_processing_codes = [
+        "15fee0c0-47d6-48d1-83b8-10385427ce79",
+        "36d1e996-028c-4c72-8d45-84ba79cdf456",
+        "bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
+    ]
+    retrieval_codes = [code for code in retrieval_codes if code not in queue_for_processing_codes]
     valid_retrieval_codes = []
     for code in retrieval_codes:
         try:
