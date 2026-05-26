@@ -336,6 +336,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         for report in reports_offered_by_StatisticsSource_fixture:
             possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report}_{dt.strftime(AWS_timestamp_format())}.parquet")
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
