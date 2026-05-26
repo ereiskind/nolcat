@@ -339,7 +339,6 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
-    log.debug(f"`possible_S3_file_names`:\n{format_list_for_stdout(possible_S3_file_names)}")
     for report in reports_offered_by_StatisticsSource_fixture:
         assert report in list(flash_message_dict.keys())
         for S3_file_name in [file_name for file_name in files_in_bucket if report in file_name.name]:
