@@ -709,10 +709,9 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        #ALERT: `raise DatabaseInteractionError`
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
-        return message
+        raise DatabaseInteractionError(message)
 
 
 def first_new_PK_value(relation):
