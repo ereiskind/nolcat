@@ -335,16 +335,15 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     for dt in get_datetime_sequence(before, after):
         for report in reports_offered_by_StatisticsSource_fixture:
             possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report}_{dt.strftime(AWS_timestamp_format())}.parquet")
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
-    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
-    #TEST: temp
-    log.error(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")
-    log.error(f"`possible_S3_file_names`:\n{format_list_for_stdout(possible_S3_file_names)}")
-    #TEST: end temp
     for report in reports_offered_by_StatisticsSource_fixture:
         assert report in list(flash_message_dict.keys())
+        for S3_file_name in [file_name for file_name in files_in_bucket if report in file_name.name]:
+            assert S3_file_name in possible_S3_file_names
+            remove_file_from_S3(S3_file_name)
 
 
 @pytest.mark.skip  #TEST: temp
