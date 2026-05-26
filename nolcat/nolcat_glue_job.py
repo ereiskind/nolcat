@@ -2394,19 +2394,19 @@ class ConvertJSONDictToParquet:
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         attribute_performance_list = []
-        self._log.error(f"Before `if` block")  #TEST: temp
+        self._log.error(f"TESTING {report_type}: Before `if` block")  #TEST: temp
         if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
-            self._log.error(f"In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
+            self._log.error(f"TESTING {report_type}: In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
             list_of_records = report_items_list
         elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
-            self._log.error(f"In `elif third_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
+            self._log.error(f"TESTING {report_type}: In `elif third_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
             list_of_records = items_list
         else:
-            self._log.error(f"In `else:`")  #TEST: temp
+            self._log.error(f"TESTING {report_type}: In `else:`")  #TEST: temp
             message = f"The JSON is malformed, lacking the `Attribute_Performance` key."
             self._log.critical(message)
             return message
-        self._log.error(f"After `if` block")  #TEST: temp
+        self._log.error(f"TESTING {report_type}: After `if` block")  #TEST: temp
 
         for record in list_of_records:
             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
