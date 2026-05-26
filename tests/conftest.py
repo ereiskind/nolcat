@@ -700,7 +700,7 @@ def valid_COUNTER_retrieval_code():
         "15fee0c0-47d6-48d1-83b8-10385427ce79",
         "36d1e996-028c-4c72-8d45-84ba79cdf456",
         "bc2a4cec-e44e-4c07-bccf-3c5524bc0465",
-        "5541d245-4230-405c-b7c1-f51b27926666.",
+        "5541d245-4230-405c-b7c1-f51b27926666",
     ]
     retrieval_codes = [code for code in retrieval_codes if code not in queue_for_processing_codes]
     valid_retrieval_codes = []
