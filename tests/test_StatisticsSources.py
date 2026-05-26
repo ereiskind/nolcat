@@ -346,7 +346,6 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
             assert S3_file_name in possible_S3_file_names
 
 
-@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 @pytest.mark.slow
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
