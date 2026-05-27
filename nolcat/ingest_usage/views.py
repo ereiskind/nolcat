@@ -128,7 +128,7 @@ def upload_COUNTER_data():
 
 @bp.route('/harvest/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics(testing):  #ALERT: Calls other relation
+def harvest_SUSHI_statistics(testing):
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
@@ -213,7 +213,7 @@ def harvest_SUSHI_statistics(testing):  #ALERT: Calls other relation
 
 @bp.route('/upload-non-COUNTER/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports(testing):  #ALERT: Calls other relation
+def upload_non_COUNTER_reports(testing):
     """The route function for uploading files containing non-COUNTER data into the container.
 
     Args:

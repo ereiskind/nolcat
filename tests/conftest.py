@@ -519,7 +519,7 @@ def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):  #ALERT: Calls other relation
+def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
 
     Both the test functions that call this fixture upload files to S3 with names based off of data from this fixture, so removing those files also requires data from this fixture. As a result, the teardown functionality that removes the files from S3 is in this fixture function.
@@ -573,7 +573,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file): 
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_after_upload(engine, caplog):  #ALERT: Calls other relation
+def non_COUNTER_AUCT_object_after_upload(engine, caplog):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
 
     Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
@@ -715,7 +715,7 @@ def valid_COUNTER_retrieval_code():
 
 
 #Section: Test Helper Functions
-def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):  #ALERT: Calls COUNTER relation
+def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method.

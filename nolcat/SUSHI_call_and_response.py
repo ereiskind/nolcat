@@ -300,7 +300,7 @@ class SUSHICallAndResponse:
         return API_response
     
 
-    def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):  #ALERT: Calls other relation
+    def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
@@ -408,7 +408,7 @@ class SUSHICallAndResponse:
             return (message, [message])
     
 
-    def _evaluate_individual_SUSHI_exception(self, error_contents):  #ALERT: Calls other relation
+    def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
         For the messages, the report type is added to the start of the sentence in `_handle_SUSHI_exceptions()`.

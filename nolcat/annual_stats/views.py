@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def annual_stats_homepage():  #ALERT: Calls other relation
+def annual_stats_homepage():
     """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
     log.info("Starting `annual_stats_homepage()`.")
     form = ChooseFiscalYearForm()
@@ -41,7 +41,7 @@ def annual_stats_homepage():  #ALERT: Calls other relation
 
 
 @bp.route('/view_year/<int:PK>', methods=['GET', 'POST'])
-def show_fiscal_year_details(PK):  #ALERT: Calls other relation
+def show_fiscal_year_details(PK):
     """Returns a page that shows the information about and the statistics collection status for the fiscal year.
 
     Args:

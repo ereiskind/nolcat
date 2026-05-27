@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 @bp.route('/<string:list>')
-def view_lists_homepage(list):  #ALERT: Calls other relation
+def view_lists_homepage(list):
     """Returns the homepage for the `view_lists` blueprint, which shows the list of resource sources, statistics sources, or vendors depending on the variable route value.
 
         Args:
@@ -56,7 +56,7 @@ def view_lists_homepage(list):  #ALERT: Calls other relation
 
 
 @bp.route('/<string:list>/<int:PK>')
-def view_list_record(list, PK):  #ALERT: Calls other relation
+def view_list_record(list, PK):
     """Returns the details and notes about a statistics source, resource source, or vendor.
 
     For a given record in the `resourceSources`, `statisticsSources`, or `vendors` relations, the value of all of the relation's fields and the notes are shown. For vendor records, the currently affiliated resource sources and statistics sources are shown as well. From this page, notes can be added, but not edited or deleted.
@@ -95,7 +95,7 @@ def view_list_record(list, PK):  #ALERT: Calls other relation
 
 
 @bp.route('/edit/<string:list>/<int:PK>')
-def edit_list_record(list, PK):  #ALERT: Calls other relation
+def edit_list_record(list, PK):
     """Returns a page for editing records in the `resourceSources`, `statisticsSources`, or `vendors` relations.
 
     Adding a record is done by creating a `PK` value that matches what's next in the auto-generated count list, adding new values to all the fields available for edit, which are then committed to the relation as a new record. Editing the `resourceSources` relation is also the method for updating the `statisticsResourceSources` junction table, which is never directly visible or directly accessed.

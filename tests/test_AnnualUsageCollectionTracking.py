@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine):  #ALERT: Calls other relation
+def AUCT_fixture_for_SUSHI(engine):
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
 
     Args:
@@ -76,7 +76,7 @@ def S3_regex_and_teardown(AUCT_fixture_for_SUSHI):
 
 
 @pytest.mark.slow
-def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_for_SUSHI, S3_regex_and_teardown, caplog):  #ALERT: Calls other relation
+def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_for_SUSHI, S3_regex_and_teardown, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
 
     Args:
@@ -142,7 +142,7 @@ def sample_FileStorage_object(path_to_sample_file):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):  #ALERT: Calls other relation
+def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
 
     Args:

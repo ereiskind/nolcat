@@ -7,6 +7,19 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
+* Functions with `query_database()` querying non-COUNTER relations called by other functions
+
+  * `nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()`
+  * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
+  * `nolcat.models.Vendors.get_statisticsSources_records()`
+  * `nolcat.models.Vendors.get_resourceSources_records()`
+  * `nolcat.models.ResourceSources.change_StatisticsSource()`
+  * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`
+  * `nolcat.nolcat_glue_job.first_new_PK_value()`
+  * `nolcat.nolcat_glue_job.update_database()`
+  * `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
+  * `nolcat.SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`
+
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
   * Confirm all tests still pass with working teardown
@@ -69,6 +82,11 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.models.FiscalYears.calculate_ARL_18()`
     * `nolcat.models.FiscalYears.calculate_ARL_19()`
     * `nolcat.models.FiscalYears.calculate_ARL_20()`
+    * `nolcat.models.StatisticsSources._check_if_data_in_database()`
+    * `nolcat.nolcat_glue_job.first_new_PK_value()`
+    * `nolcat.nolcat_glue_job.check_if_data_already_in_COUNTERData()`
+    * `nolcat.nolcat_glue_job.update_database()`
+    * `nolcat.view_usage.run_custom_SQL_query()`
     * `nolcat.view_usage.use_predefined_SQL_query()`
     * `nolcat.view_usage.construct_PR_query_with_wizard()`
     * `nolcat.view_usage.construct_DR_query_with_wizard()`
@@ -77,14 +95,13 @@ Move Code to Glue Jobs and Data to Parquet
     * `tests.conftest.match_direct_SUSHI_harvest_result()`
     * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()`
     * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_SQL_insert()`
-    * `tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`
-    * `tests.test_bp_view_usage.test_run_custom_SQL_query()`
     * `tests.test_bp_view_usage.test_use_predefined_SQL_query()`
     * `tests.test_bp_view_usage.start_query_wizard_form_data()`
-    * `tests.test_bp_view_usage.PR_parameters()`
-    * `tests.test_bp_view_usage.DR_parameters()`
-    * `tests.test_bp_view_usage.TR_parameters()`
-    * `tests.test_bp_view_usage.IR_parameters()`
+    * `tests.test_bp_view_usage.test_construct_PR_query_with_wizard()`
+    * `tests.test_bp_view_usage.test_construct_DR_query_with_wizard()`
+    * `tests.test_bp_view_usage.test_construct_TR_query_with_wizard()`
+    * `tests.test_bp_view_usage.test_construct_IR_query_with_wizard()`
+    * `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
 
   * Look out for fuzzy matching methods for strings in parquet files--current `(MATCH(<field>) AGAINST('<string>' IN NATURAL LANGUAGE MODE))` has an odd relationship with word boundaries (e.g. "Social Science Premium Collection->Education Collection->ERIC" can be found with the string "ollection->eric" but not the string "remium collectio")
 

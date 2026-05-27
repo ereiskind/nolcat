@@ -78,7 +78,7 @@ def SUSHI_credentials_fixture():
 
 
 @pytest.fixture
-def StatisticsSource_instance_name(engine, caplog):  #ALERT: Calls other relation
+def StatisticsSource_instance_name(engine, caplog):
     """Selects a `statisticsSources.statistics_source_name` value from the database.
 
     `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()` makes a StatisticsSource object for adding a note from a record based on that record's `statistics_source_name` value, so it fails if a placeholder name is used. This randomly selects a name from the database to be used in its place.

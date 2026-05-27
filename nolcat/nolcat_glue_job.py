@@ -675,7 +675,7 @@ def query_database(query, engine, index=None):
         raise DatabaseInteractionError(message)
 
 
-def first_new_PK_value(relation):  #ALERT: Calls all relations
+def first_new_PK_value(relation):
     """The function for getting the next value in the primary key sequence.
 
     The default value of the SQLAlchemy `autoincrement` argument in the field constructor method adds `AUTO_INCREMENT` to the primary key field in the data definition language. Loading values, even ones following the sequential numbering that auto-incrementation would use, alters the relation's `AUTO_INCREMENT` attribute, causing a primary key duplication error. Stopping this error requires removing auto-incrementation from the primary key fields (by setting the `autoincrement` argument in the field constructor method to `False`); without the auto-incrementation, however, the primary key values must be included as the dataframe's record index field. This function finds the highest value in the primary key field of the given relation and returns the next integer.
@@ -726,7 +726,7 @@ def first_new_PK_value(relation):  #ALERT: Calls all relations
     return int(largest_PK_value) + 1
 
 
-def check_if_data_already_in_COUNTERData(df):  #ALERT: Calls COUNTER relation
+def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
@@ -828,7 +828,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: Calls COUNTER relation
         return (df, None)  #ToDo: Calls impact second value of returned tuple--function will need to be redone to handle data movement from MySQL to S3
 
 
-def update_database(update_statement, engine):  #ALERT: Calls all relations
+def update_database(update_statement, engine):
     """A wrapper for the `Engine.execute()` method that includes the error handling.
 
     The `execute()` method of the `sqlalchemy.engine.Engine` class automatically commits the changes made by the statement.

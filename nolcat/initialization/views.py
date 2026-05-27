@@ -318,7 +318,7 @@ def collect_sources_data():
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
-def collect_AUCT_and_historical_COUNTER_data():  #ALERT: Calls other relation
+def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
@@ -490,7 +490,7 @@ def collect_AUCT_and_historical_COUNTER_data():  #ALERT: Calls other relation
 
 @bp.route('/initialization-page-4/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/initialization-page-4/<string:testing>', methods=['GET', 'POST'])
-def upload_historical_non_COUNTER_usage(testing):  #ALERT: Calls other relation
+def upload_historical_non_COUNTER_usage(testing):
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.

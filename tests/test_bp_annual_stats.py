@@ -11,7 +11,7 @@ from nolcat.annual_stats import *
 log = logging.getLogger(__name__)
 
 
-def test_GET_request_for_annual_stats_homepage(engine, client, caplog):  #ALERT: Calls other relation
+def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
 
     Args:

@@ -72,7 +72,7 @@ def view_usage_homepage():
 
 
 @bp.route('/custom-query', methods=['GET', 'POST'])
-def run_custom_SQL_query():  #ALERT: Calls all relations
+def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
@@ -120,7 +120,7 @@ def run_custom_SQL_query():  #ALERT: Calls all relations
 
 
 @bp.route('preset-query', methods=['GET', 'POST'])
-def use_predefined_SQL_query():  #ALERT: Calls COUNTER relation
+def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     log.info("Starting `use_predefined_SQL_query()`.")
     form = PresetQueryForm()
@@ -266,7 +266,7 @@ def use_predefined_SQL_query():  #ALERT: Calls COUNTER relation
 
 
 @bp.route('query-wizard', methods=['GET', 'POST'])
-def start_query_wizard():  #ALERT: Calls other relation
+def start_query_wizard():
     """Collects the date range and report type for the query to be created."""
     log.info("Starting `start_query_wizard()`.")
     form = StartQueryWizardForm()
@@ -378,7 +378,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
 
 
 @bp.route('query-wizard/PR', methods=['GET', 'POST'])
-def construct_PR_query_with_wizard():  #ALERT: Calls COUNTER relation
+def construct_PR_query_with_wizard():
     """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_PR_query_with_wizard()`.")
     form = PRQueryWizardForm()
@@ -482,7 +482,7 @@ def construct_PR_query_with_wizard():  #ALERT: Calls COUNTER relation
 
 
 @bp.route('query-wizard/DR', methods=['GET', 'POST'])
-def construct_DR_query_with_wizard():  #ALERT: Calls COUNTER relation
+def construct_DR_query_with_wizard():
     """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_DR_query_with_wizard()`.")
     form = DRQueryWizardForm()
@@ -600,7 +600,7 @@ def construct_DR_query_with_wizard():  #ALERT: Calls COUNTER relation
 
 
 @bp.route('query-wizard/TR', methods=['GET', 'POST'])
-def construct_TR_query_with_wizard():  #ALERT: Calls COUNTER relation
+def construct_TR_query_with_wizard():
     """Returns a page that allows a valid SQL query for title usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
@@ -784,7 +784,7 @@ def construct_TR_query_with_wizard():  #ALERT: Calls COUNTER relation
 
 
 @bp.route('query-wizard/IR', methods=['GET', 'POST'])
-def construct_IR_query_with_wizard():  #ALERT: Calls COUNTER relation
+def construct_IR_query_with_wizard():
     """Returns a page that allows a valid SQL query for item usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
@@ -1017,7 +1017,7 @@ def construct_IR_query_with_wizard():  #ALERT: Calls COUNTER relation
 
 @bp.route('/non-COUNTER-downloads/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/non-COUNTER-downloads/<string:testing>', methods=['GET', 'POST'])
-def download_non_COUNTER_usage(testing):  #ALERT: Calls other relation
+def download_non_COUNTER_usage(testing):
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
     
     Args:

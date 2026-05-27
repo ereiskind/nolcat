@@ -287,7 +287,7 @@ def test_load_data_into_database(engine, vendors_relation):
     assert regex_match_object.group(2) == "vendors"
 
 
-def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):  #ALERT: Calls other relation
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
@@ -386,7 +386,7 @@ def test_first_new_PK_value(client):
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, client):  #ALERT: Calls other relation
+def test_update_database(engine, client):
     """Tests updating data in the database through a SQL update statement.
 
     Args:
@@ -427,7 +427,7 @@ def test_update_database(engine, client):  #ALERT: Calls other relation
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database_with_insert_statement(engine, client):  #ALERT: Calls other relation
+def test_update_database_with_insert_statement(engine, client):
     """Tests adding records to the database through a SQL insert statement.
 
     Args:

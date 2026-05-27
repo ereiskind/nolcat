@@ -91,7 +91,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_depreciated_ACRL_60b(self):  #ALERT: Calls COUNTER relation
+    def calculate_depreciated_ACRL_60b(self):
         """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
         ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." This method doesn't load the answer into the database.
@@ -153,7 +153,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_depreciated_ACRL_63(self):  #ALERT: Calls COUNTER relation
+    def calculate_depreciated_ACRL_63(self):
         """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
         ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
@@ -182,7 +182,7 @@ class FiscalYears(db.Model):
     
 
     @hybrid_method
-    def calculate_ACRL_61a(self):  #ALERT: Calls COUNTER relation
+    def calculate_ACRL_61a(self):
         """This method calculates the value of ACRL question 61a for the given fiscal year.
 
         ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
@@ -228,7 +228,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_61b(self):  #ALERT: Calls COUNTER relation
+    def calculate_ACRL_61b(self):
         """This method calculates the value of ACRL question 61b for the given fiscal year.
 
         ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage. This method doesn't load the answer into the database.
@@ -257,7 +257,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ARL_18(self):  #ALERT: Calls COUNTER relation
+    def calculate_ARL_18(self):
         """This method calculates the value of ARL question 18 for the given fiscal year.
 
         ARL 18 is the "Number of successful full-text article requests (journals)." This method doesn't load the answer into the database.
@@ -286,7 +286,7 @@ class FiscalYears(db.Model):
 
     
     @hybrid_method
-    def calculate_ARL_19(self):  #ALERT: Calls COUNTER relation
+    def calculate_ARL_19(self):
         """This method calculates the value of ARL question 19 for the given fiscal year.
 
         ARL 19 is the "Number of regular searches (databases)." This method doesn't load the answer into the database.
@@ -315,7 +315,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ARL_20(self):  #ALERT: Calls COUNTER relation
+    def calculate_ARL_20(self):
         """This method calculates the value of ARL question 20 for the given fiscal year.
 
         ARL 20 is the "Number of federated searches (databases)." This method doesn't load the answer into the database.
@@ -344,7 +344,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def create_usage_tracking_records_for_fiscal_year(self):  #ALERT: Calls other relation
+    def create_usage_tracking_records_for_fiscal_year(self):
         """Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
 
         Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
@@ -394,7 +394,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def collect_fiscal_year_usage_statistics(self):  #ALERT: Calls other relation
+    def collect_fiscal_year_usage_statistics(self):
         """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
@@ -569,7 +569,7 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_statisticsSources_records(self):  #ALERT: Calls other relation
+    def get_statisticsSources_records(self):
         """Shows the records for all the statistics sources associated with the vendor.
 
         Returns:
@@ -600,7 +600,7 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_resourceSources_records(self):  #ALERT: Calls other relation
+    def get_resourceSources_records(self):
         """Shows the records for all the resource sources associated with the vendor.
 
         Returns:
@@ -1119,7 +1119,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _check_if_data_in_database(self, report, start_date, end_date):  #ALERT: Calls COUNTER relation
+    def _check_if_data_in_database(self, report, start_date, end_date):
         """Checks if any usage report for the given date and statistics source combination is already in the database.
 
         Args:
@@ -1340,7 +1340,7 @@ class ResourceSources(db.Model):
 
 
     @hybrid_method
-    def change_StatisticsSource(self, statistics_source_PK):  #ALERT: Calls other relation
+    def change_StatisticsSource(self, statistics_source_PK):
         """Change the current statistics source for the resource source.
 
         This method changes the `True` value in the `StatisticsResourceSources` record for the given resource source to `False`, then adds a new record creating a connection between the given statistics source and resource source.
@@ -1571,7 +1571,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):  #ALERT: Calls other relation
+    def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.

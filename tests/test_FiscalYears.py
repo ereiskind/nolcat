@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 #Section: Test Annual Usage Statistics Methods
 @pytest.fixture
-def FY2020_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
+def FY2020_FiscalYears_object(engine, caplog):
     """Creates a FiscalYears object for the fiscal year with COUNTER R5 test data.
 
     Args:
@@ -205,7 +205,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test  #ALERT: Calls other relation
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
 
     Args:
@@ -360,7 +360,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
 
 #Section: Test Collecting Usage Statistics
 @pytest.fixture
-def FY2022_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
+def FY2022_FiscalYears_object(engine, caplog):
     """Creates a FiscalYears object for the fiscal year with an `annualUsageCollectionTracking` record that meets the criteria for inclusion in `FiscalYears.collect_fiscal_year_usage_statistics()`.
 
     Args:
