@@ -74,7 +74,9 @@ def view_list_record(list, PK):  #ALERT: Calls other relation
         #         engine=db.engine,
         #     )
         # except DatabaseInteractionError as error:
-        #     #ToDo: Simple query
+        #     message = f"Unable to load page--{error}"
+        #     log.warning(message)
+        #     flash(message)
         #     return redirect(url_for('view_usage.use_predefined_SQL_query'))
         # df = df.astype({dict setting correct dtypes})
         return "render_template('view_lists/view-record.html', form=form)"
