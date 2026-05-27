@@ -34,6 +34,7 @@ class SUSHICallAndResponse:
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
         _stdout_API_response_based_on_size: A method for limiting the amount of text written to stdout when viewing SUSHI harvest results.
     """
+    _log = logging.getLogger(log.name).getChild(__qualname__)
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 

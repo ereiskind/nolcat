@@ -22,6 +22,8 @@ class UploadCOUNTERReports:
     Methods:
         create_dataframe: This method transforms the data from the tabular COUNTER reports in uploaded Excel workbooks into a single dataframe ready for normalization.
     """
+    _log = logging.getLogger(log.name).getChild(__qualname__)
+
     def __init__(self, COUNTER_report_files):
         """The constructor method for `UploadCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
 
