@@ -428,22 +428,6 @@ def check_if_file_exists_statement(file_path, alone=True):
 
 #SECTION: Database and Dataframe Functions
 #SUBSECTION: MySQL Interaction Result Statements
-def database_query_fail_statement(error_message, value_type="load requested page"):
-    """This statement indicates the failure of a call to `nolcat.app.query_database()`.
-
-    Args:
-        error_message (str): the return statement indicating the failure of `nolcat.app.query_database()`
-        value_type (str, optional): the type of value that the query should have returned; default is ``
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if value_type == "load requested page":
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:].replace(' raised', ', which raised')}"
-    else:
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
-
-
 def return_value_from_query_statement(return_value, type_of_query=None):
     """This statement shows an individual value or sequence of values returned by a call to `nolcat.app.query_database()`.
 
@@ -731,9 +715,9 @@ def first_new_PK_value(relation):  #ALERT: Calls all relations
             engine=db.engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: Simple query
-        log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
-        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
+        message = f"Unable to return requested data--{error}"
+        log.error(message)
+        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`  #ALERT: `raise DatabaseInteractionError`
     if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
@@ -786,8 +770,9 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Returns data to flash
-            return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
+            message = f"Unable to return requested data--{error}"
+            log.error(message)
+            return (None, message)
         number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
@@ -818,8 +803,9 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: Calls COUNTER relation
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                #ToDo: Returns data to flash
-                return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
+                message = f"Unable to return requested data--{error}"
+                log.error(message)
+                return (None, message)
             instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
         #Subsection: Return Results
@@ -870,8 +856,7 @@ def update_database(update_statement, engine):  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
@@ -882,8 +867,7 @@ def update_database(update_statement, engine):  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             before_number = extract_value_from_single_value_df(before_df)
             log.debug(f"There are {before_number} records in the relation to be updated.")
@@ -913,8 +897,7 @@ def update_database(update_statement, engine):  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
@@ -928,8 +911,7 @@ def update_database(update_statement, engine):  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             after_number = extract_value_from_single_value_df(after_df)
             log.debug(f"There are {after_number} records in the relation that was updated.")
@@ -944,8 +926,7 @@ def update_database(update_statement, engine):  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             if extract_value_from_single_value_df(df) > 0:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."

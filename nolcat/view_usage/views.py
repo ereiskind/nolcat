@@ -89,8 +89,9 @@ def run_custom_SQL_query():  #ALERT: Calls all relations
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(df))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         
         file_path = create_downloads_folder() / 'NoLCAT_download.csv'
@@ -233,8 +234,9 @@ def use_predefined_SQL_query():  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(df))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
@@ -275,8 +277,9 @@ def start_query_wizard():  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(fiscal_year_options))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('view_usage/query-wizard-start.html', form=form)
@@ -293,8 +296,9 @@ def start_query_wizard():  #ALERT: Calls other relation
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                #ToDo: Simple query
-                flash(database_query_fail_statement(fiscal_year_dates))
+                message = f"Unable to load page--{error}"
+                log.warning(message)
+                flash(message)
                 return redirect(url_for('view_usage.view_usage_homepage'))
             begin_date = fiscal_year_dates['start_date'][0].isoformat()
             end_date = fiscal_year_dates['end_date'][0].isoformat()
@@ -445,9 +449,8 @@ def construct_PR_query_with_wizard():  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df)
-            log.error(message)
+            message = f"Unable to load page--{error}"
+            log.warning(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -564,9 +567,8 @@ def construct_DR_query_with_wizard():  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df)
-            log.error(message)
+            message = f"Unable to load page--{error}"
+            log.warning(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -749,9 +751,8 @@ def construct_TR_query_with_wizard():  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df)
-            log.error(message)
+            message = f"Unable to load page--{error}"
+            log.warning(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -982,9 +983,8 @@ def construct_IR_query_with_wizard():  #ALERT: Calls COUNTER relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df)
-            log.error(message)
+            message = f"Unable to load page--{error}"
+            log.warning(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -1048,8 +1048,9 @@ def download_non_COUNTER_usage(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(file_download_options))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form, testing=testing)
@@ -1073,8 +1074,9 @@ def download_non_COUNTER_usage(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(AUCT_object))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
         AUCT_object['manual_collection_required'] = restore_boolean_values_to_boolean_field(AUCT_object['manual_collection_required'])

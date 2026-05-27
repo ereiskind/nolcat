@@ -111,8 +111,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(TR_B1_df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
@@ -128,8 +127,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(IR_M1_df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
@@ -145,8 +143,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(TR_J1_df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
@@ -176,8 +173,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ACRL_63 = extract_value_from_single_value_df(df)
@@ -206,8 +202,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(TR_B1_df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
@@ -223,8 +218,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple Query
-            message = database_query_fail_statement(IR_M1_df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
@@ -254,8 +248,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ACRL_61b = extract_value_from_single_value_df(df)
@@ -284,8 +277,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_18 = extract_value_from_single_value_df(df)
@@ -314,8 +306,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_19 = extract_value_from_single_value_df(df)
@@ -344,8 +335,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(df, "return requested value")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_20 = extract_value_from_single_value_df(df)
@@ -370,8 +360,9 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            return database_query_fail_statement(current_statistics_sources, "return requested series")
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            return message  #ALERT: `raise DatabaseInteractionError`
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
@@ -436,8 +427,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Returns data to flash
-            message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
+            message = f"Unable to return requested data--{error}"
             return {'create AUCT object': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
@@ -465,8 +455,7 @@ class FiscalYears(db.Model):
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                #ToDo: Not raising error
-                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
+                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = f"Unable to return requested data for the statistics source with primary key {AUCT_object.AUCT_statistics_source}--{error}"
                 continue
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
@@ -602,8 +591,7 @@ class Vendors(db.Model):
         #         index='statistics_source_ID',
         #     )
         # except DatabaseInteractionError as error:
-        #     #ToDo: Simple query
-        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     message = f"Unable to return requested data--{error}"
         #     self._log.warning(message)
         #     return message
         # self._log.debug(return_dataframe_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
@@ -635,8 +623,7 @@ class Vendors(db.Model):
         #         index='resource_source_ID',
         #     )
         # except DatabaseInteractionError as error:
-        #     #ToDo: Simple query
-        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     message = f"Unable to return requested data--{error}"
         #     self._log.warning(message)
         #     return message
         # self._log.debug(return_dataframe_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
@@ -1156,8 +1143,9 @@ class StatisticsSources(db.Model):
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                #ToDo: Simple query
-                return database_query_fail_statement(number_of_records, "return requested value")
+                message = f"Unable to return requested data--{error}"
+                self._log.error(message)
+                return message  #ALERT: `raise DatabaseInteractionError`
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
@@ -1384,8 +1372,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            message = database_query_fail_statement(check_for_existing_record, "return requested record")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         
@@ -1607,8 +1594,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Returns data to flash
-            message = database_query_fail_statement(fiscal_year_data, "return requested values")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return {'STOP': [message]}
         start_date = fiscal_year_data['start_date'][0]
@@ -1624,8 +1610,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Returns data to flash
-            message = database_query_fail_statement(statistics_source_data, "return requested values")
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return {'STOP': [message]}
         statistics_source = StatisticsSources(

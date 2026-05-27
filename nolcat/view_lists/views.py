@@ -38,8 +38,9 @@ def view_lists_homepage(list):  #ALERT: Calls other relation
     #         engine=db.engine,
     #     )
     # except DatabaseInteractionError as error:
-    #     #ToDo: HTTP 404
-    #     flash(database_query_fail_statement(df))
+    #     message = f"Unable to find page--{error}"
+    #     log.warning(message)
+    #     flash(message)
     #     return abort(404)
     # if list == "resources":
     #     df = df.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if k in df.columns.tolist()})
@@ -114,8 +115,9 @@ def edit_list_record(list, PK):  #ALERT: Calls other relation
         #         engine=db.engine,
         #     )
         # except DatabaseInteractionError as error:
-        #     #ToDo: Simple query
-        #     flash(database_query_fail_statement(df))
+        #     message = f"Unable to load page--{error}"
+        #     log.warning(message)
+        #     flash(message)
         #     return redirect(url_for(view_lists.view_lists_homepage))
         # df = df.astype({dict setting correct dtypes})
         #ToDo: Prepopulate the fields

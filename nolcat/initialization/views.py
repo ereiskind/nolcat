@@ -336,8 +336,9 @@ def collect_AUCT_and_historical_COUNTER_data():  #ALERT: Calls other relation
                 index=["statistics_source_ID", "fiscal_year_ID"],
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(df))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
@@ -524,8 +525,9 @@ def upload_historical_non_COUNTER_usage(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.data_load_complete'))
         list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
@@ -566,9 +568,8 @@ def upload_historical_non_COUNTER_usage(testing):  #ALERT: Calls other relation
                         engine=db.engine,
                     )
                 except DatabaseInteractionError as error:
-                    #ToDo: Not raising error
-                    message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
-                    log.error(message)
+                    message = f"Unable to load page for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}--{error}"
+                    log.warning(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
                 AUCT_object = AnnualUsageCollectionTracking(

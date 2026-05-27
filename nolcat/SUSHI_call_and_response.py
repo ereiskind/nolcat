@@ -321,8 +321,9 @@ class SUSHICallAndResponse:
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Not raising error
-            raise DatabaseInteractionError(database_query_fail_statement(statistics_source_ID, "return requested value"))
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
@@ -480,8 +481,8 @@ class SUSHICallAndResponse:
                         engine=db.engine,
                     )
                 except DatabaseInteractionError as error:
-                    #ToDo: Returns data to flash
-                    error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
+                    error_message = f"Unable to create StatisticsSources object to use `add_note()` method--{error}"
+                    log.error(error_message)
                     return (error_message, [message, error_message])
                 try:
                     statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary

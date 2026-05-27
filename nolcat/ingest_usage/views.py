@@ -145,8 +145,9 @@ def harvest_SUSHI_statistics(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(statistics_source_options))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
@@ -157,8 +158,9 @@ def harvest_SUSHI_statistics(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(df))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -244,8 +246,9 @@ def upload_non_COUNTER_reports(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
@@ -276,8 +279,9 @@ def upload_non_COUNTER_reports(testing):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(df))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(
             AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],

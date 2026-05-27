@@ -25,8 +25,9 @@ def annual_stats_homepage():  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: HTTP 404
-            flash(database_query_fail_statement(fiscal_year_options))
+            message = f"Unable to find page--{error}"
+            log.warning(message)
+            flash(message)
             return abort(404)
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
@@ -62,8 +63,9 @@ def show_fiscal_year_details(PK):  #ALERT: Calls other relation
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(fiscal_year_details))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
@@ -74,8 +76,9 @@ def show_fiscal_year_details(PK):  #ALERT: Calls other relation
                 index='AUCT_statistics_source',
             )
         except DatabaseInteractionError as error:
-            #ToDo: Simple query
-            flash(database_query_fail_statement(fiscal_year_reporting))
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display

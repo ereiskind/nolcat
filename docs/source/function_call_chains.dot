@@ -71,37 +71,29 @@ digraph function_call_chains {
     calculate_depreciated_ACRL_60b -> query_database
     calculate_depreciated_ACRL_60b -> extract_value_from_single_value_df
     calculate_depreciated_ACRL_60b -> return_value_from_query_statement
-    calculate_depreciated_ACRL_60b -> database_query_fail_statement
     calculate_depreciated_ACRL_63 -> query_database
     calculate_depreciated_ACRL_63 -> extract_value_from_single_value_df
     calculate_depreciated_ACRL_63 -> return_value_from_query_statement
-    calculate_depreciated_ACRL_63 -> database_query_fail_statement
     calculate_ACRL_61a -> query_database
     calculate_ACRL_61a -> extract_value_from_single_value_df
     calculate_ACRL_61a -> return_value_from_query_statement
-    calculate_ACRL_61a -> database_query_fail_statement
     calculate_ACRL_61b -> query_database
     calculate_ACRL_61b -> extract_value_from_single_value_df
     calculate_ACRL_61b -> return_value_from_query_statement
-    calculate_ACRL_61b -> database_query_fail_statement
     calculate_ARL_18 -> query_database
     calculate_ARL_18 -> extract_value_from_single_value_df
     calculate_ARL_18 -> return_value_from_query_statement
-    calculate_ARL_18 -> database_query_fail_statement
     calculate_ARL_19 -> query_database
     calculate_ARL_19 -> extract_value_from_single_value_df
     calculate_ARL_19 -> return_value_from_query_statement
-    calculate_ARL_19 -> database_query_fail_statement
     calculate_ARL_20 -> query_database
     calculate_ARL_20 -> extract_value_from_single_value_df
     calculate_ARL_20 -> return_value_from_query_statement
-    calculate_ARL_20 -> database_query_fail_statement
     create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     create_usage_tracking_records_for_fiscal_year -> return_string_of_dataframe_info
     create_usage_tracking_records_for_fiscal_year -> load_data_into_database
     create_usage_tracking_records_for_fiscal_year -> query_database
     create_usage_tracking_records_for_fiscal_year -> return_dataframe_from_query_statement
-    create_usage_tracking_records_for_fiscal_year -> database_query_fail_statement
     collect_fiscal_year_usage_statistics -> _harvest_R5_SUSHI
     collect_fiscal_year_usage_statistics -> first_new_PK_value
     collect_fiscal_year_usage_statistics -> load_data_into_database
@@ -109,7 +101,6 @@ digraph function_call_chains {
     collect_fiscal_year_usage_statistics -> update_database
     collect_fiscal_year_usage_statistics -> format_list_for_stdout
     collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    collect_fiscal_year_usage_statistics -> database_query_fail_statement
     collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     collect_fiscal_year_usage_statistics -> update_database_success_regex
     collect_fiscal_year_usage_statistics -> remove_IDE_spacing_from_statement
@@ -194,7 +185,6 @@ digraph function_call_chains {
     _check_if_data_in_database -> query_database
     _check_if_data_in_database -> extract_value_from_single_value_df
     _check_if_data_in_database -> return_value_from_query_statement
-    _check_if_data_in_database -> database_query_fail_statement
     collect_usage_statistics -> _harvest_R5_SUSHI
 
 
@@ -239,7 +229,6 @@ digraph function_call_chains {
     change_StatisticsSource -> load_data_into_database
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
-    change_StatisticsSource -> database_query_fail_statement
     change_StatisticsSource -> database_update_fail_statement
     change_StatisticsSource -> update_database_success_regex
 
@@ -289,7 +278,6 @@ digraph function_call_chains {
     collect_annual_usage_statistics -> update_database
     collect_annual_usage_statistics -> initialize_relation_class_object_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
-    collect_annual_usage_statistics -> database_query_fail_statement
     collect_annual_usage_statistics -> update_database_success_regex
     collect_annual_usage_statistics -> remove_IDE_spacing_from_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
@@ -338,12 +326,10 @@ digraph function_call_chains {
     _save_raw_Response_text -> save_unconverted_data_via_upload
     _save_raw_Response_text -> extract_value_from_single_value_df
     _save_raw_Response_text -> AWS_timestamp_format
-    _save_raw_Response_text -> database_query_fail_statement
     _handle_SUSHI_exceptions -> _evaluate_individual_SUSHI_exception
     _handle_SUSHI_exceptions -> format_list_for_stdout
     _evaluate_individual_SUSHI_exception -> add_note_in_statisticsSources
     _evaluate_individual_SUSHI_exception -> query_database
-    _evaluate_individual_SUSHI_exception -> database_query_fail_statement
 
 
     subgraph cluster_UploadCOUNTERReports {
@@ -369,13 +355,11 @@ digraph function_call_chains {
     annual_stats_homepage -> show_fiscal_year_details
     annual_stats_homepage -> query_database
     annual_stats_homepage -> Flask_error_statement
-    annual_stats_homepage -> database_query_fail_statement
     show_fiscal_year_details -> state_data_types_in_fiscalYears
     show_fiscal_year_details -> state_data_types_in_annualUsageCollectionTracking
     show_fiscal_year_details -> annual_stats_homepage
     show_fiscal_year_details -> query_database
     show_fiscal_year_details -> Flask_error_statement
-    show_fiscal_year_details -> database_query_fail_statement
 
 
     subgraph cluster_ingest_usage {
@@ -405,13 +389,11 @@ digraph function_call_chains {
     harvest_SUSHI_statistics -> query_database
     harvest_SUSHI_statistics -> initialize_relation_class_object_statement
     harvest_SUSHI_statistics -> Flask_error_statement
-    harvest_SUSHI_statistics -> database_query_fail_statement
     upload_non_COUNTER_reports -> upload_nonstandard_usage_file
     upload_non_COUNTER_reports -> ingest_usage_homepage
     upload_non_COUNTER_reports -> create_AUCT_SelectField_options
     upload_non_COUNTER_reports -> query_database
     upload_non_COUNTER_reports -> Flask_error_statement
-    upload_non_COUNTER_reports -> database_query_fail_statement
 
 
     subgraph cluster_initialization {
@@ -456,7 +438,6 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
     collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
-    collect_AUCT_and_historical_COUNTER_data -> database_query_fail_statement
     collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
     collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
@@ -466,7 +447,6 @@ digraph function_call_chains {
     upload_historical_non_COUNTER_usage -> non_COUNTER_file_name_regex
     upload_historical_non_COUNTER_usage -> initialize_relation_class_object_statement
     upload_historical_non_COUNTER_usage -> Flask_error_statement
-    upload_historical_non_COUNTER_usage -> database_query_fail_statement
 
 
     subgraph cluster_login {
@@ -516,7 +496,6 @@ digraph function_call_chains {
     run_custom_SQL_query -> Flask_error_statement
     run_custom_SQL_query -> list_folder_contents_statement
     run_custom_SQL_query -> check_if_file_exists_statement
-    run_custom_SQL_query -> database_query_fail_statement
     use_predefined_SQL_query -> set_encoding
     use_predefined_SQL_query -> create_downloads_folder
     use_predefined_SQL_query -> view_usage_homepage
@@ -526,13 +505,11 @@ digraph function_call_chains {
     use_predefined_SQL_query -> Flask_error_statement
     use_predefined_SQL_query -> list_folder_contents_statement
     use_predefined_SQL_query -> check_if_file_exists_statement
-    use_predefined_SQL_query -> database_query_fail_statement
     start_query_wizard -> view_usage_homepage
     start_query_wizard -> query_wizard_sort_redirect
     start_query_wizard -> last_day_of_month
     start_query_wizard -> query_database
     start_query_wizard -> Flask_error_statement
-    start_query_wizard -> database_query_fail_statement
     query_wizard_sort_redirect -> start_query_wizard
     query_wizard_sort_redirect -> Flask_error_statement
     construct_PR_query_with_wizard -> create_COUNTER_fixed_vocab_list
@@ -545,7 +522,6 @@ digraph function_call_chains {
     construct_PR_query_with_wizard -> Flask_error_statement
     construct_PR_query_with_wizard -> list_folder_contents_statement
     construct_PR_query_with_wizard -> check_if_file_exists_statement
-    construct_PR_query_with_wizard -> database_query_fail_statement
     construct_DR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_DR_query_with_wizard -> set_encoding
     construct_DR_query_with_wizard -> create_downloads_folder
@@ -556,7 +532,6 @@ digraph function_call_chains {
     construct_DR_query_with_wizard -> Flask_error_statement
     construct_DR_query_with_wizard -> list_folder_contents_statement
     construct_DR_query_with_wizard -> check_if_file_exists_statement
-    construct_DR_query_with_wizard -> database_query_fail_statement
     construct_TR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_TR_query_with_wizard -> set_encoding
     construct_TR_query_with_wizard -> create_downloads_folder
@@ -567,7 +542,6 @@ digraph function_call_chains {
     construct_TR_query_with_wizard -> Flask_error_statement
     construct_TR_query_with_wizard -> list_folder_contents_statement
     construct_TR_query_with_wizard -> check_if_file_exists_statement
-    construct_TR_query_with_wizard -> database_query_fail_statement
     construct_IR_query_with_wizard -> create_COUNTER_fixed_vocab_list
     construct_IR_query_with_wizard -> set_encoding
     construct_IR_query_with_wizard -> create_downloads_folder
@@ -578,7 +552,6 @@ digraph function_call_chains {
     construct_IR_query_with_wizard -> Flask_error_statement
     construct_IR_query_with_wizard -> list_folder_contents_statement
     construct_IR_query_with_wizard -> check_if_file_exists_statement
-    construct_IR_query_with_wizard -> database_query_fail_statement
     download_non_COUNTER_usage -> state_data_types_in_annualUsageCollectionTracking
     download_non_COUNTER_usage -> download_nonstandard_usage_file
     download_non_COUNTER_usage -> create_downloads_folder
@@ -591,7 +564,6 @@ digraph function_call_chains {
     download_non_COUNTER_usage -> Flask_error_statement
     download_non_COUNTER_usage -> list_folder_contents_statement
     download_non_COUNTER_usage -> check_if_file_exists_statement
-    download_non_COUNTER_usage -> database_query_fail_statement
 
 
     subgraph cluster_nolcat_glue_job {
@@ -621,7 +593,6 @@ digraph function_call_chains {
         Flask_error_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
-        database_query_fail_statement [shape="box"]
         return_value_from_query_statement [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
@@ -719,17 +690,14 @@ digraph function_call_chains {
     first_new_PK_value -> query_database
     first_new_PK_value -> extract_value_from_single_value_df
     first_new_PK_value -> return_value_from_query_statement
-    first_new_PK_value -> database_query_fail_statement
     check_if_data_already_in_COUNTERData -> query_database
     check_if_data_already_in_COUNTERData -> extract_value_from_single_value_df
     check_if_data_already_in_COUNTERData -> format_list_for_stdout
     check_if_data_already_in_COUNTERData -> return_value_from_query_statement
-    check_if_data_already_in_COUNTERData -> database_query_fail_statement
     update_database -> query_database
     update_database -> truncate_longer_lines
     update_database -> extract_value_from_single_value_df
     update_database -> remove_IDE_spacing_from_statement
-    update_database -> database_query_fail_statement
     save_unconverted_data_via_upload -> upload_file_to_S3_bucket
     save_unconverted_data_via_upload -> format_list_for_stdout
     list_files_in_bucket_location -> format_list_for_stdout
