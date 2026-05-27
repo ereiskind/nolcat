@@ -318,7 +318,7 @@ def collect_sources_data():
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
-def collect_AUCT_and_historical_COUNTER_data():
+def collect_AUCT_and_historical_COUNTER_data():  #ALERT: Calls other relation
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
@@ -329,12 +329,14 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        df = query_database(
-            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
-            engine=db.engine,
-            index=["statistics_source_ID", "fiscal_year_ID"],
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
+                engine=db.engine,
+                index=["statistics_source_ID", "fiscal_year_ID"],
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(df))
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
@@ -487,7 +489,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
 @bp.route('/initialization-page-4/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/initialization-page-4/<string:testing>', methods=['GET', 'POST'])
-def upload_historical_non_COUNTER_usage(testing):
+def upload_historical_non_COUNTER_usage(testing):  #ALERT: Calls other relation
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     
     The route function renders the page showing a form with a field for uploading a file for each non-COUNTER `annualUsageCollectionTracking` record. When the files containing the non-COUNTER data are submitted, the function saves the data by changing the file name, saving the file to S3, and saving the file name to the `annualUsageCollectionTracking.usage_file_path` field of the given record, then redirects to the `data_load_complete()` route function.
@@ -498,29 +500,31 @@ def upload_historical_non_COUNTER_usage(testing):
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            non_COUNTER_files_needed = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        annualUsageCollectionTracking.usage_is_being_collected=true AND
+                        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                        annualUsageCollectionTracking.usage_file_path IS NULL AND
+                        (
+                            annualUsageCollectionTracking.collection_status='Collection not started' OR
+                            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                        );
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('initialization.data_load_complete'))
         list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
@@ -540,27 +544,29 @@ def upload_historical_non_COUNTER_usage(testing):
                     log.warning(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
-                df = query_database(
-                    query=f"""
-                        SELECT
-                            annualUsageCollectionTracking.AUCT_statistics_source,
-                            fiscalYears.fiscal_year_ID,
-                            annualUsageCollectionTracking.usage_is_being_collected,
-                            annualUsageCollectionTracking.manual_collection_required,
-                            annualUsageCollectionTracking.collection_via_email,
-                            annualUsageCollectionTracking.is_COUNTER_compliant,
-                            annualUsageCollectionTracking.collection_status,
-                            annualUsageCollectionTracking.usage_file_path,
-                            annualUsageCollectionTracking.notes
-                        FROM annualUsageCollectionTracking
-                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                        WHERE
-                            annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
-                            fiscalYears.fiscal_year='{fiscal_year}';
-                    """,
-                    engine=db.engine,
-                )
-                if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+                try:
+                    df = query_database(
+                        query=f"""
+                            SELECT
+                                annualUsageCollectionTracking.AUCT_statistics_source,
+                                fiscalYears.fiscal_year_ID,
+                                annualUsageCollectionTracking.usage_is_being_collected,
+                                annualUsageCollectionTracking.manual_collection_required,
+                                annualUsageCollectionTracking.collection_via_email,
+                                annualUsageCollectionTracking.is_COUNTER_compliant,
+                                annualUsageCollectionTracking.collection_status,
+                                annualUsageCollectionTracking.usage_file_path,
+                                annualUsageCollectionTracking.notes
+                            FROM annualUsageCollectionTracking
+                            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                            WHERE
+                                annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
+                                fiscalYears.fiscal_year='{fiscal_year}';
+                        """,
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
+                    #ToDo: Not raising error
                     message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
                     log.error(message)
                     flash_error_messages[file['usage_file'].filename] = message

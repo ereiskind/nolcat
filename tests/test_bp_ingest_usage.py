@@ -42,7 +42,7 @@ def test_ingest_usage_homepage(client):
 
 @pytest.mark.dependency()
 @pytest.mark.slow
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):  #ALERT: Calls COUNTER relation
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form.
 
     Args:
@@ -70,12 +70,14 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    df = query_database(
-        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
-        engine=engine,
-        index='COUNTER_data_ID',
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
+            engine=engine,
+            index='COUNTER_data_ID',
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
@@ -89,7 +91,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
 
 
 @pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])
-def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog):
+def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog):  #ALERT: Calls COUNTER relation
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
     
     This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
@@ -122,17 +124,21 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    check_relation_size = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(check_relation_size, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        check_relation_size = query_database(
+            query=f"SELECT COUNT(*) FROM COUNTERData;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(check_relation_size))
-    df = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df))
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns='COUNTER_data_ID')
@@ -193,7 +199,7 @@ def test_match_direct_SUSHI_harvest_result(engine, caplog):
     assert_frame_equal(match_result_df, df)
 
 
-def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
+def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):  #ALERT: Calls other relation
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data.
 
     Args:
@@ -223,11 +229,13 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    df = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = list(df.itertuples(index=False, name=None))
 
@@ -238,7 +246,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
 
 
 @pytest.fixture
-def select_statistics_source_ID(engine, caplog):
+def select_statistics_source_ID(engine, caplog):  #ALERT: Calls other relation
     """Selects a value from the statisticsSources relation to use in `test_bp_ingest_usage.test_collect_annual_usage_statistics()`.
 
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` value used in the test data must be valid COUNTER Registry ID values; for testing purposes, any statisticsSources record with a valid statistics_source_retrieval_code can be used. The selection of the record's PK is in a fixture so the selected value can also be passed to `test_bp_ingest_usage.S3_regex_and_teardown()`.
@@ -252,11 +260,13 @@ def select_statistics_source_ID(engine, caplog):
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.models')
-    df = query_database(
-        query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df))
     yield choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
 
@@ -337,7 +347,7 @@ def test_harvest_SUSHI_statistics(client, tmp_path, most_recent_month_with_usage
     assert HTML_file_page_title in POST_response.data
 
 
-def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
+def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):  #ALERT: Calls other relation
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
 
     Args:
@@ -366,29 +376,31 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    df = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df))
     db_select_field_options = create_AUCT_SelectField_options(df)
 
@@ -398,7 +410,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
+def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):  #ALERT: Calls other relation
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record.
 
     Args:
@@ -449,10 +461,14 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully to", prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Successful Database Update
-    df = query_database(
-        query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
-        engine=engine,
-    )
+    try:
+        df = query_database(
+            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
+        pass
     assert df.at[0,'collection_status'] == 'Collection complete'
     assert df.at[0,'usage_file_path'] == file_name
 

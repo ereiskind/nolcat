@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 #Section: Test Annual Usage Statistics Methods
 @pytest.fixture
-def FY2020_FiscalYears_object(engine, caplog):
+def FY2020_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
     """Creates a FiscalYears object for the fiscal year with COUNTER R5 test data.
 
     Args:
@@ -26,12 +26,14 @@ def FY2020_FiscalYears_object(engine, caplog):
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(record, False))
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
@@ -204,7 +206,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test  #ALERT: Calls other relation
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
 
     Args:
@@ -223,12 +225,14 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
-    retrieved_data = query_database(
-        query="SELECT * FROM annualUsageCollectionTracking;",
-        engine=engine,
-        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    )
-    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        retrieved_data = query_database(
+            query="SELECT * FROM annualUsageCollectionTracking;",
+            engine=engine,
+            index=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
@@ -358,7 +362,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
 
 #Section: Test Collecting Usage Statistics
 @pytest.fixture
-def FY2022_FiscalYears_object(engine, caplog):
+def FY2022_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
     """Creates a FiscalYears object for the fiscal year with an `annualUsageCollectionTracking` record that meets the criteria for inclusion in `FiscalYears.collect_fiscal_year_usage_statistics()`.
 
     Args:
@@ -369,12 +373,14 @@ def FY2022_FiscalYears_object(engine, caplog):
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(record, False))
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],

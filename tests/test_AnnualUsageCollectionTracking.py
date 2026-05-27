@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine):
+def AUCT_fixture_for_SUSHI(engine):  #ALERT: Calls other relation
     """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
 
     Args:
@@ -27,11 +27,13 @@ def AUCT_fixture_for_SUSHI(engine):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
     # Cannot use `caplog` for `query_database()` due to scope mismatch
-    record = query_database(
-        query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
@@ -75,7 +77,7 @@ def S3_regex_and_teardown(AUCT_fixture_for_SUSHI):
 
 
 @pytest.mark.slow
-def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_for_SUSHI, S3_regex_and_teardown, caplog):
+def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_for_SUSHI, S3_regex_and_teardown, caplog):  #ALERT: Calls other relation
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
 
     Args:
@@ -96,11 +98,13 @@ def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_
     if 'STOP' in flash_message_dict.keys():
         pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
 
-    database_update_check = query_database(
-        query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
-        engine=engine,
-    )
-    if isinstance(database_update_check, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        database_update_check = query_database(
+            query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(database_update_check))
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
     assert database_update_check == "Collection complete"
@@ -140,7 +144,7 @@ def sample_FileStorage_object(path_to_sample_file):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):
+def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStorage_object, non_COUNTER_AUCT_object_before_upload, path_to_sample_file):  #ALERT: Calls other relation
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
 
     Args:
@@ -163,11 +167,13 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
     )
     assert cmp(path_to_sample_file, download_location)
 
-    usage_file_path_in_database = query_database(
-        query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
-        engine=engine,
-    )
-    if isinstance(usage_file_path_in_database, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        usage_file_path_in_database = query_database(
+            query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
     usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))

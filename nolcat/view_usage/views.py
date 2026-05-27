@@ -72,7 +72,7 @@ def view_usage_homepage():
 
 
 @bp.route('/custom-query', methods=['GET', 'POST'])
-def run_custom_SQL_query():
+def run_custom_SQL_query():  #ALERT: Calls all relations
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
@@ -83,11 +83,13 @@ def run_custom_SQL_query():
         log.info(check_if_file_exists_statement(file_path))
         return render_template('view_usage/custom-query.html', form=form)
     elif form.validate_on_submit():
-        df = query_database(
-            query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection: https://stackoverflow.com/a/71604821
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection: https://stackoverflow.com/a/71604821
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
@@ -117,7 +119,7 @@ def run_custom_SQL_query():
 
 
 @bp.route('preset-query', methods=['GET', 'POST'])
-def use_predefined_SQL_query():
+def use_predefined_SQL_query():  #ALERT: Calls COUNTER relation
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     log.info("Starting `use_predefined_SQL_query()`.")
     form = PresetQueryForm()
@@ -225,11 +227,13 @@ def use_predefined_SQL_query():
             """
         #ToDo: Decide what other canned reports, if any, are needed
 
-        df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
@@ -260,16 +264,18 @@ def use_predefined_SQL_query():
 
 
 @bp.route('query-wizard', methods=['GET', 'POST'])
-def start_query_wizard():
+def start_query_wizard():  #ALERT: Calls other relation
     """Collects the date range and report type for the query to be created."""
     log.info("Starting `start_query_wizard()`.")
     form = StartQueryWizardForm()
     if request.method == 'GET':
-        fiscal_year_options = query_database(
-            query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
-            engine=db.engine,
-        )
-        if isinstance(fiscal_year_options, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            fiscal_year_options = query_database(
+                query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(fiscal_year_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
@@ -281,11 +287,13 @@ def start_query_wizard():
             begin_date = form.begin_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:
             log.debug(f"Using the fiscal year with ID {form.fiscal_year.data} as the date range.")
-            fiscal_year_dates = query_database(
-                query=f"SELECT start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={form.fiscal_year.data};",
-                engine=db.engine,
-            )
-            if isinstance(fiscal_year_dates, str):  #ALERT: `except DatabaseInteractionError`
+            try:
+                fiscal_year_dates = query_database(
+                    query=f"SELECT start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={form.fiscal_year.data};",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                #ToDo: Simple query
                 flash(database_query_fail_statement(fiscal_year_dates))
                 return redirect(url_for('view_usage.view_usage_homepage'))
             begin_date = fiscal_year_dates['start_date'][0].isoformat()
@@ -366,7 +374,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
 
 
 @bp.route('query-wizard/PR', methods=['GET', 'POST'])
-def construct_PR_query_with_wizard():
+def construct_PR_query_with_wizard():  #ALERT: Calls COUNTER relation
     """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_PR_query_with_wizard()`.")
     form = PRQueryWizardForm()
@@ -431,11 +439,13 @@ def construct_PR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -469,7 +479,7 @@ def construct_PR_query_with_wizard():
 
 
 @bp.route('query-wizard/DR', methods=['GET', 'POST'])
-def construct_DR_query_with_wizard():
+def construct_DR_query_with_wizard():  #ALERT: Calls COUNTER relation
     """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_DR_query_with_wizard()`.")
     form = DRQueryWizardForm()
@@ -548,11 +558,13 @@ def construct_DR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -586,7 +598,7 @@ def construct_DR_query_with_wizard():
 
 
 @bp.route('query-wizard/TR', methods=['GET', 'POST'])
-def construct_TR_query_with_wizard():
+def construct_TR_query_with_wizard():  #ALERT: Calls COUNTER relation
     """Returns a page that allows a valid SQL query for title usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
@@ -731,11 +743,13 @@ def construct_TR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -769,7 +783,7 @@ def construct_TR_query_with_wizard():
 
 
 @bp.route('query-wizard/IR', methods=['GET', 'POST'])
-def construct_IR_query_with_wizard():
+def construct_IR_query_with_wizard():  #ALERT: Calls COUNTER relation
     """Returns a page that allows a valid SQL query for item usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
@@ -962,11 +976,13 @@ def construct_IR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df)
             log.error(message)
             flash(message)
@@ -1001,7 +1017,7 @@ def construct_IR_query_with_wizard():
 
 @bp.route('/non-COUNTER-downloads/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/non-COUNTER-downloads/<string:testing>', methods=['GET', 'POST'])
-def download_non_COUNTER_usage(testing):
+def download_non_COUNTER_usage(testing):  #ALERT: Calls other relation
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded.
     
     Args:
@@ -1016,21 +1032,23 @@ def download_non_COUNTER_usage(testing):
                 file.unlink()
                 log.debug(check_if_file_exists_statement(file))
 
-        file_download_options = query_database(
-            query=f"""
-                SELECT
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year,
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
-            """,
-            engine=db.engine,
-        )
-        if isinstance(file_download_options, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            file_download_options = query_database(
+                query=f"""
+                    SELECT
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year,
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(file_download_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
@@ -1038,22 +1056,24 @@ def download_non_COUNTER_usage(testing):
     elif form.validate_on_submit():
         log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
-        AUCT_object = query_database(
-            query=f"""
-                SELECT
-                    usage_is_being_collected,
-                    manual_collection_required,
-                    collection_via_email,
-                    is_COUNTER_compliant,
-                    collection_status,
-                    usage_file_path,
-                    notes
-                FROM annualUsageCollectionTracking
-                WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
-            """,
-            engine=db.engine,
-        )
-        if isinstance(AUCT_object, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            AUCT_object = query_database(
+                query=f"""
+                    SELECT
+                        usage_is_being_collected,
+                        manual_collection_required,
+                        collection_via_email,
+                        is_COUNTER_compliant,
+                        collection_status,
+                        usage_file_path,
+                        notes
+                    FROM annualUsageCollectionTracking
+                    WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(AUCT_object))
             return redirect(url_for('view_usage.view_usage_homepage'))
         AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])

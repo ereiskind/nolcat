@@ -299,7 +299,7 @@ class SUSHICallAndResponse:
         return API_response
     
 
-    def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+    def _save_raw_Response_text(self, Response_text, bucket_path=PRODUCTION_COUNTER_FILE_PATH):  #ALERT: Calls other relation
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
@@ -314,11 +314,13 @@ class SUSHICallAndResponse:
             S3InteractionError: if a problem occurs while saving the data to S3
         """
         log.info("Starting `_save_raw_Response_text()`.")
-        statistics_source_ID = query_database(
-            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_ID, str):
+        try:
+            statistics_source_ID = query_database(
+                query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             raise DatabaseInteractionError(database_query_fail_statement(statistics_source_ID, "return requested value"))
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
@@ -404,7 +406,7 @@ class SUSHICallAndResponse:
             return (message, [message])
     
 
-    def _evaluate_individual_SUSHI_exception(self, error_contents):
+    def _evaluate_individual_SUSHI_exception(self, error_contents):  #ALERT: Calls other relation
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
         For the messages, the report type is added to the start of the sentence in `_handle_SUSHI_exceptions()`.
@@ -471,11 +473,13 @@ class SUSHICallAndResponse:
         if error_code == '1030' or error_code == '3030' or error_code == '3032' or error_code == '3040' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
             if error_code == '3032' or error_code == '3040':
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
-                df = query_database(
-                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-                    engine=db.engine,
-                )
-                if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+                try:
+                    df = query_database(
+                        query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
+                    #ToDo: Returns data to flash
                     error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
                     return (error_message, [message, error_message])
                 try:

@@ -78,7 +78,7 @@ def SUSHI_credentials_fixture():
 
 
 @pytest.fixture
-def StatisticsSource_instance_name(engine, caplog):
+def StatisticsSource_instance_name(engine, caplog):  #ALERT: Calls other relation
     """Selects a `statisticsSources.statistics_source_name` value from the database.
 
     `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()` makes a StatisticsSource object for adding a note from a record based on that record's `statistics_source_name` value, so it fails if a placeholder name is used. This randomly selects a name from the database to be used in its place.
@@ -91,11 +91,13 @@ def StatisticsSource_instance_name(engine, caplog):
         str: a value in `statisticsSources.statistics_source_name`
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    df = query_database(
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df, False))
     yield extract_value_from_single_value_df(df, False)
 

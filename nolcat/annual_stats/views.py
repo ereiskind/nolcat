@@ -13,17 +13,19 @@ log = logging.getLogger(__name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def annual_stats_homepage():
+def annual_stats_homepage():  #ALERT: Calls other relation
     """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
     log.info("Starting `annual_stats_homepage()`.")
     form = ChooseFiscalYearForm()
     if request.method == 'GET':
         # The links to the lists of vendors, resource sources, and statistics sources are standard jinja redirects; the code for populating the lists from the underlying relations is in the route functions being redirected to
-        fiscal_year_options = query_database(
-            query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
-            engine=db.engine,
-        )
-        if isinstance(fiscal_year_options, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            fiscal_year_options = query_database(
+                query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: HTTP 404
             flash(database_query_fail_statement(fiscal_year_options))
             return abort(404)
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
@@ -38,7 +40,7 @@ def annual_stats_homepage():
 
 
 @bp.route('/view_year/<int:PK>', methods=['GET', 'POST'])
-def show_fiscal_year_details(PK):
+def show_fiscal_year_details(PK):  #ALERT: Calls other relation
     """Returns a page that shows the information about and the statistics collection status for the fiscal year.
 
     Args:
@@ -54,21 +56,25 @@ def show_fiscal_year_details(PK):
     edit_AUCT_form = EditAUCTForm()
     #ToDo: is the best way to run `FiscalYears.create_usage_tracking_records_for_fiscal_year()` also a form?
     if request.method == 'GET':
-        fiscal_year_details = query_database(
-            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID={PK};",
-            engine=db.engine,
-        )
-        if isinstance(fiscal_year_details, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            fiscal_year_details = query_database(
+                query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID={PK};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(fiscal_year_details))
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
-        fiscal_year_reporting = query_database(
-            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year={PK};",
-            engine=db.engine,
-            index='AUCT_statistics_source',
-        )
-        if isinstance(fiscal_year_reporting, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            fiscal_year_reporting = query_database(
+                query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year={PK};",
+                engine=db.engine,
+                index='AUCT_statistics_source',
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(fiscal_year_reporting))
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())

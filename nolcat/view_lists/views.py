@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 @bp.route('/<string:list>')
-def view_lists_homepage(list):
+def view_lists_homepage(list):  #ALERT: Calls other relation
     """Returns the homepage for the `view_lists` blueprint, which shows the list of resource sources, statistics sources, or vendors depending on the variable route value.
 
         Args:
@@ -32,14 +32,21 @@ def view_lists_homepage(list):
         log.error(f"The route function didn't understand the argument `{list}`.")  ##Flask_error_statement()
         return abort(404)
     
-    # df = query_database(
-    #     query=SQL_query,
-    #     engine=db.engine,
-    # )
-    # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    # try:
+    #     df = query_database(
+    #         query=SQL_query,
+    #         engine=db.engine,
+    #     )
+    # except DatabaseInteractionError as error:
+    #     #ToDo: HTTP 404
     #     flash(database_query_fail_statement(df))
     #     return abort(404)
-    # df = df.astype({dict setting correct dtypes})
+    # if list == "resources":
+    #     df = df.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if k in df.columns.tolist()})
+    # elif list == "statistics":
+    #     df = df.astype({k: v for (k, v) in StatisticsSources.state_data_types().items() if k in df.columns.tolist()})
+    # elif list == "vendors":
+    #     df = df.astype({k: v for (k, v) in Vendors.state_data_types().items() if k in df.columns.tolist()})
     # Add field with links to see details for each record
     # Display the returned dataframe
         # https://stackoverflow.com/q/52644035
@@ -48,7 +55,7 @@ def view_lists_homepage(list):
 
 
 @bp.route('/<string:list>/<int:PK>')
-def view_list_record(list, PK):
+def view_list_record(list, PK):  #ALERT: Calls other relation
     """Returns the details and notes about a statistics source, resource source, or vendor.
 
     For a given record in the `resourceSources`, `statisticsSources`, or `vendors` relations, the value of all of the relation's fields and the notes are shown. For vendor records, the currently affiliated resource sources and statistics sources are shown as well. From this page, notes can be added, but not edited or deleted.
@@ -60,12 +67,15 @@ def view_list_record(list, PK):
     log.info(f"Starting `view_list_record()` for {list}.")
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        # df = query_database(
-        #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-        #     engine=db.engine,
-        # )
-        #ALERT: `except DatabaseInteractionError`
-        #ToDo: df = df.astype({dict setting correct dtypes})
+        # try:
+        #     df = query_database(
+        #         query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #         engine=db.engine,
+        #     )
+        # except DatabaseInteractionError as error:
+        #     #ToDo: Simple query
+        #     return redirect(url_for('view_usage.use_predefined_SQL_query'))
+        # df = df.astype({dict setting correct dtypes})
         return "render_template('view_lists/view-record.html', form=form)"
     # elif form.validate_on_submit():
         #ToDo: Run one of the methods below based on the list type
@@ -82,7 +92,7 @@ def view_list_record(list, PK):
 
 
 @bp.route('/edit/<string:list>/<int:PK>')
-def edit_list_record(list, PK):
+def edit_list_record(list, PK):  #ALERT: Calls other relation
     """Returns a page for editing records in the `resourceSources`, `statisticsSources`, or `vendors` relations.
 
     Adding a record is done by creating a `PK` value that matches what's next in the auto-generated count list, adding new values to all the fields available for edit, which are then committed to the relation as a new record. Editing the `resourceSources` relation is also the method for updating the `statisticsResourceSources` junction table, which is never directly visible or directly accessed.
@@ -98,19 +108,21 @@ def edit_list_record(list, PK):
             #ToDo: Show page without prefilled values
             return "render_template('view_lists/edit-record.html', form=form)"
         #ToDo: if `PK` is in the relation
-            # df = query_database(
-            #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-            #     engine=db.engine,
-            # )
-            # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            #     flash(database_query_fail_statement(df))
-            #     return redirect(url_for(view_lists.view_lists_homepage))
-            # df = df.astype({dict setting correct dtypes})
-            #ToDo: Prepopulate the fields
-                # https://stackoverflow.com/q/35892144
-                # https://stackoverflow.com/q/23712986
-                # https://stackoverflow.com/q/42984453
-                # https://stackoverflow.com/q/28941504
+        # try:
+        #     df = query_database(
+        #         query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #         engine=db.engine,
+        #     )
+        # except DatabaseInteractionError as error:
+        #     #ToDo: Simple query
+        #     flash(database_query_fail_statement(df))
+        #     return redirect(url_for(view_lists.view_lists_homepage))
+        # df = df.astype({dict setting correct dtypes})
+        #ToDo: Prepopulate the fields
+            # https://stackoverflow.com/q/35892144
+            # https://stackoverflow.com/q/23712986
+            # https://stackoverflow.com/q/42984453
+            # https://stackoverflow.com/q/28941504
         # return render_template('view_lists/page.html', form=form)
     # elif form.validate_on_submit():
         #ToDo: add_access_stop_date()

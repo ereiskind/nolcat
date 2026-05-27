@@ -287,7 +287,7 @@ def test_load_data_into_database(engine, vendors_relation):
     assert regex_match_object.group(2) == "vendors"
 
 
-def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):  #ALERT: Calls other relation
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
@@ -310,22 +310,24 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     )
     if not load_data_into_database_success_regex().fullmatch(check):
         pytest.skip(database_function_skip_statements(check))
-    retrieved_data = query_database(
-        query="""
-            SELECT
-                statisticsSources.statistics_source_ID,
-                statisticsSources.statistics_source_name,
-                statisticsSources.statistics_source_retrieval_code,
-                vendors.vendor_name
-            FROM statisticsSources
-            JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
-            ORDER BY statisticsSources.statistics_source_ID;
-        """,
-        engine=engine,
-        index='statistics_source_ID'
-        # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
-    )
-    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        retrieved_data = query_database(
+            query="""
+                SELECT
+                    statisticsSources.statistics_source_ID,
+                    statisticsSources.statistics_source_name,
+                    statisticsSources.statistics_source_retrieval_code,
+                    vendors.vendor_name
+                FROM statisticsSources
+                JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
+                ORDER BY statisticsSources.statistics_source_ID;
+            """,
+            engine=engine,
+            index='statistics_source_ID'
+            # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype(df_dtypes)
 
@@ -385,7 +387,7 @@ def test_first_new_PK_value(client):
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database(engine, client):
+def test_update_database(engine, client):  #ALERT: Calls other relation
     """Tests updating data in the database through a SQL update statement.
 
     Args:
@@ -397,12 +399,14 @@ def test_update_database(engine, client):
             update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
             engine=engine,
         )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        retrieved_updated_vendors_data = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index='vendor_ID',
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
@@ -425,7 +429,7 @@ def test_update_database(engine, client):
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
-def test_update_database_with_insert_statement(engine, client):
+def test_update_database_with_insert_statement(engine, client):  #ALERT: Calls other relation
     """Tests adding records to the database through a SQL insert statement.
 
     Args:
@@ -437,12 +441,14 @@ def test_update_database_with_insert_statement(engine, client):
             update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
             engine=engine,
         )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        retrieved_updated_vendors_data = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index='vendor_ID',
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(

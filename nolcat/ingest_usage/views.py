@@ -128,7 +128,7 @@ def upload_COUNTER_data():
 
 @bp.route('/harvest/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/harvest/<string:testing>', methods=['GET', 'POST'])
-def harvest_SUSHI_statistics(testing):
+def harvest_SUSHI_statistics(testing):  #ALERT: Calls other relation
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
@@ -139,21 +139,25 @@ def harvest_SUSHI_statistics(testing):
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
     if request.method == 'GET':
-        statistics_source_options = query_database(
-            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_options, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            statistics_source_options = query_database(
+                query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(statistics_source_options))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
-        df = query_database(
-            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
@@ -207,7 +211,7 @@ def harvest_SUSHI_statistics(testing):
 
 @bp.route('/upload-non-COUNTER/', defaults={'testing': ""}, methods=['GET', 'POST'])
 @bp.route('/upload-non-COUNTER/<string:testing>', methods=['GET', 'POST'])
-def upload_non_COUNTER_reports(testing):
+def upload_non_COUNTER_reports(testing):  #ALERT: Calls other relation
     """The route function for uploading files containing non-COUNTER data into the container.
 
     Args:
@@ -216,59 +220,63 @@ def upload_non_COUNTER_reports(testing):
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            non_COUNTER_files_needed = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        annualUsageCollectionTracking.usage_is_being_collected=true AND
+                        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                        annualUsageCollectionTracking.usage_file_path IS NULL AND
+                        (
+                            annualUsageCollectionTracking.collection_status='Collection not started' OR
+                            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                        );
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
-        df = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    annualUsageCollectionTracking.usage_is_being_collected,
-                    annualUsageCollectionTracking.manual_collection_required,
-                    annualUsageCollectionTracking.collection_via_email,
-                    annualUsageCollectionTracking.is_COUNTER_compliant,
-                    annualUsageCollectionTracking.collection_status,
-                    annualUsageCollectionTracking.usage_file_path,
-                    annualUsageCollectionTracking.notes,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    AUCT_statistics_source={statistics_source_ID}
-                    AND AUCT_fiscal_year={fiscal_year_ID};
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        annualUsageCollectionTracking.usage_is_being_collected,
+                        annualUsageCollectionTracking.manual_collection_required,
+                        annualUsageCollectionTracking.collection_via_email,
+                        annualUsageCollectionTracking.is_COUNTER_compliant,
+                        annualUsageCollectionTracking.collection_status,
+                        annualUsageCollectionTracking.usage_file_path,
+                        annualUsageCollectionTracking.notes,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                        JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        AUCT_statistics_source={statistics_source_ID}
+                        AND AUCT_fiscal_year={fiscal_year_ID};
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(

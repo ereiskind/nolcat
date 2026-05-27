@@ -519,7 +519,7 @@ def remove_test_file_from_non_COUNTER_S3_folder(path_to_sample_file):
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
+def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):  #ALERT: Calls other relation
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
 
     Both the test functions that call this fixture upload files to S3 with names based off of data from this fixture, so removing those files also requires data from this fixture. As a result, the teardown functionality that removes the files from S3 is in this fixture function.
@@ -545,8 +545,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        pytest.skip(database_function_skip_statements(record, False))
-    if isinstance(record, str):  #ToDo: Remove when `query_database()` raises exception when there's a problem
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(record, False))
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")  #ToDo: This often happens when 'test_AnnualUsageCollectionTracking.py' is run after 'test_bp_ingest_usage.py'--find out why
@@ -575,7 +574,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_after_upload(engine, caplog):
+def non_COUNTER_AUCT_object_after_upload(engine, caplog):  #ALERT: Calls other relation
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
 
     Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
@@ -588,12 +587,14 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        record = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
@@ -716,7 +717,7 @@ def valid_COUNTER_retrieval_code():
 
 
 #Section: Test Helper Functions
-def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
+def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):  #ALERT: Calls COUNTER relation
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
@@ -730,19 +731,21 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    df = query_database(
-        query=f"""
-            SELECT *
-            FROM (
-                SELECT * FROM COUNTERData
-                ORDER BY COUNTER_data_ID DESC
-                LIMIT {number_of_records}
-            ) subquery
-            ORDER BY COUNTER_data_ID ASC;
-        """,
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        df = query_database(
+            query=f"""
+                SELECT *
+                FROM (
+                    SELECT * FROM COUNTERData
+                    ORDER BY COUNTER_data_ID DESC
+                    LIMIT {number_of_records}
+                ) subquery
+                ORDER BY COUNTER_data_ID ASC;
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: `pytest.skip`
         pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values

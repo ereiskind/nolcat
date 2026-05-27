@@ -714,7 +714,7 @@ def query_database(query, engine, index=None):
         raise DatabaseInteractionError(message)
 
 
-def first_new_PK_value(relation):
+def first_new_PK_value(relation):  #ALERT: Calls all relations
     """The function for getting the next value in the primary key sequence.
 
     The default value of the SQLAlchemy `autoincrement` argument in the field constructor method adds `AUTO_INCREMENT` to the primary key field in the data definition language. Loading values, even ones following the sequential numbering that auto-incrementation would use, alters the relation's `AUTO_INCREMENT` attribute, causing a primary key duplication error. Stopping this error requires removing auto-incrementation from the primary key fields (by setting the `autoincrement` argument in the field constructor method to `False`); without the auto-incrementation, however, the primary key values must be included as the dataframe's record index field. This function finds the highest value in the primary key field of the given relation and returns the next integer.
@@ -744,27 +744,28 @@ def first_new_PK_value(relation):
     elif relation == 'COUNTERData':
         PK_field = 'COUNTER_data_ID'
     
-    largest_PK_value = query_database(
-        query=f"""
-            SELECT {PK_field} FROM {relation}
-            ORDER BY {PK_field} DESC
-            LIMIT 1;
-        """,
-        engine=db.engine,
-    )
-    if isinstance(largest_PK_value, str):  #ALERT: `except DatabaseInteractionError`
+    try:
+        largest_PK_value = query_database(
+            query=f"""
+                SELECT {PK_field} FROM {relation}
+                ORDER BY {PK_field} DESC
+                LIMIT 1;
+            """,
+            engine=db.engine,
+        )
+    except DatabaseInteractionError as error:
+        #ToDo: Simple query
         log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
         return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
-    elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+    if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
-    else:
-        largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
-        log.debug(return_value_from_query_statement(largest_PK_value))
-        return int(largest_PK_value) + 1
+    largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
+    log.debug(return_value_from_query_statement(largest_PK_value))
+    return int(largest_PK_value) + 1
 
 
-def check_if_data_already_in_COUNTERData(df):
+def check_if_data_already_in_COUNTERData(df):  #ALERT: Calls COUNTER relation
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
@@ -802,11 +803,13 @@ def check_if_data_already_in_COUNTERData(df):
     total_number_of_matching_records = 0
     matching_record_instances = []
     for combo in combinations_to_check:
-        number_of_matching_records = query_database(
-            query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
-            engine=db.engine,
-        )
-        if isinstance(number_of_matching_records, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            number_of_matching_records = query_database(
+                query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Returns data to flash
             return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
         number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
@@ -832,11 +835,13 @@ def check_if_data_already_in_COUNTERData(df):
             if not to_remove.empty:
                 records_to_remove.append(to_remove)
 
-            statistics_source_name = query_database(
-                query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
-                engine=db.engine,
-            )
-            if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
+            try:
+                statistics_source_name = query_database(
+                    query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                #ToDo: Returns data to flash
                 return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
             instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
@@ -860,7 +865,7 @@ def check_if_data_already_in_COUNTERData(df):
         return (df, None)  #ToDo: Calls impact second value of returned tuple--function will need to be redone to handle data movement from MySQL to S3
 
 
-def update_database(update_statement, engine):
+def update_database(update_statement, engine):  #ALERT: Calls all relations
     """A wrapper for the `Engine.execute()` method that includes the error handling.
 
     The `execute()` method of the `sqlalchemy.engine.Engine` class automatically commits the changes made by the statement.
@@ -882,21 +887,25 @@ def update_database(update_statement, engine):
     TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            before_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
         query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            before_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
         else:
             before_number = extract_value_from_single_value_df(before_df)
@@ -921,11 +930,13 @@ def update_database(update_statement, engine):
         return message  #ALERT: `raises DatabaseInteractionError`
     
     if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            after_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             log.debug(f"The records after being updated:\n{after_df}")
@@ -934,11 +945,13 @@ def update_database(update_statement, engine):
                 log.warning(message)
                 return message  #ALERT: `raises DatabaseInteractionError`
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            after_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
         else:
             after_number = extract_value_from_single_value_df(after_df)
@@ -948,11 +961,13 @@ def update_database(update_statement, engine):
                 log.warning(message)
                 return message  #ALERT: `raises DatabaseInteractionError`
     elif TRUNCATE_regex:
-        df = query_database(
-            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Not raising error
             log.warning(database_query_fail_statement(df, "confirm success of change to database"))
         else:
             if extract_value_from_single_value_df(df) > 0:

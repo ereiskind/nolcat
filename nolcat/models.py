@@ -91,7 +91,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_depreciated_ACRL_60b(self):
+    def calculate_depreciated_ACRL_60b(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
         ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." This method doesn't load the answer into the database.
@@ -101,59 +101,62 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_60b()` for {self.fiscal_year}.")
-        TR_B1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            TR_B1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
-        else:
-            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
-            self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
+        TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
+        self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
-        IR_M1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            IR_M1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
-        else:
-            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
-            self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
+        IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
+        self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
-        TR_J1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_J1_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            TR_J1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(TR_J1_df, "return requested value")
             self._log.warning(message)
             return message
-        else:
-            TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
-            self._log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
+        TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
+        self._log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
 
     @hybrid_method
-    def calculate_depreciated_ACRL_63(self):
+    def calculate_depreciated_ACRL_63(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
         ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
@@ -163,15 +166,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_63()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -181,7 +186,7 @@ class FiscalYears(db.Model):
     
 
     @hybrid_method
-    def calculate_ACRL_61a(self):
+    def calculate_ACRL_61a(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of ACRL question 61a for the given fiscal year.
 
         ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database." This method doesn't load the answer into the database.
@@ -191,43 +196,45 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ACRL_61a()` for {self.fiscal_year}.")
-        TR_B1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            TR_B1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(TR_B1_df, "return requested value")
             self._log.warning(message)
             return message
-        else:
-            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
-            self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
+        TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
+        self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
-        IR_M1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            IR_M1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple Query
             message = database_query_fail_statement(IR_M1_df, "return requested value")
             self._log.warning(message)
             return message
-        else:
-            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
-            self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
+        IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
+        self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
 
 
     @hybrid_method
-    def calculate_ACRL_61b(self):
+    def calculate_ACRL_61b(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of ACRL question 61b for the given fiscal year.
 
         ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage. This method doesn't load the answer into the database.
@@ -237,15 +244,17 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ACRL_61b()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -255,7 +264,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ARL_18(self):
+    def calculate_ARL_18(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of ARL question 18 for the given fiscal year.
 
         ARL 18 is the "Number of successful full-text article requests (journals)." This method doesn't load the answer into the database.
@@ -265,15 +274,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -283,7 +294,7 @@ class FiscalYears(db.Model):
 
     
     @hybrid_method
-    def calculate_ARL_19(self):
+    def calculate_ARL_19(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of ARL question 19 for the given fiscal year.
 
         ARL 19 is the "Number of regular searches (databases)." This method doesn't load the answer into the database.
@@ -293,15 +304,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -311,7 +324,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ARL_20(self):
+    def calculate_ARL_20(self):  #ALERT: Calls COUNTER relation
         """This method calculates the value of ARL question 20 for the given fiscal year.
 
         ARL 20 is the "Number of federated searches (databases)." This method doesn't load the answer into the database.
@@ -321,15 +334,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(df, "return requested value")
             self._log.warning(message)
             return message
@@ -339,7 +354,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def create_usage_tracking_records_for_fiscal_year(self):
+    def create_usage_tracking_records_for_fiscal_year(self):  #ALERT: Calls other relation
         """Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
 
         Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
@@ -349,11 +364,13 @@ class FiscalYears(db.Model):
         """
         self._log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
-        current_statistics_sources = query_database(
-            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
-            engine=db.engine,
-        )
-        if isinstance(current_statistics_sources, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            current_statistics_sources = query_database(
+                query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             return database_query_fail_statement(current_statistics_sources, "return requested series")
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
@@ -386,7 +403,7 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def collect_fiscal_year_usage_statistics(self):
+    def collect_fiscal_year_usage_statistics(self):  #ALERT: Calls other relation
         """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation. For simplicity, the current code of practice is used.
@@ -396,28 +413,30 @@ class FiscalYears(db.Model):
         """
         self._log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
-        AUCT_objects_to_collect_df = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    annualUsageCollectionTracking.usage_is_being_collected,
-                    annualUsageCollectionTracking.manual_collection_required,
-                    annualUsageCollectionTracking.collection_via_email,
-                    annualUsageCollectionTracking.is_COUNTER_compliant,
-                    annualUsageCollectionTracking.collection_status,
-                    annualUsageCollectionTracking.usage_file_path,
-                    annualUsageCollectionTracking.notes
-                FROM annualUsageCollectionTracking
-                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.manual_collection_required=false;
-            """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
-            engine=db.engine,
-        )
-        if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            AUCT_objects_to_collect_df = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        annualUsageCollectionTracking.usage_is_being_collected,
+                        annualUsageCollectionTracking.manual_collection_required,
+                        annualUsageCollectionTracking.collection_via_email,
+                        annualUsageCollectionTracking.is_COUNTER_compliant,
+                        annualUsageCollectionTracking.collection_status,
+                        annualUsageCollectionTracking.usage_file_path,
+                        annualUsageCollectionTracking.notes
+                    FROM annualUsageCollectionTracking
+                        JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.manual_collection_required=false;
+                """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Returns data to flash
             message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
             return {'create AUCT object': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
@@ -440,11 +459,13 @@ class FiscalYears(db.Model):
         sections_of_UPDATE_statement = []
         return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
-            statistics_source_df = query_database(
-                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
-                engine=db.engine,
-            )
-            if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
+            try:
+                statistics_source_df = query_database(
+                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                #ToDo: Not raising error
                 return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
                 continue
             statistics_source = StatisticsSources(
@@ -559,7 +580,7 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_statisticsSources_records(self):
+    def get_statisticsSources_records(self):  #ALERT: Calls other relation
         """Shows the records for all the statistics sources associated with the vendor.
 
         Returns:
@@ -567,20 +588,21 @@ class Vendors(db.Model):
             str: an error message if the request for the data fails
         """
         self._log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
-        # vendor_PK = the int value that serves as the primary key for the vendor
-        # df = query_database(
-        #     query=f"""
-        #         SELECT
-        #             statistics_source_ID,
-        #             statistics_source_name,
-        #             statistics_source_retrieval_code
-        #         FROM statisticsSources
-        #         WHERE vendor_ID={vendor_PK};
-        #     """,
-        #     engine=db.engine,
-        #     index='statistics_source_ID',
-        # )
-        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        # try:
+        #     df = query_database(
+        #         query=f"""
+        #             SELECT
+        #                 statistics_source_ID,
+        #                 statistics_source_name,
+        #                 statistics_source_retrieval_code
+        #             FROM statisticsSources
+        #             WHERE vendor_ID={self.vendor_ID};
+        #         """,
+        #         engine=db.engine,
+        #         index='statistics_source_ID',
+        #     )
+        # except DatabaseInteractionError as error:
+        #     #ToDo: Simple query
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -590,7 +612,7 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_resourceSources_records(self):
+    def get_resourceSources_records(self):  #ALERT: Calls other relation
         """Shows the records for all the resource sources associated with the vendor.
 
         Returns:
@@ -598,21 +620,22 @@ class Vendors(db.Model):
             str: an error message if the request for the data fails
         """
         self._log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
-        # vendor_PK = the int value that serves as the primary key for the vendor
-        # df = query_database(
-        #     query=f"""
-        #         SELECT
-        #             resource_source_ID,
-        #             resource_source_name,
-        #             source_in_use,
-        #             access_stop_date
-        #         FROM resourceSources
-        #         WHERE vendor_ID={vendor_PK};
-        #     """,
-        #     engine=db.engine,
-        #     index='resource_source_ID',
-        # )
-        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
+        # try:
+        #     df = query_database(
+        #         query=f"""
+        #             SELECT
+        #                 resource_source_ID,
+        #                 resource_source_name,
+        #                 source_in_use,
+        #                 access_stop_date
+        #             FROM resourceSources
+        #             WHERE vendor_ID={self.vendor_ID};
+        #         """,
+        #         engine=db.engine,
+        #         index='resource_source_ID',
+        #     )
+        # except DatabaseInteractionError as error:
+        #     #ToDo: Simple query
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     self._log.warning(message)
         #     return message
@@ -1109,7 +1132,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _check_if_data_in_database(self, report, start_date, end_date):
+    def _check_if_data_in_database(self, report, start_date, end_date):  #ALERT: Calls COUNTER relation
         """Checks if any usage report for the given date and statistics source combination is already in the database.
 
         Args:
@@ -1127,11 +1150,13 @@ class StatisticsSources(db.Model):
         months_to_harvest = []
         
         for month_being_checked in months_in_date_range:
-            number_of_records = query_database(
-                query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
-                engine=db.engine,
-            )
-            if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
+            try:
+                number_of_records = query_database(
+                    query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                #ToDo: Simple query
                 return database_query_fail_statement(number_of_records, "return requested value")
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
@@ -1327,7 +1352,7 @@ class ResourceSources(db.Model):
 
 
     @hybrid_method
-    def change_StatisticsSource(self, statistics_source_PK):
+    def change_StatisticsSource(self, statistics_source_PK):  #ALERT: Calls other relation
         """Change the current statistics source for the resource source.
 
         This method changes the `True` value in the `StatisticsResourceSources` record for the given resource source to `False`, then adds a new record creating a connection between the given statistics source and resource source.
@@ -1353,11 +1378,13 @@ class ResourceSources(db.Model):
             self._log.warning(message)
             return message
         
-        check_for_existing_record = query_database(
-            query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
-            engine=db.engine,
-        )
-        if isinstance(check_for_existing_record, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            check_for_existing_record = query_database(
+                query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Simple query
             message = database_query_fail_statement(check_for_existing_record, "return requested record")
             self._log.warning(message)
             return message
@@ -1557,7 +1584,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):
+    def collect_annual_usage_statistics(self, bucket_path=PRODUCTION_COUNTER_FILE_PATH):  #ALERT: Calls other relation
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -1574,11 +1601,13 @@ class AnnualUsageCollectionTracking(db.Model):
         self._log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
         #Subsection: Get Data from `fiscalYears`
-        fiscal_year_data = query_database(
-            query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
-            engine=db.engine,
-        )
-        if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            fiscal_year_data = query_database(
+                query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Returns data to flash
             message = database_query_fail_statement(fiscal_year_data, "return requested values")
             self._log.warning(message)
             return {'STOP': [message]}
@@ -1589,11 +1618,13 @@ class AnnualUsageCollectionTracking(db.Model):
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
-        statistics_source_data = query_database(
-            query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
+        try:
+            statistics_source_data = query_database(
+                query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            #ToDo: Returns data to flash
             message = database_query_fail_statement(statistics_source_data, "return requested values")
             self._log.warning(message)
             return {'STOP': [message]}
