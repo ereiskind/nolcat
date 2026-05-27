@@ -491,8 +491,7 @@ def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicat
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(number_of_records))
+        pytest.skip(f"Unable to run test--{error}")
     if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     with client:

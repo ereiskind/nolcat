@@ -545,8 +545,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file): 
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")  #ToDo: This often happens when 'test_AnnualUsageCollectionTracking.py' is run after 'test_bp_ingest_usage.py'--find out why
     record = record.sample().reset_index()
@@ -594,8 +593,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):  #ALERT: Calls other r
             # Conversion to class object easier when primary keys stay as standard fields
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -745,8 +743,7 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):  #ALER
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})

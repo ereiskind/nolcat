@@ -42,8 +42,7 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):  #ALERT:
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(db_select_field_options))
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"

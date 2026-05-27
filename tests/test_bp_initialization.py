@@ -422,8 +422,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
             index='fiscal_year_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
@@ -435,8 +434,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
             index=['fiscal_year_ID', 'question'],
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     annualStatistics_relation_data = change_single_field_dataframe_into_series(annualStatistics_relation_data)
     annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
 
@@ -447,8 +445,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
             index='vendor_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(vendors_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
     try:
@@ -458,8 +455,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
             index='vendor_notes_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
@@ -528,8 +524,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
             index='statistics_source_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
 
     try:
@@ -539,8 +534,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
             index='statistics_source_notes_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
@@ -551,8 +545,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
             index='resource_source_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(resourceSources_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
 
@@ -563,8 +556,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
             index='resource_source_notes_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
@@ -575,8 +567,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
             index=['SRS_statistics_source', 'SRS_resource_source'],
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
@@ -664,8 +655,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
             index=["AUCT_statistics_source", "AUCT_fiscal_year"],
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
     try:
@@ -675,8 +665,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
             index="COUNTER_data_ID",
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+        pytest.skip(f"Unable to run test--{error}")
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
     COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
@@ -744,8 +733,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):  #
             engine=db.engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -839,8 +827,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
             engine=db.engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = {f"usage_files-{i}-usage_file": AUCT_options for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields)}
     log.debug(f"Uploads possible for the following fields:\n{format_list_for_stdout(list_of_AUCT_submission_fields)}")
@@ -893,8 +880,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            #ToDo: `pytest.skip`
-            pytest.skip(database_function_skip_statements(df))
+            pytest.skip(f"Unable to run test--{error}")
         collection_status_and_file_path.append((
             df.at[0,'collection_status'],
             df.at[0,'usage_file_path'],

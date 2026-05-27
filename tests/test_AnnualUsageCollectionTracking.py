@@ -33,8 +33,7 @@ def AUCT_fixture_for_SUSHI(engine):  #ALERT: Calls other relation
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -104,8 +103,7 @@ def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_update_check))
+        pytest.skip(f"Unable to run test--{error}")
     database_update_check = extract_value_from_single_value_df(database_update_check, False)
     assert database_update_check == "Collection complete"
 
@@ -173,8 +171,7 @@ def test_upload_nonstandard_usage_file(engine, client, tmp_path, sample_FileStor
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(usage_file_path_in_database))
+        pytest.skip(f"Unable to run test--{error}")
     usage_file_path_in_database = extract_value_from_single_value_df(usage_file_path_in_database)
     log.debug(return_value_from_query_statement(usage_file_path_in_database))
     assert file_name == usage_file_path_in_database

@@ -97,8 +97,7 @@ def StatisticsSource_instance_name(engine, caplog):  #ALERT: Calls other relatio
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     yield extract_value_from_single_value_df(df, False)
 
 

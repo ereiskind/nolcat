@@ -33,8 +33,7 @@ def FY2020_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
             # Conversion to class object easier when primary keys stay as standard fields
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -202,7 +201,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
         index_field_name='fiscal_year_ID',
     )
     if not load_data_into_database_success_regex().fullmatch(method_result):
-        pytest.skip(database_function_skip_statements(method_result, False))
+        pytest.skip(f"Unable to create fixture--{method_result}")
     yield None
 
 
@@ -232,8 +231,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
             index=["AUCT_statistics_source", "AUCT_fiscal_year"],
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(retrieved_data))
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
@@ -380,8 +378,7 @@ def FY2022_FiscalYears_object(engine, caplog):  #ALERT: Calls other relation
             # Conversion to class object easier when primary keys stay as standard fields
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],

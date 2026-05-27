@@ -309,7 +309,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index_field_name='statistics_source_ID',
     )
     if not load_data_into_database_success_regex().fullmatch(check):
-        pytest.skip(database_function_skip_statements(check))
+        pytest.skip(f"Unable to run test--{check}")
     try:
         retrieved_data = query_database(
             query="""
@@ -327,8 +327,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
             # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(retrieved_data))
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
@@ -406,8 +405,7 @@ def test_update_database(engine, client):  #ALERT: Calls other relation
             index='vendor_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
         data=[
@@ -448,8 +446,7 @@ def test_update_database_with_insert_statement(engine, client):  #ALERT: Calls o
             index='vendor_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
         data=[

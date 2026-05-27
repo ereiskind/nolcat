@@ -77,8 +77,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
             index='COUNTER_data_ID',
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
 
@@ -130,16 +129,14 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(check_relation_size))
+        pytest.skip(f"Unable to run test--{error}")
     try:
         df = query_database(
             query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns='COUNTER_data_ID')
     insert_statement_data = pd.DataFrame(
@@ -235,8 +232,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):  #ALE
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = list(df.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"
@@ -266,8 +262,7 @@ def select_statistics_source_ID(engine, caplog):  #ALERT: Calls other relation
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to create fixture--{error}")
     yield choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
 
 
@@ -400,8 +395,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):  #A
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = create_AUCT_SelectField_options(df)
 
     assert page.status == "200 OK"

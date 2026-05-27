@@ -143,8 +143,7 @@ def test_use_predefined_SQL_query(request, engine, client, header_value, COUNTER
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_df))
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -171,8 +170,7 @@ def start_query_wizard_form_data(engine, caplog):  #ALERT: Calls COUNTER relatio
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(df))
+        pytest.skip(f"Unable to create fixture--{error}")
     df = df.sample().reset_index()
     yield {
         'begin_date': df.at[0,'usage_date'],
@@ -333,8 +331,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_df))
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -482,8 +479,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_df))
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -860,8 +856,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_df))
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1193,8 +1188,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(database_df))
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1251,8 +1245,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):  #A
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pytest.skip(database_function_skip_statements(db_select_field_options))
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"
