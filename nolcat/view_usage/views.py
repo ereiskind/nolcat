@@ -336,7 +336,9 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
-            flash(f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which would have resulted in an error when querying the database. Please correct the dates and try again.")
+            message = f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which would have resulted in an error when querying the database. Please correct the dates and try again."
+            log.debug(message)
+            flash(message)
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
             flash_statement = "The usage data being requested includes COUNTER Release 4 data for all usage"
@@ -344,6 +346,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
                 flash_statement = flash_statement + "."
             else:
                 flash_statement = flash_statement + " before 2019-07-01."
+            log.debug(flash_statement)
             flash(flash_statement)
         logging.debug(f"The query date range is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
         
