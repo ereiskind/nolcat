@@ -29,7 +29,7 @@ def view_lists_homepage(list):  #ALERT: Calls other relation
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
-        log.error(f"The route function didn't understand the argument `{list}`.")  ##Flask_error_statement()
+        log.error(f"The route function didn't understand the argument `{list}`.")
         return abort(404)
     
     # try:
