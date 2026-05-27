@@ -461,8 +461,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        #ToDo: `pytest.skip`
-        pass
+        pytest.skip(f"Unable to run test--{error}")
     assert df.at[0,'collection_status'] == 'Collection complete'
     assert df.at[0,'usage_file_path'] == file_name
 
