@@ -102,7 +102,6 @@ digraph function_call_chains {
     collect_fiscal_year_usage_statistics -> format_list_for_stdout
     collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
     collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
-    collect_fiscal_year_usage_statistics -> update_database_success_regex
     collect_fiscal_year_usage_statistics -> remove_IDE_spacing_from_statement
 
 
@@ -221,16 +220,13 @@ digraph function_call_chains {
     }
     add_access_stop_date -> update_database
     add_access_stop_date -> database_update_fail_statement
-    add_access_stop_date -> update_database_success_regex
     remove_access_stop_date -> update_database
     remove_access_stop_date -> database_update_fail_statement
-    remove_access_stop_date -> update_database_success_regex
     change_StatisticsSource -> state_data_types_in_statisticsResourceSources
     change_StatisticsSource -> load_data_into_database
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
     change_StatisticsSource -> database_update_fail_statement
-    change_StatisticsSource -> update_database_success_regex
 
 
     subgraph cluster_resourceSourceNotes {
@@ -278,13 +274,11 @@ digraph function_call_chains {
     collect_annual_usage_statistics -> update_database
     collect_annual_usage_statistics -> initialize_relation_class_object_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
-    collect_annual_usage_statistics -> update_database_success_regex
     collect_annual_usage_statistics -> remove_IDE_spacing_from_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     upload_nonstandard_usage_file -> update_database
     upload_nonstandard_usage_file -> file_extensions_and_mimetypes
-    upload_nonstandard_usage_file -> update_database_success_regex
 
 
     subgraph cluster_COUNTERData {
@@ -383,7 +377,6 @@ digraph function_call_chains {
     upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     upload_COUNTER_data -> Flask_error_statement
     upload_COUNTER_data -> database_update_fail_statement
-    upload_COUNTER_data -> update_database_success_regex
     harvest_SUSHI_statistics -> collect_usage_statistics
     harvest_SUSHI_statistics -> ingest_usage_homepage
     harvest_SUSHI_statistics -> query_database
@@ -439,7 +432,6 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
     collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
     collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
-    collect_AUCT_and_historical_COUNTER_data -> update_database_success_regex
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
     upload_historical_non_COUNTER_usage -> data_load_complete
     upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
@@ -599,7 +591,6 @@ digraph function_call_chains {
         return_dataframe_from_query_statement [shape="box"]
         database_update_fail_statement [shape="box"]
         load_data_into_database_success_regex [shape="box"]
-        update_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
         create_AUCT_SelectField_options [shape="box"]
@@ -1455,7 +1446,6 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> query_database
     test_collect_annual_usage_statistics -> extract_value_from_single_value_df
     test_collect_annual_usage_statistics -> load_data_into_database_success_regex
-    test_collect_annual_usage_statistics -> update_database_success_regex
     test_collect_annual_usage_statistics -> engine
     test_collect_annual_usage_statistics -> client
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
@@ -2160,7 +2150,6 @@ digraph function_call_chains {
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
     test_collect_fiscal_year_usage_statistics -> update_database
-    test_collect_fiscal_year_usage_statistics -> update_database_success_regex
     test_collect_fiscal_year_usage_statistics -> engine
     test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
     test_collect_fiscal_year_usage_statistics -> list_files_in_bucket_location

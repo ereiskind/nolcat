@@ -477,11 +477,12 @@ class FiscalYears(db.Model):
             SET collection_status='Collection complete'
             WHERE {" OR ".join(sections_of_UPDATE_statement)};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
             message = f"While the SUSHI data was successfully uploaded to S3, the `annualUsageCollectionTracking` wasn't updated, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
             return_statements['update_database()'] = message
@@ -1302,14 +1303,15 @@ class ResourceSources(db.Model):
                 source_in_use=false
             WHERE resource_source_ID={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
             message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+            self._log.error(message)
+            return message  #ALERT: `raise DatabaseInteractionError`
         return update_result
 
 
@@ -1328,14 +1330,15 @@ class ResourceSources(db.Model):
                 source_in_use=true
             WHERE resource_source_ID={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
             message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+            self._log.error(message)
+            return message  #ALERT: `raise DatabaseInteractionError`
         return update_result
 
 
@@ -1357,14 +1360,15 @@ class ResourceSources(db.Model):
             SET current_statistics_source=false
             WHERE SRS_resource_source={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
             message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+            self._log.error(message)
+            return message  #ALERT: `raise DatabaseInteractionError`
         
         try:
             check_for_existing_record = query_database(
@@ -1373,8 +1377,8 @@ class ResourceSources(db.Model):
             )
         except DatabaseInteractionError as error:
             message = f"Unable to return requested data--{error}"
-            self._log.warning(message)
-            return message
+            self._log.error(message)
+            return message  #ALERT: `raise DatabaseInteractionError`
         
         if check_for_existing_record.empty:
             self._log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1408,14 +1412,15 @@ class ResourceSources(db.Model):
                 SET current_statistics_source=true
                 WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
             """
-            update_result = update_database(
-                update_statement=update_statement,
-                engine=db.engine,
-            )
-            if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+            try:
+                update_result = update_database(
+                    update_statement=update_statement,
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
                 message = database_update_fail_statement(update_statement)
-                self._log.warning(message)
-                return message
+                self._log.error(message)
+                return message  #ALERT: `raise DatabaseInteractionError`
             return update_result
 
 
@@ -1635,13 +1640,14 @@ class AnnualUsageCollectionTracking(db.Model):
             SET collection_status='Collection complete'
             WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
         """
-        update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+        try:
+            update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
-            self._log.warning(message)
+            self._log.error(message)
             raise DatabaseInteractionErrorWithFlashMessages(message, [message, flash_message_dict])
         return flash_message_dict
 
@@ -1699,12 +1705,15 @@ class AnnualUsageCollectionTracking(db.Model):
                 collection_status='Collection complete'
             WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
         """
-        update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            raise DatabaseInteractionError(f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}")
+        try:
+            update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         self._log.info(f"Successfully updated `annualUsageCollectionTracking.usage_file_path` to {file_name} and `annualUsageCollectionTracking.collection_status` to 'Collection complete'.")
         return S3_file_name
     

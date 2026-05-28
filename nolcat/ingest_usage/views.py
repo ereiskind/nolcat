@@ -105,11 +105,12 @@ def upload_COUNTER_data():
                         insert_statements.append(COUNTERData_insert_statement)
             messages_to_flash = []
             for statement in insert_statements:
-                update_result = update_database(
-                    update_statement=statement,
-                    engine=db.engine,
-                )
-                if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+                try:
+                    update_result = update_database(
+                        update_statement=statement,
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
                     message = database_update_fail_statement(statement)
                     log.warning(message)
                     messages_to_flash.append(message)   

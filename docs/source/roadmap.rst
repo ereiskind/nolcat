@@ -9,31 +9,15 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
-  * Raise errors in `nolcat.nolcat_glue_job.update_database()`
-  * Remove `nolcat.nolcat_glue_job.update_database_success_regex()`
-    * add_access_stop_date
-    * change_StatisticsSource
-    * remove_access_stop_date
-    * upload_nonstandard_usage_file
-      * test_upload_nonstandard_usage_file
-      * upload_non_COUNTER_reports
-        * test_upload_non_COUNTER_reports
-      * upload_historical_non_COUNTER_usage
-        * files_for_test_upload_historical_non_COUNTER_usage
-        * test_upload_historical_non_COUNTER_usage
-      * upload_non_COUNTER_reports
-        * test_GET_request_for_upload_non_COUNTER_reports
-      * upload_historical_non_COUNTER_usage
-        * test_GET_request_for_upload_historical_non_COUNTER_usage
   * Raise errors in `nolcat.nolcat_glue_job.first_new_PK_value()`
     * test_first_new_PK_value
-    * upload_COUNTER_data (also `update_database`)
+    * upload_COUNTER_data
       * test_upload_COUNTER_data_via_SQL_insert
       * test_upload_COUNTER_data_via_Excel
-    * collect_AUCT_and_historical_COUNTER_data (also `update_database`)
+    * collect_AUCT_and_historical_COUNTER_data
       * test_collect_AUCT_and_historical_COUNTER_data
       * test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
-    * collect_fiscal_year_usage_statistics (also `update_database`)
+    * collect_fiscal_year_usage_statistics
       * test_collect_fiscal_year_usage_statistics
     * collect_sources_data (also `update_database`)
       * test_collect_sources_data
@@ -71,10 +55,11 @@ Move Code to Glue Jobs and Data to Parquet
             * test_GET_request_for_harvest_SUSHI_statistics
   * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
     * test_collect_fiscal_year_usage_statistics
-  * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`
-    * test_collect_annual_usage_statistics
   * `nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()`
     * test_create_usage_tracking_records_for_fiscal_year
+  * Raise errors in `nolcat.models.ResourceSources.add_access_stop_date()`
+  * Raise errors in `nolcat.models.ResourceSources.remove_access_stop_date()`
+  * Raise errors in `nolcat.models.ResourceSources.change_StatisticsSource()`
 
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
