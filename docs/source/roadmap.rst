@@ -9,16 +9,74 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
-  * `nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()`
+  * Raise errors in `nolcat.nolcat_glue_job.update_database()`
+  * Remove `nolcat.nolcat_glue_job.update_database_success_regex()`
+    * test_update_database
+    * test_update_database_with_insert_statement
+    * add_access_stop_date
+    * change_StatisticsSource
+    * remove_access_stop_date
+    * upload_nonstandard_usage_file
+      * test_upload_nonstandard_usage_file
+      * upload_non_COUNTER_reports
+        * test_upload_non_COUNTER_reports
+      * upload_historical_non_COUNTER_usage
+        * files_for_test_upload_historical_non_COUNTER_usage
+        * test_upload_historical_non_COUNTER_usage
+      * upload_non_COUNTER_reports
+        * test_GET_request_for_upload_non_COUNTER_reports
+      * upload_historical_non_COUNTER_usage
+        * test_GET_request_for_upload_historical_non_COUNTER_usage
+  * Raise errors in `nolcat.nolcat_glue_job.first_new_PK_value()`
+    * test_first_new_PK_value
+    * upload_COUNTER_data (also `update_database`)
+      * test_upload_COUNTER_data_via_SQL_insert
+      * test_upload_COUNTER_data_via_Excel
+    * collect_AUCT_and_historical_COUNTER_data (also `update_database`)
+      * test_collect_AUCT_and_historical_COUNTER_data
+      * test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
+    * collect_fiscal_year_usage_statistics (also `update_database`)
+      * test_collect_fiscal_year_usage_statistics
+    * collect_sources_data (also `update_database`)
+      * test_collect_sources_data
+    * collect_FY_and_vendor_data (also `update_database`)
+      * test_collect_FY_and_vendor_data
+      * test_GET_request_for_collect_FY_and_vendor_data
+  * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
+    * make_SUSHI_call
+      * test_status_call
+      * test_status_call_validity
+      * test_reports_call
+      * test_reports_call_validity
+      * list_of_reports
+      * test_PR_call_validity
+      * test_DR_call_validity
+      * test_TR_call_validity
+      * test_IR_call_validity
+      * fetch_SUSHI_information
+        * test_fetch_SUSHI_information_for_API
+        * SUSHI_credentials_fixture_in_test_StatisticsSources
+          * reports_offered_by_StatisticsSource_fixture
+      * _harvest_single_report
+        * data_for_testing_harvest_single_report
+        * test_harvest_single_report
+        * test_harvest_single_report_with_partial_date_range
+      * _harvest_R5_SUSHI
+        * test_harvest_R5_SUSHI
+        * test_check_if_data_in_database_no
+        * test_check_if_data_in_database_yes
+        * test_harvest_R5_SUSHI_with_invalid_dates
+        * test_harvest_R5_SUSHI_with_report_to_harvest
+        * collect_usage_statistics
+          * harvest_SUSHI_statistics
+            * test_harvest_SUSHI_statistics
+            * test_GET_request_for_harvest_SUSHI_statistics
   * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
-  * `nolcat.models.Vendors.get_statisticsSources_records()`
-  * `nolcat.models.Vendors.get_resourceSources_records()`
-  * `nolcat.models.ResourceSources.change_StatisticsSource()`
+    * test_collect_fiscal_year_usage_statistics
   * `nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()`
-  * `nolcat.nolcat_glue_job.first_new_PK_value()`
-  * `nolcat.nolcat_glue_job.update_database()`
-  * `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-  * `nolcat.SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`
+    * test_collect_annual_usage_statistics
+  * `nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()`
+    * test_create_usage_tracking_records_for_fiscal_year
 
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
