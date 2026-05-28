@@ -11,8 +11,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Raise errors in `nolcat.nolcat_glue_job.update_database()`
   * Remove `nolcat.nolcat_glue_job.update_database_success_regex()`
-    * test_update_database
-    * test_update_database_with_insert_statement
     * add_access_stop_date
     * change_StatisticsSource
     * remove_access_stop_date

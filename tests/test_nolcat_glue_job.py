@@ -393,9 +393,10 @@ def test_update_database(engine, client):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
     """
+    update_statement = f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;"
     with client:
         update_result = update_database(
-            update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
+            update_statement,
             engine=engine,
         )
     try:
@@ -422,7 +423,7 @@ def test_update_database(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
@@ -434,9 +435,10 @@ def test_update_database_with_insert_statement(engine, client):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
     """
+    update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
     with client:
         update_result = update_database(
-            update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
+            update_statement,
             engine=engine,
         )
     try:
@@ -465,7 +467,7 @@ def test_update_database_with_insert_statement(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 

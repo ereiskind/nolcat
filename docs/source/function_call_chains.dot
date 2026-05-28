@@ -1355,12 +1355,12 @@ digraph function_call_chains {
     test_update_database -> state_data_types_in_vendors
     test_update_database -> query_database
     test_update_database -> update_database
-    test_update_database -> update_database_success_regex
+    test_update_database -> truncate_longer_lines
     test_update_database -> engine
     test_update_database_with_insert_statement -> state_data_types_in_vendors
     test_update_database_with_insert_statement -> query_database
     test_update_database_with_insert_statement -> update_database
-    test_update_database_with_insert_statement -> update_database_success_regex
+    test_update_database_with_insert_statement -> truncate_longer_lines
     test_update_database_with_insert_statement -> engine
     dataframe_to_save_to_S3 -> unable_to_delete_test_file_in_S3_statement
     dataframe_to_save_to_S3 -> list_files_in_bucket_location

@@ -839,6 +839,9 @@ def update_database(update_statement, engine):
     
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
+    
+    Raises:
+        DatabaseInteractionError: if the SQL update statement fails
     """
     update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(update_statement)
@@ -884,11 +887,11 @@ def update_database(update_statement, engine):
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                raise DatabaseInteractionError(message)
     except Exception as error:
         message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
-        return message  #ALERT: `raises DatabaseInteractionError`
+        raise DatabaseInteractionError(message)
     
     if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
         try:
@@ -902,8 +905,8 @@ def update_database(update_statement, engine):
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
         try:
             after_df = query_database(
@@ -917,8 +920,8 @@ def update_database(update_statement, engine):
             log.debug(f"There are {after_number} records in the relation that was updated.")
             if before_number >= after_number:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     elif TRUNCATE_regex:
         try:
             df = query_database(
@@ -930,8 +933,8 @@ def update_database(update_statement, engine):
         else:
             if extract_value_from_single_value_df(df) > 0:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
