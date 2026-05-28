@@ -302,14 +302,15 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "vendor_name": Vendors.state_data_types()['vendor_name'],
     }
 
-    check = load_data_into_database(
-        df=statisticsSources_relation,
-        relation='statisticsSources',
-        engine=engine,
-        index_field_name='statistics_source_ID',
-    )
-    if not load_data_into_database_success_regex().fullmatch(check):
-        pytest.skip(f"Unable to run test--{check}")
+    try:
+        check = load_data_into_database(
+            df=statisticsSources_relation,
+            relation='statisticsSources',
+            engine=engine,
+            index_field_name='statistics_source_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     try:
         retrieved_data = query_database(
             query="""

@@ -194,14 +194,15 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
         None
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    method_result = load_data_into_database(
-        df=FY2023_FiscalYears_object_and_record[1],
-        relation='fiscalYears',
-        engine=engine,
-        index_field_name='fiscal_year_ID',
-    )
-    if not load_data_into_database_success_regex().fullmatch(method_result):
-        pytest.skip(f"Unable to create fixture--{method_result}")
+    try:
+        method_result = load_data_into_database(
+            df=FY2023_FiscalYears_object_and_record[1],
+            relation='fiscalYears',
+            engine=engine,
+            index_field_name='fiscal_year_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield None
 
 

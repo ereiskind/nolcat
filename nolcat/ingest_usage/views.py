@@ -82,12 +82,19 @@ def upload_COUNTER_data():
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
             log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
-            load_result = load_data_into_database(
-                df=df,
-                relation='COUNTERData',
-                engine=db.engine,
-                index_field_name='COUNTER_data_ID',
-            )
+            try:
+                load_result = load_data_into_database(
+                    df=df,
+                    relation='COUNTERData',
+                    engine=db.engine,
+                    index_field_name='COUNTER_data_ID',
+                )
+            except DatabaseInteractionError as error:
+                message = f"Unable to load data--{error}"
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             messages_to_flash.append(load_result)
             log.debug(message_to_flash)
             flash(messages_to_flash)

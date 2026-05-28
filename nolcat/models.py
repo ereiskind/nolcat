@@ -351,6 +351,9 @@ class FiscalYears(db.Model):
 
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
+        
+        Raises:
+            DatabaseInteractionError: if any SQL interaction fails
         """
         self._log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
@@ -384,12 +387,16 @@ class FiscalYears(db.Model):
         self._log.debug(f"And a summary of the dataframe the above records are in:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
-        load_result = load_data_into_database(
-            df=df,
-            relation='annualUsageCollectionTracking',
-            engine=db.engine,
-            index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        )
+        try:
+            load_result = load_data_into_database(
+                df=df,
+                relation='annualUsageCollectionTracking',
+                engine=db.engine,
+                index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
+            )
+        except DatabaseInteractionError as error:
+            self._log.error(error)
+            raise DatabaseInteractionError(error)
         return load_result
 
 
@@ -1354,6 +1361,9 @@ class ResourceSources(db.Model):
         
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if any SQL interaction fails
         """
         self._log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1399,11 +1409,15 @@ class ResourceSources(db.Model):
             )
             series = series.astype(StatisticsResourceSources.state_data_types())
 
-            load_result = load_data_into_database(
-                df=series,
-                relation='statisticsResourceSources',
-                engine=db.engine,
-            )
+            try:
+                load_result = load_data_into_database(
+                    df=series,
+                    relation='statisticsResourceSources',
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                self._log.error(error)
+                raise DatabaseInteractionError(error)
             return load_result
 
         else:

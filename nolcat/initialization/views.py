@@ -114,36 +114,40 @@ def collect_FY_and_vendor_data():
 
         #Section: Load Data into Database
         data_load_errors = []
-        fiscalYears_load_result = load_data_into_database(
-            df=fiscalYears_dataframe,
-            relation='fiscalYears',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(fiscalYears_load_result):
-            data_load_errors.append(fiscalYears_load_result)
-        annualStatistics_load_result = load_data_into_database(
-            df=annualStatistics_dataframe,
-            relation='annualStatistics',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(annualStatistics_load_result):
-            data_load_errors.append(annualStatistics_load_result)
-        vendors_load_result = load_data_into_database(
-            df=vendors_dataframe,
-            relation='vendors',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(vendors_load_result):
-            data_load_errors.append(vendors_load_result)
+        try:
+            fiscalYears_load_result = load_data_into_database(
+                df=fiscalYears_dataframe,
+                relation='fiscalYears',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as fiscalYears_load_error:
+            data_load_errors.append(fiscalYears_load_error)
+        try:
+            annualStatistics_load_result = load_data_into_database(
+                df=annualStatistics_dataframe,
+                relation='annualStatistics',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as annualStatistics_load_error:
+            data_load_errors.append(annualStatistics_load_error)
+        try:
+            vendors_load_result = load_data_into_database(
+                df=vendors_dataframe,
+                relation='vendors',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as vendors_load_error:
+            data_load_errors.append(vendors_load_error)
         vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
         vendorNotes_dataframe.index.name = 'vendor_notes_ID'
-        vendorNotes_load_result = load_data_into_database(
-            df=vendorNotes_dataframe,
-            relation='vendorNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
-            data_load_errors.append(vendorNotes_load_result)
+        try:
+            vendorNotes_load_result = load_data_into_database(
+                df=vendorNotes_dataframe,
+                relation='vendorNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as vendorNotes_load_error:
+            data_load_errors.append(vendorNotes_load_error)
         if data_load_errors:
             log.debug(data_load_errors)
             flash(data_load_errors)
@@ -266,45 +270,50 @@ def collect_sources_data():
 
         #Section: Load Data into Database
         data_load_errors = []
-        statisticsSources_load_result = load_data_into_database(
-            df=statisticsSources_dataframe,
-            relation='statisticsSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsSources_load_result):
-            data_load_errors.append(statisticsSources_load_result)
+        try:
+            statisticsSources_load_result = load_data_into_database(
+                df=statisticsSources_dataframe,
+                relation='statisticsSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsSources_load_error:
+            data_load_errors.append(statisticsSources_load_error)
         statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
         statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
-        statisticsSourceNotes_load_result = load_data_into_database(
-            df=statisticsSourceNotes_dataframe,
-            relation='statisticsSourceNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsSourceNotes_load_result):
-            data_load_errors.append(statisticsSourceNotes_load_result)
-        resourceSources_load_result = load_data_into_database(
-            df=resourceSources_dataframe,
-            relation='resourceSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(resourceSources_load_result):
-            data_load_errors.append(resourceSources_load_result)
+        try:
+            statisticsSourceNotes_load_result = load_data_into_database(
+                df=statisticsSourceNotes_dataframe,
+                relation='statisticsSourceNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsSourceNotes_load_error:
+            data_load_errors.append(statisticsSourceNotes_load_error)
+        try:
+            resourceSources_load_result = load_data_into_database(
+                df=resourceSources_dataframe,
+                relation='resourceSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as resourceSources_load_error:
+            data_load_errors.append(resourceSources_load_error)
         resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
         resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
-        resourceSourceNotes_load_result = load_data_into_database(
-            df= resourceSourceNotes_dataframe,
-            relation='resourceSourceNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(resourceSourceNotes_load_result):
-            data_load_errors.append(resourceSourceNotes_load_result)
-        statisticsResourceSources_load_result = load_data_into_database(
-            df=statisticsResourceSources_dataframe,
-            relation='statisticsResourceSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsResourceSources_load_result):
-            data_load_errors.append(statisticsResourceSources_load_result)
+        try:
+            resourceSourceNotes_load_result = load_data_into_database(
+                df= resourceSourceNotes_dataframe,
+                relation='resourceSourceNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as resourceSourceNotes_load_error:
+            data_load_errors.append(resourceSourceNotes_load_error)
+        try:
+            statisticsResourceSources_load_result = load_data_into_database(
+                df=statisticsResourceSources_dataframe,
+                relation='statisticsResourceSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsResourceSources_load_error:
+            data_load_errors.append(statisticsResourceSources_load_error)
         if data_load_errors:
             log.debug(data_load_errors)
             flash(data_load_errors)
@@ -462,26 +471,28 @@ def collect_AUCT_and_historical_COUNTER_data():
             log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
 
         #Subsection: Load Data into Database
-        annualUsageCollectionTracking_load_result = load_data_into_database(
-            df=AUCT_dataframe,
-            relation='annualUsageCollectionTracking',
-            engine=db.engine,
-            index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-        )
-        if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
-            messages_to_flash.append(annualUsageCollectionTracking_load_result)
+        try:
+            annualUsageCollectionTracking_load_result = load_data_into_database(
+                df=AUCT_dataframe,
+                relation='annualUsageCollectionTracking',
+                engine=db.engine,
+                index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+            )
+        except DatabaseInteractionError as annualUsageCollectionTracking_load_error:
+            messages_to_flash.append(annualUsageCollectionTracking_load_error)
             log.debug(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         if COUNTER_reports_df is not None:  # `is not None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
-            COUNTERData_load_result = load_data_into_database(
-                df=COUNTER_reports_df,
-                relation='COUNTERData',
-                engine=db.engine,
-                index_field_name='COUNTER_data_ID',
-            )
-            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-                messages_to_flash.append(COUNTERData_load_result)
+            try:
+                COUNTERData_load_result = load_data_into_database(
+                    df=COUNTER_reports_df,
+                    relation='COUNTERData',
+                    engine=db.engine,
+                    index_field_name='COUNTER_data_ID',
+                )
+            except DatabaseInteractionError as COUNTERData_load_error:
+                messages_to_flash.append(COUNTERData_load_error)
         if messages_to_flash:
             log.debug(messages_to_flash)
             flash(messages_to_flash)
