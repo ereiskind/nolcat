@@ -111,7 +111,7 @@ def upload_COUNTER_data():
                         engine=db.engine,
                     )
                 except DatabaseInteractionError as error:
-                    message = database_update_fail_statement(statement)
+                    message = f"Updating the {statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(statement)}"
                     log.warning(message)
                     messages_to_flash.append(message)   
             

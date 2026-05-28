@@ -1309,7 +1309,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = database_update_fail_statement(update_statement)
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             return message  #ALERT: `raise DatabaseInteractionError`
         return update_result
@@ -1336,7 +1336,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = database_update_fail_statement(update_statement)
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             return message  #ALERT: `raise DatabaseInteractionError`
         return update_result
@@ -1366,7 +1366,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = database_update_fail_statement(update_statement)
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             return message  #ALERT: `raise DatabaseInteractionError`
         
@@ -1418,7 +1418,7 @@ class ResourceSources(db.Model):
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                message = database_update_fail_statement(update_statement)
+                message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
                 self._log.error(message)
                 return message  #ALERT: `raise DatabaseInteractionError`
             return update_result

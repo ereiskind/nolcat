@@ -497,22 +497,6 @@ def return_dataframe_from_query_statement(query_subject, df):
         return f"The result of the query for {query_subject}:\n{df}"
 
 
-def database_update_fail_statement(update_statement):
-    """This statement indicates the failure of a call to `nolcat.app.update_database()`.
-
-    The repetition of the statement in both a print statement and as the return value ensures the SQL UPDATE statement isn't truncated, which would happen if the statement only went to stdout via log statements. 
-
-    Args:
-        update_statement (str): the SQL update statement
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
-    print(message)
-    return message
-
-
 #SUBSECTION: Result Statement Regexes
 def load_data_into_database_success_regex():
     """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.

@@ -219,14 +219,11 @@ digraph function_call_chains {
         ]
     }
     add_access_stop_date -> update_database
-    add_access_stop_date -> database_update_fail_statement
     remove_access_stop_date -> update_database
-    remove_access_stop_date -> database_update_fail_statement
     change_StatisticsSource -> state_data_types_in_statisticsResourceSources
     change_StatisticsSource -> load_data_into_database
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
-    change_StatisticsSource -> database_update_fail_statement
 
 
     subgraph cluster_resourceSourceNotes {
@@ -376,7 +373,6 @@ digraph function_call_chains {
     upload_COUNTER_data -> format_list_for_stdout
     upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     upload_COUNTER_data -> Flask_error_statement
-    upload_COUNTER_data -> database_update_fail_statement
     harvest_SUSHI_statistics -> collect_usage_statistics
     harvest_SUSHI_statistics -> ingest_usage_homepage
     harvest_SUSHI_statistics -> query_database
@@ -589,7 +585,6 @@ digraph function_call_chains {
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
-        database_update_fail_statement [shape="box"]
         load_data_into_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
@@ -675,7 +670,6 @@ digraph function_call_chains {
     }
     filter_empty_parentheses -> remove_IDE_spacing_from_statement
     list_folder_contents_statement -> format_list_for_stdout
-    database_update_fail_statement -> remove_IDE_spacing_from_statement
     create_AUCT_SelectField_options -> change_single_field_dataframe_into_series
     query_database -> remove_IDE_spacing_from_statement
     first_new_PK_value -> query_database
