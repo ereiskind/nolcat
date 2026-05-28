@@ -229,7 +229,6 @@ class SUSHICallAndResponse:
         
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
-            str: error message to indicate to `StatisticsSources._harvest_single_report()` that the API call failed
         
         Raises:
             InvalidAPIResponseError: if the GET request(s) raise error(s)

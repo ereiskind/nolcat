@@ -754,7 +754,7 @@ def update_database(update_statement, engine):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
     
     Returns:
-        str: a message indicating success or including the error raised by the attempt to update the data
+        str: a message indicating success
     
     Raises:
         DatabaseInteractionError: if the SQL update statement fails
