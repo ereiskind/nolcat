@@ -111,7 +111,7 @@ Move Code to Glue Jobs and Data to Parquet
   * Delete class
   * Update function call chain diagram to reflect above change
 
-* Delete any statement functions no longer in use
+* Delete unneeded statement functions, using function contents in call locations (`nolcat.nolcat_glue_job.Flask_error_statement()`, `nolcat.nolcat_glue_job.list_folder_contents_statement()`, `nolcat.nolcat_glue_job.check_if_file_exists_statement()`, `nolcat.nolcat_glue_job.return_value_from_query_statement()`, `nolcat.nolcat_glue_job.initialize_relation_class_object_statement()`, `nolcat.nolcat_glue_job.return_dataframe_from_query_statement()`)
 * Change functions querying only the `nolcat.models.COUNTERData` relation to querying the parquet files in S3 with Athena
 
   * Functions with queries getting data from the `nolcat.models.COUNTERData` relation

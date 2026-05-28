@@ -312,7 +312,6 @@ digraph function_call_chains {
     make_SUSHI_call -> format_list_for_stdout
     make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
     _convert_Response_to_JSON -> _stdout_API_response_based_on_size
-    _convert_Response_to_JSON -> failed_SUSHI_call_statement
     _save_raw_Response_text -> query_database
     _save_raw_Response_text -> save_unconverted_data_via_upload
     _save_raw_Response_text -> extract_value_from_single_value_df
@@ -575,9 +574,6 @@ digraph function_call_chains {
         remove_IDE_spacing_from_statement [shape="box"]
         truncate_longer_lines [shape="box"]
         format_ISSN [shape="box"]
-        harvest_R5_SUSHI_success_statement [shape="box"]
-        failed_SUSHI_call_statement [shape="box"]
-        skip_test_due_to_SUSHI_error_regex [shape="box"]
         Flask_error_statement [shape="box"]
         list_folder_contents_statement [shape="box"]
         check_if_file_exists_statement [shape="box"]
