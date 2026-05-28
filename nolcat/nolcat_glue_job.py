@@ -537,7 +537,10 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
         index_field_name (str or list of str): the name of the field(s) in the relation that the dataframe index values should be loaded into; default is `None`, same as in the wrapped method, which means the index field name(s) are matched to field(s) in the relation
 
     Returns:
-        str: a message indicating success or including the error raised by the attempt to load the data
+        str: a message indicating success
+    
+    Raises:
+        DatabaseInteractionError: if the SQL update fails
     """
     log.info(f"Starting `load_data_into_database()` for relation {relation}.")
     try:
@@ -548,13 +551,13 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             chunksize=1000,
             index_label=index_field_name,
         )
-        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
-        log.info(message)
-        return message
     except Exception as error:
         message = f"Loading data into the {relation} relation raised the error {error}."
         log.error(message)
-        return message
+        raise DatabaseInteractionError(message)
+    message = f"Successfully loaded {number_of_records} records into the {relation} relation."
+    log.info(message)
+    return message
 
 
 def query_database(query, engine, index=None):
