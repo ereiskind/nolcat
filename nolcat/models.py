@@ -1025,6 +1025,7 @@ class StatisticsSources(db.Model):
         Raises:
             NoSUSHIUsageDataError: if no SUSHI usage data is returned
             InvalidSUSHIResponseError: if the SUSHI call returns an error
+            S3InteractionErrorWithFlashMessages: if a problem occurs while saving the SUSHI call response to S3
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)

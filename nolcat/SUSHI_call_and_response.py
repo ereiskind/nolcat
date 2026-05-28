@@ -72,6 +72,7 @@ class SUSHICallAndResponse:
             tuple: the API call response (dict); a list of the statements that should be flashed (list of str)
         
         Raises:
+            InvalidAPIResponseError: if the GET request(s) raise error(s)
             NoSUSHIDataError: if the call returns no content
             DatabaseInteractionErrorWithFlashMessages: if the SQL query while saving the raw response fails
             S3InteractionErrorWithFlashMessages: if a problem occurs while saving the raw response to S3
@@ -229,6 +230,9 @@ class SUSHICallAndResponse:
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
             str: error message to indicate to `StatisticsSources._harvest_single_report()` that the API call failed
+        
+        Raises:
+            InvalidAPIResponseError: if the GET request(s) raise error(s)
         """
         log.info(f"Starting `_make_API_call()` by calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path

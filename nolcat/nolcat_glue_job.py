@@ -1129,6 +1129,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     
     Raises:
         InvalidAPIResponseError: if the JSON doesn't contain a valid URL
+        json.JSONDecodeError: if the API return value cannot be converted into a Python dict
     """
     log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
     #Section: Retrieve Data from COUNTER Registry
@@ -2430,11 +2431,14 @@ class ConvertJSONDictToParquet:
 
         Returns:
             str: the date or timestamp in ISO format
+        
+        Raises:
+            TypeError: if the data type is non-serializable
         """
         if isinstance(dates,(date, datetime)):
             return dates.isoformat()
         else:
-            raise TypeError  # So any unexpected non-serializable data types raise a type error
+            raise TypeError
     
 
     @staticmethod
