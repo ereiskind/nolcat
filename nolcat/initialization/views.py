@@ -379,11 +379,12 @@ def collect_AUCT_and_historical_COUNTER_data():
                 message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
                 log.error(message)
                 for relation in ['statisticsSources', 'statisticsSourceNotes', 'resourceSources', 'resourceSourceNotes', 'statisticsResourceSources']:
-                    update_result = update_database(
-                        update_statement=f"Truncate {relation};",
-                        engine=db.engine,
-                    )
-                    if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
+                    try:
+                        update_result = update_database(
+                            update_statement=f"TRUNCATE {relation};",
+                            engine=db.engine,
+                        )
+                    except DatabaseInteractionError as error:
                         message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
                         log.critical(message)
                         flash(message)
