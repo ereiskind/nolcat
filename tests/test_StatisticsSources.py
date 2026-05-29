@@ -127,10 +127,12 @@ def reports_offered_by_StatisticsSource_fixture(client, StatisticsSources_fixtur
                 "reports",
                 {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"Unable to create fixture--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to create fixture--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to create fixture--{error.message.message}")
     log.info(f"The call to reports for {StatisticsSources_fixture.statistics_source_name} was successful.")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
@@ -240,9 +242,9 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
@@ -287,9 +289,9 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
@@ -327,9 +329,9 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     after = datetime.now()
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
@@ -371,9 +373,9 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
             bucket_path=TEST_COUNTER_FILE_PATH,
         )
     except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(flash_message_dict, dict)
     assert 'status' in list(flash_message_dict.keys())
     assert report_being_called in list(flash_message_dict.keys())

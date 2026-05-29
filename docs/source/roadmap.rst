@@ -11,15 +11,6 @@ Move Code to Glue Jobs and Data to Parquet
 
   * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
     * make_SUSHI_call
-      * test_status_call
-      * test_status_call_validity
-      * test_reports_call
-      * test_reports_call_validity
-      * list_of_reports
-      * test_PR_call_validity
-      * test_DR_call_validity
-      * test_TR_call_validity
-      * test_IR_call_validity
       * fetch_SUSHI_information
         * test_fetch_SUSHI_information_for_API
         * SUSHI_credentials_fixture_in_test_StatisticsSources
