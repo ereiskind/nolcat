@@ -281,7 +281,7 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
+    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), result)
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 8
     assert regex_match_object.group(2) == "vendors"

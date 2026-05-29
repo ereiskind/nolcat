@@ -437,18 +437,6 @@ def return_dataframe_from_query_statement(query_subject, df):
         return f"The result of the query for {query_subject}:\n{df}"
 
 
-#SUBSECTION: Result Statement Regexes
-def load_data_into_database_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
-
-    The optional period at the end allows the regex to match when it's being used as the beginning of a statement.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
-    """
-    return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
-
-
 #SUBSECTION: Common Dataframe Adjustments
 def change_single_field_dataframe_into_series(df):
     """The function for changing a dataframe with a single field into a series.

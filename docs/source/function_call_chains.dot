@@ -101,7 +101,6 @@ digraph function_call_chains {
     collect_fiscal_year_usage_statistics -> update_database
     collect_fiscal_year_usage_statistics -> format_list_for_stdout
     collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
-    collect_fiscal_year_usage_statistics -> load_data_into_database_success_regex
     collect_fiscal_year_usage_statistics -> remove_IDE_spacing_from_statement
 
 
@@ -403,7 +402,6 @@ digraph function_call_chains {
     collect_FY_and_vendor_data -> first_new_PK_value
     collect_FY_and_vendor_data -> load_data_into_database
     collect_FY_and_vendor_data -> Flask_error_statement
-    collect_FY_and_vendor_data -> load_data_into_database_success_regex
     collect_sources_data -> state_data_types_in_statisticsSources
     collect_sources_data -> state_data_types_in_statisticsSourceNotes
     collect_sources_data -> state_data_types_in_resourceSources
@@ -412,7 +410,6 @@ digraph function_call_chains {
     collect_sources_data -> first_new_PK_value
     collect_sources_data -> load_data_into_database
     collect_sources_data -> Flask_error_statement
-    collect_sources_data -> load_data_into_database_success_regex
     collect_AUCT_and_historical_COUNTER_data -> state_data_types_in_annualUsageCollectionTracking
     collect_AUCT_and_historical_COUNTER_data -> create_dataframe
     collect_AUCT_and_historical_COUNTER_data -> collect_FY_and_vendor_data
@@ -426,7 +423,6 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
     collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
-    collect_AUCT_and_historical_COUNTER_data -> load_data_into_database_success_regex
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
     upload_historical_non_COUNTER_usage -> data_load_complete
     upload_historical_non_COUNTER_usage -> create_AUCT_SelectField_options
@@ -581,7 +577,6 @@ digraph function_call_chains {
         initialize_relation_class_object_statement [shape="box"]
         unable_to_get_updated_primary_key_values_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
-        load_data_into_database_success_regex [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]
         create_AUCT_SelectField_options [shape="box"]
@@ -1318,14 +1313,12 @@ digraph function_call_chains {
     test_create_AUCT_SelectField_options -> create_AUCT_SelectField_options
     test_extract_value_from_single_value_df -> extract_value_from_single_value_df
     test_load_data_into_database -> load_data_into_database
-    test_load_data_into_database -> load_data_into_database_success_regex
     test_load_data_into_database -> engine
     test_load_data_into_database -> vendors_relation_in_conftest
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     test_loading_connected_data_into_other_relation -> load_data_into_database
     test_loading_connected_data_into_other_relation -> query_database
-    test_loading_connected_data_into_other_relation -> load_data_into_database_success_regex
     test_loading_connected_data_into_other_relation -> engine
     test_loading_connected_data_into_other_relation -> statisticsSources_relation_in_conftest
     test_query_database -> state_data_types_in_vendors
@@ -1435,7 +1428,6 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
     test_collect_annual_usage_statistics -> query_database
     test_collect_annual_usage_statistics -> extract_value_from_single_value_df
-    test_collect_annual_usage_statistics -> load_data_into_database_success_regex
     test_collect_annual_usage_statistics -> engine
     test_collect_annual_usage_statistics -> client
     test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
@@ -1590,7 +1582,6 @@ digraph function_call_chains {
     test_upload_COUNTER_data_via_Excel -> upload_COUNTER_data
     test_upload_COUNTER_data_via_Excel -> query_database
     test_upload_COUNTER_data_via_Excel -> format_list_for_stdout
-    test_upload_COUNTER_data_via_Excel -> load_data_into_database_success_regex
     test_upload_COUNTER_data_via_Excel -> engine
     test_upload_COUNTER_data_via_Excel -> client
     test_upload_COUNTER_data_via_Excel -> create_COUNTERData_workbook_iterdir_list
@@ -2122,14 +2113,12 @@ digraph function_call_chains {
     test_calculate_ARL_20 -> client
     test_calculate_ARL_20 -> FY2020_FiscalYears_object
     load_new_record_into_fiscalYears -> load_data_into_database
-    load_new_record_into_fiscalYears -> load_data_into_database_success_regex
     load_new_record_into_fiscalYears -> engine
     load_new_record_into_fiscalYears -> FY2023_FiscalYears_object_and_record
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
     test_create_usage_tracking_records_for_fiscal_year -> query_database
-    test_create_usage_tracking_records_for_fiscal_year -> load_data_into_database_success_regex
     test_create_usage_tracking_records_for_fiscal_year -> engine
     test_create_usage_tracking_records_for_fiscal_year -> client
     test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record

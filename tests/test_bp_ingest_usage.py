@@ -85,7 +85,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 

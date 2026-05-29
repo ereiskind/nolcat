@@ -221,7 +221,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     #Section: Call Method
     with client:
         method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
-    if not load_data_into_database_success_regex().fullmatch(method_result):
+    if not re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
@@ -352,7 +352,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
+    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), method_result)
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
