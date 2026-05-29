@@ -79,7 +79,7 @@ def filter_empty_parentheses(log_statement):
     """
     if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
         return False
-    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
+    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search('\n\s+', log_statement.msg):
         log_statement.msg = remove_IDE_spacing_from_statement(log_statement.msg)
         return True
     else:
@@ -152,7 +152,7 @@ def ISSN_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
+    return re.compile(r'\d{4}\-\d{3}[\dxX]\s*')
 
 
 def ISBN_regex():
@@ -163,7 +163,7 @@ def ISBN_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
+    return re.compile(r'(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*')
 
 
 def non_COUNTER_file_name_regex():
@@ -172,7 +172,7 @@ def non_COUNTER_file_name_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
+    return re.compile(r'(\d+)_(\d{4})\.\w{3,4}')
 
 
 def empty_string_regex():
@@ -181,7 +181,7 @@ def empty_string_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"^\s*$")
+    return re.compile(r'^\s*$')
 
 
 def proprietary_ID_regex():
@@ -190,7 +190,7 @@ def proprietary_ID_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"[Pp]roprietary(_ID)?")
+    return re.compile(r'[Pp]roprietary(_ID)?')
 
 
 def author_regex():
@@ -276,7 +276,7 @@ def remove_IDE_spacing_from_statement(statement):
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
-    statement = " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " ".join(re.split(r'\n\s+', statement)).strip()
     statement = " AND ".join(statement.split("\nAND ")).strip()
     return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
 
@@ -307,7 +307,7 @@ def format_ISSN(unformatted_ISSN):
         str: the formatted ISSN
     """
     trimmed_ISSN = str(unformatted_ISSN).strip()
-    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+    if re.fullmatch(r'\d{7}[\dxX]', trimmed_ISSN):
         return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
     else:
         log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
@@ -752,9 +752,9 @@ def update_database(update_statement, engine):
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
 
     # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
-    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
-    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
-    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
+    UPDATE_regex = re.findall(r'UPDATE (\w+) SET .+( WHERE .+);', update_statement)
+    INSERT_regex = re.findall(r'INSERT INTO `?(\w+)`? .+;', update_statement)
+    TRUNCATE_regex = re.findall(r'TRUNCATE (\w+);', update_statement)
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
         try:
@@ -880,7 +880,7 @@ def upload_file_to_S3_bucket_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
+    return re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')
 
 
 #SUBSECTION: S3 Interaction Functions

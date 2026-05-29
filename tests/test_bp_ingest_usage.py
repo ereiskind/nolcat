@@ -452,7 +452,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully to", prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(r'Usage file for .+--FY \d{4} uploaded successfully to', prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Successful Database Update
     try:

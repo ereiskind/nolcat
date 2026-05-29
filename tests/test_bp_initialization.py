@@ -888,7 +888,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     log.info(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")
     for record in collection_status_and_file_path:
         assert record[0] == 'Collection complete'
-        assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
+        assert re.fullmatch(r'\d+_\d+\.\w{3,4}', record[1]) is not None
 
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]

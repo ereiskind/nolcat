@@ -76,7 +76,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
+    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -136,7 +136,7 @@ def reports_offered_by_StatisticsSource_fixture(client, StatisticsSources_fixtur
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"{StatisticsSources_fixture.statistics_source_name} offers the following reports: {list_of_reports}.")
     yield list_of_reports

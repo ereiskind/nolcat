@@ -921,7 +921,7 @@ class StatisticsSources(db.Model):
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
                         for report_detail_keys, report_detail_values in report_details_dict.items():
-                            if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
+                            if isinstance(report_detail_keys, str) and re.fullmatch(r'[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 self._log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             else:
@@ -931,7 +931,7 @@ class StatisticsSources(db.Model):
                 return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
 
             #Subsection: Get List of Available Customizable Reports
-            available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
+            available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
             available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
             self._log.info(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}.")
 

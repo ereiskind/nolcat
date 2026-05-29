@@ -665,7 +665,7 @@ def test_fetch_URL_from_COUNTER_Registry(request):
     registry_ID, expected_code_of_practice, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     assert expected_code_of_practice == code_of_practice
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -686,7 +686,7 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     registry_ID, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
     assert code_of_practice == "5.1"
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -697,7 +697,7 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
     """
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
 
 
 #SECTION: `ConvertJSONDictToParquet()` Tests
