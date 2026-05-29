@@ -408,19 +408,6 @@ def initialize_relation_class_object_statement(relation_class_name, object_value
     return f"The following {relation_class_name} object was initialized based on the query results:\n{object_value}"
 
 
-def unable_to_get_updated_primary_key_values_statement(relation, error):
-    """This statement prepares the error raised by `nolcat.app.first_new_PK_value()` for the logging output.
-
-    Args:
-        relation (str): the relation name
-        error (Exception): the Python Exception raised by `nolcat.app.first_new_PK_value()`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
-
-
 def return_dataframe_from_query_statement(query_subject, df):
     """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
 

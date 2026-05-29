@@ -100,7 +100,6 @@ digraph function_call_chains {
     collect_fiscal_year_usage_statistics -> query_database
     collect_fiscal_year_usage_statistics -> update_database
     collect_fiscal_year_usage_statistics -> format_list_for_stdout
-    collect_fiscal_year_usage_statistics -> unable_to_get_updated_primary_key_values_statement
     collect_fiscal_year_usage_statistics -> remove_IDE_spacing_from_statement
 
 
@@ -369,7 +368,6 @@ digraph function_call_chains {
     upload_COUNTER_data -> truncate_longer_lines
     upload_COUNTER_data -> update_database
     upload_COUNTER_data -> format_list_for_stdout
-    upload_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     upload_COUNTER_data -> Flask_error_statement
     harvest_SUSHI_statistics -> collect_usage_statistics
     harvest_SUSHI_statistics -> ingest_usage_homepage
@@ -420,7 +418,6 @@ digraph function_call_chains {
     collect_AUCT_and_historical_COUNTER_data -> check_if_data_already_in_COUNTERData
     collect_AUCT_and_historical_COUNTER_data -> update_database
     collect_AUCT_and_historical_COUNTER_data -> format_list_for_stdout
-    collect_AUCT_and_historical_COUNTER_data -> unable_to_get_updated_primary_key_values_statement
     collect_AUCT_and_historical_COUNTER_data -> Flask_error_statement
     collect_AUCT_and_historical_COUNTER_data -> return_dataframe_from_query_statement
     upload_historical_non_COUNTER_usage -> upload_nonstandard_usage_file
@@ -575,7 +572,6 @@ digraph function_call_chains {
         check_if_file_exists_statement [shape="box"]
         return_value_from_query_statement [shape="box"]
         initialize_relation_class_object_statement [shape="box"]
-        unable_to_get_updated_primary_key_values_statement [shape="box"]
         return_dataframe_from_query_statement [shape="box"]
         change_single_field_dataframe_into_series [shape="box"]
         restore_boolean_values_to_boolean_field [shape="box"]

@@ -75,9 +75,8 @@ def upload_COUNTER_data():
             try:
                 df.index += first_new_PK_value('COUNTERData')
             except Exception as error:  #ALERT: `except DatabaseInteractionError`
-                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
-                messages_to_flash.append(message)
+                log.warning(error)
+                messages_to_flash.append(error)
                 flash(messages_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")

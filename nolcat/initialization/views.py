@@ -462,9 +462,8 @@ def collect_AUCT_and_historical_COUNTER_data():
             try:
                 COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
             except Exception as error:  #ALERT: `except DatabaseInteractionError`
-                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
-                messages_to_flash.append(message)
+                log.warning(error)
+                messages_to_flash.append(error)
                 flash(messages_to_flash)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
