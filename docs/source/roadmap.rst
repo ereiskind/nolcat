@@ -9,18 +9,6 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
-  * Raise errors in `nolcat.nolcat_glue_job.first_new_PK_value()`
-    * upload_COUNTER_data
-      * test_upload_COUNTER_data_via_SQL_insert
-      * test_upload_COUNTER_data_via_Excel
-    * collect_AUCT_and_historical_COUNTER_data
-      * test_collect_AUCT_and_historical_COUNTER_data
-      * test_GET_request_for_collect_AUCT_and_historical_COUNTER_data
-    * collect_sources_data (also `update_database`)
-      * test_collect_sources_data
-    * collect_FY_and_vendor_data (also `update_database`)
-      * test_collect_FY_and_vendor_data
-      * test_GET_request_for_collect_FY_and_vendor_data
   * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
     * make_SUSHI_call
       * test_status_call

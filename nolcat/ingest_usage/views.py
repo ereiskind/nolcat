@@ -74,7 +74,7 @@ def upload_COUNTER_data():
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:  #ALERT: `except DatabaseInteractionError`
+            except DatabaseInteractionError as error:
                 log.warning(error)
                 messages_to_flash.append(error)
                 flash(messages_to_flash)

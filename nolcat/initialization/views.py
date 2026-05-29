@@ -138,7 +138,10 @@ def collect_FY_and_vendor_data():
             )
         except DatabaseInteractionError as vendors_load_error:
             data_load_errors.append(vendors_load_error)
-        vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        try:
+            vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         vendorNotes_dataframe.index.name = 'vendor_notes_ID'
         try:
             vendorNotes_load_result = load_data_into_database(
@@ -278,7 +281,10 @@ def collect_sources_data():
             )
         except DatabaseInteractionError as statisticsSources_load_error:
             data_load_errors.append(statisticsSources_load_error)
-        statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        try:
+            statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
         try:
             statisticsSourceNotes_load_result = load_data_into_database(
@@ -296,7 +302,10 @@ def collect_sources_data():
             )
         except DatabaseInteractionError as resourceSources_load_error:
             data_load_errors.append(resourceSources_load_error)
-        resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        try:
+            resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
         try:
             resourceSourceNotes_load_result = load_data_into_database(
@@ -461,7 +470,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             
             try:
                 COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:  #ALERT: `except DatabaseInteractionError`
+            except DatabaseInteractionError as error:
                 log.warning(error)
                 messages_to_flash.append(error)
                 flash(messages_to_flash)
