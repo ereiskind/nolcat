@@ -590,6 +590,9 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
         str: a message including the error raised by the attempt to run the query
+    
+    Raises:
+        DatabaseInteractionError: if the SQL query fails
     """
     log.info(f"Starting `first_new_PK_value()` for the {relation} relation.")
     if relation == 'fiscalYears':
@@ -621,7 +624,7 @@ def first_new_PK_value(relation):
     except DatabaseInteractionError as error:
         message = f"Unable to return requested data--{error}"
         log.error(message)
-        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`  #ALERT: `raise DatabaseInteractionError`
+        raise DatabaseInteractionError(message)
     if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
