@@ -785,8 +785,8 @@ class StatisticsSources(db.Model):
                             "status",
                             {k: v for k, v in credentials.items() if k != "URL"},
                         ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
-                    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                        self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code}.")
+                    except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                        self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code} as primary credentials raised '{error.message}'.")
                         if statistics_source_credentials.get('alt_customer_ID'):
                             credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
                         if statistics_source_credentials.get('alt_requestor_ID'):
@@ -846,8 +846,8 @@ class StatisticsSources(db.Model):
                 "status",
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
-        except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error.message}. SUSHI calls will *NOT* be made."
+        except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
             return_statements['status'] = error.message
             return_statements['STOP'] = []
             for e in error.messages_to_flash + [message]:
@@ -906,8 +906,8 @@ class StatisticsSources(db.Model):
                     "reports",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error.message}."
+            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
                 return_statements['reports'] = error.message
                 return_statements['STOP'] = []
                 for e in error.messages_to_flash + [message]:
@@ -1066,7 +1066,7 @@ class StatisticsSources(db.Model):
                             all_messages_to_flash.append(e)
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
-                    except InvalidSUSHIResponseError as error:
+                    except InvalidAPIResponseError as error:
                         message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
@@ -1108,8 +1108,8 @@ class StatisticsSources(db.Model):
                     f"reports/{report.lower()}",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
+            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                 messages_to_flash = [message]
                 for e in error.messages_to_flash:
                     messages_to_flash.append(e)

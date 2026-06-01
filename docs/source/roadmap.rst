@@ -10,7 +10,6 @@ Move Code to Glue Jobs and Data to Parquet
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
   * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-    * make_SUSHI_call
       * fetch_SUSHI_information
         * test_fetch_SUSHI_information_for_API
         * SUSHI_credentials_fixture_in_test_StatisticsSources
