@@ -750,6 +750,9 @@ class StatisticsSources(db.Model):
         Returns:
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
+        
+        Raises:
+            InvalidAPIResponseError: if the SUSHI URL can't be extracted from the COUNTER Registry
         """
         self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
@@ -767,9 +770,12 @@ class StatisticsSources(db.Model):
                         else:
                             code_of_practice = "5"
                     else:
-                        credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
-                        if isinstance(credentials['URL'], Exception):
-                            return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
+                        try:
+                            credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
+                        except json.JSONDecodeError as error:
+                            raise InvalidAPIResponseError(f"The COUNTER Registry response couldn't be converted into a JSON because '{error.message}")
+                        except InvalidAPIResponseError as error:
+                            raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
                 
                     # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
                     if statistics_source_credentials.get('requestor_ID'):
@@ -833,9 +839,15 @@ class StatisticsSources(db.Model):
             message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             self._log.error(message)
             return {'dates': [message]}
-        SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         return_statements = {}
+        try:
+            SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
+        except InvalidAPIResponseError as error:
+            message = f"Getting the credentials for the SUSHI calls raised '{error.message}'. SUSHI calls will *NOT* be made."
+            return_statements['STOP'] = [message]
+            self._log.warning(return_statements)
+            return return_statements
+        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         self._log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
         #Section: Confirm SUSHI API Functionality

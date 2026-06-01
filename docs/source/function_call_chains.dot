@@ -2180,6 +2180,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_fetch_SUSHI_information_for_API_failure [
+            style="dashed"
+            shape="box"
+        ]
         SUSHI_credentials_fixture_in_test_StatisticsSources [
             label="SUSHI_credentials_fixture"
             style="dotted"
@@ -2243,6 +2247,7 @@ digraph function_call_chains {
     StatisticsSources_fixture -> valid_COUNTER_retrieval_code
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
+    test_fetch_SUSHI_information_for_API_failure -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture
     reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture
