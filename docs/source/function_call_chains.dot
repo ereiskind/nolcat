@@ -2285,11 +2285,16 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI -> get_datetime_sequence
     test_harvest_R5_SUSHI -> list_files_in_bucket_location
     test_harvest_R5_SUSHI -> remove_file_from_S3
+    test_harvest_R5_SUSHI -> format_list_for_stdout
     test_harvest_R5_SUSHI_with_report_to_harvest -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_report_to_harvest -> last_day_of_month
     test_harvest_R5_SUSHI_with_report_to_harvest -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_report_to_harvest -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_report_to_harvest -> reports_offered_by_StatisticsSource_fixture
+    test_harvest_R5_SUSHI_with_report_to_harvest -> get_datetime_sequence
+    test_harvest_R5_SUSHI_with_report_to_harvest -> list_files_in_bucket_location
+    test_harvest_R5_SUSHI_with_report_to_harvest -> remove_file_from_S3
+    test_harvest_R5_SUSHI_with_report_to_harvest -> format_list_for_stdout
     test_harvest_R5_SUSHI_with_invalid_dates -> _harvest_R5_SUSHI
     test_harvest_R5_SUSHI_with_invalid_dates -> last_day_of_month
     test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage

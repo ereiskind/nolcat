@@ -9,21 +9,6 @@ Move Code to Glue Jobs and Data to Parquet
 ==========================================
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
-  * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-      * _harvest_R5_SUSHI
-        * test_harvest_R5_SUSHI
-        * test_check_if_data_in_database_no
-        * test_check_if_data_in_database_yes
-        * test_harvest_R5_SUSHI_with_invalid_dates
-        * test_harvest_R5_SUSHI_with_report_to_harvest
-        * collect_usage_statistics
-          * harvest_SUSHI_statistics
-            * test_harvest_SUSHI_statistics
-            * test_GET_request_for_harvest_SUSHI_statistics
-  * `nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()`
-    * test_collect_fiscal_year_usage_statistics
-  * `nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()`
-    * test_create_usage_tracking_records_for_fiscal_year
   * Raise errors in `nolcat.models.ResourceSources.add_access_stop_date()`
   * Raise errors in `nolcat.models.ResourceSources.remove_access_stop_date()`
   * Raise errors in `nolcat.models.ResourceSources.change_StatisticsSource()`

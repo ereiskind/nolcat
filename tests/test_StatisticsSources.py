@@ -345,17 +345,12 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     before = datetime.now()
-    try:
-        with client:
-            flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
-            most_recent_month_with_usage[0],
-            most_recent_month_with_usage[1],
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Unable to run test--{error.message}")
-    except InvalidAPIResponseError as error:
-        pytest.skip(f"Unable to run test--{error.message.message}")
+    with client:
+        flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
+        most_recent_month_with_usage[0],
+        most_recent_month_with_usage[1],
+        bucket_path=TEST_COUNTER_FILE_PATH,
+    )
     after = datetime.now()
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
@@ -364,6 +359,11 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
+    if 'STOP' in list(flash_message_dict.keys()):
+        log.error(f"`_harvest_R5_SUSHI()` returned:\n{format_list_for_stdout(flash_message_dict)}")
+        for S3_file_name in [file_name for file_name in files_in_bucket if file_name in possible_S3_file_names]:
+            remove_file_from_S3(S3_file_name)
+        assert False
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
     for report in reports_offered_by_StatisticsSource_fixture:
@@ -389,20 +389,29 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     report_being_called = choice(reports_offered_by_StatisticsSource_fixture)
-    try:
-        flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
-            begin_date,
-            end_date,
-            report_being_called,
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(f"Unable to run test--{error.message}")
-    except InvalidAPIResponseError as error:
-        pytest.skip(f"Unable to run test--{error.message.message}")
+    before = datetime.now()
+    flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        report_being_called,
+        bucket_path=TEST_COUNTER_FILE_PATH,
+    )
+    after = datetime.now()
+    possible_S3_file_names = []
+    for dt in get_datetime_sequence(before, after):
+        possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report_being_called}_{dt.strftime(AWS_timestamp_format())}.parquet")
+    file_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)[0]
+    log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
+    if 'STOP' in list(flash_message_dict.keys()):
+        log.error(f"`_harvest_R5_SUSHI()` returned:\n{format_list_for_stdout(flash_message_dict)}")
+        if file_in_bucket in possible_S3_file_names:
+            remove_file_from_S3(file_in_bucket)
+        assert False
     assert 'status' in list(flash_message_dict.keys())
     assert report_being_called in list(flash_message_dict.keys())
+    remove_file_from_S3(file_in_bucket)  # If placed after final assert statement, test isn't recognized by its dependencies
+    assert file_in_bucket in possible_S3_file_names
 
 
 @pytest.mark.skip  #TEST: temp
@@ -429,7 +438,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     )
     assert isinstance(flash_message_dict, dict)
     assert len(flash_message_dict) == 1
-    assert flash_message_dict['dates']
+    assert flash_message_dict['STOP']
 
 
 #ToDo: Is a test for `_harvest_R5_SUSHI()` with a specified code of practice needed?

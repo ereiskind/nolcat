@@ -435,7 +435,7 @@ class FiscalYears(db.Model):
             )
         except DatabaseInteractionError as error:
             message = f"Unable to return requested data--{error}"
-            return {'create AUCT object': message}
+            return {'STOP': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -490,7 +490,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"While the SUSHI data was successfully uploaded to S3, the `annualUsageCollectionTracking` wasn't updated, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
             return_statements['update_database()'] = message
         return return_statements
@@ -1621,9 +1621,6 @@ class AnnualUsageCollectionTracking(db.Model):
 
         Returns:
             dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
-        
-        Raises:
-            DatabaseInteractionErrorWithFlashMessages: if the SQL update statement fails
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
@@ -1681,9 +1678,9 @@ class AnnualUsageCollectionTracking(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
-            raise DatabaseInteractionErrorWithFlashMessages(message, [message, flash_message_dict])
+            flash_message_dict['update_database()'] = message
         return flash_message_dict
 
 
