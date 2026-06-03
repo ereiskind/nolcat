@@ -896,14 +896,22 @@ class StatisticsSources(db.Model):
                     usage_end_date,
                     bucket_path=bucket_path,
                 )
-            except InvalidSUSHIResponseError as error:
+            except NoSUSHIUsageDataError as error:
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised '{error.message}' and returned no data."
+                return_statements[report_to_harvest] = error.message
+                return_statements['STOP'] = []
+                for e in error.messages_to_flash + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements
+            except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages) as error:
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                 return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = []
                 for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
             return_statements[report_to_harvest] = messages_to_flash
             return return_statements
         
@@ -1007,14 +1015,14 @@ class StatisticsSources(db.Model):
                     for e in error.messages_to_flash + [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                except InvalidSUSHIResponseError as error:
+                except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages) as error:
                     message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                     return_statements[report_name] = error.message
                     return_statements['STOP'] = []
                     for e in error.messages_to_flash + [message]:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
-                    return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                    return return_statements
                 self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")  #TEST: temp
                 return_statements[report_name] = messages_to_flash
 

@@ -10,10 +10,6 @@ Move Code to Glue Jobs and Data to Parquet
 * Functions with `query_database()` querying non-COUNTER relations called by other functions
 
   * Raise errors in `nolcat.SUSHICallAndResponse._save_raw_Response_text()`
-      * _harvest_single_report
-        * data_for_testing_harvest_single_report
-        * test_harvest_single_report
-        * test_harvest_single_report_with_partial_date_range
       * _harvest_R5_SUSHI
         * test_harvest_R5_SUSHI
         * test_check_if_data_in_database_no
