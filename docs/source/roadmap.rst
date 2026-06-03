@@ -7,12 +7,6 @@ Planned Iterations
 
 Move Code to Glue Jobs and Data to Parquet
 ==========================================
-* Functions with `query_database()` querying non-COUNTER relations called by other functions
-
-  * Raise errors in `nolcat.models.ResourceSources.add_access_stop_date()`
-  * Raise errors in `nolcat.models.ResourceSources.remove_access_stop_date()`
-  * Raise errors in `nolcat.models.ResourceSources.change_StatisticsSource()`
-
 * Save `nolcat.nolcat_glue_job.ConvertJSONDictsToParquet` output as parquet in S3
 
   * Confirm all tests still pass with working teardown

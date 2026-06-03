@@ -1322,6 +1322,9 @@ class ResourceSources(db.Model):
         
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1339,7 +1342,7 @@ class ResourceSources(db.Model):
         except DatabaseInteractionError as error:
             message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
-            return message  #ALERT: `raise DatabaseInteractionError`
+            raise DatabaseInteractionError(message)
         return update_result
 
 
@@ -1349,6 +1352,9 @@ class ResourceSources(db.Model):
 
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1366,7 +1372,7 @@ class ResourceSources(db.Model):
         except DatabaseInteractionError as error:
             message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
-            return message  #ALERT: `raise DatabaseInteractionError`
+            raise DatabaseInteractionError(message)
         return update_result
 
 
@@ -1399,7 +1405,7 @@ class ResourceSources(db.Model):
         except DatabaseInteractionError as error:
             message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
-            return message  #ALERT: `raise DatabaseInteractionError`
+            raise DatabaseInteractionError(message)
         
         try:
             check_for_existing_record = query_database(
@@ -1409,7 +1415,7 @@ class ResourceSources(db.Model):
         except DatabaseInteractionError as error:
             message = f"Unable to return requested data--{error}"
             self._log.error(message)
-            return message  #ALERT: `raise DatabaseInteractionError`
+            raise DatabaseInteractionError(message)
         
         if check_for_existing_record.empty:
             self._log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1455,7 +1461,7 @@ class ResourceSources(db.Model):
             except DatabaseInteractionError as error:
                 message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
                 self._log.error(message)
-                return message  #ALERT: `raise DatabaseInteractionError`
+                raise DatabaseInteractionError(message)
             return update_result
 
 
