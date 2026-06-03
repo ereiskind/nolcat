@@ -838,7 +838,7 @@ class StatisticsSources(db.Model):
         if usage_start_date > usage_end_date:
             message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             self._log.error(message)
-            return {'dates': [message]}
+            return {'STOP': [message]}
         return_statements = {}
         try:
             SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
@@ -865,7 +865,7 @@ class StatisticsSources(db.Model):
             for e in error.messages_to_flash + [message]:
                 return_statements['STOP'].append(e)
             self._log.warning(return_statements)
-            return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return return_statements
         return_statements['status'] = messages_to_flash
         self._log.info(f"The call to `status` for {self.statistics_source_name} was successful.")
 
@@ -933,7 +933,7 @@ class StatisticsSources(db.Model):
                 for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
             return_statements['reports'] = messages_to_flash
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
@@ -948,7 +948,7 @@ class StatisticsSources(db.Model):
                 message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response is required:\n{SUSHI_reports_response}"
                 return_statements['STOP'] = [message]
                 self._log.error(message)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
 
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
