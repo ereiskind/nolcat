@@ -88,12 +88,9 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     pass
 
 
-@pytest.mark.xfail(raises=InvalidAPIResponseError)
-def test_fetch_SUSHI_information_for_nonexistent_API():
-    """Tests getting SUSHI credentials for nonexistent COUNTER Registry IDs returns an error.
-
-    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.
-    """
+@pytest.mark.xfail(raises=LookupError)
+def test_fetch_SUSHI_information_for_API_not_in_CSV():
+    """Tests getting SUSHI credentials for a COUNTER Registry ID not in the SUSHI credentials CSV returns an error."""
     StatisticsSources_record = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = "Stats Source Name",
@@ -107,10 +104,7 @@ def test_fetch_SUSHI_information_for_nonexistent_API():
 
 @pytest.mark.xfail(raises=InvalidAPIResponseError)
 def test_fetch_SUSHI_information_for_depreciated_API():
-    """Tests getting SUSHI credentials for depreciated COUNTER Registry IDs returns an error.
-
-    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.
-    """
+    """Tests getting SUSHI credentials for depreciated COUNTER Registry IDs returns an error."""
     StatisticsSources_record = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = "Stats Source Name",

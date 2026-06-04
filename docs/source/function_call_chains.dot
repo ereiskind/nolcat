@@ -2188,7 +2188,11 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_fetch_SUSHI_information_for_API_failure [
+        test_fetch_SUSHI_information_for_API_not_in_CSV [
+            style="dashed"
+            shape="box"
+        ]
+        test_fetch_SUSHI_information_for_depreciated_API [
             style="dashed"
             shape="box"
         ]
@@ -2256,8 +2260,8 @@ digraph function_call_chains {
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
     test_fetch_SUSHI_information_for_API -> URL_regex
-    test_fetch_SUSHI_information_for_nonexistent_API -> fetch_SUSHI_information
-    test_fetch_SUSHI_information_for_nonexistent_API -> URL_regex
+    test_fetch_SUSHI_information_for_API_not_in_CSV -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_API_not_in_CSV -> URL_regex
     test_fetch_SUSHI_information_for_depreciated_API -> fetch_SUSHI_information
     test_fetch_SUSHI_information_for_depreciated_API -> URL_regex
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
