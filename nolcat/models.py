@@ -916,6 +916,7 @@ class StatisticsSources(db.Model):
                 if report_to_harvest == "TR":
                     self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
+            self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
             try:
                 S3_file_name, messages_to_flash = self._harvest_single_report(
@@ -1027,6 +1028,7 @@ class StatisticsSources(db.Model):
                     if report_name == "TR":
                         self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                         SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
+                self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
                 #Subsection: Make API Call(s)
                 try:
