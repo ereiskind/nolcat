@@ -682,7 +682,7 @@ def most_recent_month_with_usage(caplog):
 def valid_COUNTER_retrieval_code():
     """Provides a random, valid retrieval COUNTER Registry IDs.
 
-    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing. COUNTER Registry IDs that lead to 'Report Queued for Processing' (error 1011) are also filtered out, as those sources will always cause skips in later tests.
+    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing. COUNTER Registry IDs that lead to 'Report Queued for Processing' (error 1011) or 'No Usage Available for Requested Dates' (error 3030) for DRs when their platforms don't have databases are also filtered out, as those sources will always cause skips in later tests.
 
     Yields:
         str: a COUNTER Registry ID
@@ -702,6 +702,7 @@ def valid_COUNTER_retrieval_code():
         "5541d245-4230-405c-b7c1-f51b27926666",
         "c67345a4-34f7-445e-ad49-b38b21438b59",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
+        "e193087c-543b-4c9c-939c-a70be149987e",  # 3030 for DR
     ]
     retrieval_codes = [code for code in retrieval_codes if code not in queue_for_processing_codes]
     valid_retrieval_codes = []
