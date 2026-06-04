@@ -1300,6 +1300,7 @@ digraph function_call_chains {
     test_AWS_timestamp_format -> AWS_timestamp_format
     test_get_datetime_sequence -> get_datetime_sequence
     test_non_COUNTER_file_name_regex -> non_COUNTER_file_name_regex
+    test_URL_regex -> URL_regex
     test_empty_string_regex -> empty_string_regex
     test_return_string_of_dataframe_info -> return_string_of_dataframe_info
     test_format_list_for_stdout_with_list -> format_list_for_stdout
