@@ -752,61 +752,91 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         
         Raises:
+            LookupError: if the `StatisticsSources.statistics_source_retrieval_code` isn't in the credentials file
             InvalidAPIResponseError: if the SUSHI URL can't be extracted from the COUNTER Registry
         """
         self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
+        credentials = None
         with open(PATH_TO_CREDENTIALS_FILE()) as file:
             CSV_data = csv.DictReader(file)
             self._log.debug("SUSHI credentials loaded.")
             for statistics_source_credentials in CSV_data:
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                     self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                    credentials = {'customer_id': statistics_source_credentials['customer_ID']}
-                    if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
-                        credentials['URL'] = statistics_source_credentials['URL']
-                        if "r51" in credentials['URL']:
-                            code_of_practice = "5.1"
-                        else:
-                            code_of_practice = "5"
-                    else:
-                        try:
-                            credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
-                        except json.JSONDecodeError as error:
-                            raise InvalidAPIResponseError(f"The COUNTER Registry response couldn't be converted into a JSON because '{error.message}")
-                        except InvalidAPIResponseError as error:
-                            raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
-                
-                    # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
-                    if statistics_source_credentials.get('requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
-                    if statistics_source_credentials.get('API_key'):
-                        credentials['api_key'] = statistics_source_credentials['API_key']
-                    if statistics_source_credentials.get('platform'):
-                        credentials['platform'] = statistics_source_credentials['platform']
-                    try:
-                        SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
-                            self.statistics_source_name,
-                            credentials['URL'],
-                            "status",
-                            {k: v for k, v in credentials.items() if k != "URL"},
-                        ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
-                    except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                        self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code} as primary credentials raised '{error.message}'.")
-                        if statistics_source_credentials.get('alt_customer_ID'):
-                            credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
-                        if statistics_source_credentials.get('alt_requestor_ID'):
-                            credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
-                        elif credentials.get('requestor_id'):
-                            del credentials['requestor_id']
-                        if statistics_source_credentials.get('alt_API_key'):
-                            credentials['api_key'] = statistics_source_credentials['alt_API_key']
-                        elif credentials.get('api_key'):
-                            del credentials['api_key']
-                        if statistics_source_credentials.get('alt_platform'):
-                            credentials['platform'] = statistics_source_credentials['alt_platform']
-                        elif credentials.get('platform'):
-                            del credentials['platform']  
+                    credentials = {**statistics_source_credentials}
+                    break
+        if not credentials:
+            message = f"The statistics source retrieval code {self.statistics_source_retrieval_code} wasn't found in the SUSHI credentials CSV file."
+            self._log.error(message)
+            raise LookupError(message)
+        
+        credentials['customer_id'] = credentials['customer_ID']
+        del credentials['customer_ID']
+
+        if credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+            if "r51" in credentials['URL']:
+                code_of_practice = "5.1"
+            else:
+                code_of_practice = "5"
+        else:
+            try:
+                credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(credentials['statistics_source_retrieval_code'], code_of_practice)
+            except json.JSONDecodeError as error:
+                raise InvalidAPIResponseError(f"The COUNTER Registry response couldn't be converted into a JSON because '{error.message}")
+            except InvalidAPIResponseError as error:
+                raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
+        del credentials['statistics_source_retrieval_code']
+
+        # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
+        alt_credentials = {}
+        #ToDo: Take `alt_` keys out of `credentials` and save them in another dict
+        if credentials.get('requestor_ID'):
+            credentials['requestor_id'] = credentials['requestor_ID']
+            del credentials['requestor_ID']
+        if credentials.get('API_key'):
+            credentials['api_key'] = credentials['API_key']
+            del credentials['API_key']
+        # `platform` doesn't need to be changed
+        if credentials.get('alt_customer_ID'):
+            alt_credentials['customer_id'] = credentials['alt_customer_ID']
+            del credentials['alt_customer_ID']
+        if credentials.get('alt_requestor_ID'):
+            alt_credentials['requestor_id'] = credentials['alt_requestor_ID']
+            del credentials['alt_requestor_ID']
+        if credentials.get('alt_API_key'):
+            alt_credentials['api_key'] = credentials['alt_API_key']
+            del credentials['alt_API_key']
+        if credentials.get('alt_platform'):
+            alt_credentials['platform'] = credentials['alt_platform']
+            del credentials['alt_platform']
+
+        try:
+            SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
+                self.statistics_source_name,
+                credentials['URL'],
+                "status",
+                {k: v for k, v in credentials.items() if k != "URL"},
+            ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
+        except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code} as primary credentials raised '{error.message}'.")
+            if alt_credentials.get('customer_id'):
+                credentials['customer_id'] = alt_credentials['customer_id']
+            if credentials.get('requestor_id'):
+                if alt_credentials.get('requestor_id'):
+                    credentials['requestor_id'] = alt_credentials['requestor_id']
+                else:
+                    del credentials['requestor_id']
+            if credentials.get('api_key'):
+                if alt_credentials.get('api_key'):
+                    credentials['api_key'] = alt_credentials['api_key']
+                else:
+                    del credentials['api_key']
+            if credentials.get('platform'):
+                if alt_credentials.get('platform'):
+                    credentials['platform'] = alt_credentials['platform']
+                else:
+                    del credentials['platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
