@@ -557,6 +557,7 @@ digraph function_call_chains {
         ISSN_regex [shape="box"]
         ISBN_regex [shape="box"]
         non_COUNTER_file_name_regex [shape="box"]
+        URL_regex [shape="box"]
         empty_string_regex [shape="box"]
         proprietary_ID_regex [shape="box"]
         author_regex [shape="box"]
@@ -1140,6 +1141,10 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
+        test_URL_regex [
+            style="dashed"
+            shape="box"
+        ]
         test_empty_string_regex [
             style="dashed"
             shape="box"
@@ -1346,8 +1351,11 @@ digraph function_call_chains {
     test_list_files_in_bucket_location -> list_files_in_bucket_location
     test_list_files_in_bucket_location -> format_list_for_stdout
     test_fetch_URL_from_COUNTER_Registry -> fetch_URL_from_COUNTER_Registry
+    test_fetch_URL_from_COUNTER_Registry -> URL_regex
     test_fetch_URL_from_COUNTER_Registry_for_specific_CoP -> fetch_URL_from_COUNTER_Registry
+    test_fetch_URL_from_COUNTER_Registry_for_specific_CoP -> URL_regex
     test_fetch_URL_from_COUNTER_Registry_failure -> fetch_URL_from_COUNTER_Registry
+    test_fetch_URL_from_COUNTER_Registry_failure -> URL_regex
     R5_JSON_3_PR_relation -> state_data_types_in_COUNTERData
     R5_JSON_0_DR_relation -> state_data_types_in_COUNTERData
     R5_JSON_3_TR_relation -> state_data_types_in_COUNTERData
@@ -2247,8 +2255,11 @@ digraph function_call_chains {
     StatisticsSources_fixture -> valid_COUNTER_retrieval_code
     test_fetch_SUSHI_information_for_API -> fetch_SUSHI_information
     test_fetch_SUSHI_information_for_API -> StatisticsSources_fixture
+    test_fetch_SUSHI_information_for_API -> URL_regex
     test_fetch_SUSHI_information_for_nonexistent_API -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_nonexistent_API -> URL_regex
     test_fetch_SUSHI_information_for_depreciated_API -> fetch_SUSHI_information
+    test_fetch_SUSHI_information_for_depreciated_API -> URL_regex
     SUSHI_credentials_fixture_in_test_StatisticsSources -> fetch_SUSHI_information
     SUSHI_credentials_fixture_in_test_StatisticsSources -> StatisticsSources_fixture
     reports_offered_by_StatisticsSource_fixture -> StatisticsSources_fixture

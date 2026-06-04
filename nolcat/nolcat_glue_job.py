@@ -175,6 +175,17 @@ def non_COUNTER_file_name_regex():
     return re.compile(r'(\d+)_(\d{4})\.\w{3,4}')
 
 
+def URL_regex():
+    """A regex for a URL.
+
+    Regex adapted from https://stackoverflow.com/a/3809435.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.([a-z]{2,4}|online)\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/')
+
+
 def empty_string_regex():
     """A regex for matching empty strings and whitespace-only strings.
 

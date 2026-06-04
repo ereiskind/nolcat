@@ -68,15 +68,13 @@ def StatisticsSources_fixture(valid_COUNTER_retrieval_code):
 @pytest.mark.slow
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
     """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', credentials['URL'])
+    assert URL_regex().fullmatch(credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -94,7 +92,7 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 def test_fetch_SUSHI_information_for_nonexistent_API():
     """Tests getting SUSHI credentials for nonexistent COUNTER Registry IDs returns an error.
 
-    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.  Regex taken from https://stackoverflow.com/a/3809435.
+    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.
     """
     StatisticsSources_record = StatisticsSources(
         statistics_source_ID = 0,
@@ -104,14 +102,14 @@ def test_fetch_SUSHI_information_for_nonexistent_API():
     )
     credentials = StatisticsSources_record.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', credentials['URL'])
+    assert URL_regex().fullmatch(credentials['URL'])
 
 
 @pytest.mark.xfail(raises=InvalidAPIResponseError)
 def test_fetch_SUSHI_information_for_depreciated_API():
     """Tests getting SUSHI credentials for depreciated COUNTER Registry IDs returns an error.
 
-    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.  Regex taken from https://stackoverflow.com/a/3809435.
+    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.
     """
     StatisticsSources_record = StatisticsSources(
         statistics_source_ID = 0,
@@ -121,7 +119,7 @@ def test_fetch_SUSHI_information_for_depreciated_API():
     )
     credentials = StatisticsSources_record.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', credentials['URL'])
+    assert URL_regex().fullmatch(credentials['URL'])
 
 
 @pytest.fixture(scope='module')

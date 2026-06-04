@@ -47,6 +47,14 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
 
 
+def test_URL_regex():
+    """Tests matching the regex object to URLs."""
+    assert URL_regex().fullmatch("https://www.lib.fsu.edu/") is not None
+    assert URL_regex().fullmatch("https://registry.countermetrics.org/api/v1/platform/abc-123/") is not None
+    assert URL_regex().fullmatch("https://about.muse.jhu.edu/lib/counter5/sushi/") is not None
+    assert URL_regex().fullmatch("https://api.siqcloud.online/counterapi/r51/reports/tr?customer_id=something&api_key=somethingElse&begin_date=2000-01&end_date=2000-01/") is not None
+
+
 def test_empty_string_regex():
     """Tests matching the regex object to empty and whitespace-only strings."""
     assert empty_string_regex().fullmatch("") is not None
@@ -656,8 +664,6 @@ def test_list_files_in_bucket_location():
 ])
 def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         request (tuple): COUNTER registry ID; COUNTER CoP; SUSHI URL matching registry ID and CoP
@@ -665,7 +671,7 @@ def test_fetch_URL_from_COUNTER_Registry(request):
     registry_ID, expected_code_of_practice, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     assert expected_code_of_practice == code_of_practice
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -677,8 +683,6 @@ def test_fetch_URL_from_COUNTER_Registry(request):
 ])
 def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         request (tuple): COUNTER registry ID; SUSHI URL matching registry ID
@@ -686,7 +690,7 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     registry_ID, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
     assert code_of_practice == "5.1"
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -694,10 +698,10 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
 def test_fetch_URL_from_COUNTER_Registry_failure():
     """Tests getting a COUNTER Registry response not containing a URL returns an error.
     
-    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
+    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list.
     """
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
-    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
 
 
 #SECTION: `ConvertJSONDictToParquet()` Tests
