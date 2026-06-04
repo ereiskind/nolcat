@@ -270,7 +270,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
     except InvalidAPIResponseError as error:
         pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
-    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
+    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_report-{report_to_check}")
     assert isinstance(messages_to_flash, list)
     download_location = tmp_path / S3_file_name.name
     s3_client.download_file(
@@ -317,7 +317,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
     except InvalidAPIResponseError as error:
         pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
-    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
+    assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_report-{report_to_check}")
     assert isinstance(messages_to_flash, list)
     download_location = tmp_path / S3_file_name.name
     s3_client.download_file(
