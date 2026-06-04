@@ -90,23 +90,33 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     pass
 
 
-@pytest.fixture(params=[
-    "fake",
-    "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
-])
 @pytest.mark.xfail(raises=InvalidAPIResponseError)
-def test_fetch_SUSHI_information_for_API_failure(request):
-    """Tests getting SUSHI credentials for invalid COUNTER Registry IDs returns an error.
+def test_fetch_SUSHI_information_for_nonexistent_API():
+    """Tests getting SUSHI credentials for nonexistent COUNTER Registry IDs returns an error.
 
-    The first parameter is a nonexistent ID and thus not in the COUNTER Registry; the second parameter is the registry ID for a depreciated platform, so there's no URL to return. Regex taken from https://stackoverflow.com/a/3809435.
-
-    Args:
-        request (str): values for `StatisticsSources.statistics_source_retrieval_code` that should raise an error
+    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.  Regex taken from https://stackoverflow.com/a/3809435.
     """
     StatisticsSources_record = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = "Stats Source Name",
-        statistics_source_retrieval_code = request.param,
+        statistics_source_retrieval_code = "fake",
+        vendor_ID = 0,
+    )
+    credentials = StatisticsSources_record.fetch_SUSHI_information()
+    assert isinstance(credentials, dict)
+    assert re.fullmatch(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/', credentials['URL'])
+
+
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
+def test_fetch_SUSHI_information_for_depreciated_API():
+    """Tests getting SUSHI credentials for depreciated COUNTER Registry IDs returns an error.
+
+    The fixture and xfail decorators cannot be combined, so the tests must be two separate functions.  Regex taken from https://stackoverflow.com/a/3809435.
+    """
+    StatisticsSources_record = StatisticsSources(
+        statistics_source_ID = 0,
+        statistics_source_name = "Stats Source Name",
+        statistics_source_retrieval_code = "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
         vendor_ID = 0,
     )
     credentials = StatisticsSources_record.fetch_SUSHI_information()
