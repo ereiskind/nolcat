@@ -414,7 +414,6 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert file_in_bucket in possible_S3_file_names
 
 
-@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.

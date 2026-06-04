@@ -276,6 +276,7 @@ def remove_IDE_spacing_from_statement(statement):
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
+    log.error(f"`type(statement)`: {type(statement)}")  #TEST: temp
     statement = " ".join(re.split(r'\n\s+', statement)).strip()
     statement = " AND ".join(statement.split("\nAND ")).strip()
     return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
@@ -737,6 +738,7 @@ def update_database(update_statement, engine):
     Raises:
         DatabaseInteractionError: if the SQL update statement fails
     """
+    log.error(f"`type(update_statement)`: {type(update_statement)}")  #TEST: temp
     update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
