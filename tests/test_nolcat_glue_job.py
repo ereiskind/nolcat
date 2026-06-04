@@ -444,9 +444,8 @@ def test_update_database_with_insert_statement(engine, client):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
     """
-    update_statement = f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
+    update_statement = f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');"
     with client:
-        log.error(f"`type(update_statement)`: {type(update_statement)}")  #TEST: temp
         update_result = update_database(
             update_statement,
             engine=engine,
