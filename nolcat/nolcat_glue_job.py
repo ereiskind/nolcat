@@ -558,6 +558,9 @@ def query_database(query, engine, index=None):
     Returns:
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
+    
+    Raises:
+        DatabaseInteractionError: if the SQL query fails
     """
     log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
