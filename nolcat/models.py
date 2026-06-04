@@ -907,16 +907,14 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "DR":
                 SUSHI_parameters['attributes_to_show'] = "Access_Method"
             elif report_to_harvest == "TR":
-                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Section_Type"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type"
             elif report_to_harvest == "IR":
                 SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters['include_parent_details'] = "True"
             if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                 SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                 if report_to_harvest == "TR":
-                    self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
-            self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
             try:
                 S3_file_name, messages_to_flash = self._harvest_single_report(
@@ -1026,9 +1024,7 @@ class StatisticsSources(db.Model):
                 if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
-                        self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                         SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
-                self._log.error(f"`SUSHI_parameters['attributes_to_show']`: {SUSHI_parameters['attributes_to_show']}")  #TEST: temp
 
                 #Subsection: Make API Call(s)
                 try:
