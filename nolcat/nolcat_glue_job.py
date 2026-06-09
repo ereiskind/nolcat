@@ -1894,10 +1894,10 @@ class ConvertJSONDictToParquet:
         }
 
         #Section: Iterate Through `Report_Items` Section of SUSHI JSON to Create Single-Level Dictionaries
-        report_items_list = []
+        list_of_records_in_report_items = []
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             self._log.debug(f"Starting iteration for new JSON record {record}.")
-            report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            record_in_report_items = {"report_creation_date": report_creation_date}  # This resets the contents of `record_in_report_items`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
                 second_iteration_key_list = []
 
@@ -1909,31 +1909,31 @@ class ConvertJSONDictToParquet:
                         field = "resource_name"
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict[field] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                        record_in_report_items[field] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
                     elif len(value) > RESOURCE_NAME_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, value)
                         self._log.critical(message)
                         return message
                     else:
-                        report_items_dict[field] = value
+                        record_in_report_items[field] = value
                         include_in_df_dtypes[field] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['publisher'] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                        record_in_report_items['publisher'] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
                     elif len(value) > PUBLISHER_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher", value)
                         self._log.critical(message)
                         return message
                     else:
-                        report_items_dict['publisher'] = value
+                        record_in_report_items['publisher'] = value
                         include_in_df_dtypes['publisher'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
@@ -1944,15 +1944,15 @@ class ConvertJSONDictToParquet:
                 elif key == "Platform":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['platform'] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                        record_in_report_items['platform'] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_report_items['platform']))
                     elif len(value) > PLATFORM_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("platform", value)
                         self._log.critical(message)
                         return message
                     else:
-                        report_items_dict['platform'] = value
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                        record_in_report_items['platform'] = value
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_report_items['platform']))
 
                 #Subsection: Capture `authors` or `parent_authors` Value
                 elif key == "Authors":
@@ -1965,20 +1965,20 @@ class ConvertJSONDictToParquet:
                         pass  # Lack of key in given record will become null value when converted to a dataframe
                     for label_and_author_name in value:
                         if label_and_author_name.get('Name'):
-                            if field not in report_items_dict and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
+                            if field not in record_in_report_items and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, label_and_author_name['Name'])
                                 self._log.critical(message)
                                 return message
-                            elif field not in report_items_dict:
-                                report_items_dict[field] = label_and_author_name['Name'].strip()
+                            elif field not in record_in_report_items:
+                                record_in_report_items[field] = label_and_author_name['Name'].strip()
                                 include_in_df_dtypes[field] = 'string'
-                            elif report_items_dict[field].endswith(" et al."):
+                            elif record_in_report_items[field].endswith(" et al."):
                                 break  # The loop of adding author names
-                            elif len(report_items_dict[field]) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
-                                report_items_dict[field] = report_items_dict[field] + "; " + label_and_author_name['Name'].strip()
+                            elif len(record_in_report_items[field]) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
+                                record_in_report_items[field] = record_in_report_items[field] + "; " + label_and_author_name['Name'].strip()
                             else:
-                                report_items_dict[field] = report_items_dict[field] + " et al."
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                record_in_report_items[field] = record_in_report_items[field] + " et al."
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `publication_date` or `parent_publication_date` Value
                 elif key == "Item_Dates":
@@ -2019,9 +2019,9 @@ class ConvertJSONDictToParquet:
                                 self._log.critical(message)
                                 return message
                             else:
-                                report_items_dict[field] = ID_value
+                                record_in_report_items[field] = ID_value
                                 include_in_df_dtypes[field] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
                         elif proprietary_ID_regex().search(ID_type):
@@ -2035,9 +2035,9 @@ class ConvertJSONDictToParquet:
                                 self._log.critical(message)
                                 return message
                             else:
-                                report_items_dict[field] = ID_value
+                                record_in_report_items[field] = ID_value
                                 include_in_df_dtypes[field] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `ISBN` or `parent_ISBN` Value
                         elif ID_type == "ISBN":
@@ -2056,12 +2056,12 @@ class ConvertJSONDictToParquet:
                                 field = "print_ISSN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if ISSN_regex().fullmatch(ID_value):
-                                report_items_dict[field] = ID_value.strip()
+                                record_in_report_items[field] = ID_value.strip()
                                 include_in_df_dtypes[field] = 'string'
                             else:
-                                report_items_dict[field] = format_ISSN(ID_value)
+                                record_in_report_items[field] = format_ISSN(ID_value)
                                 include_in_df_dtypes[field] = 'string'
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
                         elif ID_type == "Online_ISSN":
@@ -2088,43 +2088,43 @@ class ConvertJSONDictToParquet:
                     else:
                         field = "data_type"
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    report_items_dict[field] = value
+                    record_in_report_items[field] = value
                     include_in_df_dtypes[field] = 'string'
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", report_items_dict[field]))
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", record_in_report_items[field]))
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":  # Based on sample data, `YOP` shouldn't be captured here; capture left in to handle possible edge cases
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     try:
-                        report_items_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                        record_in_report_items['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                     except:
-                        report_items_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", report_items_dict['YOP']))
+                        record_in_report_items['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", record_in_report_items['YOP']))
 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
-                    report_items_dict['access_type'] = value
+                    record_in_report_items['access_type'] = value
                     include_in_df_dtypes['access_type'] = 'string'
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", report_items_dict['access_type']))
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", record_in_report_items['access_type']))
 
                 else:
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
-                    report_items_dict[key] = value
+                    record_in_report_items[key] = value
                     second_iteration_key_list.append(key)
 
-            report_items_list.append(report_items_dict)
-            self._log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
-        self._log.debug("`report_items_list` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
+            list_of_records_in_report_items.append(record_in_report_items)
+            self._log.debug(f"Record added to `list_of_records_in_report_items`: {list_of_records_in_report_items[-1]}")
+        self._log.debug("`list_of_records_in_report_items` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
 
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
-        items_list = []
+        list_of_records_in_items = []
         if second_iteration_key_list == ["Items"] and report_type == "IR":
-            for record in report_items_list:
+            for record in list_of_records_in_report_items:
                 self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
                 for items in record['Items']:
-                    items_dict = {k: v for (k, v) in record.items() if k not in second_iteration_key_list}
+                    record_in_items = {k: v for (k, v) in record.items() if k not in second_iteration_key_list}
                     for items_key, items_value in items.items():
                         third_iteration_key_list = []
 
@@ -2132,31 +2132,31 @@ class ConvertJSONDictToParquet:
                         if items_key == "Item":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.resource_name`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['resource_name'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                                record_in_items['resource_name'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", record_in_items['resource_name']))
                             elif len(value) > RESOURCE_NAME_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, items_value)
                                 self._log.critical(message)
                                 return message
                             else:
-                                items_dict['resource_name'] = items_value
+                                record_in_items['resource_name'] = items_value
                                 include_in_df_dtypes['resource_name'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", record_in_items['resource_name']))
 
                         #Subsection: Capture `publisher` Value
                         elif items_key == "Publisher":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['publisher'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                                record_in_items['publisher'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_items['publisher']))
                             elif len(items_value) > PUBLISHER_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher", items_value)
                                 self._log.critical(message)
                                 return message
                             else:
-                                items_dict['publisher'] = items_value
+                                record_in_items['publisher'] = items_value
                                 include_in_df_dtypes['publisher'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_items['publisher']))
 
                         #Subsection: Capture `publisher_ID` Value
                         elif items_key == "Publisher_ID":
@@ -2167,15 +2167,15 @@ class ConvertJSONDictToParquet:
                         elif items_key == "Platform":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.platform`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['platform'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", items_dict['platform']))
+                                record_in_items['platform'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_items['platform']))
                             elif len(items_value) > PLATFORM_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("platform", items_value)
                                 self._log.critical(message)
                                 return message
                             else:
-                                items_dict['platform'] = items_value
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", items_dict['platform']))
+                                record_in_items['platform'] = items_value
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_items['platform']))
 
                         #Subsection: Capture `authors` Value
                         elif items_key == "Authors":
@@ -2184,20 +2184,20 @@ class ConvertJSONDictToParquet:
                                 pass  # Lack of key in given record will become null value when converted to a dataframe
                             for label_and_author_name in items_value:
                                 if label_and_author_name.get('Name'):
-                                    if 'authors' not in items_dict and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
+                                    if 'authors' not in record_in_items and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("authors", label_and_author_name['Name'])
                                         self._log.critical(message)
                                         return message
-                                    elif 'authors' not in items_dict:
-                                        items_dict['authors'] = label_and_author_name['Name'].strip()
+                                    elif 'authors' not in record_in_items:
+                                        record_in_items['authors'] = label_and_author_name['Name'].strip()
                                         include_in_df_dtypes['authors'] = 'string'
-                                    elif items_dict['authors'].endswith(" et al."):
+                                    elif record_in_items['authors'].endswith(" et al."):
                                         break  # The loop of adding author names
-                                    elif len(items_dict['authors']) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
-                                        items_dict['authors'] = items_dict['authors'] + "; " + label_and_author_name['Name'].strip()
+                                    elif len(record_in_items['authors']) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
+                                        record_in_items['authors'] = record_in_items['authors'] + "; " + label_and_author_name['Name'].strip()
                                     else:
-                                        items_dict['authors'] = items_dict['authors'] + " et al."
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("authors", items_dict['authors']))
+                                        record_in_items['authors'] = record_in_items['authors'] + " et al."
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("authors", record_in_items['authors']))
 
                         #Subsection: Capture `publication_date` Value
                         elif items_key == "Publication_Date":
@@ -2205,18 +2205,18 @@ class ConvertJSONDictToParquet:
                             if items_value == "1000-01-01" or items_value == "1753-01-01" or items_value == "1900-01-01":
                                 pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
                             try:
-                                items_dict['publication_date'] = date.fromisoformat(items_value)
+                                record_in_items['publication_date'] = date.fromisoformat(items_value)
                                 include_in_df_dtypes['publication_date'] = True
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publication_date", items_dict['publication_date']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publication_date", record_in_items['publication_date']))
                             except:
                                 pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
 
                         #Subsection:  Capture `article_version` Value
                         elif items_key == "Article_Version":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.article_version`"))
-                            items_dict['article_version'] = items_value
+                            record_in_items['article_version'] = items_value
                             include_in_df_dtypes['article_version'] = 'string'
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", items_dict['article_version']))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", record_in_items['article_version']))
 
                         #Subsection: Capture Standard Identifiers
                         elif items_key == "Item_ID":
@@ -2231,9 +2231,9 @@ class ConvertJSONDictToParquet:
                                         self._log.critical(message)
                                         return message
                                     else:
-                                        items_dict['DOI'] = ID_value
+                                        record_in_items['DOI'] = ID_value
                                         include_in_df_dtypes['DOI'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("DOI", items_dict['DOI']))
+                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("DOI", record_in_items['DOI']))
 
                                 #Subsection: Capture `proprietary_ID` Value
                                 elif proprietary_ID_regex().search(ID_type):
@@ -2243,9 +2243,9 @@ class ConvertJSONDictToParquet:
                                         self._log.critical(message)
                                         return message
                                     else:
-                                        items_dict['proprietary_ID'] = ID_value
+                                        record_in_items['proprietary_ID'] = ID_value
                                         include_in_df_dtypes['proprietary_ID'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("proprietary_ID", items_dict['proprietary_ID']))
+                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("proprietary_ID", record_in_items['proprietary_ID']))
 
                                 #Subsection: Capture `ISBN` Value
                                 elif ID_type == "ISBN":
@@ -2269,15 +2269,15 @@ class ConvertJSONDictToParquet:
 
                         else:
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "a placeholder for later unpacking"))
-                            items_dict[items_key] = items_value
+                            record_in_items[items_key] = items_value
                             third_iteration_key_list.append(items_key)
 
-                    items_list.append(items_dict)
-                    self._log.debug(f"Record added to `items_list`: {items_list[-1]}")
-            self._log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
+                    list_of_records_in_items.append(record_in_items)
+                    self._log.debug(f"Record added to `list_of_records_in_items`: {list_of_records_in_items[-1]}")
+            self._log.debug("`list_of_records_in_items` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
-        attribute_performance_list = []
+        list_of_records_in_attribute_performance = []
         #TEST: temp
         self._log.error(f"TESTING {report_type}: Before `if` block")
         try:
@@ -2291,10 +2291,10 @@ class ConvertJSONDictToParquet:
         #TEST: end temp
         if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
             self._log.error(f"TESTING {report_type}: In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
-            list_of_records = report_items_list
+            list_of_records = list_of_records_in_report_items
         elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
             self._log.error(f"TESTING {report_type}: In `elif third_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
-            list_of_records = items_list
+            list_of_records = list_of_records_in_items
         else:
             self._log.error(f"TESTING {report_type}: In `else:`")  #TEST: temp
             message = f"The JSON is malformed, lacking the `Attribute_Performance` key."
@@ -2305,68 +2305,68 @@ class ConvertJSONDictToParquet:
         for record in list_of_records:
             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
             for attributes in record['Attribute_Performance']:
-                attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
+                record_in_attribute_performance = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
                 for attribute_performance_key, attribute_performance_value in attributes.items():
                     final_iteration_key_list = []
 
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.data_type`"))
-                        attribute_performance_dict['data_type'] = attribute_performance_value
+                        record_in_attribute_performance['data_type'] = attribute_performance_value
                         include_in_df_dtypes['data_type'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", record_in_attribute_performance['data_type']))
 
                     #Subsection: Capture `YOP` Value
                     elif attribute_performance_key == "YOP":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.YOP`"))
                         try:
-                            attribute_performance_dict['YOP'] = int(attribute_performance_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                            record_in_attribute_performance['YOP'] = int(attribute_performance_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                             include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                         except:
-                            attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
+                            record_in_attribute_performance['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", record_in_attribute_performance['YOP']))
 
                     #Subsection: Capture `access_type` Value
                     elif attribute_performance_key == "Access_Type":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_type`"))
-                        attribute_performance_dict['access_type'] = attribute_performance_value
+                        record_in_attribute_performance['access_type'] = attribute_performance_value
                         include_in_df_dtypes['access_type'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", record_in_attribute_performance['access_type']))
 
                     #Subsection: Capture `access_method` Value
                     elif attribute_performance_key == "Access_Method":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_method`"))
-                        attribute_performance_dict['access_method'] = attribute_performance_value
+                        record_in_attribute_performance['access_method'] = attribute_performance_value
                         include_in_df_dtypes['access_method'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_method", record_in_attribute_performance['access_method']))
 
                     else:
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
-                        attribute_performance_dict[attribute_performance_key] = attribute_performance_value
+                        record_in_attribute_performance[attribute_performance_key] = attribute_performance_value
                         final_iteration_key_list.append(attribute_performance_key)
 
-                attribute_performance_list.append(attribute_performance_dict)
-                self._log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
-        self._log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
+                list_of_records_in_attribute_performance.append(record_in_attribute_performance)
+                self._log.debug(f"Record added to `list_of_records_in_attribute_performance`: {list_of_records_in_attribute_performance[-1]}")
+        self._log.debug("`list_of_records_in_attribute_performance` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
-        performance_list = []
-        for record in attribute_performance_list:
+        list_of_records_in_performance = []
+        for record in list_of_records_in_attribute_performance:
             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Performance'], "Performance", "keys at the top level of the JSON"))
-            performance_dict = {k: v for (k, v) in record.items() if k != "Performance"}
+            record_in_performance = {k: v for (k, v) in record.items() if k != "Performance"}
             for performance_key, performance_value in record['Performance'].items():
                 self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(performance_key, performance_key, "`COUNTERData.metric_type`"))
-                performance_dict['metric_type'] = performance_key
+                record_in_performance['metric_type'] = performance_key
                 for usage_date, usage_count in performance_value.items():
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(f"{usage_date}' and '{usage_count}", performance_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
                     final_dict = {
-                        **deepcopy(performance_dict),
+                        **deepcopy(record_in_performance),
                         'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
                         'usage_count': usage_count,
                     }
-                    performance_list.append(final_dict)
+                    list_of_records_in_performance.append(final_dict)
                     self._log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
-        self._log.debug("`performance_list` created by iteration through `Performance` section of SUSHI JSON.\n\n")
+        self._log.debug("`list_of_records_in_performance` created by iteration through `Performance` section of SUSHI JSON.\n\n")
 
         #Section: Create Dataframe
         self._log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
@@ -2378,9 +2378,9 @@ class ConvertJSONDictToParquet:
         df_dtypes['usage_count'] = 'int'
         self._log.info(f"`df_dtypes`: {df_dtypes}")
 
-        self._log.debug(f"`performance_list` before `json.dumps()`  is type {type(performance_list)}.")
+        self._log.debug(f"`list_of_records_in_performance` before `json.dumps()`  is type {type(list_of_records_in_performance)}.")
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
-            performance_list,
+            list_of_records_in_performance,
             default=ConvertJSONDictToParquet._serialize_dates,
         )
         if len(records_orient_list) > 1500:
