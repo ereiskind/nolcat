@@ -1934,30 +1934,29 @@ class ConvertJSONDictToParquet:
                         include_in_df_dtypes['publisher'] = 'string'
                         self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
 
-                #Subsection: Capture `publisher_ID` Value
+                #Subsection: Capture `publisher_ID` or `parent_publisher_ID`Value
                 elif key == "Publisher_ID":  # Code below not tested
-                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
-                    if isinstance(value, list) and value != []:
-                        if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
-                            if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
-                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
-                                self._log.critical(message)
-                                return message
-                            else:
-                                record_in_report_items['publisher_ID'] = value[0]['Value']
-                                include_in_df_dtypes['publisher_ID'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
-                        else:
-                            for type_and_value in value:
-                                if proprietary_ID_regex.search(type_and_value['Type']):
-                                    if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
-                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
-                                        self._log.critical(message)
-                                        return message
-                                    else:
-                                        record_in_report_items['publisher_ID'] = type_and_value['Value']
-                                        include_in_df_dtypes['publisher_ID'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
+                    if report_type == "IR":
+                        field = "parent_publisher_ID"
+                    else:
+                        field = "publisher_ID"
+                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    if isinstance(value, dict) and len(value) == 1:
+                        value = list(value.values())[0]
+                    elif isinstance(value, list) and len(value) == 1:
+                        value = value[0]
+                    elif isinstance(value, str) or isinstance(value, int):
+                        value = str(value)
+                    else:
+                        self._log.debug(f"The value '{value}' wasn't in a parsable format for the publisher_ID field.")
+                        continue
+                    if len(value) > PUBLISHER_ID_LENGTH:
+                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, value)
+                        self._log.critical(message)
+                        return message
+                    record_in_report_items[field] = value
+                    include_in_df_dtypes[field] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
@@ -2066,7 +2065,7 @@ class ConvertJSONDictToParquet:
                             else:
                                 field = "ISBN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            record_in_report_items['ISBN'] = str(type_and_value['Value'])
+                            record_in_report_items['ISBN'] = str(ID_value)
                             include_in_df_dtypes['ISBN'] = 'string'
                             self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_report_items['ISBN']))
 
@@ -2107,14 +2106,13 @@ class ConvertJSONDictToParquet:
                             else:
                                 field = "URI"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            if len(type_and_value['Value']) > URI_LENGTH:
-                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
+                            if len(ID_value) > URI_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", ID_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                record_in_report_items['URI'] = type_and_value['Value']
-                                include_in_df_dtypes['URI'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_report_items['URI']))
+                            record_in_report_items[field] = value
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
                 elif key == "Data_Type":
@@ -2201,27 +2199,22 @@ class ConvertJSONDictToParquet:
                         #Subsection: Capture `publisher_ID` Value
                         elif items_key == "Publisher_ID":  # Code below not tested
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher_ID`"))
-                            if isinstance(value, list) and value != []:
-                                if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
-                                    if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
-                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
-                                        self._log.critical(message)
-                                        return message
-                                    else:
-                                        record_in_items['publisher_ID'] = value[0]['Value']
-                                        include_in_df_dtypes['publisher_ID'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
-                                else:
-                                    for type_and_value in value:
-                                        if proprietary_ID_regex.search(type_and_value['Type']):
-                                            if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
-                                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
-                                                self._log.critical(message)
-                                                return message
-                                            else:
-                                                record_in_items['publisher_ID'] = type_and_value['Value']
-                                                include_in_df_dtypes['publisher_ID'] = 'string'
-                                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
+                            if isinstance(items_value, dict) and len(items_value) == 1:
+                                items_value = list(items_value.values())[0]
+                            elif isinstance(items_value, list) and len(items_value) == 1:
+                                items_value = items_value[0]
+                            elif isinstance(items_value, str) or isinstance(items_value, int):
+                                items_value = str(items_value)
+                            else:
+                                self._log.debug(f"The value '{items_value}' wasn't in a parsable format for the publisher_ID field.")
+                                continue
+                            if len(items_value) > PUBLISHER_ID_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", items_value)
+                                self._log.critical(message)
+                                return message
+                            record_in_report_items['publisher_ID'] = items_value
+                            include_in_df_dtypes['publisher_ID'] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
 
                         #Subsection: Capture `platform` Value
                         elif items_key == "Platform":
@@ -2310,7 +2303,7 @@ class ConvertJSONDictToParquet:
                                 #Subsection: Capture `ISBN` Value
                                 elif ID_type == "ISBN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
-                                    record_in_items['ISBN'] = str(type_and_value['Value'])
+                                    record_in_items['ISBN'] = str(ID_value)
                                     include_in_df_dtypes['ISBN'] = 'string'
                                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
 
@@ -2328,25 +2321,24 @@ class ConvertJSONDictToParquet:
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
-                                    if ISSN_regex().fullmatch(type_and_value['Value']):
-                                        record_in_items['online_ISSN'] = type_and_value['Value'].strip()
+                                    if ISSN_regex().fullmatch(ID_value):
+                                        record_in_items['online_ISSN'] = ID_value.strip()
                                         include_in_df_dtypes['online_ISSN'] = 'string'
                                     else:
-                                        record_in_items['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        record_in_items['online_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
                                         include_in_df_dtypes['online_ISSN'] = 'string'
                                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
 
                                 #Subsection: Capture `URI` Value
                                 elif ID_type == "URI":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
-                                    if len(type_and_value['Value']) > URI_LENGTH:
-                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
+                                    if len(ID_value) > URI_LENGTH:
+                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", ID_value)
                                         self._log.critical(message)
                                         return message
-                                    else:
-                                        record_in_items['URI'] = type_and_value['Value']
-                                        include_in_df_dtypes['URI'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
+                                    record_in_items['URI'] = ID_value
+                                    include_in_df_dtypes['URI'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
 
                         #Subsection: Capture `Attribute_Performance` Value
                         elif items_key == "Attribute_Performance":
