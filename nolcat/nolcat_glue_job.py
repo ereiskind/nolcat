@@ -1297,7 +1297,7 @@ class ConvertJSONDictToParquet:
                     )
                 except S3InteractionError as error:
                     message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                    log.critical(message)
+                    self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
                 return S3_file_name
@@ -1319,7 +1319,7 @@ class ConvertJSONDictToParquet:
                     )
                 except S3InteractionError as error:
                     message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                    log.critical(message)
+                    self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
                 return S3_file_name
@@ -1338,7 +1338,7 @@ class ConvertJSONDictToParquet:
                 )
             except S3InteractionError as error:
                 message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                log.critical(message)
+                self._log.critical(message)
                 raise S3InteractionError(message)
             self._log.warning(f"Data saved to {S3_file_name}.")
             return S3_file_name
@@ -1941,23 +1941,23 @@ class ConvertJSONDictToParquet:
                         if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
                             if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
-                                log.critical(message)
+                                self._log.critical(message)
                                 return message
                             else:
                                 record_in_report_items['publisher_ID'] = value[0]['Value']
                                 include_in_df_dtypes['publisher_ID'] = 'string'
-                                log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
                         else:
                             for type_and_value in value:
                                 if proprietary_ID_regex.search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
-                                        log.critical(message)
+                                        self._log.critical(message)
                                         return message
                                     else:
                                         record_in_report_items['publisher_ID'] = type_and_value['Value']
                                         include_in_df_dtypes['publisher_ID'] = 'string'
-                                        log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
+                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
@@ -2068,7 +2068,7 @@ class ConvertJSONDictToParquet:
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             record_in_report_items['ISBN'] = str(type_and_value['Value'])
                             include_in_df_dtypes['ISBN'] = 'string'
-                            log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_report_items['ISBN']))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_report_items['ISBN']))
 
                         #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
                         elif ID_type == "Print_ISSN":
@@ -2098,7 +2098,7 @@ class ConvertJSONDictToParquet:
                             else:
                                 record_in_report_items[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
                                 include_in_df_dtypes[field] = 'string'
-                            log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `URI` or `parent_URI` Value
                         elif ID_type == "URI":  # Code below not tested
@@ -2109,12 +2109,12 @@ class ConvertJSONDictToParquet:
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if len(type_and_value['Value']) > URI_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
-                                log.critical(message)
+                                self._log.critical(message)
                                 return message
                             else:
                                 record_in_report_items['URI'] = type_and_value['Value']
                                 include_in_df_dtypes['URI'] = 'string'
-                                log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_report_items['URI']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_report_items['URI']))
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
                 elif key == "Data_Type":
@@ -2205,23 +2205,23 @@ class ConvertJSONDictToParquet:
                                 if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
                                     if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
-                                        log.critical(message)
+                                        self._log.critical(message)
                                         return message
                                     else:
                                         record_in_items['publisher_ID'] = value[0]['Value']
                                         include_in_df_dtypes['publisher_ID'] = 'string'
-                                        log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
+                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
                                 else:
                                     for type_and_value in value:
                                         if proprietary_ID_regex.search(type_and_value['Type']):
                                             if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
                                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
-                                                log.critical(message)
+                                                self._log.critical(message)
                                                 return message
                                             else:
                                                 record_in_items['publisher_ID'] = type_and_value['Value']
                                                 include_in_df_dtypes['publisher_ID'] = 'string'
-                                                log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
+                                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_items['publisher_ID']))
 
                         #Subsection: Capture `platform` Value
                         elif items_key == "Platform":
@@ -2312,7 +2312,7 @@ class ConvertJSONDictToParquet:
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
                                     record_in_items['ISBN'] = str(type_and_value['Value'])
                                     include_in_df_dtypes['ISBN'] = 'string'
-                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
 
                                 #Subsection: Capture `print_ISSN` Value
                                 elif ID_type == "Print_ISSN":  # Code below not tested
@@ -2323,7 +2323,7 @@ class ConvertJSONDictToParquet:
                                     else:
                                         record_in_items['print_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
                                         include_in_df_dtypes['print_ISSN'] = 'string'
-                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("print_ISSN", record_in_items['print_ISSN']))
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("print_ISSN", record_in_items['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":  # Code below not tested
@@ -2334,19 +2334,19 @@ class ConvertJSONDictToParquet:
                                     else:
                                         record_in_items['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
                                         include_in_df_dtypes['online_ISSN'] = 'string'
-                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
 
                                 #Subsection: Capture `URI` Value
                                 elif ID_type == "URI":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
                                     if len(type_and_value['Value']) > URI_LENGTH:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
-                                        log.critical(message)
+                                        self._log.critical(message)
                                         return message
                                     else:
                                         record_in_items['URI'] = type_and_value['Value']
                                         include_in_df_dtypes['URI'] = 'string'
-                                        log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
+                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
 
                         #Subsection: Capture `Attribute_Performance` Value
                         elif items_key == "Attribute_Performance":
