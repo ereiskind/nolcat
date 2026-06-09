@@ -2307,9 +2307,11 @@ class ConvertJSONDictToParquet:
                                         self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("proprietary_ID", record_in_items['proprietary_ID']))
 
                                 #Subsection: Capture `ISBN` Value
-                                elif ID_type == "ISBN":
+                                elif ID_type == "ISBN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
-                                    pass
+                                    record_in_items['ISBN'] = str(type_and_value['Value'])
+                                    include_in_df_dtypes['ISBN'] = 'string'
+                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
 
                                 #Subsection: Capture `print_ISSN` Value
                                 elif ID_type == "Print_ISSN":
