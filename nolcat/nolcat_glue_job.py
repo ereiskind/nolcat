@@ -2325,9 +2325,15 @@ class ConvertJSONDictToParquet:
                                     log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("print_ISSN", record_in_items['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
-                                elif ID_type == "Online_ISSN":
+                                elif ID_type == "Online_ISSN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
-                                    pass
+                                    if ISSN_regex().fullmatch(type_and_value['Value']):
+                                        record_in_items['online_ISSN'] = type_and_value['Value'].strip()
+                                        include_in_df_dtypes['online_ISSN'] = 'string'
+                                    else:
+                                        record_in_items['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        include_in_df_dtypes['online_ISSN'] = 'string'
+                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
 
                                 #Subsection: Capture `URI` Value
                                 elif ID_type == "URI":
