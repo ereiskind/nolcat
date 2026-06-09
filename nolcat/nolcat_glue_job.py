@@ -1999,14 +1999,17 @@ class ConvertJSONDictToParquet:
                                 record_in_report_items[field] = record_in_report_items[field] + " et al."
                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
-                #Subsection: Capture `publication_date` or `parent_publication_date` Value
-                elif key == "Item_Dates":
-                    if report_type == "IR":
-                        field = "parent_publication_date"
-                    else:
-                        field = "publication_date"
+                #Subsection: Capture `parent_publication_date` Value
+                elif (key == "Item_Dates" or key == "Publication_Date") and report_type == "IR":  # Code below not tested; key should only ever be in IR
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    pass
+                    if items_value == "1000-01-01" or items_value == "1753-01-01" or items_value == "1900-01-01":
+                        pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
+                    try:
+                        record_in_items['parent_publication_date'] = date.fromisoformat(items_value)
+                        include_in_df_dtypes['parent_publication_date'] = True
+                    except:
+                        pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("parent_publication_date", record_in_items['parent_publication_date']))
 
                 #Subsection: Capture `article_version` or `parent_article_version` Value
                 elif key == "Article_Version":
