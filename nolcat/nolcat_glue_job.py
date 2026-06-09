@@ -2085,13 +2085,19 @@ class ConvertJSONDictToParquet:
                             self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
-                        elif ID_type == "Online_ISSN":
+                        elif ID_type == "Online_ISSN":  # Code below not tested
                             if report_type == "IR":
                                 field = "parent_online_ISSN"
                             else:
                                 field = "online_ISSN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if ISSN_regex().fullmatch(ID_value):
+                                record_in_report_items[field] = ID_value.strip()
+                                include_in_df_dtypes[field] = 'string'
+                            else:
+                                record_in_report_items[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                include_in_df_dtypes[field] = 'string'
+                            log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `URI` or `parent_URI` Value
                         elif ID_type == "URI":
