@@ -2100,13 +2100,20 @@ class ConvertJSONDictToParquet:
                             log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `URI` or `parent_URI` Value
-                        elif ID_type == "URI":
+                        elif ID_type == "URI":  # Code below not tested
                             if report_type == "IR":
                                 field = "parent_URI"
                             else:
                                 field = "URI"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if len(type_and_value['Value']) > URI_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
+                                log.critical(message)
+                                return message
+                            else:
+                                record_in_report_items['URI'] = type_and_value['Value']
+                                include_in_df_dtypes['URI'] = 'string'
+                                log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_report_items['URI']))
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
                 elif key == "Data_Type":
