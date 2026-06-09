@@ -2011,14 +2011,12 @@ class ConvertJSONDictToParquet:
                         pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("parent_publication_date", record_in_items['parent_publication_date']))
 
-                #Subsection: Capture `article_version` or `parent_article_version` Value
-                elif key == "Article_Version":
-                    if report_type == "IR":
-                        field = "parent_article_version"
-                    else:
-                        field = "article_version"
+                #Subsection: Capture `parent_article_version` Value
+                elif key == "Article_Version" and report_type == "IR":  # Code below not tested; key should only ever be in IR
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    pass
+                    record_in_report_items['article_version'] = value
+                    include_in_df_dtypes['article_version'] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", record_in_report_items['article_version']))
 
                 #Subsection: Capture Standard Identifiers or Parent Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
