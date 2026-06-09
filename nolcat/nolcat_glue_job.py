@@ -1899,7 +1899,6 @@ class ConvertJSONDictToParquet:
             self._log.debug(f"Starting iteration for new JSON record {record}.")
             record_in_report_items = {"report_creation_date": report_creation_date}  # This resets the contents of `record_in_report_items`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
-                second_iteration_key_list = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
                 if key == "Database" or key == "Title":
@@ -2109,10 +2108,15 @@ class ConvertJSONDictToParquet:
                     include_in_df_dtypes['access_type'] = 'string'
                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", record_in_report_items['access_type']))
 
-                else:
+                #Subsection: Capture Inner List Values
+                elif key == "Items" and report_type == "IR":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
-                    record_in_report_items[key] = value
-                    second_iteration_key_list.append(key)
+                    record_in_report_items['Items UNWIND'] = value
+                    self._log.debug(f"Added placeholder '{record_in_report_items['Items UNWIND']}' to row dictionary for later unpacking.")
+                elif key == "Attribute_Performance":
+                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
+                    record_in_report_items['Attribute_Performance UNWIND'] = value
+                    self._log.debug(f"Added placeholder '{record_in_report_items['Attribute_Performance UNWIND']}' to row dictionary for later unpacking.")
 
             list_of_records_in_report_items.append(record_in_report_items)
             self._log.debug(f"Record added to `list_of_records_in_report_items`: {list_of_records_in_report_items[-1]}")
@@ -2120,13 +2124,13 @@ class ConvertJSONDictToParquet:
 
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
         list_of_records_in_items = []
-        if second_iteration_key_list == ["Items"] and report_type == "IR":
+        if "Items UNWIND" in record_in_report_items.keys():
+            fields_collected_before_Items_UNWIND = deepcopy(include_in_df_dtypes.keys())
             for record in list_of_records_in_report_items:
-                self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
-                for items in record['Items']:
-                    record_in_items = {k: v for (k, v) in record.items() if k not in second_iteration_key_list}
+                self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items UNWIND'], "Items", "keys at the top level of the JSON"))
+                for items in record['Items UNWIND']:
+                    record_in_items = {k: v for (k, v) in record.items() if k not in fields_collected_before_Items_UNWIND}
                     for items_key, items_value in items.items():
-                        third_iteration_key_list = []
 
                         #Subsection: Capture `resource_name` Value
                         if items_key == "Item":
@@ -2267,10 +2271,11 @@ class ConvertJSONDictToParquet:
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
                                     pass
 
-                        else:
+                        #Subsection: Capture `Attribute_Performance` Value
+                        elif items_key == "Attribute_Performance":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "a placeholder for later unpacking"))
-                            record_in_items[items_key] = items_value
-                            third_iteration_key_list.append(items_key)
+                            record_in_items['Attribute_Performance UNWIND'] = items_value
+                            self._log.debug(f"Added placeholder '{record_in_items['Attribute_Performance UNWIND']}' to row dictionary for later unpacking.")
 
                     list_of_records_in_items.append(record_in_items)
                     self._log.debug(f"Record added to `list_of_records_in_items`: {list_of_records_in_items[-1]}")
@@ -2278,36 +2283,15 @@ class ConvertJSONDictToParquet:
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
         list_of_records_in_attribute_performance = []
-        #TEST: temp
-        self._log.error(f"TESTING {report_type}: Before `if` block")
-        try:
-            self._log.error(f"`second_iteration_key_list` (type {type(second_iteration_key_list)}): {second_iteration_key_list}")
-        except Exception as e:
-            self._log.error(f"`second_iteration_key_list` to stdout raised {e}")
-        try:
-            self._log.error(f"`third_iteration_key_list` (type {type(third_iteration_key_list)}): {third_iteration_key_list}")
-        except Exception as e:
-            self._log.error(f"`third_iteration_key_list` to stdout raised {e}")
-        #TEST: end temp
-        if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
-            self._log.error(f"TESTING {report_type}: In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
-            list_of_records = list_of_records_in_report_items
-        elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
-            self._log.error(f"TESTING {report_type}: In `elif third_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
+        if list_of_records_in_items:
             list_of_records = list_of_records_in_items
         else:
-            self._log.error(f"TESTING {report_type}: In `else:`")  #TEST: temp
-            message = f"The JSON is malformed, lacking the `Attribute_Performance` key."
-            self._log.critical(message)
-            return message
-        self._log.error(f"TESTING {report_type}: After `if` block")  #TEST: temp
-
+            list_of_records = list_of_records_in_report_items
         for record in list_of_records:
-            self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
-            for attributes in record['Attribute_Performance']:
-                record_in_attribute_performance = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
+            self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance UNWIND'], "Attribute_Performance", "keys at the top level of the JSON"))
+            for attributes in record['Attribute_Performance UNWIND']:
+                record_in_attribute_performance = {k: v for (k, v) in record.items() if k != "Attribute_Performance UNWIND"}
                 for attribute_performance_key, attribute_performance_value in attributes.items():
-                    final_iteration_key_list = []
 
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
@@ -2340,10 +2324,11 @@ class ConvertJSONDictToParquet:
                         include_in_df_dtypes['access_method'] = 'string'
                         self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_method", record_in_attribute_performance['access_method']))
 
-                    else:
+                    #Subsection: Capture `Performance` Value
+                    elif attribute_performance_key == "Performance":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
-                        record_in_attribute_performance[attribute_performance_key] = attribute_performance_value
-                        final_iteration_key_list.append(attribute_performance_key)
+                        record_in_attribute_performance['Performance'] = attribute_performance_value
+                        self._log.debug(f"Added placeholder '{record_in_attribute_performance['Performance']}' to row dictionary for later unpacking.")
 
                 list_of_records_in_attribute_performance.append(record_in_attribute_performance)
                 self._log.debug(f"Record added to `list_of_records_in_attribute_performance`: {list_of_records_in_attribute_performance[-1]}")
