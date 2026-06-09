@@ -2314,9 +2314,15 @@ class ConvertJSONDictToParquet:
                                     log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
 
                                 #Subsection: Capture `print_ISSN` Value
-                                elif ID_type == "Print_ISSN":
+                                elif ID_type == "Print_ISSN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
-                                    pass
+                                    if ISSN_regex().fullmatch(ID_value):
+                                        record_in_items['print_ISSN'] = ID_value.strip()
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    else:
+                                        record_in_items['print_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("print_ISSN", record_in_items['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
                                 elif ID_type == "Online_ISSN":
