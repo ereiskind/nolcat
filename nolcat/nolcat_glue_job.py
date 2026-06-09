@@ -1935,9 +1935,29 @@ class ConvertJSONDictToParquet:
                         self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
 
                 #Subsection: Capture `publisher_ID` Value
-                elif key == "Publisher_ID":
+                elif key == "Publisher_ID":  # Code below not tested
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
-                    pass
+                    if isinstance(value, list) and value != []:
+                        if len(value) == 1 and proprietary_ID_regex.search(value[0]['Type']):
+                            if len(value[0]['Value']) > PUBLISHER_ID_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", value[0]['Value'])
+                                log.critical(message)
+                                return message
+                            else:
+                                record_in_report_items['publisher_ID'] = value[0]['Value']
+                                include_in_df_dtypes['publisher_ID'] = 'string'
+                                log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
+                        else:
+                            for type_and_value in value:
+                                if proprietary_ID_regex.search(type_and_value['Type']):
+                                    if len(type_and_value['Value']) > PUBLISHER_ID_LENGTH:
+                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", type_and_value['Value'])
+                                        log.critical(message)
+                                        return message
+                                    else:
+                                        record_in_report_items['publisher_ID'] = type_and_value['Value']
+                                        include_in_df_dtypes['publisher_ID'] = 'string'
+                                        log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
