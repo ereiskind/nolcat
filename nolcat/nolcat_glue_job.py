@@ -2336,9 +2336,16 @@ class ConvertJSONDictToParquet:
                                     log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
 
                                 #Subsection: Capture `URI` Value
-                                elif ID_type == "URI":
+                                elif ID_type == "URI":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
-                                    pass
+                                    if len(type_and_value['Value']) > URI_LENGTH:
+                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", type_and_value['Value'])
+                                        log.critical(message)
+                                        return message
+                                    else:
+                                        record_in_items['URI'] = type_and_value['Value']
+                                        include_in_df_dtypes['URI'] = 'string'
+                                        log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
 
                         #Subsection: Capture `Attribute_Performance` Value
                         elif items_key == "Attribute_Performance":
