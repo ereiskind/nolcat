@@ -153,16 +153,21 @@ def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
 @pytest.fixture
-def FY2023_FiscalYears_object_and_record():
+def new_FiscalYears_object_and_record():
     """Creates a FiscalYears object and an empty record for the fiscalYears relation.
 
     Yields:
-        tuple: the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+        tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
     """
     primary_key_value = 6
-    fiscal_year_value = "2023"
-    start_date_value = date.fromisoformat('2022-07-01')
-    end_date_value = date.fromisoformat('2023-06-30')
+    today = date.today()
+    if today.month < 8:
+        fiscal_year_number = today.year - 2
+    else:
+        fiscal_year_number = today.year - 1
+    fiscal_year_value = str(fiscal_year_number)
+    start_date_value = date(fiscal_year_number-1, 7, 1)
+    end_date_value = date(fiscal_year_number, 6, 30)
 
     FY_instance = FiscalYears(
         fiscal_year_ID = primary_key_value,
@@ -182,12 +187,12 @@ def FY2023_FiscalYears_object_and_record():
 
 
 @pytest.fixture
-def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_record, caplog):
+def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record, caplog):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+        new_FiscalYears_object_and_record (tuple): tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Yields:
@@ -196,7 +201,7 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     try:
         method_result = load_data_into_database(
-            df=FY2023_FiscalYears_object_and_record[1],
+            df=new_FiscalYears_object_and_record[1],
             relation='fiscalYears',
             engine=engine,
             index_field_name='fiscal_year_ID',
@@ -206,21 +211,21 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, new_FiscalYears_object_and_record, caplog):  # `load_new_record_into_fiscalYears()` not called but used to load record needed for test
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
         load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
-        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
+        new_FiscalYears_object_and_record (tuple): tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     #Section: Call Method
     with client:
-        method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+        method_result = new_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
     if not re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     

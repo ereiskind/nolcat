@@ -2067,7 +2067,7 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        FY2023_FiscalYears_object_and_record [
+        new_FiscalYears_object_and_record [
             style="dotted"
             shape="box"
         ]
@@ -2119,14 +2119,14 @@ digraph function_call_chains {
     test_calculate_ARL_20 -> FY2020_FiscalYears_object
     load_new_record_into_fiscalYears -> load_data_into_database
     load_new_record_into_fiscalYears -> engine
-    load_new_record_into_fiscalYears -> FY2023_FiscalYears_object_and_record
+    load_new_record_into_fiscalYears -> new_FiscalYears_object_and_record
     test_create_usage_tracking_records_for_fiscal_year -> create_usage_tracking_records_for_fiscal_year
     test_create_usage_tracking_records_for_fiscal_year -> state_data_types_in_annualUsageCollectionTracking
     test_create_usage_tracking_records_for_fiscal_year -> restore_boolean_values_to_boolean_field
     test_create_usage_tracking_records_for_fiscal_year -> query_database
     test_create_usage_tracking_records_for_fiscal_year -> engine
     test_create_usage_tracking_records_for_fiscal_year -> client
-    test_create_usage_tracking_records_for_fiscal_year -> FY2023_FiscalYears_object_and_record
+    test_create_usage_tracking_records_for_fiscal_year -> new_FiscalYears_object_and_record
     FY2022_FiscalYears_object -> query_database
     FY2022_FiscalYears_object -> initialize_relation_class_object_statement
     FY2022_FiscalYears_object -> engine
