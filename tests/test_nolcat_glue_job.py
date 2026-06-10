@@ -6130,7 +6130,7 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
         JSON_dicts_with_metadata (tuple): the location of the JSON being converted to a dataframe; the report type; the statistics source ID; the dataframe resulting from the conversion
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
+    #caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job.ConvertJSONDictToParquet')  # When not testing for JSON to dataframe conversion issues, the logging for it takes up too many lines; comment this caplog out when necessary
     JSON_report_path, report_type, statistics_source_ID, df_from_fixture = JSON_dicts_with_metadata
     with open(JSON_report_path) as JSON_file:
         dict_from_JSON = json.load(JSON_file)
