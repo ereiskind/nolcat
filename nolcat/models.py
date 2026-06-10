@@ -365,7 +365,7 @@ class FiscalYears(db.Model):
         except DatabaseInteractionError as error:
             message = f"Unable to return requested data--{error}"
             self._log.error(message)
-            return message  #ALERT: `raise DatabaseInteractionError`
+            raise DatabaseInteractionError(message)
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
@@ -395,8 +395,9 @@ class FiscalYears(db.Model):
                 index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
             )
         except DatabaseInteractionError as error:
-            self._log.error(error)
-            raise DatabaseInteractionError(error)
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         return load_result
 
 
