@@ -2154,13 +2154,10 @@ class ConvertJSONDictToParquet:
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
         list_of_records_in_items = []
         if "Items UNWIND" in record_in_report_items.keys():
-            self._log.error(f"`record_in_report_items.keys()`: {list(record_in_report_items.keys())}")  #TEST: temp
-            self._log.error(f"`include_in_df_dtypes.keys()`: {list(include_in_df_dtypes.keys())}")  #TEST: temp
-            fields_collected_before_Items_UNWIND = deepcopy(list(include_in_df_dtypes.keys()))
             for record in list_of_records_in_report_items:
                 self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items UNWIND'], "Items", "keys at the top level of the JSON"))
                 for items in record['Items UNWIND']:
-                    record_in_items = {k: v for (k, v) in record.items() if k not in fields_collected_before_Items_UNWIND}
+                    record_in_items = {k: v for (k, v) in record.items() if k != "Items UNWIND"}
                     for items_key, items_value in items.items():
 
                         #Subsection: Capture `resource_name` Value
@@ -2441,7 +2438,6 @@ class ConvertJSONDictToParquet:
             encoding_errors='backslashreplace',
         )
         self._log.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
-        self._log.error(f"`df_dtypes`: {df_dtypes}")  #TEST: temp
 
         df = df.astype(df_dtypes)  # This sets the string data types
         self._log.debug(f"Dataframe dtypes after conversion:\n{return_string_of_dataframe_info(df)}")
