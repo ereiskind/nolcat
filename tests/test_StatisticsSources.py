@@ -402,9 +402,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
         possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report_being_called}_{dt.strftime(AWS_timestamp_format())}.parquet")
-    file_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)#TEST:[0]
-    log.debug(f"`file_in_bucket`:\n{format_list_for_stdout(file_in_bucket)}")  #TEST: temp
-    file_in_bucket = file_in_bucket[0]  #TEST: temp
+    file_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)[0]  # This relies on the bucket having the parquet file from the function being tested and only the file from the function being tested, but there's no better way to handle the file name extraction
     log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
     if 'STOP' in list(flash_message_dict.keys()):
