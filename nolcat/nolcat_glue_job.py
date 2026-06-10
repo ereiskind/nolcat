@@ -2152,9 +2152,13 @@ class ConvertJSONDictToParquet:
         self._log.debug("`list_of_records_in_report_items` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
 
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
+        self._log.error("Before `list_of_records_in_items`")  #TEST: temp
         list_of_records_in_items = []
+        self._log.error("After `list_of_records_in_items`")  #TEST: temp
         if "Items UNWIND" in record_in_report_items.keys():
+            self._log.error("In `if 'Items UNWIND' in record_in_report_items.keys():`")  #TEST: temp
             fields_collected_before_Items_UNWIND = deepcopy(include_in_df_dtypes.keys())
+            self._log.error("Before `for record in list_of_records_in_report_items:`")  #TEST: temp
             for record in list_of_records_in_report_items:
                 self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items UNWIND'], "Items", "keys at the top level of the JSON"))
                 for items in record['Items UNWIND']:
