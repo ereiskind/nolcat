@@ -1998,10 +1998,10 @@ class ConvertJSONDictToParquet:
                 #Subsection: Capture `parent_publication_date` Value
                 elif (key == "Item_Dates" or key == "Publication_Date") and report_type == "IR":  # Code below not tested; key should only ever be in IR
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    if items_value == "1000-01-01" or items_value == "1753-01-01" or items_value == "1900-01-01":
+                    if value == "1000-01-01" or value == "1753-01-01" or value == "1900-01-01":
                         pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
                     try:
-                        record_in_items['parent_publication_date'] = date.fromisoformat(items_value)
+                        record_in_items['parent_publication_date'] = date.fromisoformat(value)
                         include_in_df_dtypes['parent_publication_date'] = True
                     except:
                         pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
