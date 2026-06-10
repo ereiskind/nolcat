@@ -353,7 +353,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         most_recent_month_with_usage[1],
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    after = datetime.now()
+    after = datetime.now() + timedelta(seconds=2)  # The additional time provides a buffer for name matching purposes
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
         for report in reports_offered_by_StatisticsSource_fixture:
@@ -398,7 +398,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         report_being_called,
         bucket_path=TEST_COUNTER_FILE_PATH,
     )
-    after = datetime.now()
+    after = datetime.now() + timedelta(seconds=2)  # The additional time provides a buffer for name matching purposes
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
         possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report_being_called}_{dt.strftime(AWS_timestamp_format())}.parquet")
