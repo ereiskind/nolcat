@@ -6144,4 +6144,13 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
         Filename=download_location,
     )
     df_from_S3 = pd.read_parquet(download_location)
+    #TEST: temp
+    try:
+        log.error(f"Dataframe differences:\n{df_from_S3.compare(df_from_fixture)}")
+    except:
+        log.error(f"In `df_from_S3.index` but not `df_from_fixture.index`:\n{df_from_S3.index.difference(df_from_fixture.index)}")
+        log.error(f"In `df_from_fixture.index` but not `df_from_S3.index`:\n{df_from_fixture.index.difference(df_from_S3.index)}")
+        log.error(f"In `df_from_S3.columns` but not `df_from_fixture.columns`:\n{set(df_from_S3.columns).difference(set(df_from_fixture.columns))}")
+        log.error(f"In `df_from_fixture.columns` but not `df_from_S3.columns`:\n{set(df_from_fixture.columns).difference(set(df_from_S3.columns))}")
+    #TEST: end temp
     assert_frame_equal(df_from_S3, df_from_fixture[df_from_S3.columns.tolist()])
