@@ -1051,10 +1051,9 @@ class StatisticsSources(db.Model):
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements
-                self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")  #TEST: temp
+                self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")
                 return_statements[report_name] = messages_to_flash
 
-            self._log.error(f"TESTING: `for custom_report in available_custom_reports:` complete")  #TEST: temp
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 self._log.warning(message)
