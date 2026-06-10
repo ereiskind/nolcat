@@ -2054,15 +2054,15 @@ class ConvertJSONDictToParquet:
                             self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `ISBN` or `parent_ISBN` Value
-                        elif ID_type == "ISBN":  # Code below not tested
+                        elif ID_type == "ISBN":
                             if report_type == "IR":
                                 field = "parent_ISBN"
                             else:
                                 field = "ISBN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            record_in_report_items['ISBN'] = str(ID_value)
-                            include_in_df_dtypes['ISBN'] = 'string'
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_report_items['ISBN']))
+                            record_in_report_items[field] = str(ID_value)
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
                         elif ID_type == "Print_ISSN":
