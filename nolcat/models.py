@@ -934,7 +934,7 @@ class StatisticsSources(db.Model):
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements
-            except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages) as error:
+            except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                 return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = []
@@ -1044,7 +1044,7 @@ class StatisticsSources(db.Model):
                     for e in error.messages_to_flash + [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages) as error:
+                except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                     message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                     return_statements[report_name] = error.message
                     return_statements['STOP'] = []
@@ -1081,9 +1081,14 @@ class StatisticsSources(db.Model):
             NoSUSHIUsageDataError: if no SUSHI usage data is returned
             InvalidSUSHIResponseError: if the SUSHI call returns an error
             S3InteractionErrorWithFlashMessages: if a problem occurs while saving the SUSHI call response to S3
+            DatabaseInteractionErrorWithFlashMessages: if the check for data in the database fails
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
-        subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        try:
+            subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        except DatabaseInteractionError as error:
+            self._log.error(error)
+            raise DatabaseInteractionErrorWithFlashMessages(error, error)
         if isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (None, [message])
@@ -1186,7 +1191,9 @@ class StatisticsSources(db.Model):
 
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
-            str: the error message from `query_database()` being passed through
+        
+        Raises:
+           DatabaseInteractionError: if the SQL query fails
         """
         self._log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
@@ -1202,7 +1209,7 @@ class StatisticsSources(db.Model):
             except DatabaseInteractionError as error:
                 message = f"Unable to return requested data--{error}"
                 self._log.error(message)
-                return message  #ALERT: `raise DatabaseInteractionError`
+                raise DatabaseInteractionError(message)
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:

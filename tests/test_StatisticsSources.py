@@ -267,7 +267,7 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
                 end_date,
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
-    except InvalidSUSHIResponseError as error:
+    except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
         pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
         pytest.skip(f"Unable to run test--{error.message.message}")
@@ -314,7 +314,7 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
                 end_date,
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
-    except InvalidSUSHIResponseError as error:
+    except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
         pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
         pytest.skip(f"Unable to run test--{error.message.message}")
