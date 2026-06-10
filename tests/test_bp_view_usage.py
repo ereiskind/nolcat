@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 from random import choice
@@ -137,12 +137,13 @@ def test_use_predefined_SQL_query(request, engine, client, header_value, COUNTER
         encoding_errors='backslashreplace',
     )
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    database_df = query_database(
-        query=request.param[1],
-        engine=engine,
-    )
-    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=request.param[1],
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -163,12 +164,13 @@ def start_query_wizard_form_data(engine, caplog):
         dict: form input for the form on "query-wizard-start.html"
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    df = query_database(
-        query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     df = df.sample().reset_index()
     yield {
         'begin_date': df.at[0,'usage_date'],
@@ -323,12 +325,13 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -470,12 +473,13 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -846,12 +850,13 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1177,12 +1182,13 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1223,22 +1229,23 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
-        query="""
-                SELECT
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year,
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
-            """,
-        engine=engine,
-    )
-    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(db_select_field_options))
+    try:
+        db_select_field_options = query_database(
+            query="""
+                    SELECT
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year,
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+                """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"

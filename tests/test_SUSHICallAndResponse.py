@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 from datetime import date
@@ -91,12 +91,13 @@ def StatisticsSource_instance_name(engine, caplog):
         str: a value in `statisticsSources.statistics_source_name`
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    df = query_database(
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df, False))
+    try:
+        df = query_database(
+            query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_name IS NOT NULL;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield extract_value_from_single_value_df(df, False)
 
 
@@ -121,11 +122,11 @@ def test_status_call(client, SUSHI_credentials_fixture, StatisticsSource_instanc
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -143,17 +144,24 @@ def test_status_call_validity(client, SUSHI_credentials_fixture, StatisticsSourc
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    with client:
-        response = SUSHICallAndResponse(
-            StatisticsSource_instance_name,
-            URL,
-            "status",
-            SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                StatisticsSource_instance_name,
+                URL,
+                "status",
+                SUSHI_credentials
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
+    except InvalidAPIResponseError as error:
+        pytest.skip(f"Unable to run test--{error.message.message}")
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
-        if re.fullmatch(r"[sS]ervice.?[aA]ctive", key):
+        if re.fullmatch(r'[sS]ervice.?[aA]ctive', key):
             service_active_value = response[0][key]  # The value that goes with `key` in `response[0]`
     assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
 
@@ -179,11 +187,11 @@ def test_reports_call(client, SUSHI_credentials_fixture, StatisticsSource_instan
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -201,20 +209,27 @@ def test_reports_call_validity(client, SUSHI_credentials_fixture, StatisticsSour
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    with client:
-        response = SUSHICallAndResponse(
-            StatisticsSource_instance_name,
-            URL,
-            "reports",
-            SUSHI_credentials
-        ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    try:
+        with client:
+            response = SUSHICallAndResponse(
+                StatisticsSource_instance_name,
+                URL,
+                "reports",
+                SUSHI_credentials
+            ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
+    except InvalidAPIResponseError as error:
+        pytest.skip(f"Unable to run test--{error.message.message}")
     list_of_reports = [report for report in list(response[0].values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
             if (
-                re.fullmatch(r"[PpDdTtIi]?[Rr](_\wJ?\d)?", report["Report_ID"])
+                re.fullmatch(r'[PpDdTtIi]?[Rr](_\wJ?\d)?', report["Report_ID"])
                 or report["Report_ID"].startswith("Silverchair:CR_")  # Silverchair custom report
                 or report["Report_ID"].startswith("sciencedirect:")  # Elsevier custom report
                 or report["Report_ID"].startswith("OUP:")  # Oxford custom report
@@ -248,16 +263,16 @@ def list_of_reports(client, SUSHI_credentials_fixture, caplog):
                 SUSHI_credentials,
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to create fixture--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to create fixture--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to create fixture--{error.message.message}")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`list_of_reports()` for {URL} yields {list_of_reports}.")
     yield list_of_reports
@@ -288,11 +303,11 @@ def test_PR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -324,11 +339,11 @@ def test_DR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -360,11 +375,11 @@ def test_TR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)
@@ -396,11 +411,11 @@ def test_IR_call_validity(client, SUSHI_credentials_fixture, StatisticsSource_in
                 SUSHI_credentials
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-        pytest.skip(f"The `{error.call_path}` call test is being skipped because {error.initial_error}")
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+        pytest.skip(f"Unable to run test--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(response, tuple)
     assert isinstance(response[0], dict)
     assert isinstance(response[1], list)

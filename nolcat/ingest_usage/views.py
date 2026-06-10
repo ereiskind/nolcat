@@ -66,6 +66,7 @@ def upload_COUNTER_data():
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             if df is None:
+                log.debug(message_to_flash)
                 flash(message_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             if message_to_flash:
@@ -73,21 +74,28 @@ def upload_COUNTER_data():
             
             try:
                 df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:  #ALERT: `except DatabaseInteractionError`
-                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
-                messages_to_flash.append(message)
+            except DatabaseInteractionError as error:
+                log.warning(error)
+                messages_to_flash.append(error)
                 flash(messages_to_flash)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
             log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
-            load_result = load_data_into_database(
-                df=df,
-                relation='COUNTERData',
-                engine=db.engine,
-                index_field_name='COUNTER_data_ID',
-            )
+            try:
+                load_result = load_data_into_database(
+                    df=df,
+                    relation='COUNTERData',
+                    engine=db.engine,
+                    index_field_name='COUNTER_data_ID',
+                )
+            except DatabaseInteractionError as error:
+                message = f"Unable to load data--{error}"
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             messages_to_flash.append(load_result)
+            log.debug(message_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         elif list(mimetype_set)[0] == 'application/sql':
@@ -96,22 +104,24 @@ def upload_COUNTER_data():
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
                     display_line = truncate_longer_lines(line)  # Size of lines on display limited to prevent memory errors due to overly long lines
                     log.debug(f"The line starting `{display_line}` in the SQL file data is type {type(line)}.")
-                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO `COUNTERData` (\(.+\) )?VALUES.+\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
+                    COUNTERData_insert_statement = re.fullmatch(br'(INSERT INTO `COUNTERData` (\(.+\) )?VALUES.+\);)\s*', line)  # The `\s*` after the semicolon is for the new line character(s)
                     if COUNTERData_insert_statement:
                         COUNTERData_insert_statement = COUNTERData_insert_statement.groups()[0].decode('utf-8')
                         log.debug(f"Adding the line starting `{display_line}` to the list of insert statements.")
                         insert_statements.append(COUNTERData_insert_statement)
             messages_to_flash = []
             for statement in insert_statements:
-                update_result = update_database(
-                    update_statement=statement,
-                    engine=db.engine,
-                )
-                if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-                    message = database_update_fail_statement(statement)
+                try:
+                    update_result = update_database(
+                        update_statement=statement,
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
+                    message = f"Updating the {statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(statement)}"
                     log.warning(message)
                     messages_to_flash.append(message)   
             
+            log.debug(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         else:
@@ -139,22 +149,28 @@ def harvest_SUSHI_statistics(testing):
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
     if request.method == 'GET':
-        statistics_source_options = query_database(
-            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_options, str):  #ALERT: `except DatabaseInteractionError`
-            flash(database_query_fail_statement(statistics_source_options))
+        try:
+            statistics_source_options = query_database(
+                query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
-        df = query_database(
-            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            flash(database_query_fail_statement(df))
+        try:
+            df = query_database(
+                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -196,6 +212,7 @@ def harvest_SUSHI_statistics(testing):
         )
         if 'STOP' in flash_message_dict.keys():
             log.warning(f"SUSHI harvesting interrupted: {flash_message_dict['STOP']}")
+        log.debug(flash_message_dict)
         flash(flash_message_dict)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
@@ -216,60 +233,66 @@ def upload_non_COUNTER_reports(testing):
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):  #ALERT: `except DatabaseInteractionError`
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+        try:
+            non_COUNTER_files_needed = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        annualUsageCollectionTracking.usage_is_being_collected=true AND
+                        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                        annualUsageCollectionTracking.usage_file_path IS NULL AND
+                        (
+                            annualUsageCollectionTracking.collection_status='Collection not started' OR
+                            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                        );
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form, testing=testing)
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
-        df = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    annualUsageCollectionTracking.usage_is_being_collected,
-                    annualUsageCollectionTracking.manual_collection_required,
-                    annualUsageCollectionTracking.collection_via_email,
-                    annualUsageCollectionTracking.is_COUNTER_compliant,
-                    annualUsageCollectionTracking.collection_status,
-                    annualUsageCollectionTracking.usage_file_path,
-                    annualUsageCollectionTracking.notes,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    AUCT_statistics_source={statistics_source_ID}
-                    AND AUCT_fiscal_year={fiscal_year_ID};
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            flash(database_query_fail_statement(df))
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        annualUsageCollectionTracking.usage_is_being_collected,
+                        annualUsageCollectionTracking.manual_collection_required,
+                        annualUsageCollectionTracking.collection_via_email,
+                        annualUsageCollectionTracking.is_COUNTER_compliant,
+                        annualUsageCollectionTracking.collection_status,
+                        annualUsageCollectionTracking.usage_file_path,
+                        annualUsageCollectionTracking.notes,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                        JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        AUCT_statistics_source={statistics_source_ID}
+                        AND AUCT_fiscal_year={fiscal_year_ID};
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(
             AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],

@@ -79,7 +79,7 @@ def filter_empty_parentheses(log_statement):
     """
     if log_statement.name == "sqlalchemy.engine.base.Engine" and log_statement.msg == "%r":
         return False
-    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search(r"\n\s+", log_statement.msg):
+    elif log_statement.name == "sqlalchemy.engine.base.Engine" and re.search('\n\s+', log_statement.msg):
         log_statement.msg = remove_IDE_spacing_from_statement(log_statement.msg)
         return True
     else:
@@ -152,7 +152,7 @@ def ISSN_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
+    return re.compile(r'\d{4}\-\d{3}[\dxX]\s*')
 
 
 def ISBN_regex():
@@ -163,7 +163,7 @@ def ISBN_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
+    return re.compile(r'(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*')
 
 
 def non_COUNTER_file_name_regex():
@@ -172,7 +172,18 @@ def non_COUNTER_file_name_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"(\d+)_(\d{4})\.\w{3,4}")
+    return re.compile(r'(\d+)_(\d{4})\.\w{3,4}')
+
+
+def URL_regex():
+    """A regex for a URL.
+
+    Regex adapted from https://stackoverflow.com/a/3809435.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r'https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.([a-z]{2,4}|online)\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/')
 
 
 def empty_string_regex():
@@ -181,7 +192,7 @@ def empty_string_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"^\s*$")
+    return re.compile(r'^\s*$')
 
 
 def proprietary_ID_regex():
@@ -190,7 +201,7 @@ def proprietary_ID_regex():
     Returns:
         re.Pattern: the regex object
     """
-    return re.compile(r"[Pp]roprietary(_ID)?")
+    return re.compile(r'[Pp]roprietary(_ID)?')
 
 
 def author_regex():
@@ -276,7 +287,7 @@ def remove_IDE_spacing_from_statement(statement):
     Returns:
         str: the same SQL statement on a single line without multi-space gaps
     """
-    statement = " ".join(re.split(r"\n\s+", statement)).strip()
+    statement = " ".join(re.split(r'\n\s+', statement)).strip()
     statement = " AND ".join(statement.split("\nAND ")).strip()
     return " GROUP BY ".join(statement.split("\nGROUP BY ")).strip()
 
@@ -307,7 +318,7 @@ def format_ISSN(unformatted_ISSN):
         str: the formatted ISSN
     """
     trimmed_ISSN = str(unformatted_ISSN).strip()
-    if re.fullmatch(r"\d{7}[\dxX]", trimmed_ISSN):
+    if re.fullmatch(r'\d{7}[\dxX]', trimmed_ISSN):
         return trimmed_ISSN[:4] + "-" + trimmed_ISSN[-4:]
     else:
         log.warning(f"`{unformatted_ISSN}` isn't consistent with an ISSN, so it isn't being reformatted as an ISSN.")
@@ -315,66 +326,6 @@ def format_ISSN(unformatted_ISSN):
 
 
 #SUBSECTION: SUSHI Statements and Regexes
-def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records, fiscal_year=None):
-    """This statement indicates a successful call to `StatisticsSources._harvest_R5_SUSHI()`.
-
-    Args:
-        statistics_source_name (str): the name of the statistics source
-        number_of_records (int): the number of records found by `StatisticsSources._harvest_R5_SUSHI()`
-        fiscal_year (str, optional): the fiscal year for the `StatisticsSources._harvest_R5_SUSHI()` call; default is `None`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if fiscal_year:
-        return f"The SUSHI harvest for statistics source {statistics_source_name} for FY {fiscal_year} successfully found {number_of_records} records."
-    else:
-        return f"The SUSHI harvest for statistics source {statistics_source_name} successfully found {number_of_records} records."
-
-
-def failed_SUSHI_call_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
-    """This statement indicates a failed call to `SUSHICallAndResponse.make_SUSHI_call()`.
-
-    Args:
-        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-        statistics_source_name (str): the name of the statistics source
-        error_messages (str): the message detailing the error(s) returned by `SUSHICallAndResponse.make_SUSHI_call()`
-        SUSHI_error (bool, optional): indicates if the error is a SUSHI error handled by the program; default is `True`
-        no_usage_data (bool, optional): indicates if the error indicates that there shouldn't be any usage data; default is `False`
-        stop_API_calls (bool, optional): indicates if the error is stopping all SUSHI calls to the given statistics source; default is `False`
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if '\n' in error_messages:
-        error_messages = f"s\n{error_messages}\n"
-    else:
-        error_messages = f" {error_messages} "
-    
-    if SUSHI_error:
-        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the SUSHI error{error_messages}"
-    else:
-        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the error{error_messages}"
-    
-    if no_usage_data:
-        return f"{main_value[:-1]}, so the call returned no usage data."
-    elif stop_API_calls:
-        return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
-    else:
-        return main_value[:-1]  # Removing the whitespace character at the end
-
-
-def skip_test_due_to_SUSHI_error_regex():  #ALERT: Replaced with `raise InvalidSUSHIResponseError`
-    """This regex object matches the return statements in `failed_SUSHI_call_statement()`.
-
-    The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method. This function is only called in test modules but is kept here instead of conftest to keep it with the statements it needs to match.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`
-    """
-    return re.compile(r"The call to the `.+` endpoint for .+ raised the (SUSHI )?errors?")
-
-
 def Flask_error_statement(error_statement):
     """This statement provides details on why the form couldn't be successfully submitted.
 
@@ -385,29 +336,6 @@ def Flask_error_statement(error_statement):
         str: the statement for outputting the arguments to logging
     """
     return f"The form submission failed because of the following error(s):\n{'\n'.join([f"{k}: {v}" for k, v in error_statement.items()])}"
-
-
-def database_function_skip_statements(return_value, is_test_function=True, SUSHI_error=False, no_data=False):
-    """This statement provides the logging output when a pytest skip is initiated after a `nolcat.app.query_database()`, `nolcat.app.load_data_into_database()`, or `nolcat.app.update_database()` function fails.
-    
-    Args:
-        return_value (str): the error message returned by the database helper function
-        is_test_function (bool, optional): indicates if this function is being called within a test function; default is `True`
-        SUSHI_error (bool, optional): indicates if the skip is because a SUSHI call returned a SUSHI error; default is `False`
-        no_data (bool, optional): indicates if the skip is because a SUSHI call returned no data; default is `False`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if is_test_function:
-        if SUSHI_error:
-            return f"Unable to run test because the API call raised a server-based SUSHI error, specifically {return_value[0].lower()}{return_value[1:]}"
-        elif no_data:
-            return f"Unable to run test because no SUSHI data was in the API call response, specifically raising {return_value[0].lower()}{return_value[1:]}"
-        else:
-            return f"Unable to run test because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
-    else:
-        return f"Unable to create fixture because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
 
 
 #SUBSECTION: File Download Statements
@@ -451,22 +379,6 @@ def check_if_file_exists_statement(file_path, alone=True):
 
 #SECTION: Database and Dataframe Functions
 #SUBSECTION: MySQL Interaction Result Statements
-def database_query_fail_statement(error_message, value_type="load requested page"):
-    """This statement indicates the failure of a call to `nolcat.app.query_database()`.
-
-    Args:
-        error_message (str): the return statement indicating the failure of `nolcat.app.query_database()`
-        value_type (str, optional): the type of value that the query should have returned; default is ``
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    if value_type == "load requested page":
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:].replace(' raised', ', which raised')}"
-    else:
-        return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
-
-
 def return_value_from_query_statement(return_value, type_of_query=None):
     """This statement shows an individual value or sequence of values returned by a call to `nolcat.app.query_database()`.
 
@@ -507,19 +419,6 @@ def initialize_relation_class_object_statement(relation_class_name, object_value
     return f"The following {relation_class_name} object was initialized based on the query results:\n{object_value}"
 
 
-def unable_to_get_updated_primary_key_values_statement(relation, error):
-    """This statement prepares the error raised by `nolcat.app.first_new_PK_value()` for the logging output.
-
-    Args:
-        relation (str): the relation name
-        error (Exception): the Python Exception raised by `nolcat.app.first_new_PK_value()`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
-
-
 def return_dataframe_from_query_statement(query_subject, df):
     """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
 
@@ -534,45 +433,6 @@ def return_dataframe_from_query_statement(query_subject, df):
         return f"The beginning and the end of the query for {query_subject}:\n{df.head(10)}\n...\n{df.tail(10)}"
     else:
         return f"The result of the query for {query_subject}:\n{df}"
-
-
-def database_update_fail_statement(update_statement):
-    """This statement indicates the failure of a call to `nolcat.app.update_database()`.
-
-    The repetition of the statement in both a print statement and as the return value ensures the SQL UPDATE statement isn't truncated, which would happen if the statement only went to stdout via log statements. 
-
-    Args:
-        update_statement (str): the SQL update statement
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    message = f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
-    print(message)
-    return message
-
-
-#SUBSECTION: Result Statement Regexes
-def load_data_into_database_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
-
-    The optional period at the end allows the regex to match when it's being used as the beginning of a statement.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
-    """
-    return re.compile(r"[Ss]uccessfully loaded (\d+) records into the (.+) relation\.?")
-
-
-def update_database_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.update_database()`.
-
-    The variable capitalization of the first letter allows the regex to match when it's being used as the latter half of a statement. The `re.DOTALL` flag is included because update statements include line breaks. The period at the end can be the period at the end of a sentence or the final period in the ellipsis from `nolcat.app.truncate_longer_lines()`.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
-    """
-    return re.compile(r"[Ss]uccessfully performed the update .+\.", flags=re.DOTALL)
 
 
 #SUBSECTION: Common Dataframe Adjustments
@@ -663,7 +523,10 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
         index_field_name (str or list of str): the name of the field(s) in the relation that the dataframe index values should be loaded into; default is `None`, same as in the wrapped method, which means the index field name(s) are matched to field(s) in the relation
 
     Returns:
-        str: a message indicating success or including the error raised by the attempt to load the data
+        str: a message indicating success
+    
+    Raises:
+        DatabaseInteractionError: if the SQL update fails
     """
     log.info(f"Starting `load_data_into_database()` for relation {relation}.")
     try:
@@ -674,13 +537,13 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             chunksize=1000,
             index_label=index_field_name,
         )
-        message = f"Successfully loaded {number_of_records} records into the {relation} relation."
-        log.info(message)
-        return message
     except Exception as error:
         message = f"Loading data into the {relation} relation raised the error {error}."
         log.error(message)
-        return message
+        raise DatabaseInteractionError(message)
+    message = f"Successfully loaded {number_of_records} records into the {relation} relation."
+    log.info(message)
+    return message
 
 
 def query_database(query, engine, index=None):
@@ -694,6 +557,9 @@ def query_database(query, engine, index=None):
     Returns:
         dataframe: the result of the query
         str: a message including the error raised by the attempt to run the query
+    
+    Raises:
+        DatabaseInteractionError: if the SQL query fails
     """
     log.info(f"Starting `query_database()` for query {remove_IDE_spacing_from_statement(query)}.")
     try:
@@ -709,10 +575,9 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        #ALERT: `raise DatabaseInteractionError`
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
         log.error(message)
-        return message
+        raise DatabaseInteractionError(message)
 
 
 def first_new_PK_value(relation):
@@ -726,6 +591,9 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
         str: a message including the error raised by the attempt to run the query
+    
+    Raises:
+        DatabaseInteractionError: if the SQL query fails
     """
     log.info(f"Starting `first_new_PK_value()` for the {relation} relation.")
     if relation == 'fiscalYears':
@@ -745,24 +613,25 @@ def first_new_PK_value(relation):
     elif relation == 'COUNTERData':
         PK_field = 'COUNTER_data_ID'
     
-    largest_PK_value = query_database(
-        query=f"""
-            SELECT {PK_field} FROM {relation}
-            ORDER BY {PK_field} DESC
-            LIMIT 1;
-        """,
-        engine=db.engine,
-    )
-    if isinstance(largest_PK_value, str):  #ALERT: `except DatabaseInteractionError`
-        log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
-        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
-    elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+    try:
+        largest_PK_value = query_database(
+            query=f"""
+                SELECT {PK_field} FROM {relation}
+                ORDER BY {PK_field} DESC
+                LIMIT 1;
+            """,
+            engine=db.engine,
+        )
+    except DatabaseInteractionError as error:
+        message = f"Unable to return requested data--{error}"
+        log.error(message)
+        raise DatabaseInteractionError(message)
+    if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
-    else:
-        largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
-        log.debug(return_value_from_query_statement(largest_PK_value))
-        return int(largest_PK_value) + 1
+    largest_PK_value = extract_value_from_single_value_df(largest_PK_value)
+    log.debug(return_value_from_query_statement(largest_PK_value))
+    return int(largest_PK_value) + 1
 
 
 def check_if_data_already_in_COUNTERData(df):
@@ -803,12 +672,15 @@ def check_if_data_already_in_COUNTERData(df):
     total_number_of_matching_records = 0
     matching_record_instances = []
     for combo in combinations_to_check:
-        number_of_matching_records = query_database(
-            query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
-            engine=db.engine,
-        )
-        if isinstance(number_of_matching_records, str):  #ALERT: `except DatabaseInteractionError`
-            return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
+        try:
+            number_of_matching_records = query_database(
+                query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            log.error(message)
+            return (None, message)
         number_of_matching_records = extract_value_from_single_value_df(number_of_matching_records)
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
@@ -833,12 +705,15 @@ def check_if_data_already_in_COUNTERData(df):
             if not to_remove.empty:
                 records_to_remove.append(to_remove)
 
-            statistics_source_name = query_database(
-                query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
-                engine=db.engine,
-            )
-            if isinstance(statistics_source_name, str):  #ALERT: `except DatabaseInteractionError`
-                return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
+            try:
+                statistics_source_name = query_database(
+                    query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                message = f"Unable to return requested data--{error}"
+                log.error(message)
+                return (None, message)
             instance['statistics_source_name'] = extract_value_from_single_value_df(statistics_source_name, False)
         
         #Subsection: Return Results
@@ -871,34 +746,39 @@ def update_database(update_statement, engine):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
     
     Returns:
-        str: a message indicating success or including the error raised by the attempt to update the data
+        str: a message indicating success
+    
+    Raises:
+        DatabaseInteractionError: if the SQL update statement fails
     """
     update_statement = remove_IDE_spacing_from_statement(update_statement)
     display_update_statement = truncate_longer_lines(update_statement)
     log.info(f"Starting `update_database()` for the update statement {display_update_statement}.")
 
     # These returns a tuple wrapped in a list, but since at least two return `None`, the list can't be removed by index operator here
-    UPDATE_regex = re.findall(r"UPDATE (\w+) SET .+( WHERE .+);", update_statement)
-    INSERT_regex = re.findall(r"INSERT INTO `?(\w+)`? .+;", update_statement)
-    TRUNCATE_regex = re.findall(r"TRUNCATE (\w+);", update_statement)
+    UPDATE_regex = re.findall(r'UPDATE (\w+) SET .+( WHERE .+);', update_statement)
+    INSERT_regex = re.findall(r'INSERT INTO `?(\w+)`? .+;', update_statement)
+    TRUNCATE_regex = re.findall(r'TRUNCATE (\w+);', update_statement)
     if UPDATE_regex:
         query = f"SELECT * FROM {UPDATE_regex[0][0]}{UPDATE_regex[0][1]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        try:
+            before_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             log.debug(f"The records to be updated:\n{before_df}")
     elif INSERT_regex:
         query = f"SELECT COUNT(*) FROM {INSERT_regex[0]};"
-        before_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(before_df, str):  #ALERT: `except DatabaseInteractionError`
-            log.warning(database_query_fail_statement(before_df, "confirm success of change to database"))
+        try:
+            before_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             before_number = extract_value_from_single_value_df(before_df)
             log.debug(f"There are {before_number} records in the relation to be updated.")
@@ -915,51 +795,54 @@ def update_database(update_statement, engine):
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error {error}."
                 log.error(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                raise DatabaseInteractionError(message)
     except Exception as error:
         message = f"Opening a connection with engine {engine} raised the error {error}."
         log.error(message)
-        return message  #ALERT: `raises DatabaseInteractionError`
+        raise DatabaseInteractionError(message)
     
     if UPDATE_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        try:
+            after_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
-        after_df = query_database(
-            query=query,
-            engine=db.engine,
-        )
-        if isinstance(after_df, str):  #ALERT: `except DatabaseInteractionError`
-            log.warning(database_query_fail_statement(after_df, "confirm success of change to database"))
+        try:
+            after_df = query_database(
+                query=query,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             after_number = extract_value_from_single_value_df(after_df)
             log.debug(f"There are {after_number} records in the relation that was updated.")
             if before_number >= after_number:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     elif TRUNCATE_regex:
-        df = query_database(
-            query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            log.warning(database_query_fail_statement(df, "confirm success of change to database"))
+        try:
+            df = query_database(
+                query=f"SELECT COUNT(*) FROM {TRUNCATE_regex[0][0]};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             if extract_value_from_single_value_df(df) > 0:
                 message = f"The update statement {display_update_statement} executed but there was no change in the database."
-                log.warning(message)
-                return message  #ALERT: `raises DatabaseInteractionError`
+                log.error(message)
+                raise DatabaseInteractionError(message)
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
     message = f"Successfully performed the update {display_update_statement}."
@@ -1001,7 +884,7 @@ def upload_file_to_S3_bucket_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
-    return re.compile(r"[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?")
+    return re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')
 
 
 #SUBSECTION: S3 Interaction Functions
@@ -1241,6 +1124,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     
     Raises:
         InvalidAPIResponseError: if the JSON doesn't contain a valid URL
+        json.JSONDecodeError: if the API return value cannot be converted into a Python dict
     """
     log.info(f"Starting `fetch_URL_from_COUNTER_Registry()` for the ID {registry_ID}.")
     #Section: Retrieve Data from COUNTER Registry
@@ -1413,7 +1297,7 @@ class ConvertJSONDictToParquet:
                     )
                 except S3InteractionError as error:
                     message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                    log.critical(message)
+                    self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
                 return S3_file_name
@@ -1435,7 +1319,7 @@ class ConvertJSONDictToParquet:
                     )
                 except S3InteractionError as error:
                     message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                    log.critical(message)
+                    self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
                 return S3_file_name
@@ -1454,7 +1338,7 @@ class ConvertJSONDictToParquet:
                 )
             except S3InteractionError as error:
                 message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
-                log.critical(message)
+                self._log.critical(message)
                 raise S3InteractionError(message)
             self._log.warning(f"Data saved to {S3_file_name}.")
             return S3_file_name
@@ -2010,12 +1894,11 @@ class ConvertJSONDictToParquet:
         }
 
         #Section: Iterate Through `Report_Items` Section of SUSHI JSON to Create Single-Level Dictionaries
-        report_items_list = []
+        list_of_records_in_report_items = []
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             self._log.debug(f"Starting iteration for new JSON record {record}.")
-            report_items_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `report_items_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            record_in_report_items = {"report_creation_date": report_creation_date}  # This resets the contents of `record_in_report_items`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
-                second_iteration_key_list = []
 
                 #Subsection: Capture `resource_name` or `parent_title` Value
                 if key == "Database" or key == "Title":
@@ -2025,50 +1908,66 @@ class ConvertJSONDictToParquet:
                         field = "resource_name"
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict[field] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                        record_in_report_items[field] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
                     elif len(value) > RESOURCE_NAME_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, value)
                         self._log.critical(message)
                         return message
-                    else:
-                        report_items_dict[field] = value
-                        include_in_df_dtypes[field] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                    record_in_report_items[field] = value
+                    include_in_df_dtypes[field] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.publisher`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['publisher'] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                        record_in_report_items['publisher'] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
                     elif len(value) > PUBLISHER_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher", value)
                         self._log.critical(message)
                         return message
-                    else:
-                        report_items_dict['publisher'] = value
-                        include_in_df_dtypes['publisher'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", report_items_dict['publisher']))
+                    record_in_report_items['publisher'] = value
+                    include_in_df_dtypes['publisher'] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
 
-                #Subsection: Capture `publisher_ID` Value
-                elif key == "Publisher_ID":
-                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.publisher_ID`"))
-                    pass
+                #Subsection: Capture `publisher_ID` or `parent_publisher_ID`Value
+                elif key == "Publisher_ID":  # Code below not tested
+                    if report_type == "IR":
+                        field = "parent_publisher_ID"
+                    else:
+                        field = "publisher_ID"
+                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    if isinstance(value, dict) and len(value) == 1:
+                        value = list(value.values())[0]
+                    elif isinstance(value, list) and len(value) == 1:
+                        value = value[0]
+                    elif isinstance(value, str) or isinstance(value, int):
+                        value = str(value)
+                    else:
+                        self._log.debug(f"The value '{value}' wasn't in a parsable format for the publisher_ID field.")
+                        continue
+                    if len(value) > PUBLISHER_ID_LENGTH:
+                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, value)
+                        self._log.critical(message)
+                        return message
+                    record_in_report_items[field] = value
+                    include_in_df_dtypes[field] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.platform`"))
                     if value is None or empty_string_regex().fullmatch(value):  # This value handled first because `len()` of null value raises an error
-                        report_items_dict['platform'] = None
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                        record_in_report_items['platform'] = None
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_report_items['platform']))
                     elif len(value) > PLATFORM_LENGTH:
                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("platform", value)
                         self._log.critical(message)
                         return message
-                    else:
-                        report_items_dict['platform'] = value
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", report_items_dict['platform']))
+                    record_in_report_items['platform'] = value
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_report_items['platform']))
 
                 #Subsection: Capture `authors` or `parent_authors` Value
                 elif key == "Authors":
@@ -2081,38 +1980,39 @@ class ConvertJSONDictToParquet:
                         pass  # Lack of key in given record will become null value when converted to a dataframe
                     for label_and_author_name in value:
                         if label_and_author_name.get('Name'):
-                            if field not in report_items_dict and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
+                            if field not in record_in_report_items and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, label_and_author_name['Name'])
                                 self._log.critical(message)
                                 return message
-                            elif field not in report_items_dict:
-                                report_items_dict[field] = label_and_author_name['Name'].strip()
+                            elif field not in record_in_report_items:
+                                record_in_report_items[field] = label_and_author_name['Name'].strip()
                                 include_in_df_dtypes[field] = 'string'
-                            elif report_items_dict[field].endswith(" et al."):
+                            elif record_in_report_items[field].endswith(" et al."):
                                 break  # The loop of adding author names
-                            elif len(report_items_dict[field]) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
-                                report_items_dict[field] = report_items_dict[field] + "; " + label_and_author_name['Name'].strip()
+                            elif len(record_in_report_items[field]) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
+                                record_in_report_items[field] = record_in_report_items[field] + "; " + label_and_author_name['Name'].strip()
                             else:
-                                report_items_dict[field] = report_items_dict[field] + " et al."
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                                record_in_report_items[field] = record_in_report_items[field] + " et al."
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
-                #Subsection: Capture `publication_date` or `parent_publication_date` Value
-                elif key == "Item_Dates":
-                    if report_type == "IR":
-                        field = "parent_publication_date"
-                    else:
-                        field = "publication_date"
+                #Subsection: Capture `parent_publication_date` Value
+                elif (key == "Item_Dates" or key == "Publication_Date") and report_type == "IR":  # Code below not tested; key should only ever be in IR
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    pass
+                    if value == "1000-01-01" or value == "1753-01-01" or value == "1900-01-01":
+                        pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
+                    try:
+                        record_in_items['parent_publication_date'] = date.fromisoformat(value)
+                        include_in_df_dtypes['parent_publication_date'] = True
+                    except:
+                        pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("parent_publication_date", record_in_items['parent_publication_date']))
 
-                #Subsection: Capture `article_version` or `parent_article_version` Value
-                elif key == "Article_Version":
-                    if report_type == "IR":
-                        field = "parent_article_version"
-                    else:
-                        field = "article_version"
+                #Subsection: Capture `parent_article_version` Value
+                elif key == "Article_Version" and report_type == "IR":  # Code below not tested; key should only ever be in IR
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    pass
+                    record_in_report_items['article_version'] = value
+                    include_in_df_dtypes['article_version'] = 'string'
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", record_in_report_items['article_version']))
 
                 #Subsection: Capture Standard Identifiers or Parent Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
@@ -2134,10 +2034,9 @@ class ConvertJSONDictToParquet:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("DOI", ID_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                report_items_dict[field] = ID_value
-                                include_in_df_dtypes[field] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                            record_in_report_items[field] = ID_value
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `proprietary_ID` or `parent_proprietary_ID` Value
                         elif proprietary_ID_regex().search(ID_type):
@@ -2150,10 +2049,9 @@ class ConvertJSONDictToParquet:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("proprietary_ID", ID_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                report_items_dict[field] = ID_value
-                                include_in_df_dtypes[field] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                            record_in_report_items[field] = ID_value
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `ISBN` or `parent_ISBN` Value
                         elif ID_type == "ISBN":
@@ -2162,7 +2060,9 @@ class ConvertJSONDictToParquet:
                             else:
                                 field = "ISBN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            record_in_report_items[field] = str(ID_value)
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `print_ISSN` or `parent_print_ISSN` Value
                         elif ID_type == "Print_ISSN":
@@ -2172,30 +2072,42 @@ class ConvertJSONDictToParquet:
                                 field = "print_ISSN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
                             if ISSN_regex().fullmatch(ID_value):
-                                report_items_dict[field] = ID_value.strip()
+                                record_in_report_items[field] = ID_value.strip()
                                 include_in_df_dtypes[field] = 'string'
                             else:
-                                report_items_dict[field] = format_ISSN(ID_value)
+                                record_in_report_items[field] = format_ISSN(ID_value)
                                 include_in_df_dtypes[field] = 'string'
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, report_items_dict[field]))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `online_ISSN` or `parent_online_ISSN` Value
-                        elif ID_type == "Online_ISSN":
+                        elif ID_type == "Online_ISSN":  # Code below not tested
                             if report_type == "IR":
                                 field = "parent_online_ISSN"
                             else:
                                 field = "online_ISSN"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if ISSN_regex().fullmatch(ID_value):
+                                record_in_report_items[field] = ID_value.strip()
+                                include_in_df_dtypes[field] = 'string'
+                            else:
+                                record_in_report_items[field] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                         #Subsection: Capture `URI` or `parent_URI` Value
-                        elif ID_type == "URI":
+                        elif ID_type == "URI":  # Code below not tested
                             if report_type == "IR":
                                 field = "parent_URI"
                             else:
                                 field = "URI"
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, f"`COUNTERData.{field}`"))
-                            pass
+                            if len(ID_value) > URI_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", ID_value)
+                                self._log.critical(message)
+                                return message
+                            record_in_report_items[field] = value
+                            include_in_df_dtypes[field] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `data_type` or `parent_data_type` Value
                 elif key == "Data_Type":
@@ -2204,94 +2116,110 @@ class ConvertJSONDictToParquet:
                     else:
                         field = "data_type"
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
-                    report_items_dict[field] = value
+                    record_in_report_items[field] = value
                     include_in_df_dtypes[field] = 'string'
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", report_items_dict[field]))
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", record_in_report_items[field]))
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":  # Based on sample data, `YOP` shouldn't be captured here; capture left in to handle possible edge cases
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.YOP`"))
                     try:
-                        report_items_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                        record_in_report_items['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                     except:
-                        report_items_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", report_items_dict['YOP']))
+                        record_in_report_items['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", record_in_report_items['YOP']))
 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "`COUNTERData.access_type`"))
-                    report_items_dict['access_type'] = value
+                    record_in_report_items['access_type'] = value
                     include_in_df_dtypes['access_type'] = 'string'
-                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", report_items_dict['access_type']))
+                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", record_in_report_items['access_type']))
 
-                else:
+                #Subsection: Capture Inner List Values
+                elif key == "Items" and report_type == "IR":
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
-                    report_items_dict[key] = value
-                    second_iteration_key_list.append(key)
+                    record_in_report_items['Items UNWIND'] = value
+                    self._log.debug(f"Added placeholder '{record_in_report_items['Items UNWIND']}' to row dictionary for later unpacking.")
+                elif key == "Attribute_Performance":
+                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "a placeholder for later unpacking"))
+                    record_in_report_items['Attribute_Performance UNWIND'] = value
+                    self._log.debug(f"Added placeholder '{record_in_report_items['Attribute_Performance UNWIND']}' to row dictionary for later unpacking.")
 
-            report_items_list.append(report_items_dict)
-            self._log.debug(f"Record added to `report_items_list`: {report_items_list[-1]}")
-        self._log.debug("`report_items_list` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
+            list_of_records_in_report_items.append(record_in_report_items)
+            self._log.debug(f"Record added to `list_of_records_in_report_items`: {list_of_records_in_report_items[-1]}")
+        self._log.debug("`list_of_records_in_report_items` created by iteration through `Report_Items` section of SUSHI JSON.\n\n")
 
         #Section: Iterate Through `Items` Section of IR SUSHI JSON
-        items_list = []
-        if second_iteration_key_list == ["Items"] and report_type == "IR":
-            for record in report_items_list:
-                self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items'], "Items", "keys at the top level of the JSON"))
-                for items in record['Items']:
-                    items_dict = {k: v for (k, v) in record.items() if k not in second_iteration_key_list}
+        list_of_records_in_items = []
+        if "Items UNWIND" in record_in_report_items.keys():
+            for record in list_of_records_in_report_items:
+                self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Items UNWIND'], "Items", "keys at the top level of the JSON"))
+                for items in record['Items UNWIND']:
+                    record_in_items = {k: v for (k, v) in record.items() if k != "Items UNWIND"}
                     for items_key, items_value in items.items():
-                        third_iteration_key_list = []
 
                         #Subsection: Capture `resource_name` Value
                         if items_key == "Item":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.resource_name`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['resource_name'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                                record_in_items['resource_name'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", record_in_items['resource_name']))
                             elif len(value) > RESOURCE_NAME_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement(field, items_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                items_dict['resource_name'] = items_value
-                                include_in_df_dtypes['resource_name'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", items_dict['resource_name']))
+                            record_in_items['resource_name'] = items_value
+                            include_in_df_dtypes['resource_name'] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("resource_name", record_in_items['resource_name']))
 
                         #Subsection: Capture `publisher` Value
                         elif items_key == "Publisher":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['publisher'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                                record_in_items['publisher'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_items['publisher']))
                             elif len(items_value) > PUBLISHER_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher", items_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                items_dict['publisher'] = items_value
-                                include_in_df_dtypes['publisher'] = 'string'
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", items_dict['publisher']))
+                            record_in_items['publisher'] = items_value
+                            include_in_df_dtypes['publisher'] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_items['publisher']))
 
                         #Subsection: Capture `publisher_ID` Value
-                        elif items_key == "Publisher_ID":
+                        elif items_key == "Publisher_ID":  # Code below not tested
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.publisher_ID`"))
-                            pass
+                            if isinstance(items_value, dict) and len(items_value) == 1:
+                                items_value = list(items_value.values())[0]
+                            elif isinstance(items_value, list) and len(items_value) == 1:
+                                items_value = items_value[0]
+                            elif isinstance(items_value, str) or isinstance(items_value, int):
+                                items_value = str(items_value)
+                            else:
+                                self._log.debug(f"The value '{items_value}' wasn't in a parsable format for the publisher_ID field.")
+                                continue
+                            if len(items_value) > PUBLISHER_ID_LENGTH:
+                                message = ConvertJSONDictToParquet._increase_field_length_logging_statement("publisher_ID", items_value)
+                                self._log.critical(message)
+                                return message
+                            record_in_report_items['publisher_ID'] = items_value
+                            include_in_df_dtypes['publisher_ID'] = 'string'
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher_ID", record_in_report_items['publisher_ID']))
 
                         #Subsection: Capture `platform` Value
                         elif items_key == "Platform":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.platform`"))
                             if items_value is None or empty_string_regex().fullmatch(items_value):  # This value handled first because `len()` of null value raises an error
-                                items_dict['platform'] = None
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", items_dict['platform']))
+                                record_in_items['platform'] = None
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_items['platform']))
                             elif len(items_value) > PLATFORM_LENGTH:
                                 message = ConvertJSONDictToParquet._increase_field_length_logging_statement("platform", items_value)
                                 self._log.critical(message)
                                 return message
-                            else:
-                                items_dict['platform'] = items_value
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", items_dict['platform']))
+                            record_in_items['platform'] = items_value
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("platform", record_in_items['platform']))
 
                         #Subsection: Capture `authors` Value
                         elif items_key == "Authors":
@@ -2300,20 +2228,20 @@ class ConvertJSONDictToParquet:
                                 pass  # Lack of key in given record will become null value when converted to a dataframe
                             for label_and_author_name in items_value:
                                 if label_and_author_name.get('Name'):
-                                    if 'authors' not in items_dict and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
+                                    if 'authors' not in record_in_items and len(label_and_author_name['Name']) > AUTHORS_LENGTH:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("authors", label_and_author_name['Name'])
                                         self._log.critical(message)
                                         return message
-                                    elif 'authors' not in items_dict:
-                                        items_dict['authors'] = label_and_author_name['Name'].strip()
+                                    elif 'authors' not in record_in_items:
+                                        record_in_items['authors'] = label_and_author_name['Name'].strip()
                                         include_in_df_dtypes['authors'] = 'string'
-                                    elif items_dict['authors'].endswith(" et al."):
+                                    elif record_in_items['authors'].endswith(" et al."):
                                         break  # The loop of adding author names
-                                    elif len(items_dict['authors']) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
-                                        items_dict['authors'] = items_dict['authors'] + "; " + label_and_author_name['Name'].strip()
+                                    elif len(record_in_items['authors']) + len(label_and_author_name['Name']) + 8 < AUTHORS_LENGTH:
+                                        record_in_items['authors'] = record_in_items['authors'] + "; " + label_and_author_name['Name'].strip()
                                     else:
-                                        items_dict['authors'] = items_dict['authors'] + " et al."
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("authors", items_dict['authors']))
+                                        record_in_items['authors'] = record_in_items['authors'] + " et al."
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("authors", record_in_items['authors']))
 
                         #Subsection: Capture `publication_date` Value
                         elif items_key == "Publication_Date":
@@ -2321,18 +2249,18 @@ class ConvertJSONDictToParquet:
                             if items_value == "1000-01-01" or items_value == "1753-01-01" or items_value == "1900-01-01":
                                 pass  # These dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
                             try:
-                                items_dict['publication_date'] = date.fromisoformat(items_value)
+                                record_in_items['publication_date'] = date.fromisoformat(items_value)
                                 include_in_df_dtypes['publication_date'] = True
-                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publication_date", items_dict['publication_date']))
+                                self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publication_date", record_in_items['publication_date']))
                             except:
                                 pass  # If the key-value pair is present but the value is null or a blank string, the conversion to a datetime data type would return a TypeError
 
                         #Subsection:  Capture `article_version` Value
                         elif items_key == "Article_Version":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "`COUNTERData.article_version`"))
-                            items_dict['article_version'] = items_value
+                            record_in_items['article_version'] = items_value
                             include_in_df_dtypes['article_version'] = 'string'
-                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", items_dict['article_version']))
+                            self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", record_in_items['article_version']))
 
                         #Subsection: Capture Standard Identifiers
                         elif items_key == "Item_ID":
@@ -2346,10 +2274,9 @@ class ConvertJSONDictToParquet:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("DOI", ID_value)
                                         self._log.critical(message)
                                         return message
-                                    else:
-                                        items_dict['DOI'] = ID_value
-                                        include_in_df_dtypes['DOI'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("DOI", items_dict['DOI']))
+                                    record_in_items['DOI'] = ID_value
+                                    include_in_df_dtypes['DOI'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("DOI", record_in_items['DOI']))
 
                                 #Subsection: Capture `proprietary_ID` Value
                                 elif proprietary_ID_regex().search(ID_type):
@@ -2358,131 +2285,131 @@ class ConvertJSONDictToParquet:
                                         message = ConvertJSONDictToParquet._increase_field_length_logging_statement("proprietary_ID", ID_value)
                                         self._log.critical(message)
                                         return message
-                                    else:
-                                        items_dict['proprietary_ID'] = ID_value
-                                        include_in_df_dtypes['proprietary_ID'] = 'string'
-                                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("proprietary_ID", items_dict['proprietary_ID']))
+                                    record_in_items['proprietary_ID'] = ID_value
+                                    include_in_df_dtypes['proprietary_ID'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("proprietary_ID", record_in_items['proprietary_ID']))
 
                                 #Subsection: Capture `ISBN` Value
-                                elif ID_type == "ISBN":
+                                elif ID_type == "ISBN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.ISBN`"))
-                                    pass
+                                    record_in_items['ISBN'] = str(ID_value)
+                                    include_in_df_dtypes['ISBN'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("ISBN", record_in_items['ISBN']))
 
                                 #Subsection: Capture `print_ISSN` Value
-                                elif ID_type == "Print_ISSN":
+                                elif ID_type == "Print_ISSN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.print_ISSN`"))
-                                    pass
+                                    if ISSN_regex().fullmatch(ID_value):
+                                        record_in_items['print_ISSN'] = ID_value.strip()
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    else:
+                                        record_in_items['print_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                        include_in_df_dtypes['print_ISSN'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("print_ISSN", record_in_items['print_ISSN']))
 
                                 #Subsection: Capture `online_ISSN` Value
-                                elif ID_type == "Online_ISSN":
+                                elif ID_type == "Online_ISSN":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.online_ISSN`"))
-                                    pass
+                                    if ISSN_regex().fullmatch(ID_value):
+                                        record_in_items['online_ISSN'] = ID_value.strip()
+                                        include_in_df_dtypes['online_ISSN'] = 'string'
+                                    else:
+                                        record_in_items['online_ISSN'] = str(ID_value)[:5] + "-" + str(ID_value).strip()[-4:]
+                                        include_in_df_dtypes['online_ISSN'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("online_ISSN", record_in_items['online_ISSN']))
 
                                 #Subsection: Capture `URI` Value
-                                elif ID_type == "URI":
+                                elif ID_type == "URI":  # Code below not tested
                                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(ID_value, ID_type, "`COUNTERData.URI`"))
-                                    pass
+                                    if len(ID_value) > URI_LENGTH:
+                                        message = ConvertJSONDictToParquet._increase_field_length_logging_statement("URI", ID_value)
+                                        self._log.critical(message)
+                                        return message
+                                    record_in_items['URI'] = ID_value
+                                    include_in_df_dtypes['URI'] = 'string'
+                                    self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("URI", record_in_items['URI']))
 
-                        else:
+                        #Subsection: Capture `Attribute_Performance` Value
+                        elif items_key == "Attribute_Performance":
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "a placeholder for later unpacking"))
-                            items_dict[items_key] = items_value
-                            third_iteration_key_list.append(items_key)
+                            record_in_items['Attribute_Performance UNWIND'] = items_value
+                            self._log.debug(f"Added placeholder '{record_in_items['Attribute_Performance UNWIND']}' to row dictionary for later unpacking.")
 
-                    items_list.append(items_dict)
-                    self._log.debug(f"Record added to `items_list`: {items_list[-1]}")
-            self._log.debug("`items_list` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
+                    list_of_records_in_items.append(record_in_items)
+                    self._log.debug(f"Record added to `list_of_records_in_items`: {list_of_records_in_items[-1]}")
+            self._log.debug("`list_of_records_in_items` created by iteration through `Items` section of IR SUSHI JSON.\n\n")   
 
         #Section: Iterate Through `Attribute_Performance` Section of SUSHI JSON
-        attribute_performance_list = []
-        #TEST: temp
-        self._log.error(f"TESTING {report_type}: Before `if` block")
-        try:
-            self._log.error(f"`second_iteration_key_list` (type {type(second_iteration_key_list)}): {second_iteration_key_list}")
-        except Exception as e:
-            self._log.error(f"`second_iteration_key_list` to stdout raised {e}")
-        try:
-            self._log.error(f"`third_iteration_key_list` (type {type(third_iteration_key_list)}): {third_iteration_key_list}")
-        except Exception as e:
-            self._log.error(f"`third_iteration_key_list` to stdout raised {e}")
-        #TEST: end temp
-        if second_iteration_key_list == ["Attribute_Performance"]:  # PR, DR, TR
-            self._log.error(f"TESTING {report_type}: In `if second_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
-            list_of_records = report_items_list
-        elif third_iteration_key_list == ["Attribute_Performance"]:  # IR
-            self._log.error(f"TESTING {report_type}: In `elif third_iteration_key_list == ['Attribute_Performance']:`")  #TEST: temp
-            list_of_records = items_list
+        list_of_records_in_attribute_performance = []
+        if list_of_records_in_items:
+            list_of_records = list_of_records_in_items
         else:
-            self._log.error(f"TESTING {report_type}: In `else:`")  #TEST: temp
-            message = f"The JSON is malformed, lacking the `Attribute_Performance` key."
-            self._log.critical(message)
-            return message
-        self._log.error(f"TESTING {report_type}: After `if` block")  #TEST: temp
-
+            list_of_records = list_of_records_in_report_items
         for record in list_of_records:
-            self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance'], "Attribute_Performance", "keys at the top level of the JSON"))
-            for attributes in record['Attribute_Performance']:
-                attribute_performance_dict = {k: v for (k, v) in record.items() if k != "Attribute_Performance"}
+            self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Attribute_Performance UNWIND'], "Attribute_Performance", "keys at the top level of the JSON"))
+            for attributes in record['Attribute_Performance UNWIND']:
+                record_in_attribute_performance = {k: v for (k, v) in record.items() if k != "Attribute_Performance UNWIND"}
                 for attribute_performance_key, attribute_performance_value in attributes.items():
-                    final_iteration_key_list = []
 
                     #Subsection: Capture `data_type` Value
                     if attribute_performance_key == "Data_Type":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.data_type`"))
-                        attribute_performance_dict['data_type'] = attribute_performance_value
+                        record_in_attribute_performance['data_type'] = attribute_performance_value
                         include_in_df_dtypes['data_type'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", attribute_performance_dict['data_type']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("data_type", record_in_attribute_performance['data_type']))
 
                     #Subsection: Capture `YOP` Value
                     elif attribute_performance_key == "YOP":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.YOP`"))
                         try:
-                            attribute_performance_dict['YOP'] = int(attribute_performance_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                            record_in_attribute_performance['YOP'] = int(attribute_performance_value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                             include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                         except:
-                            attribute_performance_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", attribute_performance_dict['YOP']))
+                            record_in_attribute_performance['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("YOP", record_in_attribute_performance['YOP']))
 
                     #Subsection: Capture `access_type` Value
                     elif attribute_performance_key == "Access_Type":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_type`"))
-                        attribute_performance_dict['access_type'] = attribute_performance_value
+                        record_in_attribute_performance['access_type'] = attribute_performance_value
                         include_in_df_dtypes['access_type'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", attribute_performance_dict['access_type']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_type", record_in_attribute_performance['access_type']))
 
                     #Subsection: Capture `access_method` Value
                     elif attribute_performance_key == "Access_Method":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "`COUNTERData.access_method`"))
-                        attribute_performance_dict['access_method'] = attribute_performance_value
+                        record_in_attribute_performance['access_method'] = attribute_performance_value
                         include_in_df_dtypes['access_method'] = 'string'
-                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_method", attribute_performance_dict['access_method']))
+                        self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("access_method", record_in_attribute_performance['access_method']))
 
-                    else:
+                    #Subsection: Capture `Performance` Value
+                    elif attribute_performance_key == "Performance":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(attribute_performance_value, attribute_performance_key, "a placeholder for later unpacking"))
-                        attribute_performance_dict[attribute_performance_key] = attribute_performance_value
-                        final_iteration_key_list.append(attribute_performance_key)
+                        record_in_attribute_performance['Performance'] = attribute_performance_value
+                        self._log.debug(f"Added placeholder '{record_in_attribute_performance['Performance']}' to row dictionary for later unpacking.")
 
-                attribute_performance_list.append(attribute_performance_dict)
-                self._log.debug(f"Record added to `attribute_performance_list`: {attribute_performance_list[-1]}")
-        self._log.debug("`attribute_performance_list` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
+                list_of_records_in_attribute_performance.append(record_in_attribute_performance)
+                self._log.debug(f"Record added to `list_of_records_in_attribute_performance`: {list_of_records_in_attribute_performance[-1]}")
+        self._log.debug("`list_of_records_in_attribute_performance` created by iteration through `Attribute_Performance` section of SUSHI JSON.\n\n")
 
         #Section:Iterate Through `Performance` Section of SUSHI JSON to Create Dataframe Lines
-        performance_list = []
-        for record in attribute_performance_list:
+        list_of_records_in_performance = []
+        for record in list_of_records_in_attribute_performance:
             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(record['Performance'], "Performance", "keys at the top level of the JSON"))
-            performance_dict = {k: v for (k, v) in record.items() if k != "Performance"}
+            record_in_performance = {k: v for (k, v) in record.items() if k != "Performance"}
             for performance_key, performance_value in record['Performance'].items():
                 self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(performance_key, performance_key, "`COUNTERData.metric_type`"))
-                performance_dict['metric_type'] = performance_key
+                record_in_performance['metric_type'] = performance_key
                 for usage_date, usage_count in performance_value.items():
                     self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(f"{usage_date}' and '{usage_count}", performance_key, "the `COUNTERData.usage_date` and `COUNTERData.usage_count` fields"))
                     final_dict = {
-                        **deepcopy(performance_dict),
+                        **deepcopy(record_in_performance),
                         'usage_date': datetime.strptime(usage_date, '%Y-%m').date(),
                         'usage_count': usage_count,
                     }
-                    performance_list.append(final_dict)
+                    list_of_records_in_performance.append(final_dict)
                     self._log.debug(f"The {report_type} record {final_dict}  is being added to the `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
-        self._log.debug("`performance_list` created by iteration through `Performance` section of SUSHI JSON.\n\n")
+        self._log.debug("`list_of_records_in_performance` created by iteration through `Performance` section of SUSHI JSON.\n\n")
 
         #Section: Create Dataframe
         self._log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
@@ -2494,9 +2421,9 @@ class ConvertJSONDictToParquet:
         df_dtypes['usage_count'] = 'int'
         self._log.info(f"`df_dtypes`: {df_dtypes}")
 
-        self._log.debug(f"`performance_list` before `json.dumps()`  is type {type(performance_list)}.")
+        self._log.debug(f"`list_of_records_in_performance` before `json.dumps()`  is type {type(list_of_records_in_performance)}.")
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
-            performance_list,
+            list_of_records_in_performance,
             default=ConvertJSONDictToParquet._serialize_dates,
         )
         if len(records_orient_list) > 1500:
@@ -2542,11 +2469,14 @@ class ConvertJSONDictToParquet:
 
         Returns:
             str: the date or timestamp in ISO format
+        
+        Raises:
+            TypeError: if the data type is non-serializable
         """
         if isinstance(dates,(date, datetime)):
             return dates.isoformat()
         else:
-            raise TypeError  # So any unexpected non-serializable data types raise a type error
+            raise TypeError
     
 
     @staticmethod

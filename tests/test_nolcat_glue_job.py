@@ -1,5 +1,5 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 from filecmp import cmp
@@ -45,6 +45,14 @@ def test_non_COUNTER_file_name_regex():
     assert non_COUNTER_file_name_regex().fullmatch("100_2021.xlsx") is not None
     assert non_COUNTER_file_name_regex().fullmatch("55_2016.pdf") is not None
     assert non_COUNTER_file_name_regex().fullmatch("99999_2030.json") is not None
+
+
+def test_URL_regex():
+    """Tests matching the regex object to URLs."""
+    assert URL_regex().fullmatch("https://www.lib.fsu.edu/") is not None
+    assert URL_regex().fullmatch("https://registry.countermetrics.org/api/v1/platform/abc-123/") is not None
+    assert URL_regex().fullmatch("https://about.muse.jhu.edu/lib/counter5/sushi/") is not None
+    assert URL_regex().fullmatch("https://api.siqcloud.online/counterapi/r51/reports/tr?customer_id=something&api_key=somethingElse&begin_date=2000-01&end_date=2000-01/") is not None
 
 
 def test_empty_string_regex():
@@ -281,7 +289,7 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
+    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), result)
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 8
     assert regex_match_object.group(2) == "vendors"
@@ -302,31 +310,33 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "vendor_name": Vendors.state_data_types()['vendor_name'],
     }
 
-    check = load_data_into_database(
-        df=statisticsSources_relation,
-        relation='statisticsSources',
-        engine=engine,
-        index_field_name='statistics_source_ID',
-    )
-    if not load_data_into_database_success_regex().fullmatch(check):
-        pytest.skip(database_function_skip_statements(check))
-    retrieved_data = query_database(
-        query="""
-            SELECT
-                statisticsSources.statistics_source_ID,
-                statisticsSources.statistics_source_name,
-                statisticsSources.statistics_source_retrieval_code,
-                vendors.vendor_name
-            FROM statisticsSources
-            JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
-            ORDER BY statisticsSources.statistics_source_ID;
-        """,
-        engine=engine,
-        index='statistics_source_ID'
-        # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
-    )
-    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(retrieved_data))
+    try:
+        check = load_data_into_database(
+            df=statisticsSources_relation,
+            relation='statisticsSources',
+            engine=engine,
+            index_field_name='statistics_source_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    try:
+        retrieved_data = query_database(
+            query="""
+                SELECT
+                    statisticsSources.statistics_source_ID,
+                    statisticsSources.statistics_source_name,
+                    statisticsSources.statistics_source_retrieval_code,
+                    vendors.vendor_name
+                FROM statisticsSources
+                JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID
+                ORDER BY statisticsSources.statistics_source_ID;
+            """,
+            engine=engine,
+            index='statistics_source_ID'
+            # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
@@ -392,18 +402,20 @@ def test_update_database(engine, client):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
     """
+    update_statement = f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;"
     with client:
         update_result = update_database(
-            update_statement=f"UPDATE vendors SET vendor_name='iG Publishing/Business Expert Press' WHERE vendor_ID=3;",
+            update_statement,
             engine=engine,
         )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+    try:
+        retrieved_updated_vendors_data = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index='vendor_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
         data=[
@@ -420,7 +432,7 @@ def test_update_database(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
@@ -432,18 +444,20 @@ def test_update_database_with_insert_statement(engine, client):
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
     """
+    update_statement = f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');"
     with client:
         update_result = update_database(
-            update_statement=f"INSERT INTO vendors VALUES (8, 'A Vendor'), (9, 'Another Vendor');",
+            update_statement,
             engine=engine,
         )
-    retrieved_updated_vendors_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(retrieved_updated_vendors_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
+    try:
+        retrieved_updated_vendors_data = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index='vendor_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     series = pd.Series(
         data=[
@@ -462,7 +476,7 @@ def test_update_database_with_insert_statement(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
+    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
@@ -650,8 +664,6 @@ def test_list_files_in_bucket_location():
 ])
 def test_fetch_URL_from_COUNTER_Registry(request):
     """Tests getting a SUSHI URL from the COUNTER Registry.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         request (tuple): COUNTER registry ID; COUNTER CoP; SUSHI URL matching registry ID and CoP
@@ -659,7 +671,7 @@ def test_fetch_URL_from_COUNTER_Registry(request):
     registry_ID, expected_code_of_practice, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID)
     assert expected_code_of_practice == code_of_practice
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -671,8 +683,6 @@ def test_fetch_URL_from_COUNTER_Registry(request):
 ])
 def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     """Tests getting a SUSHI URL from the COUNTER Registry for a specified code of practice.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         request (tuple): COUNTER registry ID; SUSHI URL matching registry ID
@@ -680,7 +690,7 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
     registry_ID, resulting_URL = request.param
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry(registry_ID, "5.1")
     assert code_of_practice == "5.1"
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
     assert registry_URL == resulting_URL
 
 
@@ -688,10 +698,10 @@ def test_fetch_URL_from_COUNTER_Registry_for_specific_CoP(request):
 def test_fetch_URL_from_COUNTER_Registry_failure():
     """Tests getting a COUNTER Registry response not containing a URL returns an error.
     
-    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list. Regex taken from https://stackoverflow.com/a/3809435.
+    The specified registry ID is for a depreciated platform, so `sushi_services` is an empty list.
     """
     registry_URL, code_of_practice = fetch_URL_from_COUNTER_Registry('34430d4c-b51d-4a7b-8f8e-ef28e48ebd53')
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", registry_URL)
+    assert URL_regex().fullmatch(registry_URL)
 
 
 #SECTION: `ConvertJSONDictToParquet()` Tests

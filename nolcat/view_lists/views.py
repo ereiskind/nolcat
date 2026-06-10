@@ -29,17 +29,25 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
-        log.error(f"The route function didn't understand the argument `{list}`.")  ##Flask_error_statement()
+        log.error(f"The route function didn't understand the argument `{list}`.")
         return abort(404)
     
-    # df = query_database(
-    #     query=SQL_query,
-    #     engine=db.engine,
-    # )
-    # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-    #     flash(database_query_fail_statement(df))
+    # try:
+    #     df = query_database(
+    #         query=SQL_query,
+    #         engine=db.engine,
+    #     )
+    # except DatabaseInteractionError as error:
+    #     message = f"Unable to find page--{error}"
+    #     log.warning(message)
+    #     flash(message)
     #     return abort(404)
-    # df = df.astype({dict setting correct dtypes})
+    # if list == "resources":
+    #     df = df.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if k in df.columns.tolist()})
+    # elif list == "statistics":
+    #     df = df.astype({k: v for (k, v) in StatisticsSources.state_data_types().items() if k in df.columns.tolist()})
+    # elif list == "vendors":
+    #     df = df.astype({k: v for (k, v) in Vendors.state_data_types().items() if k in df.columns.tolist()})
     # Add field with links to see details for each record
     # Display the returned dataframe
         # https://stackoverflow.com/q/52644035
@@ -60,12 +68,17 @@ def view_list_record(list, PK):
     log.info(f"Starting `view_list_record()` for {list}.")
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        # df = query_database(
-        #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-        #     engine=db.engine,
-        # )
-        #ALERT: `except DatabaseInteractionError`
-        #ToDo: df = df.astype({dict setting correct dtypes})
+        # try:
+        #     df = query_database(
+        #         query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #         engine=db.engine,
+        #     )
+        # except DatabaseInteractionError as error:
+        #     message = f"Unable to load page--{error}"
+        #     log.warning(message)
+        #     flash(message)
+        #     return redirect(url_for('view_usage.use_predefined_SQL_query'))
+        # df = df.astype({dict setting correct dtypes})
         return "render_template('view_lists/view-record.html', form=form)"
     # elif form.validate_on_submit():
         #ToDo: Run one of the methods below based on the list type
@@ -98,19 +111,22 @@ def edit_list_record(list, PK):
             #ToDo: Show page without prefilled values
             return "render_template('view_lists/edit-record.html', form=form)"
         #ToDo: if `PK` is in the relation
-            # df = query_database(
-            #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-            #     engine=db.engine,
-            # )
-            # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            #     flash(database_query_fail_statement(df))
-            #     return redirect(url_for(view_lists.view_lists_homepage))
-            # df = df.astype({dict setting correct dtypes})
-            #ToDo: Prepopulate the fields
-                # https://stackoverflow.com/q/35892144
-                # https://stackoverflow.com/q/23712986
-                # https://stackoverflow.com/q/42984453
-                # https://stackoverflow.com/q/28941504
+        # try:
+        #     df = query_database(
+        #         query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #         engine=db.engine,
+        #     )
+        # except DatabaseInteractionError as error:
+        #     message = f"Unable to load page--{error}"
+        #     log.warning(message)
+        #     flash(message)
+        #     return redirect(url_for(view_lists.view_lists_homepage))
+        # df = df.astype({dict setting correct dtypes})
+        #ToDo: Prepopulate the fields
+            # https://stackoverflow.com/q/35892144
+            # https://stackoverflow.com/q/23712986
+            # https://stackoverflow.com/q/42984453
+            # https://stackoverflow.com/q/28941504
         # return render_template('view_lists/page.html', form=form)
     # elif form.validate_on_submit():
         #ToDo: add_access_stop_date()

@@ -545,9 +545,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog, path_to_sample_file):
             engine=engine,
         )
     except DatabaseInteractionError as error:
-        pytest.skip(database_function_skip_statements(record, False))
-    if isinstance(record, str):  #ToDo: Remove when `query_database()` raises exception when there's a problem
-        pytest.skip(database_function_skip_statements(record, False))
+        pytest.skip(f"Unable to create fixture--{error}")
     if record.empty:
         pytest.skip("The query returned an empty dataframe. Rerun this test module.")  #ToDo: This often happens when 'test_AnnualUsageCollectionTracking.py' is run after 'test_bp_ingest_usage.py'--find out why
     record = record.sample().reset_index()
@@ -588,13 +586,14 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(record, False))
+    try:
+        record = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -683,7 +682,7 @@ def most_recent_month_with_usage(caplog):
 def valid_COUNTER_retrieval_code():
     """Provides a random, valid retrieval COUNTER Registry IDs.
 
-    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing. COUNTER Registry IDs that lead to 'Report Queued for Processing' (error 1011) are also filtered out, as those sources will always cause skips in later tests.
+    Using random COUNTER Registry IDs increases variability in testing, making the test more valid, but if there's a problem with the chosen statistics source, the test will fail due to external issues. This fixture ensures only IDs that don't raise an error are used for testing. COUNTER Registry IDs that lead to 'Report Queued for Processing' (error 1011) or 'No Usage Available for Requested Dates' (error 3030) for DRs when their platforms don't have databases are also filtered out, as those sources will always cause skips in later tests.
 
     Yields:
         str: a COUNTER Registry ID
@@ -703,6 +702,10 @@ def valid_COUNTER_retrieval_code():
         "5541d245-4230-405c-b7c1-f51b27926666",
         "c67345a4-34f7-445e-ad49-b38b21438b59",
         "8810096a-1a17-48f3-9614-5a81fff27e7e",
+        "e193087c-543b-4c9c-939c-a70be149987e",  # 3030 for DR
+        "1a84e072-cf3e-4ec5-8e65-261627cc1ca6",
+        "20db7a04-3830-4530-82bb-77261e7d708a",
+        "20db7a04-3830-4530-82bb-77261e7d708a",
     ]
     retrieval_codes = [code for code in retrieval_codes if code not in queue_for_processing_codes]
     valid_retrieval_codes = []
@@ -730,20 +733,21 @@ def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    df = query_database(
-        query=f"""
-            SELECT *
-            FROM (
-                SELECT * FROM COUNTERData
-                ORDER BY COUNTER_data_ID DESC
-                LIMIT {number_of_records}
-            ) subquery
-            ORDER BY COUNTER_data_ID ASC;
-        """,
-        engine=engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df, False))
+    try:
+        df = query_database(
+            query=f"""
+                SELECT *
+                FROM (
+                    SELECT * FROM COUNTERData
+                    ORDER BY COUNTER_data_ID DESC
+                    LIMIT {number_of_records}
+                ) subquery
+                ORDER BY COUNTER_data_ID ASC;
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.tolist()})

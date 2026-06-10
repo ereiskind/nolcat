@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 from pathlib import Path
@@ -415,43 +415,47 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     )
 
     #Section: Get Relations from Database for Comparison
-    fiscalYears_relation_data = query_database(
-        query="SELECT * FROM fiscalYears;",
-        engine=engine,
-        index='fiscal_year_ID',
-    )
-    if isinstance(fiscalYears_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
+    try:
+        fiscalYears_relation_data = query_database(
+            query="SELECT * FROM fiscalYears;",
+            engine=engine,
+            index='fiscal_year_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
-    annualStatistics_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        query="SELECT * FROM annualStatistics ORDER BY question DESC;",  # The ORDER BY puts the records in the same order as in the test data
-        engine=engine,
-        index=['fiscal_year_ID', 'question'],
-    )
-    if isinstance(annualStatistics_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(annualStatistics_relation_data))
+    try:
+        annualStatistics_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
+            query="SELECT * FROM annualStatistics ORDER BY question DESC;",  # The ORDER BY puts the records in the same order as in the test data
+            engine=engine,
+            index=['fiscal_year_ID', 'question'],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     annualStatistics_relation_data = change_single_field_dataframe_into_series(annualStatistics_relation_data)
     annualStatistics_relation_data = annualStatistics_relation_data.astype(AnnualStatistics.state_data_types())
 
-    vendors_relation_data = query_database(
-        query="SELECT * FROM vendors;",
-        engine=engine,
-        index='vendor_ID',
-    )
-    if isinstance(vendors_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(vendors_relation_data))
+    try:
+        vendors_relation_data = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index='vendor_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
-    vendorNotes_relation_data = query_database(
-        query="SELECT * FROM vendorNotes;",
-        engine=engine,
-        index='vendor_notes_ID',
-    )
-    if isinstance(vendorNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
+    try:
+        vendorNotes_relation_data = query_database(
+            query="SELECT * FROM vendorNotes;",
+            engine=engine,
+            index='vendor_notes_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
@@ -513,52 +517,57 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     )
 
     #Section: Get Relations from Database for Comparison
-    statisticsSources_relation_data = query_database(
-        query="SELECT * FROM statisticsSources;",
-        engine=engine,
-        index='statistics_source_ID',
-    )
-    if isinstance(statisticsSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
+    try:
+        statisticsSources_relation_data = query_database(
+            query="SELECT * FROM statisticsSources;",
+            engine=engine,
+            index='statistics_source_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
 
-    statisticsSourceNotes_relation_data = query_database(
-        query="SELECT * FROM statisticsSourceNotes;",
-        engine=engine,
-        index='statistics_source_notes_ID',
-    )
-    if isinstance(statisticsSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
+    try:
+        statisticsSourceNotes_relation_data = query_database(
+            query="SELECT * FROM statisticsSourceNotes;",
+            engine=engine,
+            index='statistics_source_notes_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
-    resourceSources_relation_data = query_database(
-        query="SELECT * FROM resourceSources;",
-        engine=engine,
-        index='resource_source_ID',
-    )
-    if isinstance(resourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(resourceSources_relation_data))
+    try:
+        resourceSources_relation_data = query_database(
+            query="SELECT * FROM resourceSources;",
+            engine=engine,
+            index='resource_source_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
 
-    resourceSourceNotes_relation_data = query_database(
-        query="SELECT * FROM resourceSourceNotes;",
-        engine=engine,
-        index='resource_source_notes_ID',
-    )
-    if isinstance(resourceSourceNotes_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
+    try:
+        resourceSourceNotes_relation_data = query_database(
+            query="SELECT * FROM resourceSourceNotes;",
+            engine=engine,
+            index='resource_source_notes_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
-    statisticsResourceSources_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        query="SELECT * FROM statisticsResourceSources;",
-        engine=engine,
-        index=['SRS_statistics_source', 'SRS_resource_source'],
-    )
-    if isinstance(statisticsResourceSources_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
+    try:
+        statisticsResourceSources_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
+            query="SELECT * FROM statisticsResourceSources;",
+            engine=engine,
+            index=['SRS_statistics_source', 'SRS_resource_source'],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
@@ -639,22 +648,24 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     )
 
     #Section: Get Relations from Database for Comparison
-    annualUsageCollectionTracking_relation_data = query_database(
-        query="SELECT * FROM annualUsageCollectionTracking;",
-        engine=engine,
-        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    )
-    if isinstance(annualUsageCollectionTracking_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
+    try:
+        annualUsageCollectionTracking_relation_data = query_database(
+            query="SELECT * FROM annualUsageCollectionTracking;",
+            engine=engine,
+            index=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    COUNTERData_relation_data = query_database(
-        query="SELECT * FROM COUNTERData;",
-        engine=engine,
-        index="COUNTER_data_ID",
-    )
-    if isinstance(COUNTERData_relation_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
+    try:
+        COUNTERData_relation_data = query_database(
+            query="SELECT * FROM COUNTERData;",
+            engine=engine,
+            index="COUNTER_data_ID",
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     COUNTERData_relation_data = COUNTERData_relation_data.drop(columns=['report_creation_date'])
     COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
@@ -698,30 +709,31 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage(client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    df = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=db.engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=db.engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
 
     assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
@@ -791,30 +803,31 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     caplog.set_level(logging.INFO, logger='nolcat.models')
 
     #Section: Create Form Submission
-    df = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=db.engine,
-    )
-    if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=db.engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     list_of_AUCT_submission_fields = create_AUCT_SelectField_options(df)
     list_of_AUCT_submission_fields = {f"usage_files-{i}-usage_file": AUCT_options for (i, AUCT_options) in enumerate(list_of_AUCT_submission_fields)}
     log.debug(f"Uploads possible for the following fields:\n{format_list_for_stdout(list_of_AUCT_submission_fields)}")
@@ -861,12 +874,13 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     #Section: Confirm Successful Database Update
     collection_status_and_file_path = []
     for record in fields_being_uploaded.values():
-        df = query_database(
-            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            pytest.skip(database_function_skip_statements(df))
+        try:
+            df = query_database(
+                query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={record[0][0]} AND AUCT_fiscal_year={record[0][1]};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            pytest.skip(f"Unable to run test--{error}")
         collection_status_and_file_path.append((
             df.at[0,'collection_status'],
             df.at[0,'usage_file_path'],
@@ -874,7 +888,7 @@ def test_upload_historical_non_COUNTER_usage(client, header_value, files_for_tes
     log.info(f"The records of the submissions have the following `annualUsageCollectionTracking.collection_status` and `annualUsageCollectionTracking.usage_file_path` values:\n{format_list_for_stdout(collection_status_and_file_path)}")
     for record in collection_status_and_file_path:
         assert record[0] == 'Collection complete'
-        assert re.fullmatch(r"\d+_\d+\.\w{3,4}", record[1]) is not None
+        assert re.fullmatch(r'\d+_\d+\.\w{3,4}', record[1]) is not None
 
     #Section: Confirm Successful S3 Upload
     list_of_files_in_S3 = [record[1] for record in collection_status_and_file_path]

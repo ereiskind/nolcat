@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 import json
@@ -68,15 +68,13 @@ def StatisticsSources_fixture(valid_COUNTER_retrieval_code):
 @pytest.mark.slow
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call.
-    
-    Regex taken from https://stackoverflow.com/a/3809435.
 
     Args:
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
     """
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b[-a-zA-Z0-9@:%_\+.~#?&//=]*/", credentials['URL'])
+    assert URL_regex().fullmatch(credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -88,6 +86,34 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     # credentials = StatisticsSources_fixture.fetch_SUSHI_information(code_of_practice=False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
+
+
+@pytest.mark.xfail(raises=LookupError)
+def test_fetch_SUSHI_information_for_API_not_in_CSV():
+    """Tests getting SUSHI credentials for a COUNTER Registry ID not in the SUSHI credentials CSV returns an error."""
+    StatisticsSources_record = StatisticsSources(
+        statistics_source_ID = 0,
+        statistics_source_name = "Stats Source Name",
+        statistics_source_retrieval_code = "fake",
+        vendor_ID = 0,
+    )
+    credentials = StatisticsSources_record.fetch_SUSHI_information()
+    assert isinstance(credentials, dict)
+    assert URL_regex().fullmatch(credentials['URL'])
+
+
+@pytest.mark.xfail(raises=InvalidAPIResponseError)
+def test_fetch_SUSHI_information_for_depreciated_API():
+    """Tests getting SUSHI credentials for depreciated COUNTER Registry IDs returns an error."""
+    StatisticsSources_record = StatisticsSources(
+        statistics_source_ID = 0,
+        statistics_source_name = "Stats Source Name",
+        statistics_source_retrieval_code = "34430d4c-b51d-4a7b-8f8e-ef28e48ebd53",
+        vendor_ID = 0,
+    )
+    credentials = StatisticsSources_record.fetch_SUSHI_information()
+    assert isinstance(credentials, dict)
+    assert URL_regex().fullmatch(credentials['URL'])
 
 
 @pytest.fixture(scope='module')
@@ -127,16 +153,18 @@ def reports_offered_by_StatisticsSource_fixture(client, StatisticsSources_fixtur
                 "reports",
                 {k: v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             ).make_SUSHI_call(bucket_path=TEST_COUNTER_FILE_PATH)
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+    except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
+        pytest.skip(f"Unable to create fixture--{error.initial_error}")
+    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to create fixture--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to create fixture--{error.message.message}")
     log.info(f"The call to reports for {StatisticsSources_fixture.statistics_source_name} was successful.")
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"{StatisticsSources_fixture.statistics_source_name} offers the following reports: {list_of_reports}.")
     yield list_of_reports
@@ -239,10 +267,10 @@ def test_harvest_single_report(client, tmp_path, StatisticsSources_fixture, data
                 end_date,
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+    except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
@@ -286,10 +314,10 @@ def test_harvest_single_report_with_partial_date_range(client, tmp_path, Statist
                 end_date,
                 bucket_path=TEST_COUNTER_FILE_PATH,
             )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
+    except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
+        pytest.skip(f"Unable to run test--{error.message}")
     except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+        pytest.skip(f"Unable to run test--{error.message.message}")
     assert isinstance(S3_file_name, CloudPath)
     assert S3_file_name.name.startswith(f"{StatisticsSources_fixture.statistics_source_ID}_{report_to_check}")
     assert isinstance(messages_to_flash, list)
@@ -319,18 +347,13 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
     before = datetime.now()
-    try:
-        with client:
-            flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
-            most_recent_month_with_usage[0],
-            most_recent_month_with_usage[1],
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
-    except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
-    after = datetime.now()
+    with client:
+        flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
+        most_recent_month_with_usage[0],
+        most_recent_month_with_usage[1],
+        bucket_path=TEST_COUNTER_FILE_PATH,
+    )
+    after = datetime.now() + timedelta(seconds=2)  # The additional time provides a buffer for name matching purposes
     possible_S3_file_names = []
     for dt in get_datetime_sequence(before, after):
         for report in reports_offered_by_StatisticsSource_fixture:
@@ -338,6 +361,11 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
+    if 'STOP' in list(flash_message_dict.keys()):
+        log.error(f"`_harvest_R5_SUSHI()` returned:\n{format_list_for_stdout(flash_message_dict)}")
+        for S3_file_name in [file_name for file_name in files_in_bucket if file_name in possible_S3_file_names]:
+            remove_file_from_S3(S3_file_name)
+        assert False
     assert 'status' in list(flash_message_dict.keys())
     assert 'reports' in list(flash_message_dict.keys())
     for report in reports_offered_by_StatisticsSource_fixture:
@@ -363,23 +391,31 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = last_day_of_month(begin_date)
     report_being_called = choice(reports_offered_by_StatisticsSource_fixture)
-    try:
-        flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
-            begin_date,
-            end_date,
-            report_being_called,
-            bucket_path=TEST_COUNTER_FILE_PATH,
-        )
-    except InvalidSUSHIResponseError as error:
-        pytest.skip(error.message)
-    except InvalidAPIResponseError as error:
-        pytest.skip(error.message.message)
+    before = datetime.now()
+    flash_message_dict = StatisticsSources_fixture._harvest_R5_SUSHI(
+        begin_date,
+        end_date,
+        report_being_called,
+        bucket_path=TEST_COUNTER_FILE_PATH,
+    )
+    after = datetime.now() + timedelta(seconds=2)  # The additional time provides a buffer for name matching purposes
+    possible_S3_file_names = []
+    for dt in get_datetime_sequence(before, after):
+        possible_S3_file_names.append(TEST_COUNTER_FILE_PATH / f"{StatisticsSources_fixture.statistics_source_ID}_{report_being_called}_{dt.strftime(AWS_timestamp_format())}.parquet")
+    file_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)[0]  # This relies on the bucket having the parquet file from the function being tested and only the file from the function being tested, but there's no better way to handle the file name extraction
+    log.debug(f"Possible S3 file names:\n{possible_S3_file_names}")
     assert isinstance(flash_message_dict, dict)
+    if 'STOP' in list(flash_message_dict.keys()):
+        log.error(f"`_harvest_R5_SUSHI()` returned:\n{format_list_for_stdout(flash_message_dict)}")
+        if file_in_bucket in possible_S3_file_names:
+            remove_file_from_S3(file_in_bucket)
+        assert False
     assert 'status' in list(flash_message_dict.keys())
     assert report_being_called in list(flash_message_dict.keys())
+    remove_file_from_S3(file_in_bucket)  # If placed after final assert statement, test isn't recognized by its dependencies
+    assert file_in_bucket in possible_S3_file_names
 
 
-@pytest.mark.skip  #TEST: temp
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests the code for rejecting a SUSHI end date before the begin date.
@@ -403,7 +439,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     )
     assert isinstance(flash_message_dict, dict)
     assert len(flash_message_dict) == 1
-    assert flash_message_dict['dates']
+    assert flash_message_dict['STOP']
 
 
 #ToDo: Is a test for `_harvest_R5_SUSHI()` with a specified code of practice needed?
@@ -485,12 +521,13 @@ def test_check_if_data_already_in_COUNTERData(engine, client, partially_duplicat
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    number_of_records = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(number_of_records))
+    try:
+        number_of_records = query_database(
+            query=f"SELECT COUNT(*) FROM COUNTERData;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     if extract_value_from_single_value_df(number_of_records) == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     with client:

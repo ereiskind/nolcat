@@ -101,53 +101,53 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_60b()` for {self.fiscal_year}.")
-        TR_B1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(TR_B1_df, "return requested value")
+        try:
+            TR_B1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
-        else:
-            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
-            self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
+        TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
+        self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
-        IR_M1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(IR_M1_df, "return requested value")
+        try:
+            IR_M1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
-        else:
-            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
-            self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
+        IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
+        self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
-        TR_J1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_J1_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(TR_J1_df, "return requested value")
+        try:
+            TR_J1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
-        else:
-            TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
-            self._log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
+        TR_J1_sum = extract_value_from_single_value_df(TR_J1_df)
+        self._log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
@@ -163,16 +163,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_63()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(df, "return requested value")
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ACRL_63 = extract_value_from_single_value_df(df)
@@ -191,37 +192,37 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ACRL_61a()` for {self.fiscal_year}.")
-        TR_B1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(TR_B1_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(TR_B1_df, "return requested value")
+        try:
+            TR_B1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
-        else:
-            TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
-            self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
+        TR_B1_sum = extract_value_from_single_value_df(TR_B1_df)
+        self._log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
-        IR_M1_df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(IR_M1_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(IR_M1_df, "return requested value")
+        try:
+            IR_M1_df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
-        else:
-            IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
-            self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
+        IR_M1_sum = extract_value_from_single_value_df(IR_M1_df)
+        self._log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
 
@@ -237,16 +238,17 @@ class FiscalYears(db.Model):
             str: the error message if a query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ACRL_61b()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(df, "return requested value")
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ACRL_61b = extract_value_from_single_value_df(df)
@@ -265,16 +267,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(df, "return requested value")
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_18 = extract_value_from_single_value_df(df)
@@ -293,16 +296,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(df, "return requested value")
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_19 = extract_value_from_single_value_df(df)
@@ -321,16 +325,17 @@ class FiscalYears(db.Model):
             str: the error message if the query fails
         """
         self._log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
-        df = query_database(
-            query=f"""
-                SELECT SUM(usage_count) FROM COUNTERData
-                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
-                AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
-            """,
-            engine=db.engine,
-        )
-        if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(df, "return requested value")
+        try:
+            df = query_database(
+                query=f"""
+                    SELECT SUM(usage_count) FROM COUNTERData
+                    WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                    AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return message
         ARL_20 = extract_value_from_single_value_df(df)
@@ -346,15 +351,21 @@ class FiscalYears(db.Model):
 
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
+        
+        Raises:
+            DatabaseInteractionError: if any SQL interaction fails
         """
         self._log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
-        current_statistics_sources = query_database(
-            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
-            engine=db.engine,
-        )
-        if isinstance(current_statistics_sources, str):  #ALERT: `except DatabaseInteractionError`
-            return database_query_fail_statement(current_statistics_sources, "return requested series")
+        try:
+            current_statistics_sources = query_database(
+                query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         self._log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
@@ -376,12 +387,17 @@ class FiscalYears(db.Model):
         self._log.debug(f"And a summary of the dataframe the above records are in:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
-        load_result = load_data_into_database(
-            df=df,
-            relation='annualUsageCollectionTracking',
-            engine=db.engine,
-            index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        )
+        try:
+            load_result = load_data_into_database(
+                df=df,
+                relation='annualUsageCollectionTracking',
+                engine=db.engine,
+                index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         return load_result
 
 
@@ -396,30 +412,31 @@ class FiscalYears(db.Model):
         """
         self._log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
-        AUCT_objects_to_collect_df = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    annualUsageCollectionTracking.usage_is_being_collected,
-                    annualUsageCollectionTracking.manual_collection_required,
-                    annualUsageCollectionTracking.collection_via_email,
-                    annualUsageCollectionTracking.is_COUNTER_compliant,
-                    annualUsageCollectionTracking.collection_status,
-                    annualUsageCollectionTracking.usage_file_path,
-                    annualUsageCollectionTracking.notes
-                FROM annualUsageCollectionTracking
-                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.manual_collection_required=false;
-            """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
-            engine=db.engine,
-        )
-        if isinstance(AUCT_objects_to_collect_df, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
-            return {'create AUCT object': message}
+        try:
+            AUCT_objects_to_collect_df = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        annualUsageCollectionTracking.usage_is_being_collected,
+                        annualUsageCollectionTracking.manual_collection_required,
+                        annualUsageCollectionTracking.collection_via_email,
+                        annualUsageCollectionTracking.is_COUNTER_compliant,
+                        annualUsageCollectionTracking.collection_status,
+                        annualUsageCollectionTracking.usage_file_path,
+                        annualUsageCollectionTracking.notes
+                    FROM annualUsageCollectionTracking
+                        JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.manual_collection_required=false;
+                """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            return {'STOP': message}
         self._log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -440,12 +457,13 @@ class FiscalYears(db.Model):
         sections_of_UPDATE_statement = []
         return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
-            statistics_source_df = query_database(
-                query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
-                engine=db.engine,
-            )
-            if isinstance(statistics_source_df, str):  #ALERT: `except DatabaseInteractionError`
-                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = database_query_fail_statement(statistics_source_df, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}")
+            try:
+                statistics_source_df = query_database(
+                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = f"Unable to return requested data for the statistics source with primary key {AUCT_object.AUCT_statistics_source}--{error}"
                 continue
             statistics_source = StatisticsSources(
                 statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
@@ -467,12 +485,13 @@ class FiscalYears(db.Model):
             SET collection_status='Collection complete'
             WHERE {" OR ".join(sections_of_UPDATE_statement)};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = f"While the SUSHI data was successfully uploaded to S3, the `annualUsageCollectionTracking` wasn't updated, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
             return_statements['update_database()'] = message
         return return_statements
@@ -567,21 +586,21 @@ class Vendors(db.Model):
             str: an error message if the request for the data fails
         """
         self._log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
-        # vendor_PK = the int value that serves as the primary key for the vendor
-        # df = query_database(
-        #     query=f"""
-        #         SELECT
-        #             statistics_source_ID,
-        #             statistics_source_name,
-        #             statistics_source_retrieval_code
-        #         FROM statisticsSources
-        #         WHERE vendor_ID={vendor_PK};
-        #     """,
-        #     engine=db.engine,
-        #     index='statistics_source_ID',
-        # )
-        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        #     message = database_query_fail_statement(df, "return requested dataframe")
+        # try:
+        #     df = query_database(
+        #         query=f"""
+        #             SELECT
+        #                 statistics_source_ID,
+        #                 statistics_source_name,
+        #                 statistics_source_retrieval_code
+        #             FROM statisticsSources
+        #             WHERE vendor_ID={self.vendor_ID};
+        #         """,
+        #         engine=db.engine,
+        #         index='statistics_source_ID',
+        #     )
+        # except DatabaseInteractionError as error:
+        #     message = f"Unable to return requested data--{error}"
         #     self._log.warning(message)
         #     return message
         # self._log.debug(return_dataframe_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
@@ -598,22 +617,22 @@ class Vendors(db.Model):
             str: an error message if the request for the data fails
         """
         self._log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
-        # vendor_PK = the int value that serves as the primary key for the vendor
-        # df = query_database(
-        #     query=f"""
-        #         SELECT
-        #             resource_source_ID,
-        #             resource_source_name,
-        #             source_in_use,
-        #             access_stop_date
-        #         FROM resourceSources
-        #         WHERE vendor_ID={vendor_PK};
-        #     """,
-        #     engine=db.engine,
-        #     index='resource_source_ID',
-        # )
-        # if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-        #     message = database_query_fail_statement(df, "return requested dataframe")
+        # try:
+        #     df = query_database(
+        #         query=f"""
+        #             SELECT
+        #                 resource_source_ID,
+        #                 resource_source_name,
+        #                 source_in_use,
+        #                 access_stop_date
+        #             FROM resourceSources
+        #             WHERE vendor_ID={self.vendor_ID};
+        #         """,
+        #         engine=db.engine,
+        #         index='resource_source_ID',
+        #     )
+        # except DatabaseInteractionError as error:
+        #     message = f"Unable to return requested data--{error}"
         #     self._log.warning(message)
         #     return message
         # self._log.debug(return_dataframe_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
@@ -732,57 +751,93 @@ class StatisticsSources(db.Model):
         Returns:
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
+        
+        Raises:
+            LookupError: if the `StatisticsSources.statistics_source_retrieval_code` isn't in the credentials file
+            InvalidAPIResponseError: if the SUSHI URL can't be extracted from the COUNTER Registry
         """
         self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
         #Section: Retrieve Data
+        credentials = None
         with open(PATH_TO_CREDENTIALS_FILE()) as file:
             CSV_data = csv.DictReader(file)
             self._log.debug("SUSHI credentials loaded.")
             for statistics_source_credentials in CSV_data:
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                     self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                    credentials = {'customer_id': statistics_source_credentials['customer_ID']}
-                    if statistics_source_credentials['statistics_source_retrieval_code'].startswith("placeholder"):
-                        credentials['URL'] = statistics_source_credentials['URL']
-                        if "r51" in credentials['URL']:
-                            code_of_practice = "5.1"
-                        else:
-                            code_of_practice = "5"
-                    else:
-                        credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(statistics_source_credentials['statistics_source_retrieval_code'], code_of_practice)
-                        if isinstance(credentials['URL'], Exception):
-                            return "How should a returned exception be handled?"  #ToDo: Answer question posed in placeholder
-                
-                    # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
-                    if statistics_source_credentials.get('requestor_ID'):
-                        credentials['requestor_id'] = statistics_source_credentials['requestor_ID']
-                    if statistics_source_credentials.get('API_key'):
-                        credentials['api_key'] = statistics_source_credentials['API_key']
-                    if statistics_source_credentials.get('platform'):
-                        credentials['platform'] = statistics_source_credentials['platform']
-                    try:
-                        SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
-                            self.statistics_source_name,
-                            credentials['URL'],
-                            "status",
-                            {k: v for k, v in credentials.items() if k != "URL"},
-                        ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
-                    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                        self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code}.")
-                        if statistics_source_credentials.get('alt_customer_ID'):
-                            credentials['customer_id'] = statistics_source_credentials['alt_customer_ID']
-                        if statistics_source_credentials.get('alt_requestor_ID'):
-                            credentials['requestor_id'] = statistics_source_credentials['alt_requestor_ID']
-                        elif credentials.get('requestor_id'):
-                            del credentials['requestor_id']
-                        if statistics_source_credentials.get('alt_API_key'):
-                            credentials['api_key'] = statistics_source_credentials['alt_API_key']
-                        elif credentials.get('api_key'):
-                            del credentials['api_key']
-                        if statistics_source_credentials.get('alt_platform'):
-                            credentials['platform'] = statistics_source_credentials['alt_platform']
-                        elif credentials.get('platform'):
-                            del credentials['platform']  
+                    credentials = {**statistics_source_credentials}
+                    break
+        if not credentials:
+            message = f"The statistics source retrieval code {self.statistics_source_retrieval_code} wasn't found in the SUSHI credentials CSV file."
+            self._log.error(message)
+            raise LookupError(message)
+        
+        credentials['customer_id'] = credentials['customer_ID']
+        del credentials['customer_ID']
+
+        if credentials['statistics_source_retrieval_code'].startswith("placeholder"):
+            if "r51" in credentials['URL']:
+                code_of_practice = "5.1"
+            else:
+                code_of_practice = "5"
+        else:
+            try:
+                credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(credentials['statistics_source_retrieval_code'], code_of_practice)
+            except json.JSONDecodeError as error:
+                raise InvalidAPIResponseError(f"The COUNTER Registry response couldn't be converted into a JSON because '{error.message}")
+            except InvalidAPIResponseError as error:
+                raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
+        del credentials['statistics_source_retrieval_code']
+
+        # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
+        alt_credentials = {}
+        #ToDo: Take `alt_` keys out of `credentials` and save them in another dict
+        if credentials.get('requestor_ID'):
+            credentials['requestor_id'] = credentials['requestor_ID']
+            del credentials['requestor_ID']
+        if credentials.get('API_key'):
+            credentials['api_key'] = credentials['API_key']
+            del credentials['API_key']
+        # `platform` doesn't need to be changed
+        if credentials.get('alt_customer_ID'):
+            alt_credentials['customer_id'] = credentials['alt_customer_ID']
+            del credentials['alt_customer_ID']
+        if credentials.get('alt_requestor_ID'):
+            alt_credentials['requestor_id'] = credentials['alt_requestor_ID']
+            del credentials['alt_requestor_ID']
+        if credentials.get('alt_API_key'):
+            alt_credentials['api_key'] = credentials['alt_API_key']
+            del credentials['alt_API_key']
+        if credentials.get('alt_platform'):
+            alt_credentials['platform'] = credentials['alt_platform']
+            del credentials['alt_platform']
+
+        try:
+            SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
+                self.statistics_source_name,
+                credentials['URL'],
+                "status",
+                {k: v for k, v in credentials.items() if k != "URL"},
+            ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
+        except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code} as primary credentials raised '{error.message}'.")
+            if alt_credentials.get('customer_id'):
+                credentials['customer_id'] = alt_credentials['customer_id']
+            if credentials.get('requestor_id'):
+                if alt_credentials.get('requestor_id'):
+                    credentials['requestor_id'] = alt_credentials['requestor_id']
+                else:
+                    del credentials['requestor_id']
+            if credentials.get('api_key'):
+                if alt_credentials.get('api_key'):
+                    credentials['api_key'] = alt_credentials['api_key']
+                else:
+                    del credentials['api_key']
+            if credentials.get('platform'):
+                if alt_credentials.get('platform'):
+                    credentials['platform'] = alt_credentials['platform']
+                else:
+                    del credentials['platform']
 
         #Section: Return Data in Requested Format
         if for_API_call:
@@ -814,10 +869,16 @@ class StatisticsSources(db.Model):
         if usage_start_date > usage_end_date:
             message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             self._log.error(message)
-            return {'dates': [message]}
-        SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+            return {'STOP': [message]}
         return_statements = {}
+        try:
+            SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
+        except (InvalidAPIResponseError, LookupError) as error:
+            message = f"Getting the credentials for the SUSHI calls raised '{error.message}'. SUSHI calls will *NOT* be made."
+            return_statements['STOP'] = [message]
+            self._log.warning(return_statements)
+            return return_statements
+        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         self._log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
         #Section: Confirm SUSHI API Functionality
@@ -828,14 +889,14 @@ class StatisticsSources(db.Model):
                 "status",
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
-        except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised {error.message}. SUSHI calls will *NOT* be made."
+        except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
             return_statements['status'] = error.message
             return_statements['STOP'] = []
             for e in error.messages_to_flash + [message]:
                 return_statements['STOP'].append(e)
             self._log.warning(return_statements)
-            return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+            return return_statements
         return_statements['status'] = messages_to_flash
         self._log.info(f"The call to `status` for {self.statistics_source_name} was successful.")
 
@@ -847,14 +908,13 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "DR":
                 SUSHI_parameters['attributes_to_show'] = "Access_Method"
             elif report_to_harvest == "TR":
-                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Section_Type"
+                SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type"
             elif report_to_harvest == "IR":
                 SUSHI_parameters['attributes_to_show'] = "Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters['include_parent_details'] = "True"
             if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                 SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                 if report_to_harvest == "TR":
-                    self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
 
             try:
@@ -866,14 +926,22 @@ class StatisticsSources(db.Model):
                     usage_end_date,
                     bucket_path=bucket_path,
                 )
-            except InvalidSUSHIResponseError as error:
+            except NoSUSHIUsageDataError as error:
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised '{error.message}' and returned no data."
+                return_statements[report_to_harvest] = error.message
+                return_statements['STOP'] = []
+                for e in error.messages_to_flash + [message]:
+                    return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements
+            except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                 return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = []
                 for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
             return_statements[report_to_harvest] = messages_to_flash
             return return_statements
         
@@ -888,14 +956,14 @@ class StatisticsSources(db.Model):
                     "reports",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised {error.message}."
+            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
                 return_statements['reports'] = error.message
                 return_statements['STOP'] = []
                 for e in error.messages_to_flash + [message]:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
             return_statements['reports'] = messages_to_flash
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 self._log.info(f"The call to reports for {self.statistics_source_name} was successful.")
@@ -903,17 +971,17 @@ class StatisticsSources(db.Model):
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
                         for report_detail_keys, report_detail_values in report_details_dict.items():
-                            if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
+                            if isinstance(report_detail_keys, str) and re.fullmatch(r'[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 self._log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             else:
                 message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response is required:\n{SUSHI_reports_response}"
                 return_statements['STOP'] = [message]
                 self._log.error(message)
-                return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
+                return return_statements
 
             #Subsection: Get List of Available Customizable Reports
-            available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
+            available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
             available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
             self._log.info(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}.")
 
@@ -957,7 +1025,6 @@ class StatisticsSources(db.Model):
                 if not re.search(r'/r5\d+/', SUSHI_info['URL']):
                     SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Data_Type"  # Mandatory starting in R5.1
                     if report_name == "TR":
-                        self._log.error(f"Adding 'Section_Type' to call to {report_name} for URL {SUSHI_info['URL']}")  #TEST: temp
                         SUSHI_parameters['attributes_to_show'] = SUSHI_parameters['attributes_to_show'] + "|Section_Type"  # Removed starting in R5
 
                 #Subsection: Make API Call(s)
@@ -977,18 +1044,17 @@ class StatisticsSources(db.Model):
                     for e in error.messages_to_flash + [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                except InvalidSUSHIResponseError as error:
+                except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                     message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                     return_statements[report_name] = error.message
                     return_statements['STOP'] = []
                     for e in error.messages_to_flash + [message]:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
-                    return return_statements  #ALERT: `raise InvalidSUSHIResponseError`?
-                self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")  #TEST: temp
+                    return return_statements
+                self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")
                 return_statements[report_name] = messages_to_flash
 
-            self._log.error(f"TESTING: `for custom_report in available_custom_reports:` complete")  #TEST: temp
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 self._log.warning(message)
@@ -1014,9 +1080,15 @@ class StatisticsSources(db.Model):
         Raises:
             NoSUSHIUsageDataError: if no SUSHI usage data is returned
             InvalidSUSHIResponseError: if the SUSHI call returns an error
+            S3InteractionErrorWithFlashMessages: if a problem occurs while saving the SUSHI call response to S3
+            DatabaseInteractionErrorWithFlashMessages: if the check for data in the database fails
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
-        subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        try:
+            subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        except DatabaseInteractionError as error:
+            self._log.error(error)
+            raise DatabaseInteractionErrorWithFlashMessages(error, error)
         if isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (None, [message])
@@ -1047,7 +1119,7 @@ class StatisticsSources(db.Model):
                             all_messages_to_flash.append(e)
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
-                    except InvalidSUSHIResponseError as error:
+                    except InvalidAPIResponseError as error:
                         message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
@@ -1089,8 +1161,8 @@ class StatisticsSources(db.Model):
                     f"reports/{report.lower()}",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
+            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                 messages_to_flash = [message]
                 for e in error.messages_to_flash:
                     messages_to_flash.append(e)
@@ -1119,7 +1191,9 @@ class StatisticsSources(db.Model):
 
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
-            str: the error message from `query_database()` being passed through
+        
+        Raises:
+           DatabaseInteractionError: if the SQL query fails
         """
         self._log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
@@ -1127,12 +1201,15 @@ class StatisticsSources(db.Model):
         months_to_harvest = []
         
         for month_being_checked in months_in_date_range:
-            number_of_records = query_database(
-                query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
-                engine=db.engine,
-            )
-            if isinstance(number_of_records, str):  #ALERT: `except DatabaseInteractionError`
-                return database_query_fail_statement(number_of_records, "return requested value")
+            try:
+                number_of_records = query_database(
+                    query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                message = f"Unable to return requested data--{error}"
+                self._log.error(message)
+                raise DatabaseInteractionError(message)
             number_of_records = extract_value_from_single_value_df(number_of_records)
             self._log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
@@ -1280,6 +1357,9 @@ class ResourceSources(db.Model):
         
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1289,14 +1369,15 @@ class ResourceSources(db.Model):
                 source_in_use=false
             WHERE resource_source_ID={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         return update_result
 
 
@@ -1306,6 +1387,9 @@ class ResourceSources(db.Model):
 
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1315,14 +1399,15 @@ class ResourceSources(db.Model):
                 source_in_use=true
             WHERE resource_source_ID={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         return update_result
 
 
@@ -1337,6 +1422,9 @@ class ResourceSources(db.Model):
         
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
+        
+        Raises:
+            DatabaseInteractionError: if any SQL interaction fails
         """
         self._log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
         update_statement=f"""
@@ -1344,23 +1432,25 @@ class ResourceSources(db.Model):
             SET current_statistics_source=false
             WHERE SRS_resource_source={self.resource_source_ID};
         """
-        update_result = update_database(
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = database_update_fail_statement(update_statement)
-            self._log.warning(message)
-            return message
+        try:
+            update_result = update_database(
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         
-        check_for_existing_record = query_database(
-            query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
-            engine=db.engine,
-        )
-        if isinstance(check_for_existing_record, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(check_for_existing_record, "return requested record")
-            self._log.warning(message)
-            return message
+        try:
+            check_for_existing_record = query_database(
+                query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         
         if check_for_existing_record.empty:
             self._log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1380,11 +1470,15 @@ class ResourceSources(db.Model):
             )
             series = series.astype(StatisticsResourceSources.state_data_types())
 
-            load_result = load_data_into_database(
-                df=series,
-                relation='statisticsResourceSources',
-                engine=db.engine,
-            )
+            try:
+                load_result = load_data_into_database(
+                    df=series,
+                    relation='statisticsResourceSources',
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                self._log.error(error)
+                raise DatabaseInteractionError(error)
             return load_result
 
         else:
@@ -1394,14 +1488,15 @@ class ResourceSources(db.Model):
                 SET current_statistics_source=true
                 WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
             """
-            update_result = update_database(
-                update_statement=update_statement,
-                engine=db.engine,
-            )
-            if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-                message = database_update_fail_statement(update_statement)
-                self._log.warning(message)
-                return message
+            try:
+                update_result = update_database(
+                    update_statement=update_statement,
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+                self._log.error(message)
+                raise DatabaseInteractionError(message)
             return update_result
 
 
@@ -1567,19 +1662,17 @@ class AnnualUsageCollectionTracking(db.Model):
 
         Returns:
             dict: keys are list of potential reports with values of list of the statements that should be flashed returned by those reports; if an error stopping harvesting is raised, the message is a value with the key 'STOP' (key: str, value: list of str)
-        
-        Raises:
-            DatabaseInteractionErrorWithFlashMessages: if the SQL update statement fails
         """
         self._log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
         #Subsection: Get Data from `fiscalYears`
-        fiscal_year_data = query_database(
-            query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
-            engine=db.engine,
-        )
-        if isinstance(fiscal_year_data, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(fiscal_year_data, "return requested values")
+        try:
+            fiscal_year_data = query_database(
+                query=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return {'STOP': [message]}
         start_date = fiscal_year_data['start_date'][0]
@@ -1589,12 +1682,13 @@ class AnnualUsageCollectionTracking(db.Model):
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
-        statistics_source_data = query_database(
-            query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_data, str):  #ALERT: `except DatabaseInteractionError`
-            message = database_query_fail_statement(statistics_source_data, "return requested values")
+        try:
+            statistics_source_data = query_database(
+                query=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
             self._log.warning(message)
             return {'STOP': [message]}
         statistics_source = StatisticsSources(
@@ -1619,14 +1713,15 @@ class AnnualUsageCollectionTracking(db.Model):
             SET collection_status='Collection complete'
             WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
         """
-        update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
-            self._log.warning(message)
-            raise DatabaseInteractionErrorWithFlashMessages(message, [message, flash_message_dict])
+        try:
+            update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            self._log.error(message)
+            flash_message_dict['update_database()'] = message
         return flash_message_dict
 
 
@@ -1683,12 +1778,15 @@ class AnnualUsageCollectionTracking(db.Model):
                 collection_status='Collection complete'
             WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
         """
-        update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
-            update_statement=update_statement,
-            engine=db.engine,
-        )
-        if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-            raise DatabaseInteractionError(f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}")
+        try:
+            update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
+                update_statement=update_statement,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         self._log.info(f"Successfully updated `annualUsageCollectionTracking.usage_file_path` to {file_name} and `annualUsageCollectionTracking.collection_status` to 'Collection complete'.")
         return S3_file_name
     

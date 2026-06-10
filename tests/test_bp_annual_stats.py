@@ -1,5 +1,5 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2026-05-21 ##########
+########## Passing 2026-06-10 ##########
 
 import pytest
 from bs4 import BeautifulSoup
@@ -36,12 +36,13 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
-        query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
-        engine=engine,
-    )
-    if isinstance(db_select_field_options, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(db_select_field_options))
+    try:
+        db_select_field_options = query_database(
+            query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"

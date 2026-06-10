@@ -34,6 +34,7 @@ class SUSHICallAndResponse:
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
         _stdout_API_response_based_on_size: A method for limiting the amount of text written to stdout when viewing SUSHI harvest results.
     """
+    _log = logging.getLogger(log.name).getChild(__qualname__)
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
@@ -71,6 +72,7 @@ class SUSHICallAndResponse:
             tuple: the API call response (dict); a list of the statements that should be flashed (list of str)
         
         Raises:
+            InvalidAPIResponseError: if the GET request(s) raise error(s)
             NoSUSHIDataError: if the call returns no content
             DatabaseInteractionErrorWithFlashMessages: if the SQL query while saving the raw response fails
             S3InteractionErrorWithFlashMessages: if a problem occurs while saving the raw response to S3
@@ -141,7 +143,7 @@ class SUSHICallAndResponse:
             elif API_response.get('Exceptions'):
                 for_debug = "Exceptions"
                 SUSHI_exception_statement = API_response['Exceptions']
-            elif API_response.get('Alert') and not (self.call_path == "status" and re.match(r"https?://.*clarivate.*\.\w{3}/", self.call_URL)):  # Web of Science `status` calls state most recent month with usage available in `Alerts`
+            elif API_response.get('Alert') and not (self.call_path == "status" and re.match(r'https?://.*clarivate.*\.\w{3}/', self.call_URL)):  # Web of Science `status` calls state most recent month with usage available in `Alerts`
                 for_debug = "Alert"
                 SUSHI_exception_statement = API_response['Alert']
             elif API_response.get('Alerts'):
@@ -178,7 +180,7 @@ class SUSHICallAndResponse:
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
-        custom_report_regex = re.compile(r"reports/[PpDdTtIi][Rr]")
+        custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         Report_Items_status = len(API_response.get('Report_Items', 'No `Report_Items` key'))  # Combining the check for the existence of the key and the length of its value list allows for deduplication of log and return statements
         if Report_Items_status == 0 or Report_Items_status == 'No `Report_Items` key':
             if custom_report_regex.search(self.call_path):
@@ -227,7 +229,9 @@ class SUSHICallAndResponse:
         
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
-            str: error message to indicate to `StatisticsSources._harvest_single_report()` that the API call failed
+        
+        Raises:
+            InvalidAPIResponseError: if the GET request(s) raise error(s)
         """
         log.info(f"Starting `_make_API_call()` by calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
@@ -314,12 +318,15 @@ class SUSHICallAndResponse:
             S3InteractionError: if a problem occurs while saving the data to S3
         """
         log.info("Starting `_save_raw_Response_text()`.")
-        statistics_source_ID = query_database(
-            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-            engine=db.engine,
-        )
-        if isinstance(statistics_source_ID, str):
-            raise DatabaseInteractionError(database_query_fail_statement(statistics_source_ID, "return requested value"))
+        try:
+            statistics_source_ID = query_database(
+                query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to return requested data--{error}"
+            self._log.error(message)
+            raise DatabaseInteractionError(message)
         
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
             file_name_stem=f"{extract_value_from_single_value_df(statistics_source_ID)}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
@@ -471,12 +478,14 @@ class SUSHICallAndResponse:
         if error_code == '1030' or error_code == '3030' or error_code == '3032' or error_code == '3040' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
             if error_code == '3032' or error_code == '3040':
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
-                df = query_database(
-                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-                    engine=db.engine,
-                )
-                if isinstance(df, str):  #ALERT: `except DatabaseInteractionError`
-                    error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
+                try:
+                    df = query_database(
+                        query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
+                    error_message = f"Unable to create StatisticsSources object to use `add_note()` method--{error}"
+                    log.error(error_message)
                     return (error_message, [message, error_message])
                 try:
                     statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary

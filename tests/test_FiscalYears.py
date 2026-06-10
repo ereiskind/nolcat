@@ -26,13 +26,14 @@ def FY2020_FiscalYears_object(engine, caplog):
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(record, False))
+    try:
+        record = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -193,14 +194,15 @@ def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_recor
         None
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    method_result = load_data_into_database(
-        df=FY2023_FiscalYears_object_and_record[1],
-        relation='fiscalYears',
-        engine=engine,
-        index_field_name='fiscal_year_ID',
-    )
-    if not load_data_into_database_success_regex().fullmatch(method_result):
-        pytest.skip(database_function_skip_statements(method_result, False))
+    try:
+        method_result = load_data_into_database(
+            df=FY2023_FiscalYears_object_and_record[1],
+            relation='fiscalYears',
+            engine=engine,
+            index_field_name='fiscal_year_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield None
 
 
@@ -219,17 +221,18 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     #Section: Call Method
     with client:
         method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
-    if not load_data_into_database_success_regex().fullmatch(method_result):
+    if not re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
-    retrieved_data = query_database(
-        query="SELECT * FROM annualUsageCollectionTracking;",
-        engine=engine,
-        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    )
-    if isinstance(retrieved_data, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(retrieved_data))
+    try:
+        retrieved_data = query_database(
+            query="SELECT * FROM annualUsageCollectionTracking;",
+            engine=engine,
+            index=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
@@ -349,7 +352,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
+    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), method_result)
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
@@ -369,13 +372,14 @@ def FY2022_FiscalYears_object(engine, caplog):
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip(database_function_skip_statements(record, False))
+    try:
+        record = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -426,12 +430,13 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path, valid_CO
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     with client:
-        update_result = update_database(
-            update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
-            engine=engine,
-        )
-    if not update_database_success_regex().fullmatch(update_result):  #ALERT: `except DatabaseInteractionError`
-        pytest.skip("Unable to add statistics source retrieval code to relevant record.")
+        try:
+            update_result = update_database(
+                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
+                engine=engine,
+            )
+        except DatabaseInteractionError as error:
+            pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
     flash_message_dict = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
     assert isinstance(flash_message_dict, dict)
