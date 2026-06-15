@@ -16,21 +16,45 @@ log = logging.getLogger(__name__)
 
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
-def AUCT_fixture_for_SUSHI(engine):
-    """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
+def AUCT_fixture_for_SUSHI(engine, new_FiscalYears_object_and_record):
+    """Creates an `AnnualUsageCollectionTracking` object for the most recently passed fiscal year and a statistics source with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
+
+    A new record in the fiscalYears relation is created so the SUSHI pull will be recent enough to still be available.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
     
     Yields:
-        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to records for the most recently passed fiscal year and with a non-null `statistics_source_retrieval_code` attribute
     """
-    # Cannot use `caplog` for `query_database()` due to scope mismatch
+    # Cannot use `caplog` for `nolcat.nolcat_glue_job` due to scope mismatch
+    FY_object, FY_df = new_FiscalYears_object_and_record
+    try:
+        method_result = load_data_into_database(
+            df=FY_df,
+            relation='fiscalYears',
+            engine=engine,
+            index_field_name='fiscal_year_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
+    try:
+        method_result = FY_object.create_usage_tracking_records_for_fiscal_year()
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
+    
     try:
         record = query_database(
-            query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
-            engine=engine,
+            query=f"""
+                    SELECT *
+                    FROM annualUsageCollectionTracking
+                        JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    WHERE
+                        statisticsSources.statistics_source_retrieval_code IS NOT NULL
+                        AND AUCT_fiscal_year=6;
+                """,
+            engine=db.engine,
         )
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to create fixture--{error}")
@@ -46,8 +70,7 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.error(f"`yield_object` (type {type(yield_object)}):\n{yield_object}")  #TEST: temp
-    log.warning(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))  # This is set at `warning` to show the retrieval code
+    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
     yield yield_object
 
 

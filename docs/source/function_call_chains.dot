@@ -1433,6 +1433,7 @@ digraph function_call_chains {
     AUCT_fixture_for_SUSHI -> query_database
     AUCT_fixture_for_SUSHI -> initialize_relation_class_object_statement
     AUCT_fixture_for_SUSHI -> engine
+    AUCT_fixture_for_SUSHI -> load_data_into_database
     S3_regex_and_teardown_in_test_AUCT -> AUCT_fixture_for_SUSHI
     test_collect_annual_usage_statistics -> collect_annual_usage_statistics
     test_collect_annual_usage_statistics -> query_database
