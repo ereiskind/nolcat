@@ -388,7 +388,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
                 engine=engine,
             )
     except DatabaseInteractionError as error:
-            pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
+        pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
     #Section: Test Function
     flash_message_dict = new_FiscalYears_object_and_record[0].collect_fiscal_year_usage_statistics()
