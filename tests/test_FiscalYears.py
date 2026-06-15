@@ -331,38 +331,6 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
 
 #Section: Test Collecting Usage Statistics
 @pytest.fixture
-def FY2022_FiscalYears_object(engine, caplog):
-    """Creates a FiscalYears object for the fiscal year with an `annualUsageCollectionTracking` record that meets the criteria for inclusion in `FiscalYears.collect_fiscal_year_usage_statistics()`.
-
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
-
-    Yields:
-        nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
-    """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
-    try:
-        record = query_database(
-            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
-            engine=engine,
-            # Conversion to class object easier when primary keys stay as standard fields
-        )
-    except DatabaseInteractionError as error:
-        pytest.skip(f"Unable to create fixture--{error}")
-    yield_object = FiscalYears(
-        fiscal_year_ID=record.at[0,'fiscal_year_ID'],
-        fiscal_year=record.at[0,'fiscal_year'],
-        start_date=record.at[0,'start_date'],
-        end_date=record.at[0,'end_date'],
-        notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
-        notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
-    )
-    log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
-    yield yield_object
-
-
-@pytest.fixture
 def S3_regex_and_teardown():
     """Creates a regex matching the S3 files created when `test_FiscalYears.test_collect_fiscal_year_usage_statistics()` runs and handles teardown for those same files.
 
