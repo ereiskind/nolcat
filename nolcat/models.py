@@ -873,8 +873,13 @@ class StatisticsSources(db.Model):
         return_statements = {}
         try:
             SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
-        except (InvalidAPIResponseError, LookupError) as error:
+        except InvalidAPIResponseError as error:
             message = f"Getting the credentials for the SUSHI calls raised '{error.message}'. SUSHI calls will *NOT* be made."
+            return_statements['STOP'] = [message]
+            self._log.warning(return_statements)
+            return return_statements
+        except LookupError as error:
+            message = f"Getting the credentials for the SUSHI calls raised '{error}'. SUSHI calls will *NOT* be made."
             return_statements['STOP'] = [message]
             self._log.warning(return_statements)
             return return_statements
