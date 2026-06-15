@@ -158,7 +158,7 @@ def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record, 
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        new_FiscalYears_object_and_record (tuple): tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Yields:
@@ -184,7 +184,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
         load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
-        new_FiscalYears_object_and_record (tuple): tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
