@@ -370,6 +370,16 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
+    #TEST: temp
+    record = query_database(
+        query="SELECT * FROM fiscalYears WHERE fiscal_year_ID=6;",
+        engine=engine,
+    )
+    record = query_database(
+        query="SELECT fiscalYears.fiscal_year_ID FROM fiscalYears JOIN annualUsageCollectionTracking ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year WHERE annualUsageCollectionTracking.usage_is_being_collected=true AND annualUsageCollectionTracking.manual_collection_required=false;",
+        engine=engine,
+    )
+    #TEST: end temp
     try:
         with client:
             update_result = update_database(
