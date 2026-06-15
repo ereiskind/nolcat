@@ -1120,7 +1120,7 @@ class StatisticsSources(db.Model):
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
                     except InvalidAPIResponseError as error:
-                        message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         self._log.critical(message)
@@ -1162,7 +1162,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = error.message + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                 messages_to_flash = [message]
                 for e in error.messages_to_flash:
                     messages_to_flash.append(e)
