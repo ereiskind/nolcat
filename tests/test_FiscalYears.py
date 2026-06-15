@@ -403,13 +403,13 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
-    with client:
-        try:
+    try:
+        with client:
             update_result = update_database(
                 update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
                 engine=engine,
             )
-        except DatabaseInteractionError as error:
+    except DatabaseInteractionError as error:
             pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
     flash_message_dict = new_FiscalYears_object_and_record[0].collect_fiscal_year_usage_statistics()
