@@ -371,11 +371,10 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
     #Section: Change Data in Database
-    FY_object, FY_record = new_FiscalYears_object_and_record
     try:
         with client:
             update_database(
-                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID={FY_record.AUCT_statistics_source};",
+                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID={new_FiscalYears_object_and_record[0].AUCT_statistics_source};",
                 engine=engine,
             )
             update_database(
@@ -385,8 +384,8 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
                         usage_is_being_collected=true
                         AND manual_collection_required=false
                     WHERE
-                        AUCT_statistics_source={FY_record.AUCT_statistics_source}
-                        AND AUCT_fiscal_year={FY_record.AUCT_fiscal_year};
+                        AUCT_statistics_source={new_FiscalYears_object_and_record[0].AUCT_statistics_source}
+                        AND AUCT_fiscal_year={new_FiscalYears_object_and_record[0].AUCT_fiscal_year};
                 """,
                 engine=engine,
             )
@@ -394,7 +393,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
             pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
     #Section: Test Function
-    flash_message_dict = FY_object.collect_fiscal_year_usage_statistics()
+    flash_message_dict = new_FiscalYears_object_and_record[0].collect_fiscal_year_usage_statistics()
     assert isinstance(flash_message_dict, dict)
     if 'STOP' in flash_message_dict.keys():
         pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
