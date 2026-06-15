@@ -1161,7 +1161,12 @@ class StatisticsSources(db.Model):
                     f"reports/{report.lower()}",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            except InvalidAPIResponseError as error:
+                message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                messages_to_flash = [message]
+                self._log.critical(message)
+                raise InvalidSUSHIResponseError(message, message)
+            except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                 message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                 messages_to_flash = [message]
                 for e in error.messages_to_flash:
