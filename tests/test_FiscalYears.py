@@ -385,15 +385,18 @@ def S3_regex_and_teardown():
 
 
 @pytest.mark.slow
-def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path, valid_COUNTER_retrieval_code, FY2022_FiscalYears_object, S3_regex_and_teardown, caplog):
+def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_new_record_into_fiscalYears, valid_COUNTER_retrieval_code, new_FiscalYears_object_and_record, S3_regex_and_teardown, caplog):  # `load_new_record_into_fiscalYears()` not called but used to load record needed for test
     """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments.
+
+    The previously created record for the most recently passed fiscal year is used to avoid raising any SUSHI 3020 errors.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         client (flask.testing.FlaskClient): a Flask test client
         tmp_path (pathlib.Path): a temporary directory created just for running tests
+        load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
         valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
-        FY2022_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object that matches this test's requirements
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
         S3_regex_and_teardown (re.compile): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
@@ -409,7 +412,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path, valid_CO
         except DatabaseInteractionError as error:
             pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
-    flash_message_dict = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
+    flash_message_dict = new_FiscalYears_object_and_record[0].collect_fiscal_year_usage_statistics()
     assert isinstance(flash_message_dict, dict)
     if 'STOP' in flash_message_dict.keys():
         pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")

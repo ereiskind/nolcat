@@ -2080,10 +2080,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        FY2022_FiscalYears_object [
-            style="dotted"
-            shape="box"
-        ]
         S3_regex_and_teardown_in_test_fiscalYears [
             label="S3_regex_and_teardown"
             style="dotted"
@@ -2128,15 +2124,12 @@ digraph function_call_chains {
     test_create_usage_tracking_records_for_fiscal_year -> engine
     test_create_usage_tracking_records_for_fiscal_year -> client
     test_create_usage_tracking_records_for_fiscal_year -> new_FiscalYears_object_and_record
-    FY2022_FiscalYears_object -> query_database
-    FY2022_FiscalYears_object -> initialize_relation_class_object_statement
-    FY2022_FiscalYears_object -> engine
     S3_regex_and_teardown_in_test_fiscalYears -> list_files_in_bucket_location
     test_collect_fiscal_year_usage_statistics -> PATH_TO_CREDENTIALS_FILE
     test_collect_fiscal_year_usage_statistics -> collect_fiscal_year_usage_statistics
     test_collect_fiscal_year_usage_statistics -> update_database
     test_collect_fiscal_year_usage_statistics -> engine
-    test_collect_fiscal_year_usage_statistics -> FY2022_FiscalYears_object
+    test_collect_fiscal_year_usage_statistics -> new_FiscalYears_object_and_record
     test_collect_fiscal_year_usage_statistics -> list_files_in_bucket_location
     test_collect_fiscal_year_usage_statistics -> S3_regex_and_teardown_in_test_fiscalYears
     test_collect_fiscal_year_usage_statistics -> valid_COUNTER_retrieval_code
