@@ -1040,6 +1040,10 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
+        new_FiscalYears_object_and_record [
+            style="dotted"
+            shape="box"
+        ]
         match_direct_SUSHI_harvest_result [shape="box"]
     }
     app -> configure_logging
@@ -2065,10 +2069,6 @@ digraph function_call_chains {
         ]
         test_calculate_ARL_20 [
             style="dashed"
-            shape="box"
-        ]
-        new_FiscalYears_object_and_record [
-            style="dotted"
             shape="box"
         ]
         load_new_record_into_fiscalYears [

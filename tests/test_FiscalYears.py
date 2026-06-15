@@ -153,40 +153,6 @@ def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
 @pytest.fixture
-def new_FiscalYears_object_and_record():
-    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
-
-    Yields:
-        tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
-    """
-    primary_key_value = 6
-    today = date.today()
-    if today.month < 8:
-        fiscal_year_number = today.year - 2
-    else:
-        fiscal_year_number = today.year - 1
-    fiscal_year_value = str(fiscal_year_number)
-    start_date_value = date(fiscal_year_number-1, 7, 1)
-    end_date_value = date(fiscal_year_number, 6, 30)
-
-    FY_instance = FiscalYears(
-        fiscal_year_ID = primary_key_value,
-        fiscal_year = fiscal_year_value,
-        start_date = start_date_value,
-        end_date = end_date_value,
-        notes_on_statisticsSources_used = None,
-        notes_on_corrections_after_submission = None,
-    )
-    FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
-        index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
-    )
-    FY_df.index.name = "fiscal_year_ID"
-    yield (FY_instance, FY_df)
-
-
-@pytest.fixture
 def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record, caplog):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 

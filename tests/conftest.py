@@ -718,6 +718,40 @@ def valid_COUNTER_retrieval_code():
     yield str(choice(valid_retrieval_codes))
 
 
+@pytest.fixture
+def new_FiscalYears_object_and_record():
+    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
+
+    Yields:
+        tuple: the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
+    """
+    primary_key_value = 6
+    today = date.today()
+    if today.month < 8:
+        fiscal_year_number = today.year - 2
+    else:
+        fiscal_year_number = today.year - 1
+    fiscal_year_value = str(fiscal_year_number)
+    start_date_value = date(fiscal_year_number-1, 7, 1)
+    end_date_value = date(fiscal_year_number, 6, 30)
+
+    FY_instance = FiscalYears(
+        fiscal_year_ID = primary_key_value,
+        fiscal_year = fiscal_year_value,
+        start_date = start_date_value,
+        end_date = end_date_value,
+        notes_on_statisticsSources_used = None,
+        notes_on_corrections_after_submission = None,
+    )
+    FY_df = pd.DataFrame(
+        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
+        index=[primary_key_value],
+        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+    )
+    FY_df.index.name = "fiscal_year_ID"
+    yield (FY_instance, FY_df)
+
+
 #Section: Test Helper Functions
 def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
