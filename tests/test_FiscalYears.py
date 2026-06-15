@@ -152,7 +152,7 @@ def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
 
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
-@pytest.fixture
+@pytest.fixture(scope='module')
 def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record, caplog):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 

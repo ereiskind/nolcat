@@ -718,7 +718,7 @@ def valid_COUNTER_retrieval_code():
     yield str(choice(valid_retrieval_codes))
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def new_FiscalYears_object_and_record():
     """Creates a FiscalYears object and an empty record for the fiscalYears relation.
 
