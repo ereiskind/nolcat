@@ -1044,7 +1044,6 @@ digraph function_call_chains {
             style="dotted"
             shape="box"
         ]
-        match_direct_SUSHI_harvest_result [shape="box"]
     }
     app -> configure_logging
     app -> create_app
@@ -1110,9 +1109,6 @@ digraph function_call_chains {
     most_recent_month_with_usage -> last_day_of_month
     valid_COUNTER_retrieval_code -> PATH_TO_CREDENTIALS_FILE
     valid_COUNTER_retrieval_code -> fetch_URL_from_COUNTER_Registry
-    match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
-    match_direct_SUSHI_harvest_result -> query_database
-    match_direct_SUSHI_harvest_result -> engine
 
 
     subgraph cluster_test_nolcat_glue_job {
@@ -1440,7 +1436,6 @@ digraph function_call_chains {
     test_collect_annual_usage_statistics -> extract_value_from_single_value_df
     test_collect_annual_usage_statistics -> engine
     test_collect_annual_usage_statistics -> client
-    test_collect_annual_usage_statistics -> match_direct_SUSHI_harvest_result
     test_collect_annual_usage_statistics -> AUCT_fixture_for_SUSHI
     test_collect_annual_usage_statistics -> format_list_for_stdout
     test_collect_annual_usage_statistics -> list_files_in_bucket_location
@@ -1556,10 +1551,6 @@ digraph function_call_chains {
             style="dashed"
             shape="box"
         ]
-        test_match_direct_SUSHI_harvest_result [
-            style="dashed"
-            shape="box"
-        ]
         test_GET_request_for_harvest_SUSHI_statistics [
             style="dashed"
             shape="box"
@@ -1605,9 +1596,6 @@ digraph function_call_chains {
     test_upload_COUNTER_data_via_SQL_insert -> engine
     test_upload_COUNTER_data_via_SQL_insert -> client
     test_upload_COUNTER_data_via_SQL_insert -> header_value
-    test_match_direct_SUSHI_harvest_result -> state_data_types_in_COUNTERData
-    test_match_direct_SUSHI_harvest_result -> engine
-    test_match_direct_SUSHI_harvest_result -> match_direct_SUSHI_harvest_result
     test_GET_request_for_harvest_SUSHI_statistics -> harvest_SUSHI_statistics
     test_GET_request_for_harvest_SUSHI_statistics -> query_database
     test_GET_request_for_harvest_SUSHI_statistics -> engine

@@ -8,7 +8,6 @@ from pandas.testing import assert_frame_equal
 from werkzeug.datastructures import FileStorage
 
 # `conftest.py` fixtures are imported automatically
-from conftest import match_direct_SUSHI_harvest_result
 from nolcat.models import *
 
 log = logging.getLogger(__name__)

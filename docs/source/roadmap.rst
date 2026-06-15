@@ -79,7 +79,6 @@ Move Code to Glue Jobs and Data to Parquet
     * `nolcat.view_usage.construct_DR_query_with_wizard()`
     * `nolcat.view_usage.construct_TR_query_with_wizard()`
     * `nolcat.view_usage.construct_IR_query_with_wizard()`
-    * `tests.conftest.match_direct_SUSHI_harvest_result()`
     * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()`
     * `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_SQL_insert()`
     * `tests.test_bp_view_usage.test_use_predefined_SQL_query()`
