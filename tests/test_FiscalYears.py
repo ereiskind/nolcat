@@ -381,8 +381,8 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
                 update_statement=f"""
                     UPDATE annualUsageCollectionTracking
                     SET
-                        usage_is_being_collected=true
-                        AND manual_collection_required=false
+                        usage_is_being_collected=true,
+                        manual_collection_required=false
                     WHERE AUCT_fiscal_year={new_FiscalYears_object_and_record[0].fiscal_year_ID};
                 """,
                 engine=engine,
