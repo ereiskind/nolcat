@@ -153,18 +153,17 @@ def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
 @pytest.fixture(scope='module')
-def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record, caplog):
+def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Yields:
         None
     """
-    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    # Cannot use `caplog` for `nolcat.nolcat_glue_job` due to scope mismatch
     try:
         method_result = load_data_into_database(
             df=new_FiscalYears_object_and_record[1],
