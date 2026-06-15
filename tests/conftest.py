@@ -728,9 +728,9 @@ def new_FiscalYears_object_and_record():
     primary_key_value = 6
     today = date.today()
     if today.month < 8:
-        fiscal_year_number = today.year - 1
+        fiscal_year_number = today.year - 2
     else:
-        fiscal_year_number = today.year
+        fiscal_year_number = today.year - 1
     fiscal_year_value = str(fiscal_year_number)
     start_date_value = date(fiscal_year_number-1, 7, 1)
     end_date_value = date(fiscal_year_number, 6, 30)
