@@ -892,8 +892,8 @@ class StatisticsSources(db.Model):
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
             message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
             return_statements['status'] = error.message
-            return_statements['STOP'] = []
-            for e in error.messages_to_flash + [message]:
+            return_statements['STOP'] = [message]
+            for e in error.messages_to_flash:
                 return_statements['STOP'].append(e)
             self._log.warning(return_statements)
             return return_statements
@@ -929,16 +929,16 @@ class StatisticsSources(db.Model):
             except NoSUSHIUsageDataError as error:
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised '{error.message}' and returned no data."
                 return_statements[report_to_harvest] = error.message
-                return_statements['STOP'] = []
-                for e in error.messages_to_flash + [message]:
+                return_statements['STOP'] = [message]
+                for e in error.messages_to_flash:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements
             except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                 return_statements[report_to_harvest] = error.message
-                return_statements['STOP'] = []
-                for e in error.messages_to_flash + [message]:
+                return_statements['STOP'] = [message]
+                for e in error.messages_to_flash:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements
@@ -959,8 +959,8 @@ class StatisticsSources(db.Model):
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                 message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
                 return_statements['reports'] = error.message
-                return_statements['STOP'] = []
-                for e in error.messages_to_flash + [message]:
+                return_statements['STOP'] = [message]
+                for e in error.messages_to_flash:
                     return_statements['STOP'].append(e)
                 self._log.warning(return_statements)
                 return return_statements
@@ -1040,15 +1040,15 @@ class StatisticsSources(db.Model):
                 except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
                     self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
-                    return_statements[report_name] = error.message
-                    for e in error.messages_to_flash + [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]:
+                    return_statements[report_name] = [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]
+                    for e in error.messages_to_flash:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
                     message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
                     return_statements[report_name] = error.message
-                    return_statements['STOP'] = []
-                    for e in error.messages_to_flash + [message]:
+                    return_statements['STOP'] = [message]
+                    for e in error.messages_to_flash:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements
@@ -1128,7 +1128,8 @@ class StatisticsSources(db.Model):
                     except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                         message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
                         self._log.critical(message)
-                        for e in error.messages_to_flash + [message]:
+                        all_messages_to_flash.append(message)
+                        for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         continue
                     for item in messages_to_flash:
