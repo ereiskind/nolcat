@@ -372,11 +372,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
 
     #TEST: temp
     record = query_database(
-        query="SELECT * FROM fiscalYears WHERE fiscal_year_ID=6;",
-        engine=engine,
-    )
-    record = query_database(
-        query="SELECT fiscalYears.fiscal_year_ID FROM fiscalYears JOIN annualUsageCollectionTracking ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year WHERE annualUsageCollectionTracking.usage_is_being_collected=true AND annualUsageCollectionTracking.manual_collection_required=false;",
+        query="SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year=6;",
         engine=engine,
     )
     #TEST: end temp
