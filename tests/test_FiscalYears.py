@@ -373,21 +373,6 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     #Section: Change Data in Database
     try:
         with client:
-            ###
-            #TEST: temp
-            query_database(
-                query="SELECT * FROM fiscalYears;",
-                engine=engine,
-            )
-            query_database(
-                query="SELECT * FROM statisticsSources;",
-                engine=engine,
-            )
-            query_database(
-                query="SELECT * FROM annualUsageCollectionTracking;",
-                engine=engine,
-            )
-            #TEST: end temp
             update_database(
                 update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID={new_FiscalYears_object_and_record[0].fiscal_year_ID};",
                 engine=engine,
@@ -402,16 +387,6 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
                 """,
                 engine=engine,
             )
-            #TEST: temp
-            query_database(
-                query="SELECT * FROM statisticsSources;",
-                engine=engine,
-            )
-            query_database(
-                query="SELECT * FROM annualUsageCollectionTracking;",
-                engine=engine,
-            )
-            #TEST: end temp
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to add statistics source retrieval code to relevant record because of {error}.")
 
