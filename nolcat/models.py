@@ -767,7 +767,7 @@ class StatisticsSources(db.Model):
             for statistics_source_credentials in CSV_data:
                 if statistics_source_credentials['statistics_source_retrieval_code'] == self.statistics_source_retrieval_code:
                     self._log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
-                    credentials = {k: v for k, v in statistics_source_credentials.items() if k != ""}
+                    credentials = {k: v for k, v in statistics_source_credentials.items() if empty_string_regex().fullmatch(v) is None}
                     break
         if not credentials:
             message = f"The statistics source retrieval code {self.statistics_source_retrieval_code} wasn't found in the SUSHI credentials CSV file."
