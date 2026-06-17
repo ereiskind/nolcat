@@ -458,6 +458,7 @@ class FiscalYears(db.Model):
         sections_of_UPDATE_statement = []
         return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
+            self._log.debug(f"Starting the SUSHI harvest for statistics source ID {AUCT_object.AUCT_statistics_source} and FY {self.fiscal_year}.")
             try:
                 statistics_source_df = query_database(
                     query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
@@ -754,7 +755,7 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         
         Raises:
-            LookupError: if the `StatisticsSources.statistics_source_retrieval_code` isn't in the credentials file
+            LookupError: if the `StatisticsSources.statistics_source_retrieval_code` or valid SUSHI credentials aren't in the credentials file
             InvalidAPIResponseError: if the SUSHI URL can't be extracted from the COUNTER Registry
         """
         self._log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name} with retrieval code {self.statistics_source_retrieval_code}.")
@@ -789,10 +790,10 @@ class StatisticsSources(db.Model):
             except InvalidAPIResponseError as error:
                 raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
         del credentials['statistics_source_retrieval_code']
+        self._log.debug(f"All possible credentials for {self.statistics_source_name}:\n{format_list_for_stdout(credentials)}")
 
         # Some statistics sources use different credentials for different codes of practice. Credentials for codes of practice that are believed to not be the most for the source but still available are placed in fields prepended with "alt_" in the CSV. The default set of credentials in the CSV are tested for the URL returned by the COUNTER Registry; if there's a problem, they're replaced with any available alternate credentials.
         alt_credentials = {}
-        #ToDo: Take `alt_` keys out of `credentials` and save them in another dict
         if credentials.get('requestor_ID'):
             credentials['requestor_id'] = credentials['requestor_ID']
             del credentials['requestor_ID']
@@ -814,6 +815,7 @@ class StatisticsSources(db.Model):
             del credentials['alt_platform']
 
         try:
+            self._log.debug(f"Trying credentials {credentials}")
             SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
                 self.statistics_source_name,
                 credentials['URL'],
@@ -821,7 +823,7 @@ class StatisticsSources(db.Model):
                 {k: v for k, v in credentials.items() if k != "URL"},
             ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            self._log.info(f"Changing to alternate credentials for {self.statistics_source_retrieval_code} as primary credentials raised '{error.message}'.")
+            self._log.info(f"Changing to alternate credentials for {self.statistics_source_name} as primary credentials raised '{error.message}'.")
             if alt_credentials.get('customer_id'):
                 credentials['customer_id'] = alt_credentials['customer_id']
             if credentials.get('requestor_id'):
@@ -839,10 +841,22 @@ class StatisticsSources(db.Model):
                     credentials['platform'] = alt_credentials['platform']
                 else:
                     del credentials['platform']
+            try:
+                self._log.debug(f"Trying credentials {credentials}")
+                SUSHI_status_response, messages_to_flash = SUSHICallAndResponse(
+                    self.statistics_source_name,
+                    credentials['URL'],
+                    "status",
+                    {k: v for k, v in credentials.items() if k != "URL"},
+                ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
+            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                message = f"None of the credentials for statistics source {self.statistics_source_name} in the SUSHI credentials CSV file were valid."
+                self._log.error(message)
+                raise LookupError(message)
 
         #Section: Return Data in Requested Format
         if for_API_call:
-            self._log.info(f"Returning the credentials {credentials} for a SUSHI API call.")
+            self._log.info(f"Returning the credentials {credentials} for a SUSHI API call to {self.statistics_source_name}.")
             return credentials
         else:
             #ToDo: Pass credentials as formatted string back to route function; where is this version of the method being called?
