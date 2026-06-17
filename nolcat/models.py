@@ -823,7 +823,7 @@ class StatisticsSources(db.Model):
                 {k: v for k, v in credentials.items() if k != "URL"},
             ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            self._log.info(f"Changing to alternate credentials for {self.statistics_source_name} as primary credentials raised '{error.message}'.")
+            self._log.info(f"Changing to alternate credentials for {self.statistics_source_name} as primary credentials raised '{error}'.")
             if alt_credentials.get('customer_id'):
                 credentials['customer_id'] = alt_credentials['customer_id']
             if credentials.get('requestor_id'):
@@ -850,7 +850,7 @@ class StatisticsSources(db.Model):
                     {k: v for k, v in credentials.items() if k != "URL"},
                 ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"None of the credentials for statistics source {self.statistics_source_name} in the SUSHI credentials CSV file were valid."
+                message = f"None of the credentials for statistics source {self.statistics_source_name} in the SUSHI credentials CSV file were valid as alternate credentials raised '{error}'."
                 self._log.error(message)
                 raise LookupError(message)
 
@@ -910,8 +910,8 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
-            return_statements['status'] = error.message
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error}'. SUSHI calls will *NOT* be made."
+            return_statements['status'] = str(error)
             return_statements['STOP'] = [message]
             for e in error.messages_to_flash:
                 return_statements['STOP'].append(e)
@@ -977,8 +977,8 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error.message}'. SUSHI calls will *NOT* be made."
-                return_statements['reports'] = error.message
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error}'. SUSHI calls will *NOT* be made."
+                return_statements['reports'] = str(error)
                 return_statements['STOP'] = [message]
                 for e in error.messages_to_flash:
                     return_statements['STOP'].append(e)
@@ -1139,18 +1139,18 @@ class StatisticsSources(db.Model):
                             all_messages_to_flash.append(e)
                         self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
-                    except InvalidAPIResponseError as error:
-                        message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
-                        for e in error.messages_to_flash:
-                            all_messages_to_flash.append(e)
-                        self._log.critical(message)
-                        raise InvalidSUSHIResponseError(message, all_messages_to_flash)
-                    except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+                    except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                         message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
                         self._log.critical(message)
                         all_messages_to_flash.append(message)
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
+                        continue
+                    except InvalidAPIResponseError as error:
+                        message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        for e in error.messages_to_flash:
+                            all_messages_to_flash.append(e)
+                        self._log.critical(message)
                         continue
                     for item in messages_to_flash:
                         all_messages_to_flash.append(item)
@@ -1183,7 +1183,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except InvalidAPIResponseError as error:
-                message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                message = str(error) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
                 messages_to_flash = [message]
                 self._log.critical(message)
                 raise InvalidSUSHIResponseError(message, message)
