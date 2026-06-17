@@ -341,7 +341,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     expected_output_data = pd.DataFrame(
         [
-            ["ProQuest", "741ebb85-02ad-4ad0-ae4f-8b268f528cb0", "ProQuest"],
+            ["ProQuest", "56bdf474-5297-45f0-841f-4083725b4595", "ProQuest"],
             ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", "EBSCO"],
             ["Gale Cengage Learning", None, "Gale"],
             ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", "Duke UP"],

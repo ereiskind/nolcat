@@ -100,7 +100,7 @@ def statisticsSources_relation():
     log.info("Starting `statisticsSources_relation()`.")
     df = pd.DataFrame(
         [
-            ["ProQuest", "741ebb85-02ad-4ad0-ae4f-8b268f528cb0", 0],  # Registry ID for Bloomsbury
+            ["ProQuest", "56bdf474-5297-45f0-841f-4083725b4595", 0],  # Registry ID for John Benjamins
             ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", 1],  # Registry ID for SAGE/CQ Press
             ["Gale Cengage Learning", None, 2],
             ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", 7],
