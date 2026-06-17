@@ -427,10 +427,11 @@ class FiscalYears(db.Model):
                         annualUsageCollectionTracking.notes
                     FROM annualUsageCollectionTracking
                         JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                    WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.manual_collection_required=false;
+                    WHERE
+                        annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID}
+                        AND annualUsageCollectionTracking.usage_is_being_collected=true
+                        AND annualUsageCollectionTracking.manual_collection_required=false
+                        AND statisticsSources.statistics_source_retrieval_code IS NOT NULL;
                 """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
                 engine=db.engine,
             )
