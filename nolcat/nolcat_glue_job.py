@@ -538,7 +538,7 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             index_label=index_field_name,
         )
     except Exception as error:
-        message = f"Loading data into the {relation} relation raised the error {error}."
+        message = f"Loading data into the {relation} relation raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
     message = f"Successfully loaded {number_of_records} records into the {relation} relation."
@@ -575,7 +575,7 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
         return df
     except Exception as error:
-        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error {error}."
+        message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
 
@@ -793,11 +793,11 @@ def update_database(update_statement, engine):
                 connection.execute(text(update_statement))
                 connection.commit()
             except Exception as error:
-                message = f"Running the update statement {display_update_statement} raised the error {error}."
+                message = f"Running the update statement {display_update_statement} raised the error '{error}'."
                 log.error(message)
                 raise DatabaseInteractionError(message)
     except Exception as error:
-        message = f"Opening a connection with engine {engine} raised the error {error}."
+        message = f"Opening a connection with engine {engine} raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
     
@@ -812,7 +812,7 @@ def update_database(update_statement, engine):
         else:
             log.debug(f"The records after being updated:\n{after_df}")
             if before_df.equals(after_df):
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                message = f"The update statement '{display_update_statement}' executed but there was no change in the database."
                 log.error(message)
                 raise DatabaseInteractionError(message)
     elif INSERT_regex and isinstance(before_df, pd.core.frame.DataFrame):
@@ -827,7 +827,7 @@ def update_database(update_statement, engine):
             after_number = extract_value_from_single_value_df(after_df)
             log.debug(f"There are {after_number} records in the relation that was updated.")
             if before_number >= after_number:
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                message = f"The update statement '{display_update_statement}' executed but there was no change in the database."
                 log.error(message)
                 raise DatabaseInteractionError(message)
     elif TRUNCATE_regex:
@@ -840,7 +840,7 @@ def update_database(update_statement, engine):
             log.warning(f"Unable to confirm success of change to database--{error}")
         else:
             if extract_value_from_single_value_df(df) > 0:
-                message = f"The update statement {display_update_statement} executed but there was no change in the database."
+                message = f"The update statement '{display_update_statement}' executed but there was no change in the database."
                 log.error(message)
                 raise DatabaseInteractionError(message)
     else:
@@ -875,7 +875,7 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    return f"Trying to remove file {file_name} from the S3 bucket raised the error {error_message}."
+    return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
 
 
 def upload_file_to_S3_bucket_success_regex():
@@ -969,7 +969,7 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=BUCKET_NAME)
     except botocore.exceptions.ClientError as error:
-        raise S3InteractionError(f"Unable to upload files to S3 because the check for S3 bucket `{BUCKET_NAME}` raised `{error}`.")
+        raise S3InteractionError(f"Unable to upload files to S3 because the check for S3 bucket `{BUCKET_NAME}` raised '{error}'.")
  
 
     #Section: Upload File to Bucket
@@ -988,11 +988,11 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
             log.info(f"Successfully loaded the file {file_name} into S3 location `{S3_file_name.parent}`.")
             return S3_file_name
         except Exception as error:
-            log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
+            log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error '{error}'. The system will now try to use `upload_file()`.")
         finally:
             file_object.close()
     except Exception as error:
-        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
+        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error '{error}'. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
     try:
@@ -1006,9 +1006,9 @@ def upload_file_to_S3_bucket(file, file_name, bucket_path):
                 log.info(f"Successfully loaded the file {file_name} into S3 location `{S3_file_name.parent}`.")
                 return S3_file_name
             except Exception as error:
-                raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because `{error}`.")
+                raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because '{error}'.")
         else:
-            raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because {file} didn't point to an existing regular file.")
+            raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because `{file}` didn't point to an existing regular file.")
     except AttributeError as error:
         raise S3InteractionError(f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied on the ability for {file} to be a file-like or path-like object.")
 
@@ -1067,7 +1067,7 @@ def save_unconverted_data_via_upload(data, file_name_stem, bucket_path=PRODUCTIO
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
-                raise RuntimeError(f"Writing data of type {type(data)} into a binary file raised `{binary_error}`; writing that data into a text file raised `{text_error}`.")
+                raise RuntimeError(f"Writing data of type {type(data)} into a binary file raised '{binary_error}'; writing that data into a text file raised '{text_error}'.")
     log.debug(f"File at {temp_file_path} successfully created.")
 
     #Section: Upload File to S3
@@ -1270,7 +1270,7 @@ class ConvertJSONDictToParquet:
         try:
             report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
-            self._log.warning(f"Parsing the `Created` field from the SUSHI report header into a Python date data type returned the error {error}. The current date, which is the likely value, is being substituted.")
+            self._log.warning(f"The current date is being used for the `report_creation_date` attribute because parsing the `Created` field from the SUSHI report header into a Python date data type returned '{error}'.")
             report_header_creation_date = date.today()
         self._log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}.")
         COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
@@ -1278,7 +1278,7 @@ class ConvertJSONDictToParquet:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call raised '{error}'. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
                 for d in self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']:
                     if d['Name'] == "Begin_Date":
                         begin_date = d['Value'][:-3]
@@ -1296,7 +1296,7 @@ class ConvertJSONDictToParquet:
                         bucket_path,
                     )
                 except S3InteractionError as error:
-                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                    message = f"*NO* DATA SAVED from calls for {self.statistics_source_ID} at `reports/{self.report_type}`--{error}"
                     self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
@@ -1305,7 +1305,7 @@ class ConvertJSONDictToParquet:
             try:
                 df = self._transform_R5b1_JSON(report_header_creation_date)
             except Exception as error:
-                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call raised `{error}`. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
+                self._log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call raised '{error}'. The data couldn't be saved as a parquet file; it will be saved as a JSON file instead.")
                 file_name_stem = f"{self.statistics_source_ID}_report-{self.report_type}_{self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']['Begin_Date'][:-3]}_{self.SUSHI_JSON_dictionary['Report_Header']['Report_Filters']['End_Date'][:-3]}_{datetime.now().strftime(AWS_timestamp_format())}"
                 if test:
                     bucket_path = TEST_COUNTER_FILE_PATH
@@ -1318,7 +1318,7 @@ class ConvertJSONDictToParquet:
                         bucket_path,
                     )
                 except S3InteractionError as error:
-                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                    message = f"*NO* DATA SAVED from calls for {self.statistics_source_ID} at `reports/{self.report_type}`--{error}"
                     self._log.critical(message)
                     raise S3InteractionError(message)
                 self._log.warning(f"Data saved to {S3_file_name}.")
@@ -1337,7 +1337,7 @@ class ConvertJSONDictToParquet:
                     bucket_path,
                 )
             except S3InteractionError as error:
-                message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY (report type {self.report_type}; statistics source ID {self.statistics_source_ID}): {error}"
+                message = f"*NO* DATA SAVED from calls for {self.statistics_source_ID} at `reports/{self.report_type}`--{error}"
                 self._log.critical(message)
                 raise S3InteractionError(message)
             self._log.warning(f"Data saved to {S3_file_name}.")

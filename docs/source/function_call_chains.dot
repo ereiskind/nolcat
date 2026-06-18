@@ -218,11 +218,14 @@ digraph function_call_chains {
         ]
     }
     add_access_stop_date -> update_database
+    add_access_stop_date -> remove_IDE_spacing_from_statement
     remove_access_stop_date -> update_database
+    remove_access_stop_date -> remove_IDE_spacing_from_statement
     change_StatisticsSource -> state_data_types_in_statisticsResourceSources
     change_StatisticsSource -> load_data_into_database
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
+    change_StatisticsSource -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_resourceSourceNotes {
@@ -271,10 +274,10 @@ digraph function_call_chains {
     collect_annual_usage_statistics -> initialize_relation_class_object_statement
     collect_annual_usage_statistics -> return_value_from_query_statement
     collect_annual_usage_statistics -> remove_IDE_spacing_from_statement
-    collect_annual_usage_statistics -> return_value_from_query_statement
     upload_nonstandard_usage_file -> upload_file_to_S3_bucket
     upload_nonstandard_usage_file -> update_database
     upload_nonstandard_usage_file -> file_extensions_and_mimetypes
+    upload_nonstandard_usage_file -> remove_IDE_spacing_from_statement
 
 
     subgraph cluster_COUNTERData {
@@ -370,6 +373,7 @@ digraph function_call_chains {
     upload_COUNTER_data -> update_database
     upload_COUNTER_data -> format_list_for_stdout
     upload_COUNTER_data -> Flask_error_statement
+    upload_COUNTER_data -> remove_IDE_spacing_from_statement
     harvest_SUSHI_statistics -> collect_usage_statistics
     harvest_SUSHI_statistics -> ingest_usage_homepage
     harvest_SUSHI_statistics -> query_database
@@ -1348,6 +1352,7 @@ digraph function_call_chains {
     test_upload_file_to_S3_bucket -> remove_test_file_from_COUNTER_S3_folder
     file_name_stem_and_data -> AWS_timestamp_format
     file_name_stem_and_data -> most_recent_month_with_usage
+    file_name_stem_and_data -> unable_to_delete_test_file_in_S3_statement
     test_save_unconverted_data_via_upload -> save_unconverted_data_via_upload
     test_save_unconverted_data_via_upload -> file_name_stem_and_data
     test_list_files_in_bucket_location -> list_files_in_bucket_location

@@ -392,7 +392,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             )
             log.debug(f"Successfully created `annualUsageCollectionTracking` relation template CSV at {template_save_location}.")
         except Exception as error:
-            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised the error {error}.")
+            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised '{error}'.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
                 log.error(message)
@@ -403,7 +403,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                             engine=db.engine,
                         )
                     except DatabaseInteractionError as error:
-                        message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
+                        message = f"Unable to truncate `{relation}` relation, requiring initialization wizard restart--{error}\n"
                         log.critical(message)
                         flash(message)
                         return redirect(url_for('initialization.collect_FY_and_vendor_data'))
@@ -448,7 +448,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 if data_not_in_df:
                     messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
             except Exception as error:
-                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -457,7 +457,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             try:
                 COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
             except Exception as error:
-                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))

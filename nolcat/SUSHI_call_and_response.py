@@ -97,7 +97,7 @@ class SUSHICallAndResponse:
         try:
             API_response = self._convert_Response_to_JSON(API_response)
         except json.JSONDecodeError as error:
-            message = error + f" Because the requests.Response object couldn't be converted to native Python data types, the requests.Response.text value is being saved to a file instead."
+            message = f"Saving the requests.Response.text value to a text file because converting it to native Python data types raised '{error}'."
             log.error(message)
             messages_to_flash = [message]
             try:
@@ -129,7 +129,7 @@ class SUSHICallAndResponse:
                 log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
                 if SUSHI_exceptions:
-                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
+                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error '{SUSHI_exceptions}'. No further SUSHI calls will be made to {self.calling_to}."
                 else:
                     message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
@@ -152,7 +152,7 @@ class SUSHICallAndResponse:
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if SUSHI_exceptions:
-                message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
+                message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error '{SUSHI_exceptions}'. No further SUSHI calls will be made to {self.calling_to}."
             else:
                 message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
             log.warning(message)
@@ -171,7 +171,7 @@ class SUSHICallAndResponse:
                 log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
                 SUSHI_exceptions, messages_to_flash = self._handle_SUSHI_exceptions(API_response, self.call_path)
                 if SUSHI_exceptions:
-                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`. No further SUSHI calls will be made to {self.calling_to}."
+                    message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error '{SUSHI_exceptions}'. No further SUSHI calls will be made to {self.calling_to}."
                 else:
                     message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
                 log.warning(message)
@@ -194,7 +194,7 @@ class SUSHICallAndResponse:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
                     if SUSHI_exceptions:
-                        message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error `{SUSHI_exceptions}`, so the call returned no usage data."
+                        message = f"The call to {self.calling_to} for {self.call_path} raised the SUSHI error '{SUSHI_exceptions}', so the call returned no usage data."
                     else:
                         message = f"The call to {self.calling_to} for {self.call_path} consisted of nothing but an exception block. No further SUSHI calls will be made to {self.calling_to}."
                     log.warning(message)
@@ -250,17 +250,17 @@ class SUSHICallAndResponse:
                 log.info(f"GET response code: {API_response}")
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:
-                message = f"GET request to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
+                message = f"GET request to {self.calling_to} raised timeout errors '{error}' and '{error_after_timeout}'."
                 log.error(message)
                 raise InvalidAPIResponseError(message)
             except Exception as error_after_timeout:
-                message = f"GET request to {self.calling_to} raised errors {error} and {error_after_timeout}."
+                message = f"GET request to {self.calling_to} raised errors '{error}' and '{error_after_timeout}'."
                 log.error(message)
                 raise InvalidAPIResponseError(message)
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            message = f"GET request to {self.calling_to} raised error {error}"
+            message = f"GET request to {self.calling_to} raised error '{error}'"
             log.error(message)
             raise InvalidAPIResponseError(message)
 
@@ -284,14 +284,14 @@ class SUSHICallAndResponse:
         try:
             API_response = API_response.json()
         except Exception as error:
-            message = f"`requests.Response.json()` raised {error}"
+            message = f"`requests.Response.json()` raised '{error}'"
             log.info(message)
             try:
                 API_response = json.loads(API_response.content.decode('utf-8'))
             except json.JSONDecodeError as error:
-                message = message + f"; `json.loads()` on `requests.Response` raised {error}"
+                message = message + f"; `json.loads()` on `requests.Response` raised '{error}'"
                 log.error(message)
-                raise json.JSONDecodeError("When trying to convert the API response to a Python dict, " + message)
+                raise json.JSONDecodeError(f"When trying to convert the API response to a Python dict, {message}.")
         
         if isinstance(API_response, list) and self.call_path == "reports":
             API_response = {'reports': API_response}
@@ -340,7 +340,7 @@ class SUSHICallAndResponse:
                 bucket_path,
             )
         except S3InteractionError as error:
-            message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {error}"
+            message = f"*NO* DATA SAVED from calls for {self.calling_to} at `{self.call_path}`--{error}"
             log.critical(message)
             raise S3InteractionError(message)
         message = f"Successfully loaded the file {file_name_stem} into S3 location `{S3_file_name}`."
@@ -460,11 +460,11 @@ class SUSHICallAndResponse:
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
             else:
                 try:
-                    message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
+                    message = f"Neither the error message `{error_contents.get('Message')}` nor the error code `{error_contents.get('Code')}` matched a known SUSHI error."
                     log.error(message)
                     return (message, message)
                 except Exception as error:
-                    message = f" had the error message {error_contents}, but trying to match it to a known COUNTER error raised the error {error}."
+                    message = f"Trying to match `{error_contents}` to a known COUNTER error raised the error '{error}'."
                     log.error(message)
                     return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
@@ -497,7 +497,7 @@ class SUSHICallAndResponse:
                     log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
                     statistics_source_object.add_note(message)
                 except NameError as error:  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Between its infrequent, unpredictable appearance and the importing of the module in which it's defined, the cause of the error is unclear.
-                    log.critical(f"Due to the error {error}, the error message {message} is not being saved to the database.")
+                    log.critical(f"The error message '{message}' is not being saved to the database due to '{error}'.")
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)

@@ -493,7 +493,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.warning(message)
             return_statements['update_database()'] = message
         return return_statements
@@ -770,7 +770,7 @@ class StatisticsSources(db.Model):
                     credentials = {k: v for k, v in statistics_source_credentials.items() if empty_string_regex().fullmatch(v) is None}
                     break
         if not credentials:
-            message = f"The statistics source retrieval code {self.statistics_source_retrieval_code} wasn't found in the SUSHI credentials CSV file."
+            message = f"The statistics source retrieval code `{self.statistics_source_retrieval_code}` wasn't found in the SUSHI credentials CSV file."
             self._log.error(message)
             raise LookupError(message)
         
@@ -786,9 +786,9 @@ class StatisticsSources(db.Model):
             try:
                 credentials['URL'], code_of_practice = fetch_URL_from_COUNTER_Registry(credentials['statistics_source_retrieval_code'], code_of_practice)
             except json.JSONDecodeError as error:
-                raise InvalidAPIResponseError(f"The COUNTER Registry response couldn't be converted into a JSON because '{error.message}")
+                raise InvalidAPIResponseError(f"Unable to create JSON--{error}")
             except InvalidAPIResponseError as error:
-                raise InvalidAPIResponseError(f"No URL could be extracted from the COUNTER Registry response because '{error.message}'")
+                raise InvalidAPIResponseError(f"Unable to return requested data--{error.message}")
         del credentials['statistics_source_retrieval_code']
         self._log.debug(f"All possible credentials for {self.statistics_source_name}:\n{format_list_for_stdout(credentials)}")
 
@@ -823,7 +823,8 @@ class StatisticsSources(db.Model):
                 {k: v for k, v in credentials.items() if k != "URL"},
             ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            self._log.info(f"Changing to alternate credentials for {self.statistics_source_name} as primary credentials raised '{error}'.")
+            self._log.info(f"Changing to alternate credentials for {self.statistics_source_name}.")
+            self._log.debug(f"Primary credentials for {self.statistics_source_name} raised '{error}'.")
             if alt_credentials.get('customer_id'):
                 credentials['customer_id'] = alt_credentials['customer_id']
             if credentials.get('requestor_id'):
@@ -850,7 +851,7 @@ class StatisticsSources(db.Model):
                     {k: v for k, v in credentials.items() if k != "URL"},
                 ).make_SUSHI_call(TEST_COUNTER_FILE_PATH)
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"None of the credentials for statistics source {self.statistics_source_name} in the SUSHI credentials CSV file were valid as alternate credentials raised '{error}'."
+                message = f"Unable to return valid SUSHI credentials for statistics source {self.statistics_source_name}--{error}"
                 self._log.error(message)
                 raise LookupError(message)
 
@@ -889,12 +890,12 @@ class StatisticsSources(db.Model):
         try:
             SUSHI_info = self.fetch_SUSHI_information(code_of_practice)
         except InvalidAPIResponseError as error:
-            message = f"Getting the credentials for the SUSHI calls raised '{error.message}'. SUSHI calls will *NOT* be made."
+            message = f"Stopping SUSHI calls at getting credentials--{error.message}"
             return_statements['STOP'] = [message]
             self._log.warning(return_statements)
             return return_statements
         except LookupError as error:
-            message = f"Getting the credentials for the SUSHI calls raised '{error}'. SUSHI calls will *NOT* be made."
+            message = f"Stopping SUSHI calls at getting credentials--{error}"
             return_statements['STOP'] = [message]
             self._log.warning(return_statements)
             return return_statements
@@ -910,7 +911,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
         except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised '{error}'. SUSHI calls will *NOT* be made."
+            message = f"Stopping SUSHI calls for {self.statistics_source_name} at `status`--{error}"
             return_statements['status'] = str(error)
             return_statements['STOP'] = [message]
             for e in error.messages_to_flash:
@@ -947,7 +948,7 @@ class StatisticsSources(db.Model):
                     bucket_path=bucket_path,
                 )
             except NoSUSHIUsageDataError as error:
-                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised '{error.message}' and returned no data."
+                message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`, which returned no data--{error.message}"
                 return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = [message]
                 for e in error.messages_to_flash:
@@ -955,7 +956,7 @@ class StatisticsSources(db.Model):
                 self._log.warning(return_statements)
                 return return_statements
             except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
+                message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`--{error.message}"
                 return_statements[report_to_harvest] = error.message
                 return_statements['STOP'] = [message]
                 for e in error.messages_to_flash:
@@ -977,7 +978,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised '{error}'. SUSHI calls will *NOT* be made."
+                message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports`--{error}"
                 return_statements['reports'] = str(error)
                 return_statements['STOP'] = [message]
                 for e in error.messages_to_flash:
@@ -1059,20 +1060,20 @@ class StatisticsSources(db.Model):
                     )
                 except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
-                    self._log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
-                    return_statements[report_name] = [f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."]
+                    message = f"No SUSHI data returned for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`--{error.message}"
+                    self._log.error(message)
+                    return_statements[report_name] = [message]
                     for e in error.messages_to_flash:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
-                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised {error.message}."
+                    message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`--{error.message}"
                     return_statements[report_name] = error.message
                     return_statements['STOP'] = [message]
                     for e in error.messages_to_flash:
                         return_statements['STOP'].append(e)
                     self._log.error(message)
                     return return_statements
-                self._log.error(f"TESTING: `_harvest_single_report` for {report_name} returned {S3_file_name} and {messages_to_flash}")
                 return_statements[report_name] = messages_to_flash
 
             if len(available_custom_reports) == no_usage_returned_count:
@@ -1108,7 +1109,7 @@ class StatisticsSources(db.Model):
             subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         except DatabaseInteractionError as error:
             self._log.error(error)
-            raise DatabaseInteractionErrorWithFlashMessages(error, error)
+            raise DatabaseInteractionErrorWithFlashMessages(error, [error])
         if isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (None, [message])
@@ -1133,21 +1134,21 @@ class StatisticsSources(db.Model):
                             SUSHI_parameters
                         ).make_SUSHI_call(bucket_path)
                     except (NoSUSHIDataError, NoSUSHIUsageDataError) as error:
-                        #OLD: self._log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                         no_usage_returned_count += 1
+                        message = f"No SUSHI data returned for {self.statistics_source_name} at `reports/{report.lower()}`--{error.message}"
+                        self._log.error(message)
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
-                        self._log.warning(SUSHI_data_response)  #ToDo: Check how to get __init__ message using error[0-2] for log statement
                         continue
                     except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                        message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} HAS *NOT* BEEN SAVED TO S3 because of the following error: {error.message}"
+                        message = f"*NO* DATA SAVED from calls for {self.statistics_source_name} at `reports/{report.lower()}` for {month_to_harvest.strftime('%Y-%m')}--{error.message}"
                         self._log.critical(message)
                         all_messages_to_flash.append(message)
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         continue
                     except InvalidAPIResponseError as error:
-                        message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                        message = f"*NO* DATA SAVED from calls for {self.statistics_source_name} at `reports/{report.lower()}`--{error.message}"
                         for e in error.messages_to_flash:
                             all_messages_to_flash.append(e)
                         self._log.critical(message)
@@ -1168,7 +1169,7 @@ class StatisticsSources(db.Model):
                         self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    raise NoSUSHIUsageDataError(report.lower(), self.statistics_source_name, "all months returned no usage")
+                    raise NoSUSHIUsageDataError(report.lower(), self.statistics_source_name, "all months returned no usage", all_messages_to_flash)
                 return (S3_file_name_list, all_messages_to_flash)
 
         elif subset_of_months_to_harvest is None:
@@ -1183,12 +1184,12 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
             except InvalidAPIResponseError as error:
-                message = str(error) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                message = f"*NO* DATA SAVED from calls for {self.statistics_source_name} at `reports/{report.lower()}`--{error}"
                 messages_to_flash = [message]
                 self._log.critical(message)
-                raise InvalidSUSHIResponseError(message, message)
+                raise InvalidSUSHIResponseError(message, [message])
             except (DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
-                message = str(error.message) + f" Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point HAS *NOT* BEEN SAVED TO S3."
+                message = f"*NO* DATA SAVED from calls for {self.statistics_source_name} at `reports/{report.lower()}`--{error.message}"
                 messages_to_flash = [message]
                 for e in error.messages_to_flash:
                     messages_to_flash.append(e)
@@ -1401,7 +1402,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             raise DatabaseInteractionError(message)
         return update_result
@@ -1431,7 +1432,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             raise DatabaseInteractionError(message)
         return update_result
@@ -1464,7 +1465,7 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             raise DatabaseInteractionError(message)
         
@@ -1520,7 +1521,7 @@ class ResourceSources(db.Model):
                     engine=db.engine,
                 )
             except DatabaseInteractionError as error:
-                message = f"Updating the {update_statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+                message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
                 self._log.error(message)
                 raise DatabaseInteractionError(message)
             return update_result
@@ -1745,7 +1746,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"While the SUSHI data was successfully uploaded to S3, updating the `annualUsageCollectionTracking` relation automatically failed, so this SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(update_statement)}"
+            message = f"Unable to update `annualUsageCollectionTracking` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             flash_message_dict['update_database()'] = message
         return flash_message_dict
@@ -1775,7 +1776,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file_path = Path(file.filename)
         file_extension = file_path.suffix
         if file_extension not in file_extensions_and_mimetypes().keys():
-            message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
+            message = f"The file extension of `{file_path}` is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             self._log.error(message)
             raise ValueError(message)
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"
@@ -1810,7 +1811,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 engine=db.engine,
             )
         except DatabaseInteractionError as error:
-            message = f"Successfully loaded the file {S3_file_name} into S3, but adding the file name to the `annualUsageCollectionTracking` failed; please submit the following SQL statement via the SQL command line:\n{update_statement}"
+            message = f"Unable to update `annualUsageCollectionTracking` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
             self._log.error(message)
             raise DatabaseInteractionError(message)
         self._log.info(f"Successfully updated `annualUsageCollectionTracking.usage_file_path` to {file_name} and `annualUsageCollectionTracking.collection_status` to 'Collection complete'.")
@@ -1841,7 +1842,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 Filename=self.usage_file_path,
             )
         except botocore.exceptions.BotoCoreError as error:
-            message = f"The file {bucket_path}/{self.usage_file_path} wasn't downloaded because of the error {error}."
+            message = f"The file {bucket_path}/{self.usage_file_path} wasn't downloaded because of the error '{error}'."
             self._log.error(message)
             raise S3InteractionError(message)
         temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path

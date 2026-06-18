@@ -62,14 +62,14 @@ class UploadCOUNTERReports:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Successfully loaded the workbook {str(FileStorage_object.filename)}.")
             except Exception as error:
-                log.error(f"Loading the workbook {str(FileStorage_object.filename)} raised the error {error}.")
+                log.error(f"Loading the workbook {str(FileStorage_object.filename)} raised the error '{error}'.")
                 data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
                 continue
             
             try:
                 statistics_source_ID = int(re.search(r'(\d+)_.+\.xlsx', str(FileStorage_object.filename)).group(1))
             except Exception as error:
-                log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
+                log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised '{error}'. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
                 continue
 

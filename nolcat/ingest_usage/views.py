@@ -52,7 +52,7 @@ def upload_COUNTER_data():
                 else:
                     messages_to_flash = []
             except Exception as error:
-                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error}."
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -61,7 +61,7 @@ def upload_COUNTER_data():
             try:
                 df, message_to_flash = check_if_data_already_in_COUNTERData(df)
             except Exception as error:
-                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -117,7 +117,7 @@ def upload_COUNTER_data():
                         engine=db.engine,
                     )
                 except DatabaseInteractionError as error:
-                    message = f"Updating the {statement.split()[1]} relation raised '{error}', so the SQL update statement needs to be submitted via the SQL command line:\n{remove_IDE_spacing_from_statement(statement)}"
+                    message = f"Unable to update `{statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(statement)}"
                     log.warning(message)
                     messages_to_flash.append(message)   
             

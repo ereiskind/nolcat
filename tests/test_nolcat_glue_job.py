@@ -601,7 +601,7 @@ def file_name_stem_and_data(request, most_recent_month_with_usage):
             Key=TEST_COUNTER_FILE_PATH.key + "/" + file_name
         )
     except botocore.exceptions.BotoCoreError as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 def test_save_unconverted_data_via_upload(tmp_path, file_name_stem_and_data):
