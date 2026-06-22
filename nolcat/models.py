@@ -455,10 +455,9 @@ class FiscalYears(db.Model):
         self._log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
 
         #Section: Collect Usage from Each Statistics Source
-        sections_of_UPDATE_statement = []
         return_statements = {}
         for AUCT_object in AUCT_objects_to_collect:
-            self._log.debug(f"Starting the SUSHI harvest for statistics source ID {AUCT_object.AUCT_statistics_source} and FY {self.fiscal_year}.")
+            self._log.info(f"Starting the SUSHI harvest for statistics source ID {AUCT_object.AUCT_statistics_source} and FY {self.fiscal_year}.")
             try:
                 statistics_source_df = query_database(
                     query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={AUCT_object.AUCT_statistics_source};",
@@ -478,24 +477,25 @@ class FiscalYears(db.Model):
                 return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
             if 'STOP' in flash_message_dict.keys():
                 continue
-            sections_of_UPDATE_statement.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
             self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} and FY {self.fiscal_year}.")
+
+            #Section: Update Data in Database
+            try:
+                update_statement = f"""
+                    UPDATE annualUsageCollectionTracking
+                    SET collection_status='Collection complete'
+                    WHERE AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year};
+                """
+                update_result = update_database(
+                    update_statement=update_statement,
+                    engine=db.engine,
+                )
+            except DatabaseInteractionError as error:
+                message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
+                self._log.warning(message)
+                return_statements['update_database()'] = message
         
-        #Section: Update Data in Database
-        update_statement = f"""
-            UPDATE annualUsageCollectionTracking
-            SET collection_status='Collection complete'
-            WHERE {" OR ".join(sections_of_UPDATE_statement)};
-        """
-        try:
-            update_result = update_database(
-                update_statement=update_statement,
-                engine=db.engine,
-            )
-        except DatabaseInteractionError as error:
-            message = f"Unable to update `{update_statement.split()[1]}` relation--{error}\n**Submit below via SQL CLI:**\n{remove_IDE_spacing_from_statement(update_statement)}"
-            self._log.warning(message)
-            return_statements['update_database()'] = message
+        log.info(f"Data for all {len(AUCT_objects_to_collect)} SUSHI records in FY {self.fiscal_year} has been collected.")
         return return_statements
 
 
