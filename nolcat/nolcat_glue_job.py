@@ -528,7 +528,7 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     Raises:
         DatabaseInteractionError: if the SQL update fails
     """
-    log.info(f"Starting `load_data_into_database()` for relation {relation}.")
+    log.info(f"Starting `load_data_into_database()` for relation `{relation}`.")
     try:
         number_of_records = df.to_sql(
             name=relation,
@@ -538,10 +538,10 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             index_label=index_field_name,
         )
     except Exception as error:
-        message = f"Loading data into the {relation} relation raised the error '{error}'."
+        message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
-    message = f"Successfully loaded {number_of_records} records into the {relation} relation."
+    message = f"Successfully loaded {number_of_records} records into the `{relation}` relation."
     log.info(message)
     return message
 
@@ -845,7 +845,7 @@ def update_database(update_statement, engine):
                 raise DatabaseInteractionError(message)
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
-    message = f"Successfully performed the update {display_update_statement}."
+    message = f"Successfully performed the update `{display_update_statement}`."
     log.info(message)
     return message
 

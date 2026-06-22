@@ -657,8 +657,26 @@ class Vendors(db.Model):
             DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
-        #ToDo: Create a method for adding notes
-        pass
+        df = pd.DataFrame(
+            [
+                [note_content, note_author, date.today().strftime('%Y-%m-%d'), self.vendor_ID],
+            ],
+            columns=["note", "written_by", "date_written", "vendor_ID"],
+        )
+        df.index.name = "vendor_notes_ID"
+        df = df.astype(VendorNotes.state_data_types())
+        df["date_written"] = pd.to_datetime(df["date_written"])
+        try:
+            load_result = load_data_into_database(
+                df=df,
+                relation='vendorNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `vendors` relation--{error}"
+            self._log.warning(message)
+            raise DatabaseInteractionError(message)
+        return load_result
 
 
 class VendorNotes(db.Model):
