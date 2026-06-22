@@ -41,7 +41,7 @@ def test_ingest_usage_homepage(client):
 
 @pytest.mark.dependency()
 @pytest.mark.slow
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog, workbooks_and_relations):  #TEST: `workbooks_and_relations` is temp
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form.
 
     Args:
@@ -86,14 +86,10 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert HTML_file_page_title in POST_response.data
     assert re.search(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
     #TEST: temp
-    try:
-        log.error(f"Compare:\n{df.compare(COUNTERData_relation[df.columns.tolist()])}")
-    except:
-        log.error(f"In `df.index` but not `COUNTERData_relation.index`:\n{df.index.difference(COUNTERData_relation.index)}")
-        log.error(f"In `COUNTERData_relation.index` but not `df.index`:\n{COUNTERData_relation.index.difference(df.index)}")
-
-        log.error(f"In `df.columns` but not `COUNTERData_relation.columns`:\n{set(df.columns).difference(set(COUNTERData_relation.columns))}")
-        log.error(f"In `COUNTERData_relation.columns` but not `df.columns`:\n{set(COUNTERData_relation.columns).difference(set(df.columns))}")
+    # Order of workbook dataframes seems inconsistent
+    log.error(f"`create_COUNTERData_workbook_iterdir_list`:\n{format_list_for_stdout(create_COUNTERData_workbook_iterdir_list)}")
+    log.error(f"`form_submissions`:\n{format_list_for_stdout(form_submissions)}")
+    log.error(f"`workbooks_and_relations`:\n{format_list_for_stdout(workbooks_and_relations)}")
     #TEST: end temp
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
