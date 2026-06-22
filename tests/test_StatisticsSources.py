@@ -46,7 +46,7 @@ def StatisticsSources_fixture(valid_COUNTER_retrieval_code):
         valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
 
     Yields:
-        StatisticsSources: a StatisticsSources object connected to valid SUSHI data
+        nolcat.models.StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
     # Cannot use `caplog` for `query_database()` due to scope mismatch
     yield_object = StatisticsSources(

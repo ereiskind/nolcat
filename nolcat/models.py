@@ -544,7 +544,7 @@ class Vendors(db.Model):
     
     Attributes:
         self.vendor_ID (int): the primary key
-        self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
+        self.vendor_name (string): the name of the vendor
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
