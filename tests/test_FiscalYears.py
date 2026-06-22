@@ -396,7 +396,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     if 'STOP' in flash_message_dict.keys():
         pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
-    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown.fullmatch(str(file))]
+    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown().fullmatch(str(file))]
     assert 0 < len(S3_file_names) <= 4
     for S3_file_name in S3_file_names:
         download_location = tmp_path / S3_file_name.name
