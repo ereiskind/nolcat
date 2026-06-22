@@ -396,7 +396,16 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     if 'STOP' in flash_message_dict.keys():
         pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
-    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown().fullmatch(str(file))]
+    #TEST: temp
+    log.error(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")
+    log.error(f"`S3_regex_and_teardown` (type {type(S3_regex_and_teardown)}): {S3_regex_and_teardown}")
+    for file in files_in_bucket:
+        log.error(f"`str(file)`: {str(file)}")
+        log.error(f"`S3_regex_and_teardown.fullmatch(str(file))` (type {type(S3_regex_and_teardown.fullmatch(str(file)))}): {S3_regex_and_teardown.fullmatch(str(file))}")
+        log.error(f"`S3_regex_and_teardown.match(str(file))` (type {type(S3_regex_and_teardown.match(str(file)))}): {S3_regex_and_teardown.match(str(file))}")
+        log.error(f"`S3_regex_and_teardown.search(str(file))` (type {type(S3_regex_and_teardown.search(str(file)))}): {S3_regex_and_teardown.search(str(file))}")
+    #TEST: end temp
+    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown.fullmatch(str(file))]
     assert 0 < len(S3_file_names) <= 4
     for S3_file_name in S3_file_names:
         download_location = tmp_path / S3_file_name.name
