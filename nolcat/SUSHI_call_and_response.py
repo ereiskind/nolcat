@@ -487,7 +487,7 @@ class SUSHICallAndResponse:
                         engine=db.engine,
                     )
                 except DatabaseInteractionError as error:
-                    error_message = f"Unable to create StatisticsSources object to use `add_note()` method--{error}"
+                    error_message = f"Unable to create `StatisticsSources` object to use `add_note()` method--{error}"
                     log.error(error_message)
                     return (error_message, [message, error_message])
                 try:
@@ -499,8 +499,20 @@ class SUSHICallAndResponse:
                     )  # Without the `int` constructors, a numpy int type is used
                     log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
                     statistics_source_object.add_note(message)
-                except NameError as error:  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Between its infrequent, unpredictable appearance and the importing of the module in which it's defined, the cause of the error is unclear.
-                    log.critical(f"The error message '{message}' is not being saved to the database due to '{error}'.")
+                except NameError as error:
+                    log.error(f"Initializing a `StatisticsSources` object failed because of '{error}'")
+                    from .models import StatisticsSources  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Since the entire `.modules` file is imported, this shouldn't be needed, but it occurs as an infrequent, unpredictable error.
+                    try:
+                        statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                            statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+                            statistics_source_name = str(df.at[0,'statistics_source_name']),
+                            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']),
+                            vendor_ID = int(df.at[0,'vendor_ID']),
+                        )  # Without the `int` constructors, a numpy int type is used
+                        log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
+                        statistics_source_object.add_note(message)
+                    except NameError as error:
+                        log.critical(f"Initializing a `StatisticsSources` object failed even after direct import of class because of '{error}'. Add the message below as a note for the {self.calling_to} `StatisticsSources` object:\n{message}")
             elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
                 message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
