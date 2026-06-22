@@ -1322,8 +1322,26 @@ class StatisticsSources(db.Model):
             DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
-        #ToDo: Create a method for adding notes
-        pass
+        df = pd.DataFrame(
+            [
+                [note_content, note_author, date.today().strftime('%Y-%m-%d'), self.statistics_source_ID],
+            ],
+            columns=["note", "written_by", "date_written", "statistics_source_ID"],
+        )
+        df.index.name = "statistics_source_notes_ID"
+        df = df.astype(StatisticsSourceNotes.state_data_types())
+        df["date_written"] = pd.to_datetime(df["date_written"])
+        try:
+            load_result = load_data_into_database(
+                df=df,
+                relation='statisticsSourceNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `statisticsSourceNotes` relation--{error}"
+            self._log.warning(message)
+            raise DatabaseInteractionError(message)
+        return load_result
 
 
 class StatisticsSourceNotes(db.Model):
