@@ -550,7 +550,7 @@ class Vendors(db.Model):
         state_data_types: This method provides a dictionary of the attributes and their data types.
         get_statisticsSources_records: Shows the records for all the statistics sources associated with the vendor.
         get_resourceSources_records: Shows the records for all the resource sources associated with the vendor.
-        add_note: #ToDo: Copy first line of docstring here
+        add_note: Adds a note for the given vendor to the `vendorNotes` relation.
     """
     _log = logging.getLogger(log.name).getChild(__qualname__)
     __tablename__ = 'vendors'
@@ -643,7 +643,19 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def add_note(self):
+    def add_note(self, note_content, note_author=None):
+        """Adds a note for the given vendor to the `vendorNotes` relation.
+
+        Args:
+            note_content (str): the note being added
+            note_author (str, optional): the note's author; default is `None`
+
+        Returns:
+            str: a message indicating a successful SQL update
+    
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
+        """
         self._log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
         pass
@@ -706,7 +718,7 @@ class StatisticsSources(db.Model):
         _harvest_single_report: Makes a single API call for a customizable report with all possible attributes.
         _check_if_data_in_database: Checks if any usage report for the given date and statistics source combination is already in the database.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
-        add_note: #ToDo: Copy first line of docstring here
+        add_note: Adds a note for the given statistics source to the `statisticsSourceNotes` relation.
     """
     _log = logging.getLogger(log.name).getChild(__qualname__)
     __tablename__ = 'statisticsSources'
@@ -1278,7 +1290,19 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def add_note(self):
+    def add_note(self, note_content, note_author=None):
+        """Adds a note for the given statistics source to the `statisticsSourceNotes` relation.
+
+        Args:
+            note_content (str): the note being added
+            note_author (str, optional): the note's author; default is `None`
+
+        Returns:
+            str: a message indicating a successful SQL update
+    
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
+        """
         self._log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
         pass
@@ -1342,7 +1366,7 @@ class ResourceSources(db.Model):
         add_access_stop_date: Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
         remove_access_stop_date:  Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
         change_StatisticsSource: Change the current statistics source for the resource source.
-        add_note:  #ToDo: Copy first line of docstring here
+        add_note: Adds a note for the given resource source to the `resourceSourceNotes` relation.
     """
     _log = logging.getLogger(log.name).getChild(__qualname__)
     __tablename__ = 'resourceSources'
@@ -1528,7 +1552,19 @@ class ResourceSources(db.Model):
 
 
     @hybrid_method
-    def add_note(self):
+    def add_note(self, note_content, note_author=None):
+        """Adds a note for the given resource source to the `resourceSourceNotes` relation.
+
+        Args:
+            note_content (str): the note being added
+            note_author (str, optional): the note's author; default is `None`
+
+        Returns:
+            str: a message indicating a successful SQL update
+    
+        Raises:
+            DatabaseInteractionError: if the SQL update statement fails
+        """
         self._log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
         pass
