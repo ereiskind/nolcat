@@ -873,7 +873,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; default is `None`, which harvests all available custom reports
             code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (cloudpathlib.CloudPath, optional): the S3 location where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
@@ -1260,7 +1260,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; default is `None`, which harvests all available custom reports
             code_of_practice (str, optional): the COUNTER code of practice for the SUSHI call; default is `None`, which uses the current CoP as designated by the COUNTER Registry
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is `nolcat.nolcat_glue_job.PRODUCTION_COUNTER_FILE_PATH`
         
@@ -1380,7 +1380,7 @@ class ResourceSources(db.Model):
         """Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
 
         Args:
-            access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; defaults to `date.today()`
+            access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; default is `date.today()`
         
         Returns:
             str: a message indicating success or including the error raised by the attempt to update the data
