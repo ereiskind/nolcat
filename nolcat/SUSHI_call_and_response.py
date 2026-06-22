@@ -298,8 +298,11 @@ class SUSHICallAndResponse:
         elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
             API_response = API_response[0]
         
-        log.info(f"SUSHI data converted to {type(API_response)}.")
-        log.debug(self._stdout_API_response_based_on_size(API_response))
+        if len(API_response) > 0:
+            log.info(f"SUSHI data from call to {self.calling_to} for `{self.call_path}` converted to {type(API_response)}.")
+            log.debug(self._stdout_API_response_based_on_size(API_response))
+        else:
+            log.warning(f"Call to {self.calling_to} for `{self.call_path}` returned an empty {type(API_response)}.")
         return API_response
     
 
