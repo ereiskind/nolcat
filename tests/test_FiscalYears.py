@@ -374,7 +374,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
     try:
         with client:
             update_database(
-                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID={new_FiscalYears_object_and_record[0].fiscal_year_ID};",
+                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
                 engine=engine,
             )
             update_database(
