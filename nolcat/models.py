@@ -1060,14 +1060,14 @@ class StatisticsSources(db.Model):
                     )
                 except NoSUSHIUsageDataError as error:
                     no_usage_returned_count += 1
-                    message = f"No SUSHI data returned for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`--{error.message}"
+                    message = f"No SUSHI data returned for {self.statistics_source_name} at `reports/{report_name.lower()}`--{error.message}"
                     self._log.error(message)
                     return_statements[report_name] = [message]
                     for e in error.messages_to_flash:
                         return_statements[report_name].append(e)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 except (InvalidSUSHIResponseError, S3InteractionErrorWithFlashMessages, DatabaseInteractionErrorWithFlashMessages) as error:
-                    message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports/{report_to_harvest.lower()}`--{error.message}"
+                    message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports/{report_name.lower()}`--{error.message}"
                     return_statements[report_name] = error.message
                     return_statements['STOP'] = [message]
                     for e in error.messages_to_flash:
