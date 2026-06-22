@@ -452,7 +452,8 @@ class FiscalYears(db.Model):
                 notes=record_tuple[9],
             ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
         ]
-        self._log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
+        #TEST: self._log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
+        self._log.error(f"\n\nThe AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}\n\n")  #TEST: temp
 
         #Section: Collect Usage from Each Statistics Source
         sections_of_UPDATE_statement = []
