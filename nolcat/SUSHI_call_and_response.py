@@ -453,7 +453,7 @@ class SUSHICallAndResponse:
             'Required ReportFilter Missing': '3070'
         }
         if error_contents.get('Message') is None:
-            message = f" had no key `Message`; this is not a standard error message and thus isn't being managed as such."
+            message = f"The error had no key `Message`; this is not a standard error message and thus isn't being managed as such."
             log.debug(message)
             return (None, message)
         error_code = errors_and_codes.get(error_contents['Message'])
@@ -473,7 +473,7 @@ class SUSHICallAndResponse:
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         #Section: Handle Error
-        message = f" request raised error {error_code}: {error_contents['Message']}."
+        message = f"The request raised error {error_code}: {error_contents['Message']}."
         if error_contents.get('Data'):
             message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
         
