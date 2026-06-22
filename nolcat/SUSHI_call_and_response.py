@@ -502,7 +502,9 @@ class SUSHICallAndResponse:
                 except NameError as error:
                     log.error(f"Initializing a `StatisticsSources` object failed because of '{error}'")
                     from .models import StatisticsSources  # This handles the intermittent raising of `NameError: name 'StatisticsSources' is not defined`. Since the entire `.modules` file is imported, this shouldn't be needed, but it occurs as an infrequent, unpredictable error.
+                    log.error(f"After the retried import, before the `try-except` block")  #TEST: temp
                     try:
+                        log.error(f"In the `try-except` block")  #TEST: temp
                         statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                             statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                             statistics_source_name = str(df.at[0,'statistics_source_name']),
