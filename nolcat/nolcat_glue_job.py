@@ -556,7 +556,6 @@ def query_database(query, engine, index=None):
     
     Returns:
         dataframe: the result of the query
-        str: a message including the error raised by the attempt to run the query
     
     Raises:
         DatabaseInteractionError: if the SQL query fails
@@ -568,16 +567,16 @@ def query_database(query, engine, index=None):
             con=engine,
             index_col=index,
         )
-        if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        else:
-            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        return df
     except Exception as error:
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
+    if df.shape[0] > 20:
+        log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+        log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+    else:
+        log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+    return df
 
 
 def first_new_PK_value(relation):
