@@ -289,10 +289,7 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the `(.+)` relation\.'), result)
-    assert regex_match_object is not None
-    assert int(regex_match_object.group(1)) == 8
-    assert regex_match_object.group(2) == "vendors"
+    assert result == "Successfully loaded 8 records into the `vendors` relation."
 
 
 def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
