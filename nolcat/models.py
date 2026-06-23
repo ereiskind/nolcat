@@ -658,9 +658,9 @@ class Vendors(db.Model):
         """
         self._log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         try:
-            next_PK_value = first_new_PK_value('vendors')
+            next_PK_value = first_new_PK_value('vendorNotes')
         except DatabaseInteractionError as error:
-            message = f"Unable to update `vendors` relation--{error}"
+            message = f"Unable to update `vendorNotes` relation--{error}"
             log.error(message)
             raise DatabaseInteractionError(message)
         df = pd.DataFrame(
@@ -1329,9 +1329,9 @@ class StatisticsSources(db.Model):
         """
         self._log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         try:
-            next_PK_value = first_new_PK_value('statisticsSources')
+            next_PK_value = first_new_PK_value('statisticsSourceNotes')
         except DatabaseInteractionError as error:
-            message = f"Unable to update `statisticsSources` relation--{error}"
+            message = f"Unable to update `statisticsSourceNotes` relation--{error}"
             log.error(message)
             raise DatabaseInteractionError(message)
         df = pd.DataFrame(
@@ -1615,9 +1615,9 @@ class ResourceSources(db.Model):
         """
         self._log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         try:
-            next_PK_value = first_new_PK_value('resourceSources')
+            next_PK_value = first_new_PK_value('resourceSourceNotes')
         except DatabaseInteractionError as error:
-            message = f"Unable to update `resourceSources` relation--{error}"
+            message = f"Unable to update `resourceSourceNotes` relation--{error}"
             log.error(message)
             raise DatabaseInteractionError(message)
         df = pd.DataFrame(
