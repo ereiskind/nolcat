@@ -440,7 +440,7 @@ def test_update_database(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
+    assert update_result == f"Successfully performed the update `{truncate_longer_lines(update_statement)}`."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
@@ -484,7 +484,7 @@ def test_update_database_with_insert_statement(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
+    assert update_result == f"Successfully performed the update `{truncate_longer_lines(update_statement)}`."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
