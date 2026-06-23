@@ -58,18 +58,20 @@ def test_change_StatisticsSource():
     pass
 
 
-def test_add_note(engine, ResourceSources_fixture, caplog):
+def test_add_note(engine, client, ResourceSources_fixture, caplog):
     """Tests adding a record to the `resourceSourceNotes` relation.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
         ResourceSources_fixture (nolcat.models.ResourceSources): a ResourceSources object
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     try:
-        update_result = ResourceSources_fixture.add_note("This is a new note", "The Author")
+        with client:
+            update_result = ResourceSources_fixture.add_note("This is a new note", "The Author")
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to run test--{error}")
     assert update_result == "Successfully loaded 1 records into the `resourceSourceNotes` relation."

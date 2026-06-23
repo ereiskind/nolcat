@@ -49,18 +49,20 @@ def test_get_resourceSources_records():
     pass
 
 
-def test_add_note(engine, Vendors_fixture, caplog):
+def test_add_note(engine, client, Vendors_fixture, caplog):
     """Tests adding a record to the `vendorNotes` relation.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
         Vendors_fixture (nolcat.models.Vendors): a Vendors object
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     try:
-        update_result = Vendors_fixture.add_note("This is a new note", "The Author")
+        with client:
+            update_result = Vendors_fixture.add_note("This is a new note", "The Author")
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to run test--{error}")
     assert update_result == "Successfully loaded 1 records into the `vendorNotes` relation."

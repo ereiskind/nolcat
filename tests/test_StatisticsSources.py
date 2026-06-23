@@ -448,18 +448,20 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
 
 
 #Section: Test `StatisticsSources.add_note()`
-def test_add_note(engine, StatisticsSources_fixture, caplog):
+def test_add_note(engine, client, StatisticsSources_fixture, caplog):
     """Tests adding a record to the `statisticsSourceNotes` relation.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     try:
-        update_result = StatisticsSources_fixture.add_note("This is a new note", "The Author")
+        with client:
+            update_result = StatisticsSources_fixture.add_note("This is a new note", "The Author")
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to run test--{error}")
     assert update_result == "Successfully loaded 1 records into the `statisticsSourceNotes` relation."
