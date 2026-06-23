@@ -589,7 +589,6 @@ def first_new_PK_value(relation):
     
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
-        str: a message including the error raised by the attempt to run the query
     
     Raises:
         DatabaseInteractionError: if the SQL query fails
