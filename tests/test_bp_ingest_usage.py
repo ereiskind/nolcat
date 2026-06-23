@@ -84,7 +84,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(re.compile(r'Successfully loaded (\d+) records into the `(.+)` relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
     #TEST: temp
     # Order of workbook dataframes seems inconsistent
     log.error(f"`create_COUNTERData_workbook_iterdir_list`:\n{format_list_for_stdout(create_COUNTERData_workbook_iterdir_list)}")
