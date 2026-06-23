@@ -290,6 +290,18 @@ def test_load_data_into_database(engine, vendors_relation):
         index_field_name='vendor_ID',
     )
     assert result == "Successfully loaded 8 records into the `vendors` relation."
+    try:
+        series = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    series = change_single_field_dataframe_into_series(series)
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    assert_series_equal(series, vendors_relation)
 
 
 def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):

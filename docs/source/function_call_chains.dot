@@ -1319,6 +1319,8 @@ digraph function_call_chains {
     test_load_data_into_database -> load_data_into_database
     test_load_data_into_database -> engine
     test_load_data_into_database -> vendors_relation_in_conftest
+    test_load_data_into_database -> query_database
+    test_load_data_into_database -> change_single_field_dataframe_into_series
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     test_loading_connected_data_into_other_relation -> load_data_into_database
