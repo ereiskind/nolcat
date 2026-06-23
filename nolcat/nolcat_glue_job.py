@@ -23,7 +23,7 @@ import s3fs
 import boto3
 import pandas as pd
 from numpy import squeeze
-from sqlalchemy import text
+import sqlalchemy
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 from cloudpathlib import CloudPath
 
@@ -797,7 +797,7 @@ def update_database(update_statement, engine):
     try:
         with engine.connect() as connection:
             try:
-                connection.execute(text(update_statement))
+                connection.execute(sqlalchemy.text(update_statement))
                 connection.commit()
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error '{error}'."
