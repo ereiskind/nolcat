@@ -850,19 +850,6 @@ def update_database(update_statement, engine):
 
 #SECTION: S3 Interaction
 #SUBSECTION: S3 Interaction Statements
-def failed_upload_to_S3_statement(file_name, error_message):
-    """This statement indicates that a call to `nolcat.app.upload_file_to_S3_bucket()` returned an error, meaning the file that should've been uploaded isn't being saved.
-
-    Args:
-        file_name (str): the name of the file that wasn't uploaded to S3
-        error_message (str): the return statement indicating the failure of `nolcat.app.upload_file_to_S3_bucket()`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Uploading the file {file_name} to S3 failed because {error_message[0].lower()}{error_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-
-
 def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
     """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
 
@@ -874,15 +861,6 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
         str: the statement for outputting the arguments to logging
     """
     return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
-
-
-def upload_file_to_S3_bucket_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
-    """
-    return re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')
 
 
 #SUBSECTION: S3 Interaction Functions

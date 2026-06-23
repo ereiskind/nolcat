@@ -312,7 +312,6 @@ digraph function_call_chains {
     make_SUSHI_call -> _handle_SUSHI_exceptions
     make_SUSHI_call -> _stdout_API_response_based_on_size
     make_SUSHI_call -> format_list_for_stdout
-    make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
     _convert_Response_to_JSON -> _stdout_API_response_based_on_size
     _save_raw_Response_text -> query_database
     _save_raw_Response_text -> save_unconverted_data_via_upload
@@ -588,9 +587,7 @@ digraph function_call_chains {
         first_new_PK_value [shape="box"]
         check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
-        failed_upload_to_S3_statement [shape="box"]
         unable_to_delete_test_file_in_S3_statement [shape="box"]
-        upload_file_to_S3_bucket_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
