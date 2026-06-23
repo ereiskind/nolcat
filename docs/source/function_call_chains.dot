@@ -134,6 +134,8 @@ digraph function_call_chains {
             shape="box"
         ]
     }
+    add_note_in_vendors -> first_new_PK_value
+    add_note_in_vendors -> load_data_into_database
 
 
     subgraph cluster_vendorNotes {
@@ -184,6 +186,8 @@ digraph function_call_chains {
     _check_if_data_in_database -> extract_value_from_single_value_df
     _check_if_data_in_database -> return_value_from_query_statement
     collect_usage_statistics -> _harvest_R5_SUSHI
+    add_note_in_statisticsSources -> first_new_PK_value
+    add_note_in_statisticsSources -> load_data_into_database
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -226,6 +230,8 @@ digraph function_call_chains {
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
     change_StatisticsSource -> remove_IDE_spacing_from_statement
+    add_note_in_resourceSources -> first_new_PK_value
+    add_note_in_resourceSources -> load_data_into_database
 
 
     subgraph cluster_resourceSourceNotes {

@@ -657,15 +657,21 @@ class Vendors(db.Model):
             DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
+        try:
+            next_PK_value = first_new_PK_value('vendors')
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `vendors` relation--{error}"
+            log.error(message)
+            raise DatabaseInteractionError(message)
         df = pd.DataFrame(
             [
-                [note_content, note_author, date.today().strftime('%Y-%m-%d'), self.vendor_ID],
+                [next_PK_value, note_content, note_author, date.today().strftime('%Y-%m-%d'), self.vendor_ID],
             ],
-            columns=["note", "written_by", "date_written", "vendor_ID"],
+            columns=["vendor_notes_ID", "note", "written_by", "date_written", "vendor_ID"],
         )
-        df.index.name = "vendor_notes_ID"
         df = df.astype(VendorNotes.state_data_types())
         df["date_written"] = pd.to_datetime(df["date_written"])
+        df = df.set_index("vendor_notes_ID")
         try:
             load_result = load_data_into_database(
                 df=df,
@@ -1322,15 +1328,21 @@ class StatisticsSources(db.Model):
             DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
+        try:
+            next_PK_value = first_new_PK_value('statisticsSources')
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `statisticsSources` relation--{error}"
+            log.error(message)
+            raise DatabaseInteractionError(message)
         df = pd.DataFrame(
             [
-                [note_content, note_author, date.today().strftime('%Y-%m-%d'), self.statistics_source_ID],
+                [next_PK_value, note_content, note_author, date.today().strftime('%Y-%m-%d'), self.statistics_source_ID],
             ],
-            columns=["note", "written_by", "date_written", "statistics_source_ID"],
+            columns=["statistics_source_notes_ID", "note", "written_by", "date_written", "statistics_source_ID"],
         )
-        df.index.name = "statistics_source_notes_ID"
         df = df.astype(StatisticsSourceNotes.state_data_types())
         df["date_written"] = pd.to_datetime(df["date_written"])
+        df = df.set_index("statistics_source_notes_ID")
         try:
             load_result = load_data_into_database(
                 df=df,
@@ -1602,15 +1614,21 @@ class ResourceSources(db.Model):
             DatabaseInteractionError: if the SQL update statement fails
         """
         self._log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
+        try:
+            next_PK_value = first_new_PK_value('resourceSources')
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `resourceSources` relation--{error}"
+            log.error(message)
+            raise DatabaseInteractionError(message)
         df = pd.DataFrame(
             [
-                [note_content, note_author, date.today().strftime('%Y-%m-%d'), self.resource_source_ID],
+                [next_PK_value, note_content, note_author, date.today().strftime('%Y-%m-%d'), self.resource_source_ID],
             ],
-            columns=["note", "written_by", "date_written", "resource_source_ID"],
+            columns=["resource_source_notes_ID", "note", "written_by", "date_written", "resource_source_ID"],
         )
-        df.index.name = "resource_source_notes_ID"
         df = df.astype(ResourceSourceNotes.state_data_types())
         df["date_written"] = pd.to_datetime(df["date_written"])
+        df = df.set_index("resource_source_notes_ID")
         try:
             load_result = load_data_into_database(
                 df=df,
