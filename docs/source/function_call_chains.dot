@@ -587,7 +587,6 @@ digraph function_call_chains {
         first_new_PK_value [shape="box"]
         check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
-        unable_to_delete_test_file_in_S3_statement [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
@@ -607,6 +606,7 @@ digraph function_call_chains {
             _extraction_complete_logging_statement [shape="box"]
             _increase_field_length_logging_statement [shape="box"]
         }
+        unable_to_delete_test_file_in_S3_statement [shape="box"]
         prepare_HTML_page_for_comparison [shape="box"]
         remove_file_from_S3 [shape="folder"]
         subgraph cluster_InvalidAPIResponseError {

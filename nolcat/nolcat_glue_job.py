@@ -849,20 +849,6 @@ def update_database(update_statement, engine):
 
 
 #SECTION: S3 Interaction
-#SUBSECTION: S3 Interaction Statements
-def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
-    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
-
-    Args:
-        file_name (str): the final part of the name of the file in S3
-        error_message (str): the AWS error message returned by the attempt to delete the file
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
-
-
 #SUBSECTION: S3 Interaction Functions
 def file_extensions_and_mimetypes():
     """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.
@@ -2499,6 +2485,19 @@ class ConvertJSONDictToParquet:
 
 
 #SECTION: Functions for Testing
+def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
+    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
+
+    Args:
+        file_name (str): the final part of the name of the file in S3
+        error_message (str): the AWS error message returned by the attempt to delete the file
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
+
+
 def prepare_HTML_page_for_comparison(page_data):
     """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
 
