@@ -468,6 +468,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
+    log.error(f"`vendorNotes_relation_data`:\n{vendorNotes_relation_data}\n\n\n")  #TEST: temp
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_series_equal(annualStatistics_relation_data, annualStatistics_relation)
     assert_series_equal(change_single_field_dataframe_into_series(vendors_relation_data), vendors_relation)
@@ -580,6 +581,8 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
+    log.error(f"`statisticsSourceNotes_relation_data`:\n{statisticsSourceNotes_relation_data}\n\n\n")  #TEST: temp
+    log.error(f"`resourceSourceNotes_relation_data`:\n{resourceSourceNotes_relation_data}\n\n\n")  #TEST: temp
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
