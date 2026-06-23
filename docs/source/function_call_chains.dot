@@ -2158,6 +2158,8 @@ digraph function_call_chains {
             shape="box"
         ]
     }
+    test_add_note_in_test_ResourceSources -> query_database
+    test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
 
 
     subgraph cluster_test_StatisticsSources {
@@ -2310,6 +2312,8 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
+    test_add_note_in_test_StatisticsSources -> add_note_in_statisticsSources
+    test_add_note_in_test_StatisticsSources -> query_database
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database
@@ -2478,4 +2482,6 @@ digraph function_call_chains {
     }
     test_get_statisticsSources_records -> get_statisticsSources_records
     test_get_resourceSources_records -> get_resourceSources_records
+    test_add_note_in_test_Vendors -> add_note_in_vendors
+    test_add_note_in_test_Vendors -> query_database
 }
