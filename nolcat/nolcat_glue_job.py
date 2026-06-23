@@ -514,7 +514,7 @@ def extract_value_from_single_value_df(df, expect_int=True):
 def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
+    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, the automatic index is `0` for the first record, which raises a `sqlalchemy.exc.IntegrityError` due to a duplicate primary key error on the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Additionally, using the return value of `to_sql()` to determine the number of records loaded came from an enhancement request from pandas 1.4.
 
     Args:
         df (dataframe): the data to load into the database
@@ -537,16 +537,6 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             chunksize=1000,
             index_label=index_field_name,
         )
-    except sqlalchemy.exc.IntegrityError as error:
-        log.info(f"Because the primary key field wasn't in the dataframe, `to_sql()` raised '{error}'.")
-        try:
-            #ToDo: first_new_PK_value(relation)
-        except DatabaseInteractionError as error:
-            message = f"Unable to update `{relation}` relation--{error}"
-            log.error(message)
-            raise DatabaseInteractionError(message)
-        #ToDo: Add PK field to df
-        #ToDo: df.to_sql()
     except Exception as error:
         message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
