@@ -538,14 +538,15 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             index_label=index_field_name,
         )
     except sqlalchemy.exc.IntegrityError as error:
-        #TEST: temp
-        log.error(f"`sqlalchemy.exc.IntegrityError` (type {type(error)}): {error}")
+        log.info(f"Because the primary key field wasn't in the dataframe, `to_sql()` raised '{error}'.")
         try:
-            log.error(f"`error.__dict__` (type {type(error.__dict__)}):\n{error.__dict__}")
-        except Exception as e:
-            log.error(f"`error.__dict__` to stdout raised '{e}'")
-        #TEST: temp
-        raise DatabaseInteractionError(error)
+            #ToDo: first_new_PK_value(relation)
+        except DatabaseInteractionError as error:
+            message = f"Unable to update `{relation}` relation--{error}"
+            log.error(message)
+            raise DatabaseInteractionError(message)
+        #ToDo: Add PK field to df
+        #ToDo: df.to_sql()
     except Exception as error:
         message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
