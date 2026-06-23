@@ -537,6 +537,9 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             chunksize=1000,
             index_label=index_field_name,
         )
+    except MySQLdb.IntegrityError as error:
+        log.error(f"`MySQLdb.IntegrityError`: {error}")
+        raise DatabaseInteractionError(error)
     except Exception as error:
         message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
