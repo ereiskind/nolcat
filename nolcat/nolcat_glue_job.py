@@ -540,17 +540,49 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     except Exception as error:
         #TEST: temp
         try:
-            log.error(f"`repr(error)` (type {type(repr(error))}):\n{repr(error)}")
+            log.error(f"`error.__class__` (type {type(error.__class__)}):\n{error.__class__}")
         except Exception as e:
-            log.error(f"`repr(error)` to stdout raised '{e}'")
+            log.error(f"`error.__class__` to stdout raised '{e}'")
         try:
-            log.error(f"`dir(error)` (type {type(dir(error))}):\n{dir(error)}")
+            log.error(f"`error.__module__` (type {type(error.__module__)}):\n{error.__module__}")
         except Exception as e:
-            log.error(f"`dir(error)` to stdout raised '{e}'")
+            log.error(f"`error.__module__` to stdout raised '{e}'")
         try:
-            log.error(f"`error.__dict__` (type {type(error.__dict__)}):\n{error.__dict__}")
+            log.error(f"`error._code_str` (type {type(error._code_str)}):\n{error._code_str}")
         except Exception as e:
-            log.error(f"`error.__dict__` to stdout raised '{e}'")
+            log.error(f"`error._code_str` to stdout raised '{e}'")
+        try:
+            log.error(f"`error._message` (type {type(error._message)}):\n{error._message}")
+        except Exception as e:
+            log.error(f"`error._message` to stdout raised '{e}'")
+        try:
+            log.error(f"`error._sql_message` (type {type(error._sql_message)}):\n{error._sql_message}")
+        except Exception as e:
+            log.error(f"`error._sql_message` to stdout raised '{e}'")
+        try:
+            log.error(f"`error._what_are_we` (type {type(error._what_are_we)}):\n{error._what_are_we}")
+        except Exception as e:
+            log.error(f"`error._what_are_we` to stdout raised '{e}'")
+        try:
+            log.error(f"`error.add_detail` (type {type(error.add_detail)}):\n{error.add_detail}")
+        except Exception as e:
+            log.error(f"`error.add_detail` to stdout raised '{e}'")
+        try:
+            log.error(f"`error.add_note` (type {type(error.add_note)}):\n{error.add_note}")
+        except Exception as e:
+            log.error(f"`error.add_note` to stdout raised '{e}'")
+        try:
+            log.error(f"`error.args` (type {type(error.args)}):\n{error.args}")
+        except Exception as e:
+            log.error(f"`error.args` to stdout raised '{e}'")
+        try:
+            log.error(f"`error.instance` (type {type(error.instance)}):\n{error.instance}")
+        except Exception as e:
+            log.error(f"`error.instance` to stdout raised '{e}'")
+        try:
+            log.error(f"`error.with_traceback` (type {type(error.with_traceback)}):\n{error.with_traceback}")
+        except Exception as e:
+            log.error(f"`error.with_traceback` to stdout raised '{e}'")
         #TEST: end temp
         message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
