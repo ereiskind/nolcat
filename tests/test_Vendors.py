@@ -88,4 +88,5 @@ def test_add_note(engine, client, Vendors_fixture, caplog):
     except DatabaseInteractionError as error:
         pytest.skip(f"Unable to run test--{error}")
     df = df.astype(VendorNotes.state_data_types())
+    log.error(df.compare(vendorNotes_df))  #TEST: temp
     assert_frame_equal(df, vendorNotes_df)
