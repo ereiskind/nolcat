@@ -81,7 +81,7 @@ def test_add_note(engine, client, ResourceSources_fixture, caplog):
             ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 12],
             ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 13],
             ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 17],
-            ["This is a new note", "The Author", date.today().strftime('%Y-%m-%d'), ResourceSources_fixture.resource_source_notes_ID],
+            ["This is a new note", "The Author", date.today().strftime('%Y-%m-%d'), ResourceSources_fixture.resource_source_ID],
         ],
         columns=["note", "written_by", "date_written", "resource_source_ID"],
     )
