@@ -477,7 +477,7 @@ class FiscalYears(db.Model):
                 return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
             if 'STOP' in flash_message_dict.keys():
                 continue
-            self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} and FY {self.fiscal_year}.")
+            self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} (ID {AUCT_object.AUCT_statistics_source}) and FY {self.fiscal_year}.")
 
             #Section: Update Data in Database
             try:

@@ -751,4 +751,5 @@ def new_FiscalYears_object_and_record():
         columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
+    log.info(initialize_relation_class_object_statement("FiscalYears", FY_instance))
     yield (FY_instance, FY_df)
