@@ -176,8 +176,8 @@ def SUSHI_credentials_fixture():
     #        ]
     #    )
     #SUSHI_credentials['end_date'] = last_day_of_month(SUSHI_credentials['end_date'])  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
-    SUSHI_credentials['end_date'] = date(2024, 7, 1)
-    SUSHI_credentials['begin_date'] = date(2025, 6, 30)
+    SUSHI_credentials['end_date'] = date(2025, 6, 30)
+    SUSHI_credentials['begin_date'] = date(2024, 7, 1)
     #TEST: end temp
 
     yield (URL, SUSHI_credentials)
