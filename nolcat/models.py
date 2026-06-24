@@ -466,18 +466,18 @@ class FiscalYears(db.Model):
             except DatabaseInteractionError as error:
                 return_statements[f'statistics_source_ID {AUCT_object.AUCT_statistics_source}'] = f"Unable to return requested data for the statistics source with primary key {AUCT_object.AUCT_statistics_source}--{error}"
                 continue
-            #statistics_source = StatisticsSources(
-            #    statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
-            #    statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
-            #    statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
-            #    vendor_ID=statistics_source_df.at[0,'vendor_ID'],
-            #)
-            #flash_message_dict = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #for k, v in flash_message_dict.items():
-            #    return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
-            #if 'STOP' in flash_message_dict.keys():
-            #    continue
-            #self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} (ID {AUCT_object.AUCT_statistics_source}) and FY {self.fiscal_year}.")
+            statistics_source = StatisticsSources(
+                statistics_source_ID=statistics_source_df.at[0,'statistics_source_ID'],
+                statistics_source_name=statistics_source_df.at[0,'statistics_source_name'],
+                statistics_source_retrieval_code=statistics_source_df.at[0,'statistics_source_retrieval_code'],
+                vendor_ID=statistics_source_df.at[0,'vendor_ID'],
+            )
+            flash_message_dict = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for k, v in flash_message_dict.items():
+                return_statements[f'statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}; {k}'] = v
+            if 'STOP' in flash_message_dict.keys():
+                continue
+            self._log.debug(f"Successfully completed the SUSHI harvest for statistics source {statistics_source.statistics_source_name} (ID {AUCT_object.AUCT_statistics_source}) and FY {self.fiscal_year}.")
 
             #Section: Update Data in Database
             #try:
