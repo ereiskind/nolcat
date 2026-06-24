@@ -470,7 +470,7 @@ def test_add_note(engine, client, StatisticsSources_fixture, caplog):
         [
             ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 8],
             ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 7],
-            ["This is a new note", "The Author", date.today().strftime('%Y-%m-%d'), StatisticsSources_fixture.statistics_sources_ID],
+            ["This is a new note", "The Author", date.today().strftime('%Y-%m-%d'), StatisticsSources_fixture.statistics_source_ID],
         ],
         columns=["note", "written_by", "date_written", "statistics_source_ID"],
     )
