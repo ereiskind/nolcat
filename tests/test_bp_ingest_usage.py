@@ -241,7 +241,7 @@ def S3_regex_and_teardown(select_statistics_source_ID):
         select_statistics_source_ID (int): the primary key of a statisticsSources record
 
     Yields:
-        re.compile: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        re.Pattern: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
     """
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
     regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + select_statistics_source_ID + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
@@ -267,7 +267,7 @@ def test_harvest_SUSHI_statistics(client, tmp_path, most_recent_month_with_usage
         tmp_path (pathlib.Path): a temporary directory created just for running tests
         most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
         select_statistics_source_ID (int): the primary key of a statisticsSources record
-        S3_regex_and_teardown (re.compile): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
         header_value (dict): HTTP header data
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """

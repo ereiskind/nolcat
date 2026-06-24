@@ -81,7 +81,7 @@ def S3_regex_and_teardown(AUCT_fixture_for_SUSHI):
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
 
     Yields:
-        re.compile: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        re.Pattern: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
     """
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
     regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + str(AUCT_fixture_for_SUSHI.AUCT_statistics_source) + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
@@ -106,7 +106,7 @@ def test_collect_annual_usage_statistics(engine, client, tmp_path, AUCT_fixture_
         client (flask.testing.FlaskClient): a Flask test client
         tmp_path (pathlib.Path): a temporary directory created just for running tests
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
-        S3_regex_and_teardown (re.compile): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
