@@ -1,5 +1,5 @@
 """Tests the routes in the `login` blueprint."""
-########## Passing 2026-06-10 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
 import logging

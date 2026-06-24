@@ -1,5 +1,5 @@
 """Tests the methods in ResourceSources."""
-########## No tests written 2026-06-10 ##########
+########## Passing 2026-06-24 ##########
 
 import pytest
 from pandas.testing import assert_frame_equal

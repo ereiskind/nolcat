@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2026-05-21 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
 from random import choice
