@@ -1158,11 +1158,15 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
         elif len(currently_valid_release) == 0 and len(expired_release) == 1 and len(audit_not_current) == 0:
             log.warning(f"COUNTER registry ID {registry_ID} only had a code of practice which has an expired audit; that CoP is being used.")
             for release_data in API_response['sushi_services']:
-                log.error(f"`release_data` (type {type(release_data)}): {release_data}")
-                #TEST: `if release_data['counter_release'] == audit_not_current[0]:` raises error because `audit_not_current` is empty
-                    #temp_URL = release_data['url']
-                    #URL_CoP = release_data['counter_release']
-                    #log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                if code_of_practice:
+                    if release_data['counter_release'] == code_of_practice:
+                        temp_URL = release_data['url']
+                        URL_CoP = release_data['counter_release']
+                        log.debug(f"{temp_URL} returned by COUNTER Registry.")
+                else:
+                    temp_URL = release_data['url']
+                    URL_CoP = release_data['counter_release']
+                    log.debug(f"{temp_URL} returned by COUNTER Registry.")
         elif len(currently_valid_release) > 1:
             raise InvalidAPIResponseError("Multiple codes of practice in the COUNTER Registry have a valid audit.")
         else:
