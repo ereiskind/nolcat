@@ -332,10 +332,10 @@ def S3_regex_and_teardown():
     """Creates a regex matching the S3 files created when `test_FiscalYears.test_collect_fiscal_year_usage_statistics()` runs and handles teardown for those same files.
 
     Yields:
-        re.Pattern: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        re.Pattern: a regex for a COUNTER parquet file created the day the fixture runs
     """
     date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
-    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/11_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/\d?_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
     yield regex
     files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
     for file_name in [file for file in files_in_bucket if regex.fullmatch(str(file))]:
@@ -361,7 +361,7 @@ def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_ne
         load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
         valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
         new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
-        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file created the day the fixture runs
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
     caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
