@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2026-05-21 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
 from random import choice
@@ -41,7 +41,7 @@ def test_ingest_usage_homepage(client):
 
 @pytest.mark.dependency()
 @pytest.mark.slow
-def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog, workbooks_and_relations):  #TEST: `workbooks_and_relations` is temp
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form.
 
     Args:
@@ -84,13 +84,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
-    #TEST: temp
-    # Order of workbook dataframes seems inconsistent
-    log.error(f"`create_COUNTERData_workbook_iterdir_list`:\n{format_list_for_stdout(create_COUNTERData_workbook_iterdir_list)}")
-    log.error(f"`form_submissions`:\n{format_list_for_stdout(form_submissions)}")
-    log.error(f"`workbooks_and_relations`:\n{format_list_for_stdout(workbooks_and_relations)}")
-    #TEST: end temp
+    assert re.search(re.compile(r'Successfully loaded (\d+) records into the `(.+)` relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 

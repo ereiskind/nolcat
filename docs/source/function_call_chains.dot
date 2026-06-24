@@ -134,6 +134,8 @@ digraph function_call_chains {
             shape="box"
         ]
     }
+    add_note_in_vendors -> first_new_PK_value
+    add_note_in_vendors -> load_data_into_database
 
 
     subgraph cluster_vendorNotes {
@@ -184,6 +186,8 @@ digraph function_call_chains {
     _check_if_data_in_database -> extract_value_from_single_value_df
     _check_if_data_in_database -> return_value_from_query_statement
     collect_usage_statistics -> _harvest_R5_SUSHI
+    add_note_in_statisticsSources -> first_new_PK_value
+    add_note_in_statisticsSources -> load_data_into_database
 
 
     subgraph cluster_statisticsSourceNotes {
@@ -226,6 +230,8 @@ digraph function_call_chains {
     change_StatisticsSource -> query_database
     change_StatisticsSource -> update_database
     change_StatisticsSource -> remove_IDE_spacing_from_statement
+    add_note_in_resourceSources -> first_new_PK_value
+    add_note_in_resourceSources -> load_data_into_database
 
 
     subgraph cluster_resourceSourceNotes {
@@ -312,7 +318,6 @@ digraph function_call_chains {
     make_SUSHI_call -> _handle_SUSHI_exceptions
     make_SUSHI_call -> _stdout_API_response_based_on_size
     make_SUSHI_call -> format_list_for_stdout
-    make_SUSHI_call -> upload_file_to_S3_bucket_success_regex
     _convert_Response_to_JSON -> _stdout_API_response_based_on_size
     _save_raw_Response_text -> query_database
     _save_raw_Response_text -> save_unconverted_data_via_upload
@@ -588,9 +593,6 @@ digraph function_call_chains {
         first_new_PK_value [shape="box"]
         check_if_data_already_in_COUNTERData [shape="box"]
         update_database [shape="cylinder"]
-        failed_upload_to_S3_statement [shape="box"]
-        unable_to_delete_test_file_in_S3_statement [shape="box"]
-        upload_file_to_S3_bucket_success_regex [shape="box"]
         file_extensions_and_mimetypes [shape="box"]
         save_dataframe_to_S3_bucket [shape="folder"]
         upload_file_to_S3_bucket [shape="folder"]
@@ -610,6 +612,7 @@ digraph function_call_chains {
             _extraction_complete_logging_statement [shape="box"]
             _increase_field_length_logging_statement [shape="box"]
         }
+        unable_to_delete_test_file_in_S3_statement [shape="box"]
         prepare_HTML_page_for_comparison [shape="box"]
         remove_file_from_S3 [shape="folder"]
         subgraph cluster_InvalidAPIResponseError {
@@ -1322,6 +1325,8 @@ digraph function_call_chains {
     test_load_data_into_database -> load_data_into_database
     test_load_data_into_database -> engine
     test_load_data_into_database -> vendors_relation_in_conftest
+    test_load_data_into_database -> query_database
+    test_load_data_into_database -> change_single_field_dataframe_into_series
     test_loading_connected_data_into_other_relation -> state_data_types_in_vendors
     test_loading_connected_data_into_other_relation -> state_data_types_in_statisticsSources
     test_loading_connected_data_into_other_relation -> load_data_into_database
@@ -2153,6 +2158,8 @@ digraph function_call_chains {
             shape="box"
         ]
     }
+    test_add_note_in_test_ResourceSources -> query_database
+    test_add_note_in_test_ResourceSources -> add_note_in_resourceSources
 
 
     subgraph cluster_test_StatisticsSources {
@@ -2305,6 +2312,8 @@ digraph function_call_chains {
     test_harvest_R5_SUSHI_with_invalid_dates -> most_recent_month_with_usage
     test_harvest_R5_SUSHI_with_invalid_dates -> StatisticsSources_fixture
     test_harvest_R5_SUSHI_with_invalid_dates -> reports_offered_by_StatisticsSource_fixture
+    test_add_note_in_test_StatisticsSources -> add_note_in_statisticsSources
+    test_add_note_in_test_StatisticsSources -> query_database
     partially_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     non_duplicate_COUNTER_data -> state_data_types_in_COUNTERData
     test_check_if_data_already_in_COUNTERData -> query_database
@@ -2473,4 +2482,6 @@ digraph function_call_chains {
     }
     test_get_statisticsSources_records -> get_statisticsSources_records
     test_get_resourceSources_records -> get_resourceSources_records
+    test_add_note_in_test_Vendors -> add_note_in_vendors
+    test_add_note_in_test_Vendors -> query_database
 }

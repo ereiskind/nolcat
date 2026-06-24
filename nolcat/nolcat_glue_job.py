@@ -23,7 +23,7 @@ import s3fs
 import boto3
 import pandas as pd
 from numpy import squeeze
-from sqlalchemy import text
+import sqlalchemy
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 from cloudpathlib import CloudPath
 
@@ -514,7 +514,7 @@ def extract_value_from_single_value_df(df, expect_int=True):
 def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
-    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, auto-increment issues can cause a duplicate primary key error to be raised on `0` for the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Using the return value of `to_sql()` to determine the number of records loaded is due to an enhancement request from pandas 1.4.
+    In the cases where `df` doesn't have a field corresponding to the primary key field in `relation`, the automatic index is `0` for the first record, which raises a `sqlalchemy.exc.IntegrityError` due to a duplicate primary key error on the very first record loaded (see https://stackoverflow.com/questions/54808848/pandas-to-sql-increase-tables-index-when-appending-dataframe, https://stackoverflow.com/questions/31315806/insert-dataframe-into-sql-table-with-auto-increment-column, https://stackoverflow.com/questions/26770489/how-to-get-autoincrement-values-for-a-column-after-uploading-a-pandas-dataframe, https://stackoverflow.com/questions/30867390/python-pandas-to-sql-how-to-create-a-table-with-a-primary-key, https://stackoverflow.com/questions/65426278/to-sql-method-of-pandas-sends-primary-key-column-as-null-even-if-the-column-is). Additionally, using the return value of `to_sql()` to determine the number of records loaded came from an enhancement request from pandas 1.4.
 
     Args:
         df (dataframe): the data to load into the database
@@ -528,7 +528,7 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
     Raises:
         DatabaseInteractionError: if the SQL update fails
     """
-    log.info(f"Starting `load_data_into_database()` for relation {relation}.")
+    log.info(f"Starting `load_data_into_database()` for relation `{relation}`.")
     try:
         number_of_records = df.to_sql(
             name=relation,
@@ -538,10 +538,10 @@ def load_data_into_database(df, relation, engine, index_field_name=None):
             index_label=index_field_name,
         )
     except Exception as error:
-        message = f"Loading data into the {relation} relation raised the error '{error}'."
+        message = f"Loading data into the `{relation}` relation raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
-    message = f"Successfully loaded {number_of_records} records into the {relation} relation."
+    message = f"Successfully loaded {number_of_records} records into the `{relation}` relation."
     log.info(message)
     return message
 
@@ -556,7 +556,6 @@ def query_database(query, engine, index=None):
     
     Returns:
         dataframe: the result of the query
-        str: a message including the error raised by the attempt to run the query
     
     Raises:
         DatabaseInteractionError: if the SQL query fails
@@ -568,16 +567,16 @@ def query_database(query, engine, index=None):
             con=engine,
             index_col=index,
         )
-        if df.shape[0] > 20:
-            log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
-            log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        else:
-            log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
-        return df
     except Exception as error:
         message = f"Running the query `{remove_IDE_spacing_from_statement(query)}` raised the error '{error}'."
         log.error(message)
         raise DatabaseInteractionError(message)
+    if df.shape[0] > 20:
+        log.info(f"The beginning and the end of the response to `{remove_IDE_spacing_from_statement(query)}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+        log.debug(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+    else:
+        log.info(f"The complete response to `{remove_IDE_spacing_from_statement(query)}`:\n{df}")
+    return df
 
 
 def first_new_PK_value(relation):
@@ -590,7 +589,6 @@ def first_new_PK_value(relation):
     
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
-        str: a message including the error raised by the attempt to run the query
     
     Raises:
         DatabaseInteractionError: if the SQL query fails
@@ -790,7 +788,7 @@ def update_database(update_statement, engine):
     try:
         with engine.connect() as connection:
             try:
-                connection.execute(text(update_statement))
+                connection.execute(sqlalchemy.text(update_statement))
                 connection.commit()
             except Exception as error:
                 message = f"Running the update statement {display_update_statement} raised the error '{error}'."
@@ -845,48 +843,12 @@ def update_database(update_statement, engine):
                 raise DatabaseInteractionError(message)
     else:
         log.warning(f"The database has no way to confirm success of change to database after executing {display_update_statement}.")
-    message = f"Successfully performed the update {display_update_statement}."
+    message = f"Successfully performed the update `{display_update_statement}`."
     log.info(message)
     return message
 
 
 #SECTION: S3 Interaction
-#SUBSECTION: S3 Interaction Statements
-def failed_upload_to_S3_statement(file_name, error_message):
-    """This statement indicates that a call to `nolcat.app.upload_file_to_S3_bucket()` returned an error, meaning the file that should've been uploaded isn't being saved.
-
-    Args:
-        file_name (str): the name of the file that wasn't uploaded to S3
-        error_message (str): the return statement indicating the failure of `nolcat.app.upload_file_to_S3_bucket()`
-    
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Uploading the file {file_name} to S3 failed because {error_message[0].lower()}{error_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-
-
-def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
-    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
-
-    Args:
-        file_name (str): the final part of the name of the file in S3
-        error_message (str): the AWS error message returned by the attempt to delete the file
-
-    Returns:
-        str: the statement for outputting the arguments to logging
-    """
-    return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
-
-
-def upload_file_to_S3_bucket_success_regex():
-    """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
-
-    Returns:
-        re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
-    """
-    return re.compile(r'[Ss]uccessfully loaded the file (.+) into S3 location `.+/.+`\.?')
-
-
 #SUBSECTION: S3 Interaction Functions
 def file_extensions_and_mimetypes():
     """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.
@@ -2523,6 +2485,19 @@ class ConvertJSONDictToParquet:
 
 
 #SECTION: Functions for Testing
+def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
+    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
+
+    Args:
+        file_name (str): the final part of the name of the file in S3
+        error_message (str): the AWS error message returned by the attempt to delete the file
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"Trying to remove file {file_name} from the S3 bucket raised the error '{error_message}'."
+
+
 def prepare_HTML_page_for_comparison(page_data):
     """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
 

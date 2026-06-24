@@ -1,5 +1,5 @@
 """This module contains the tests for the functions in `nolcat\\nolcat_glue_job.py`."""
-########## Passing 2026-06-10 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
 from filecmp import cmp
@@ -289,10 +289,18 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    regex_match_object = re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the (.+) relation\.'), result)
-    assert regex_match_object is not None
-    assert int(regex_match_object.group(1)) == 8
-    assert regex_match_object.group(2) == "vendors"
+    assert result == "Successfully loaded 8 records into the `vendors` relation."
+    try:
+        series = query_database(
+            query="SELECT * FROM vendors;",
+            engine=engine,
+            index="vendor_ID",
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    series = change_single_field_dataframe_into_series(series)
+    series = series.astype(Vendors.state_data_types())
+    assert_series_equal(series, vendors_relation)
 
 
 def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
@@ -432,7 +440,7 @@ def test_update_database(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
+    assert update_result == f"Successfully performed the update `{truncate_longer_lines(update_statement)}`."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 
@@ -476,7 +484,7 @@ def test_update_database_with_insert_statement(engine, client):
     )
     series.index.name = "vendor_ID"
     series = series.astype(Vendors.state_data_types())
-    assert update_result == f"Successfully performed the update {truncate_longer_lines(update_statement)}."
+    assert update_result == f"Successfully performed the update `{truncate_longer_lines(update_statement)}`."
     assert_series_equal(series, change_single_field_dataframe_into_series(retrieved_updated_vendors_data))
 
 

@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2026-06-10 ##########
+########## Passing 2026-06-24 ##########
 
 import pytest
 import json
@@ -46,7 +46,7 @@ def StatisticsSources_fixture(valid_COUNTER_retrieval_code):
         valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
 
     Yields:
-        StatisticsSources: a StatisticsSources object connected to valid SUSHI data
+        nolcat.models.StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
     # Cannot use `caplog` for `query_database()` due to scope mismatch
     yield_object = StatisticsSources(
@@ -448,10 +448,45 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
 
 
 #Section: Test `StatisticsSources.add_note()`
-def test_add_note():
-    """Test adding notes about statistics sources."""
-    #ToDo: Develop this test alongside the method it's testing
-    pass
+def test_add_note(engine, client, StatisticsSources_fixture, caplog):
+    """Tests adding a record to the `statisticsSourceNotes` relation.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+
+    try:
+        with client:
+            update_result = StatisticsSources_fixture.add_note("This is a new note", "The Author")
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    assert update_result == "Successfully loaded 1 records into the `statisticsSourceNotes` relation."
+
+    statisticsSourceNotes_df = pd.DataFrame(
+        [
+            ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 8],
+            ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 7],
+            ["This is a new note", "The Author", date.today().strftime('%Y-%m-%d'), StatisticsSources_fixture.statistics_source_ID],
+        ],
+        columns=["note", "written_by", "date_written", "statistics_source_ID"],
+    )
+    statisticsSourceNotes_df.index.name = "statistics_source_notes_ID"
+    statisticsSourceNotes_df = statisticsSourceNotes_df.astype(StatisticsSourceNotes.state_data_types())
+    statisticsSourceNotes_df["date_written"] = pd.to_datetime(statisticsSourceNotes_df["date_written"])
+    try:
+        df = query_database(
+            query=f"SELECT * FROM statisticsSourceNotes;",
+            engine=engine,
+            index='statistics_source_notes_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    df = df.astype(StatisticsSourceNotes.state_data_types())
+    assert_frame_equal(df, statisticsSourceNotes_df)
 
 
 #Section: Run `test_check_if_data_already_in_COUNTERData()`
