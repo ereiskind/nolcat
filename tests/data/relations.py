@@ -103,7 +103,7 @@ def statisticsSources_relation():
             ["ProQuest", "56bdf474-5297-45f0-841f-4083725b4595", 0],  # Registry ID for John Benjamins
             ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", 1],  # Registry ID for SAGE/CQ Press
             ["Gale Cengage Learning", None, 2],
-            ["Duke UP", "dd585e77-6351-4548-b679-f2d337d15cdb", 7],
+            ["Duke UP", "da757bb5-4a5e-449b-9434-81eb33cfc696", 7],  # Registry ID for SIAM; Duke UP Registry ID `dd585e77-6351-4548-b679-f2d337d15cdb`
             ["iG Library/Business Expert Press (BEP)", None, 3],
             ["DemographicsNow", None, 2],
             ["Ebook Central", None, 0],
