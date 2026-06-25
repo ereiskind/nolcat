@@ -326,7 +326,6 @@ digraph erd_and_classes {
         _serialize_dates [shape="Mrecord"]
         _extraction_start_logging_statement [shape="Mrecord"]
         _extraction_complete_logging_statement [shape="Mrecord"]
-        _increase_field_length_logging_statement [shape="Mrecord"]
     }
 
 
