@@ -129,12 +129,6 @@ Iteration 3: Add Notes
 ======================
 * Write form class for adding notes
 * Add form for adding notes to "view_lists/view_record.html"
-* Write `nolcat.models.StatisticsSources.add_note()`
-* Write `tests.test_StatisticsSources.test_add_note()`
-* Write `nolcat.models.Vendors.add_note()`
-* Write `tests.test_Vendors.test_add_note()`
-* Write `nolcat.models.ResourceSources.add_note()`
-* Write `tests.test_ResourceSources.test_add_note()`
 * Write `nolcat.models.VendorNotes.__repr__()`
 * Write `nolcat.models.StatisticsSourceNotes.__repr__()`
 * Write `nolcat.models.ResourceSourceNotes.__repr__()`
