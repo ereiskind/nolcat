@@ -1173,6 +1173,7 @@ def fetch_URL_from_COUNTER_Registry(registry_ID, code_of_practice=None):
     return (URL, URL_CoP)
 
 
+#SECTION: Classes
 class ConvertJSONDictToParquet:
     """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into parquet files.
 
@@ -2315,6 +2316,82 @@ class ConvertJSONDictToParquet:
             str: the logging statement
         """
         return f"Added `COUNTERData.{field}` value '{value}' to the row dictionary."
+
+
+class UploadExcelCOUNTERReports:
+    """A class for uploading Excel workbook(s) containing tabular COUNTER data to be saved to the database.
+
+    COUNTER reports not delivered by SUSHI are given in a tabular format and saved in either Excel workbooks or a file format easily converted to Excel. These workbooks can be ingested into this program via a Flask-WTF MultipleFileField form field, but the workbooks may contain multiple tabs, and the standard tabular COUNTER format has headers; both elements must be removed to save the data as a dataframe. This class exists to make those changes; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the list of Werkzeug FileStorage object(s), each of which encapsulates a selected Excel workbook, as a class attribute, and the `create_dataframe()` method, which creates the dataframe. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `UploadExcelCOUNTERReports` type are never instantiated.
+
+    Attributes:
+        self.COUNTER_report_files (list): the list of Werkzeug FileStorage object(s) representing the uploaded Excel workbook(s)
+
+    Methods:
+        create_dataframe: This method instantiates a dataframe containing the COUNTER data from uploaded Excel workbook(s).
+    """
+    _log = logging.getLogger(log.name).getChild(__qualname__)
+
+    def __init__(self, COUNTER_report_files):
+        """The constructor method for `UploadExcelCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
+
+        Args:
+            COUNTER_report_files (list): the list of Werkzeug FileStorage object(s) representing the uploaded Excel workbook(s)
+        """
+        self.COUNTER_report_files = COUNTER_report_files
+
+
+    def create_dataframe(self):
+        """This method instantiates a dataframe containing the COUNTER data from uploaded Excel workbook(s).
+
+        This method reads COUNTER report data from sheets in an Excel workbook into a dataframe. Due to differences in header size and field names between R4 and R5, as well as occasional variations from the standard, a specific investigation is required to establish the field names to use when forming the dataframe.
+        This method prepares the data from tabular COUNTER reports for upload into the database. This method transforms tabular COUNTER reports on sheets in Excel workbooks into dataframes, but to become complete and valid records in the relation, enhancements are needed, including cleaning the data, filling in data R4 provided through its multiple different report types, and adding the statistics source of the data, which is taken from the first part of the file name.
+
+        Returns:
+            tuple: dataframe of all COUNTER data in the Excel workbook(s); a list of workbooks and worksheets not successfully uploaded
+
+        Raises:
+            __error__: __description__
+        """
+        pass
+
+
+class ConvertExcelDfToParquet:
+    """A class for transforming dataframes derived from tabular COUNTER reports into parquet files.
+
+    Tabular COUNTER reports come in a crosstab-like format where the each month included in the data is a field. That crosstab format, however, makes complex analysis more difficult, so the crosstab must be undone before the data is saved to parquet. This class exists to make that change; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the dataframe with the data from the Excel workbook(s), as a class attribute, and the `convert_to_parquet()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `convert_to_parquet()` method, which means objects of the `ConvertExcelDfToParquet` type are never instantiated.
+
+    Attributes:
+        self.df_from_Excel (dataframe): a dataframe of COUNTER data from uploaded Excel workbook(s)
+
+    Methods:
+        convert_to_parquet: This method finishing transforming the COUNTER data from the uploaded Excel workbook(s) into a normalized dataframe then saves that dataframe as a parquet file.
+    """
+    _log = logging.getLogger(log.name).getChild(__qualname__)
+
+    def __init__(self, df_from_Excel):
+        """The constructor method for `ConvertExcelDfToParquet`, which instantiates the dataframe of COUNTER data from the uploaded Excel workbook(s).
+
+        Args:
+            df_from_Excel (dataframe): a dataframe of COUNTER data from uploaded Excel workbook(s)
+        """
+        self.df_from_Excel = df_from_Excel
+
+
+    def convert_to_parquet(self, test=False):
+        """This method finishing transforming the COUNTER data from the uploaded Excel workbook(s) into a normalized dataframe then saves that dataframe as a parquet file.
+
+        This method takes the dataframe produced by the `UploadExcelCOUNTERReports.create_dataframe()` method and performs normalization and transformation procedures so it matches the results of the `ConvertJSONDictToParquet.create_parquet()` method used for COUNTER data collected via SUSHI; this includes filling in data R4 provided through its multiple different report types. Once complete, the data is saved as a parquet file to the S3 bucket specified in the 'nolcat_secrets.py' file.
+
+        Args:
+            test (bool, optional): if the call is in a test; default is `False`
+
+        Returns:
+            cloudpathlib.CloudPath: the name/location of the file successfully saved to S3
+
+        Raises:
+            __error__: __description__
+        """
+        pass
 
 
 #SECTION: Functions for Testing
