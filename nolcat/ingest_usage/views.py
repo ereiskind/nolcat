@@ -29,9 +29,8 @@ def upload_COUNTER_data():
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
-        file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
         mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
-        for file in file_objects:
+        for file in form.COUNTER_data.data:
             log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
             if file.mimetype == 'application/octet-stream' and file.filename.endswith('.sql'):  # SQL files can have the generic `octet-stream` mimetype (before IANA RFC6922, SQL did use that mimetype)
                 mimetype_set.add('application/sql')
@@ -45,7 +44,7 @@ def upload_COUNTER_data():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         elif list(mimetype_set)[0] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
-                df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
+                df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_data.data).create_dataframe()  
                 df['report_creation_date'] = pd.to_datetime(None)
                 if data_not_in_df:
                     messages_to_flash = [f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}"]
@@ -100,7 +99,7 @@ def upload_COUNTER_data():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         elif list(mimetype_set)[0] == 'application/sql':
             insert_statements = []
-            for file in file_objects:
+            for file in form.COUNTER_data.data:
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
                     display_line = truncate_longer_lines(line)  # Size of lines on display limited to prevent memory errors due to overly long lines
                     log.debug(f"The line starting `{display_line}` in the SQL file data is type {type(line)}.")
