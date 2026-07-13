@@ -1197,7 +1197,7 @@ class StatisticsSources(db.Model):
                     self._log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
 
                     try:
-                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
+                        S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
                     except S3InteractionError as error:
                         all_messages_to_flash.append(error)
                         continue  # Raising an error here would keep any other reports from being pulled and processed
@@ -1235,7 +1235,7 @@ class StatisticsSources(db.Model):
                 self._log.critical(message)
                 raise InvalidSUSHIResponseError(message, messages_to_flash)
             try:
-                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet(bucket_path)
+                S3_file_name = ConvertJSONDictToParquet(SUSHI_data_response, report, self.statistics_source_ID).create_parquet()
             except S3InteractionError as error:
                 messages_to_flash.append(error)
                 raise S3InteractionErrorWithFlashMessages(error, messages_to_flash)
