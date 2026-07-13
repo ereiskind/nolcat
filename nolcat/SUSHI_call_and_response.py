@@ -81,6 +81,7 @@ class SUSHICallAndResponse:
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for `{self.call_path}`.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        self._log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
         try:
             API_response = self._make_API_call()
         except InvalidAPIResponseError as error:

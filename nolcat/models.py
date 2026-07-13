@@ -1058,6 +1058,7 @@ class StatisticsSources(db.Model):
             for report_name in available_custom_reports:
                 return_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             no_usage_returned_count = 0
+            self._log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
                 self._log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
@@ -1142,6 +1143,7 @@ class StatisticsSources(db.Model):
             DatabaseInteractionErrorWithFlashMessages: if the check for data in the database fails
         """
         self._log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
+        self._log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
         try:
             subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         except DatabaseInteractionError as error:
@@ -1241,6 +1243,7 @@ class StatisticsSources(db.Model):
                 self._log.info(f"Successfully saved the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} as a parquet file in S3 at {S3_file_name}.")
             else:
                 self._log.warning(f"The *JSON* of the SUSHI call for {report} report from {self.statistics_source_name} for {SUSHI_parameters['begin_date'].strftime('%Y-%m')} to {SUSHI_parameters['end_date'].strftime('%Y-%m')} was saved to S3 at {S3_file_name}.")
+            self._log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
             return (S3_file_name, messages_to_flash)
 
 

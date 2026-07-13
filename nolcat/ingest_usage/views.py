@@ -203,7 +203,6 @@ def harvest_SUSHI_statistics(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
         flash_message_dict = statistics_source.collect_usage_statistics(
             begin_date,
             end_date,
