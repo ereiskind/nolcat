@@ -1223,7 +1223,7 @@ class ConvertJSONDictToParquet:
             S3InteractionError: if a problem occurs while saving the data to S3
         """
         self._log.info("Starting `ConvertJSONDictToParquet.create_parquet()`.")
-        self._log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
+        self._log.warning(f"Production `bucket_path`: {test}")  #TEST: temp
         try:
             report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
