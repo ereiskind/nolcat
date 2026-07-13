@@ -160,7 +160,6 @@ def harvest_SUSHI_statistics(testing):
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
-        log.warning(f"`testing` (type {type(testing)}): {testing}")  #TEST: temp
         return render_template('ingest_usage/make-SUSHI-call.html', form=form, testing=testing)
     elif form.validate_on_submit():
         try:
@@ -195,7 +194,6 @@ def harvest_SUSHI_statistics(testing):
             report_to_harvest = form.report_to_harvest.data
             log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
-        log.warning(f"`testing` (type {type(testing)}): {testing}")  #TEST: temp
         if testing == "":
             bucket_path = PRODUCTION_COUNTER_FILE_PATH
         elif testing == "test":
@@ -205,6 +203,7 @@ def harvest_SUSHI_statistics(testing):
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        log.warning(f"`bucket_path`: {bucket_path}")  #TEST: temp
         flash_message_dict = statistics_source.collect_usage_statistics(
             begin_date,
             end_date,
