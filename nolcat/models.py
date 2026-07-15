@@ -946,12 +946,18 @@ class StatisticsSources(db.Model):
                 "status",
                 SUSHI_parameters
             ).make_SUSHI_call(bucket_path)
-        except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+        except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
             message = f"Stopping SUSHI calls for {self.statistics_source_name} at `status`--{error}"
             return_statements['status'] = str(error)
             return_statements['STOP'] = [message]
             for e in error.messages_to_flash:
                 return_statements['STOP'].append(e)
+            self._log.warning(return_statements)
+            return return_statements
+        except InvalidAPIResponseError as error:
+            message = f"Stopping SUSHI calls for {self.statistics_source_name} at `status`--{error}"
+            return_statements['status'] = str(error)
+            return_statements['STOP'] = [message]
             self._log.warning(return_statements)
             return return_statements
         return_statements['status'] = messages_to_flash
@@ -1013,12 +1019,18 @@ class StatisticsSources(db.Model):
                     "reports",
                     SUSHI_parameters
                 ).make_SUSHI_call(bucket_path)
-            except (InvalidAPIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
+            except (InvalidSUSHIResponseError, DatabaseInteractionErrorWithFlashMessages, S3InteractionErrorWithFlashMessages) as error:
                 message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports`--{error}"
                 return_statements['reports'] = str(error)
                 return_statements['STOP'] = [message]
                 for e in error.messages_to_flash:
                     return_statements['STOP'].append(e)
+                self._log.warning(return_statements)
+                return return_statements
+            except InvalidAPIResponseError as error:
+                message = f"Stopping SUSHI calls for {self.statistics_source_name} at `reports`--{error}"
+                return_statements['status'] = str(error)
+                return_statements['STOP'] = [message]
                 self._log.warning(return_statements)
                 return return_statements
             return_statements['reports'] = messages_to_flash
@@ -1185,8 +1197,7 @@ class StatisticsSources(db.Model):
                         continue
                     except InvalidAPIResponseError as error:
                         message = f"*NO* DATA SAVED from calls for {self.statistics_source_name} at `reports/{report.lower()}`--{error.message}"
-                        for e in error.messages_to_flash:
-                            all_messages_to_flash.append(e)
+                        all_messages_to_flash.append(message)
                         self._log.critical(message)
                         continue
                     for item in messages_to_flash:
