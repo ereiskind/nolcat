@@ -1,11 +1,8 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2025-09-29 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
-import logging
 from random import choice
-from pathlib import Path
-import os
 import re
 from ast import literal_eval
 from filecmp import cmp
@@ -15,18 +12,18 @@ from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
-from conftest import match_direct_SUSHI_harvest_result
-from conftest import prepare_HTML_page_for_comparison
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.ingest_usage import *
 
 log = logging.getLogger(__name__)
 
 
 def test_ingest_usage_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/ingest_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -45,9 +42,18 @@ def test_ingest_usage_homepage(client):
 @pytest.mark.dependency()
 @pytest.mark.slow
 def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, create_COUNTERData_workbook_iterdir_list, caplog):
-    """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
+    """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTERData_relation (dataframe): a relation of test data
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     form_submissions = {'COUNTER_data': [open(file, 'rb') for file in create_COUNTERData_workbook_iterdir_list]}
     log.debug(f"The files being uploaded to the database are:\n{format_list_for_stdout(form_submissions)}")
@@ -63,13 +69,14 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    df = query_database(
-        query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
-        engine=engine,
-        index='COUNTER_data_ID',
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query=f"SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT {COUNTERData_relation.shape[0]};",
+            engine=engine,
+            index='COUNTER_data_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns=['report_creation_date'])
 
@@ -77,16 +84,25 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(re.compile(r'Successfully loaded (\d+) records into the `(.+)` relation\.'), prepare_HTML_page_for_comparison(POST_response.data))
     assert_frame_equal(df, COUNTERData_relation[df.columns.tolist()], check_index_type=False)  # `check_index_type` argument allows test to pass if indexes aren't the same dtype
 
 
 @pytest.mark.dependency(depends=['test_upload_COUNTER_data_via_Excel'])
-def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
+def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value, caplog):
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file.
     
     This test is a dependency of `test_upload_COUNTER_data_via_Excel()` because the SQL files contains hardcoded primary key values based off the number of records that should be loaded by that test. The reason these tests aren't reversed is because if this test was first, and thus loading data into an empty database, it wouldn't be able to confirm that existing data isn't dropped upon file upload, as there would be no data to potentially drop.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
+
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
@@ -106,18 +122,20 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    check_relation_size = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(check_relation_size, str):
-        pytest.skip(database_function_skip_statements(check_relation_size))
-    df = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
-        engine=engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        check_relation_size = query_database(
+            query=f"SELECT COUNT(*) FROM COUNTERData;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+    try:
+        df = query_database(
+            query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     df = df.astype(COUNTERData.state_data_types())
     df = df.drop(columns='COUNTER_data_ID')
     insert_statement_data = pd.DataFrame(
@@ -145,37 +163,17 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert_frame_equal(df, insert_statement_data)
 
 
-def test_match_direct_SUSHI_harvest_result(engine, caplog):
-    """Tests pulling a set number of records from the `COUNTERData` relation and modifying them so they match the output of the `StatisticsSources._harvest_R5_SUSHI()` method.
-    
-    This function's call of a class method from `nolcat.models` means it's in `tests.conftest`, which lacks its own test module. The function is tested here because the immediately preceding test function loads exactly seven records into the `COUNTERData` relation, and so if it passes, the won't fail due to the last records in `COUNTERData` not containing the expected data.
-    """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    df = match_direct_SUSHI_harvest_result(engine, 7, caplog)
-    match_result_df = pd.DataFrame(
-        [
-            [0, "PR", None, None, "ProQuest", None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77],
-            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", "0363-0277", "Journal", None, 2019, "Controlled", "Regular", "Library Journal", "Journal", "ProQuest:40955", "0363-0277", None, "Unique_Item_Investigations", "2020-07-01", 3],
-            [1, "TR", "The Yellow Wallpaper", "Open Road Media", "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3],
-            [1, "TR", "The Yellow Wallpaper", "Open Road Media", "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4],
-            [2, "TR", "Library Journal", "Library Journals, LLC", "Gale", None, None, None, None, "Gale:1273", "0363-0277", "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3],
-            [3, "PR", None, None, "Duke University Press", None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2],
-            [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", "Journal", "Silverchair:1000052", "0018-2702", "1527-1919", "Total_Item_Investigations", "2020-07-01", 6],
-        ],
-        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "print_ISSN", "data_type", "section_type", "YOP", "access_type", "access_method", "parent_title", "parent_data_type", "parent_proprietary_ID", "parent_print_ISSN", "parent_online_ISSN", "metric_type", "usage_date", "usage_count"],
-    )
-    match_result_df = match_result_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in match_result_df.columns.tolist()})
-    match_result_df['usage_date'] = pd.to_datetime(match_result_df['usage_date'])
-    match_result_df["publication_date"] = pd.to_datetime(
-        match_result_df["publication_date"],
-        errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-    )
-    assert_frame_equal(match_result_df, df)
-
-
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
-    """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
     page = client.get(
         '/ingest_usage/harvest',
@@ -195,12 +193,13 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    df = query_database(
-        query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
-        engine=engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL ORDER BY statistics_source_name;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = list(df.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"
@@ -209,24 +208,75 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
+@pytest.fixture
+def select_statistics_source_ID(engine, caplog):
+    """Selects a value from the statisticsSources relation to use in `test_bp_ingest_usage.test_collect_annual_usage_statistics()`.
+
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` value used in the test data must be valid COUNTER Registry ID values; for testing purposes, any statisticsSources record with a valid statistics_source_retrieval_code can be used. The selection of the record's PK is in a fixture so the selected value can also be passed to `test_bp_ingest_usage.S3_regex_and_teardown()`.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        int: the primary key of a statisticsSources record
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    try:
+        df = query_database(
+            query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
+    yield choice(change_single_field_dataframe_into_series(df).astype('string').to_list())
+
+
+@pytest.fixture
+def S3_regex_and_teardown(select_statistics_source_ID):
+    """Creates a regex matching the S3 files created when `test_bp_ingest_usage.test_collect_annual_usage_statistics()` runs and handles teardown for those same files.
+
+    Args:
+        select_statistics_source_ID (int): the primary key of a statisticsSources record
+
+    Yields:
+        re.Pattern: a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+    """
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + '/' + select_statistics_source_ID + r'_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    yield regex
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    for file_name in [file for file in files_in_bucket if regex.fullmatch(str(file))]:
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=file_name.key,
+            )
+        except botocore.exceptions.BotoCoreError as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+
+
+def test_harvest_SUSHI_statistics(client, tmp_path, most_recent_month_with_usage, select_statistics_source_ID, S3_regex_and_teardown, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
-    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+    Ultimately, this test only checks that the POST action is successful, not that the SUSHI harvest is; testing that functionality is covered by the `tests.test_SUSHICallAndResponse` module.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        most_recent_month_with_usage (tuple): `begin_date` and `end_date` datetime.date values representing the most recent month with available data
+        select_statistics_source_ID (int): the primary key of a statisticsSources record
+        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file from a specific statistics source created on a specific day
+        header_value (dict): HTTP header data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` called in `StatisticsSources.collect_usage_statistics()` and for `query_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')
     
-    df = query_database(
-        query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
-        engine=engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
-    primary_key_list = change_single_field_dataframe_into_series(df).astype('string').to_list()
     form_input = {
-        'statistics_source': choice(primary_key_list),
+        'statistics_source': select_statistics_source_ID,
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
@@ -236,6 +286,18 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         headers=header_value,
         data=form_input,
     )
+    
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -248,8 +310,15 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
-    """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()` and `query_database()`
+    """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
     
     page = client.get(
         '/ingest_usage/upload-non-COUNTER',
@@ -269,30 +338,31 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    df = query_database(
-        query=f"""
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected=true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status='Collection not started' OR
-                    annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                );
-        """,
-        engine=engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
+    try:
+        df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = create_AUCT_SelectField_options(df)
 
     assert page.status == "200 OK"
@@ -302,8 +372,19 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
 
 
 def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, caplog):
-    """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.models')
 
     #Section: Create Form Submission
     if path_to_sample_file.suffix == '.json':
@@ -338,35 +419,27 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, tmp_path, non_
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(r"Usage file for .+--FY \d{4} uploaded successfully\.", prepare_HTML_page_for_comparison(POST_response.data))
+    assert re.search(r'Usage file for .+--FY \d{4} uploaded successfully to', prepare_HTML_page_for_comparison(POST_response.data))
     
     #Section: Confirm Successful Database Update
-    df = query_database(
-        query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
-        engine=engine,
-    )
+    try:
+        df = query_database(
+            query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     assert df.at[0,'collection_status'] == 'Collection complete'
     assert df.at[0,'usage_file_path'] == file_name
 
     #Section: Confirm Successful S3 Upload
-    list_objects_response = s3_client.list_objects_v2(
-        Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
-    )
-    log.debug(f"Raw contents of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET_FOR_TESTS}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}` (type {type(list_objects_response)}):\n{format_list_for_stdout(list_objects_response)}.")
-    files_in_bucket = []
-    bucket_contents = list_objects_response.get('Contents')
-    if bucket_contents:
-        for contents_dict in bucket_contents:
-            files_in_bucket.append(contents_dict['Key'])
-        files_in_bucket = [name.replace(f"{PATH_WITHIN_BUCKET_FOR_TESTS}", "") for name in files_in_bucket]
-        assert file_name in files_in_bucket
-    else:
-        assert False  # Nothing in bucket
+    S3_file_name = TEST_NON_COUNTER_FILE_PATH / file_name
+    files_in_bucket = list_files_in_bucket_location(S3_file_name.parent)
+    assert S3_file_name in files_in_bucket
     download_location = tmp_path / file_name
     s3_client.download_file(
         Bucket=BUCKET_NAME,
-        Key=PATH_WITHIN_BUCKET_FOR_TESTS + file_name,
+        Key=S3_file_name.key,
         Filename=download_location,
     )
     assert cmp(path_to_sample_file, download_location)

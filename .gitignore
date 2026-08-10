@@ -138,4 +138,6 @@ dmypy.json
 
 # Variable Test-Related Files
 tests/logs/*
-tests/data/transform_test_data*.json
+
+# AWS File Downloads
+AWS/*

@@ -1,22 +1,15 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2025-09-30 ##########
+########## Passing 2026-06-23 ##########
 
 import pytest
-import logging
-from pathlib import Path
-import os
 from random import choice
-import re
 from filecmp import cmp
 from ast import literal_eval
 from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from conftest import prepare_HTML_page_for_comparison
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 from nolcat.view_usage import *
 
 log = logging.getLogger(__name__)
@@ -52,7 +45,11 @@ def test_set_encoding():
 
 
 def test_view_usage_homepage(client):
-    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+    """
     page = client.get('/view_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -69,7 +66,13 @@ def test_view_usage_homepage(client):
 
 
 def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
-    """Tests running a user-written SQL query against the database and returning a CSV download."""
+    """Tests running a user-written SQL query against the database and returning a CSV download.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+    """
     form_input = {
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
         'open_in_Excel': False,
@@ -85,28 +88,37 @@ def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV):
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
-    """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+@pytest.fixture(params=[
+    ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+    ("DR_D1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
+    ("DR_D2", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Limit_Exceeded' OR metric_type='No_License');"),
+    ("TR_B1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+    # No TR_B2: no R5 resources have access denial metric types
+    ("TR_B3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests');"),
+    ("TR_J1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+    # No TR_J2: no R5 resources have access denial metric types
+    ("TR_J3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' Or metric_type='Unique_Item_Investigations' Or metric_type='Unique_Item_Requests');"),
+    ("TR_J4", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+    ("IR_A1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+    # No IR_M1: no R5 resources have multimedia data type
+])
+def test_use_predefined_SQL_query(request, engine, client, header_value, COUNTER_download_CSV, caplog):
+    """Tests providing a CSV download of the COUNTER R5 standard views.
 
-    query_options = choice((
-        ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-        ("DR_D1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
-        ("DR_D2", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Limit_Exceeded' OR metric_type='No_License');"),
-        ("TR_B1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-        # No TR_B2: no R5 resources have access denial metric types
-        ("TR_B3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests');"),
-        ("TR_J1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-        # No TR_J2: no R5 resources have access denial metric types
-        ("TR_J3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' Or metric_type='Unique_Item_Investigations' Or metric_type='Unique_Item_Requests');"),
-        ("TR_J4", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-        ("IR_A1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-        # No IR_M1: no R5 resources have multimedia data type
-    ))
+    Args:
+        request (tuple): the COUNTER standard report type; the SQL query matching that report
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+
     form_input = {
         'begin_date': '2016-07-01',
         'end_date': '2020-06-01',
-        'query_options': query_options[0],
+        'query_options': request.param[0],
         'open_in_Excel': False,
     }
     POST_response = client.post(
@@ -125,12 +137,13 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
         encoding_errors='backslashreplace',
     )
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    database_df = query_database(
-        query=query_options[1],
-        engine=engine,
-    )
-    if isinstance(database_df, str):
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=request.param[1],
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -140,21 +153,24 @@ def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download
 
 
 @pytest.fixture
-def start_query_wizard_form_data(engine):
+def start_query_wizard_form_data(engine, caplog):
     """Creates the form data for `start_query_wizard()`.
     
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         dict: form input for the form on "query-wizard-start.html"
     """
-    df = query_database(
-        query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
-        engine=engine,
-    )
-    if isinstance(df, str):
-        pytest.skip(database_function_skip_statements(df))
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    try:
+        df = query_database(
+            query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     df = df.sample().reset_index()
     yield {
         'begin_date': df.at[0,'usage_date'],
@@ -165,7 +181,13 @@ def start_query_wizard_form_data(engine):
 
 
 def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
-    """Tests the submission of the report type and date range to the query wizard."""
+    """Tests the submission of the report type and date range to the query wizard.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        start_query_wizard_form_data (dict): form input for the form on "query-wizard-start.html"
+    """
     POST_response = client.post(
         '/view_usage/query-wizard',
         headers=header_value,
@@ -179,6 +201,11 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
     """Tests that the query wizard accepts the report type and date range and redirects to the page showing the appropriate form.
     
     Because the function begin tested gets its input from the `start_query_wizard()` route function, the function being tested is accessed through a redirect from that route function. The same form input data is used as when testing that function for efficiency and to reduce the number of places the error could possibly originate if this test fails.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        start_query_wizard_form_data (dict): form input for the form on "query-wizard-start.html"
     """
     POST_response = client.post(
         '/view_usage/query-wizard',
@@ -265,8 +292,17 @@ def PR_parameters(request):
 
 
 def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        PR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -289,12 +325,13 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -403,8 +440,17 @@ def DR_parameters(request):
 
 
 def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        DR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = DR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -427,12 +473,13 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -770,8 +817,17 @@ def TR_parameters(request):
 
 
 def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        TR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = TR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -794,12 +850,13 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1092,8 +1149,17 @@ def IR_parameters(request):
 
 
 def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
-    """Tests downloading the results of a query for platform usage data constructed with a form."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    """Tests downloading the results of a query for platform usage data constructed with a form.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        IR_parameters (tuple): a `form_input` argument (dict); the SQL query that argument resolves to (str)
+        COUNTER_download_CSV (pathlib.Path): an absolute file path to a CSV download of COUNTER usage data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     form_input, query = IR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
@@ -1116,12 +1182,13 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}\nindex: {CSV_df.index}")
-    database_df = query_database(
-        query=query,
-        engine=engine,
-    )
-    if isinstance(database_df, str):
-        pytest.skip(database_function_skip_statements(database_df))
+    try:
+        database_df = query_database(
+            query=query,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     database_df = database_df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}\nindex: {database_df.index}")
 
@@ -1135,8 +1202,14 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
-    """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
+    """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
  
     page = client.get(
         '/view_usage/non-COUNTER-downloads',
@@ -1156,22 +1229,23 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = query_database(
-        query="""
-                SELECT
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year,
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
-            """,
-        engine=engine,
-    )
-    if isinstance(db_select_field_options, str):
-        pytest.skip(database_function_skip_statements(db_select_field_options))
+    try:
+        db_select_field_options = query_database(
+            query="""
+                    SELECT
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year,
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+                """,
+            engine=engine,
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"
@@ -1184,6 +1258,12 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form.
     
     The fixtures creating the annualUsageCollectionTracking instance called and creating the file that will be downloaded from S3 are separate, so the file extension, which is derived from the former, may not match the file, which comes from the latter.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        header_value (dict): HTTP header data
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+        non_COUNTER_file_to_download_from_S3 (pathlib.Path): an absolute file path to a randomly selected file that's also been temporarily uploaded to S3
     """
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method

@@ -23,7 +23,7 @@ digraph package_dependencies {
 
         Package included in 'requirements.txt`: `color="#782F40"`
         Package directly included in 'requirements.txt`: `penwidth=4`
-        Packages in 'requirements.txt' as automated dependencies: `style="bold"`
+        Packages in 'requirements.txt' as automated dependencies: `style="bold"` (may need to be changed to narrower penwidth in future)
     */
     /* Edge Types
         Dependency relationships go from installed package to dependency (required by) package and are listed under the former.
@@ -33,9 +33,7 @@ digraph package_dependencies {
     */
 
     aiobotocore [
-        label="\N==2.21.1"
-        color="#782F40"
-        penwidth=4
+        label="\N==2.26.0"
         shape="box"
     ]
     aiobotocore -> aiohttp
@@ -44,12 +42,12 @@ digraph package_dependencies {
     aiobotocore -> wrapt
 
     aiohappyeyeballs [
-        label="\N==2.5.*"
+        label="\N==2.6.1"
         shape="box"
     ]
 
     aiohttp [
-        label="\N==3.11.13"
+        label="\N==3.13.3"
         shape="box"
     ]
     aiohttp -> aiohappyeyeballs
@@ -61,12 +59,12 @@ digraph package_dependencies {
     aiohttp -> yarl
 
     aioitertools [
-        label="\N==0.12.0"
+        label="\N==0.13.0"
         shape="box"
     ]
 
     aiosignal [
-        label="\N==1.3.2"
+        label="\N==1.4.0"
         shape="box"
     ]
     aiosignal -> frozenlist
@@ -77,38 +75,37 @@ digraph package_dependencies {
     ]
 
     anyio [
-        label="\N==4.8.0"
+        label="\N==4.12.1"
         shape="box"
     ]
     anyio -> "typing_extensions"
     anyio -> idna
-    anyio -> sniffio
 
     attrs [
-        label="\N==25.1.0"
+        label="\N==25.4.0"
         shape="box"
     ]
 
-    awscli [
-        label="\N==1.38.*" // Glue default to awscli==1.23.5 --> 1.23.5
-        style="filled"
-        fillcolor="#FFC72C"
-        shape="cylinder"
-    ]
-    awscli -> botocore [style="dotted"]
-    awscli -> colorama [style="dotted"]
-    awscli -> docutils [style="dotted"]
-    awscli -> PyYAML [style="dotted"]
-    awscli -> rsa [style="dotted"]
-    awscli -> s3transfer [style="dotted"]
+    #awscli [
+    #    label="\N==1.38.*"
+    #    style="filled"
+    #    fillcolor="#FFC72C"
+    #    shape="cylinder"
+    #]
+    #awscli -> botocore [style="dotted"]
+    #awscli -> colorama [style="dotted"]
+    #awscli -> docutils [style="dotted"]
+    #awscli -> PyYAML [style="dotted"]
+    #awscli -> rsa [style="dotted"]
+    #awscli -> s3transfer [style="dotted"]
 
     Babel [
-        label="\N==2.17.0"
+        label="\N==2.18.0"
         shape="box"
     ]
 
     beautifulsoup4 [
-        label="\N==4.12.3"
+        label="\N==4.12.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -123,7 +120,7 @@ digraph package_dependencies {
     ]
 
     boto3 [
-        label="\N==1.37.1"
+        label="\N==1.41.5"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -135,7 +132,7 @@ digraph package_dependencies {
     boto3 -> s3transfer
 
     botocore [
-        label="\N==1.37.1"
+        label="\N==1.41.5"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -145,7 +142,7 @@ digraph package_dependencies {
     botocore -> urllib3
 
     Bottleneck [
-        label="\N==1.4.2"
+        label="\N==1.6.0"
         style="bold"
         color="#782F40"
         shape="box"
@@ -153,22 +150,31 @@ digraph package_dependencies {
     Bottleneck -> numpy
 
     certifi [
-        label="\N==2025.1.31"
+        label="\N==2026.2.25"
         shape="box"
     ]
 
     "charset-normalizer" [
-        label="\N==3.4.1"
+        label="\N==3.4.5"
         shape="box"
     ]
 
     click [
-        label="\N==8.1.8"
+        label="\N==8.3.1"
+        shape="box"
+    ]
+
+    cloudpathlib [
+        label="\N==0.23.*"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
         shape="box"
     ]
 
     colorama [
-        label="\N==0.4.*"
+        label="\N==0.4.6"
         shape="box"
     ]
 
@@ -183,7 +189,7 @@ digraph package_dependencies {
     ]
 
     Flask [
-        label="\N==3.0.3"
+        label="\N==3.1.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -208,7 +214,7 @@ digraph package_dependencies {
     "Flask-SQLAlchemy" -> SQLAlchemy
 
     "Flask-WTF" [
-        label="\N==1.2.1"
+        label="\N==1.2.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -220,19 +226,21 @@ digraph package_dependencies {
     "Flask-WTF" -> WTForms
 
     frozenlist [
-        label="\N==1.5.0"
+        label="\N==1.8.0"
         shape="box"
     ]
 
     fsspec [
-        label="\N==2025.3.0"
-        style="bold"
+        label="\N==2025.10.0"
+        style="filled"
+        fillcolor="#CEB888"
         color="#782F40"
+        penwidth=4
         shape="box"
     ]
 
     gevent [
-        label="\N==24.11.1"
+        label="\N==25.9.1"
         style="filled"
         fillcolor="#DFD1A7"
         shape="folder"
@@ -242,7 +250,7 @@ digraph package_dependencies {
     gevent -> "zope.interface" [style="dashed"]
 
     graphviz [
-        label="\N==0.20.3"
+        label="\N==0.21.*"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -251,12 +259,12 @@ digraph package_dependencies {
     ]
 
     greenlet [
-        label="\N==3.1.1"
+        label="\N==3.3.2"
         shape="box"
     ]
 
     gunicorn [
-        label="\N==23.0.0"
+        label="\N==25.1.0"
         style="filled"
         fillcolor="#DFD1A7"
         shape="folder"
@@ -264,22 +272,22 @@ digraph package_dependencies {
     gunicorn -> packaging [style="dashed"]
 
     h11 [
-        label="\N==0.14.0"
+        label="\N==0.16.0"
         shape="box"
     ]
 
     idna [
-        label="\N==3.10"
+        label="\N==3.11"
         shape="box"
     ]
 
     imagesize [
-        label="\N==1.4.1"
+        label="\N==2.0.0"
         shape="box"
     ]
 
     iniconfig [
-        label="\N==2.0.0"
+        label="\N==2.3.0"
         shape="box"
     ]
 
@@ -289,23 +297,23 @@ digraph package_dependencies {
     ]
 
     Jinja2 [
-        label="\N==3.1.*"
+        label="\N==3.1.6"
         shape="box"
     ]
     Jinja2 -> MarkupSafe
 
     jmespath [
-        label="\N==1.0.*"
+        label="\N==1.1.0"
         shape="box"
     ]
 
     llvmlite [
-        label="\N==0.44.0"
+        label="\N==0.46.0"
         shape="box"
     ]
 
     lxml [
-        label="\N==5.2.1"
+        label="\N==6.0.*"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -314,12 +322,12 @@ digraph package_dependencies {
     ]
 
     MarkupSafe [
-        label="\N==3.0.2"
+        label="\N==3.0.3"
         shape="box"
     ]
 
     multidict [
-        label="\N==6.1.0"
+        label="\N==6.7.1"
         shape="box"
     ]
 
@@ -332,14 +340,14 @@ digraph package_dependencies {
     mysql -> mysqlclient
 
     mysqlclient [
-        label="\N==2.2.4"
+        label="\N==2.2.*"
         color="#782F40"
         penwidth=4
         shape="box"
     ]
 
     numba [
-        label="\N==0.61.0"
+        label="\N==0.64.0"
         style="bold"
         color="#782F40"
         shape="box"
@@ -348,7 +356,7 @@ digraph package_dependencies {
     numba -> numpy
 
     numexpr [
-        label="\N==2.10.2"
+        label="\N==2.14.1"
         style="bold"
         color="#782F40"
         shape="box"
@@ -356,14 +364,14 @@ digraph package_dependencies {
     numexpr -> numpy
 
     numpy [
-        label="\N==2.1.3"
+        label="\N==2.4.3"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
     ]
 
     openpyxl [
-        label="\N==3.1.2"
+        label="\N==3.1.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -373,12 +381,12 @@ digraph package_dependencies {
     openpyxl -> "et-xmlfile"
 
     packaging [
-        label="\N==24.2"
+        label="\N==26.0"
         shape="box"
     ]
 
     pandas [
-        label="\N==2.2.2"
+        label="\N==2.3.3"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -386,25 +394,10 @@ digraph package_dependencies {
         shape="box"
     ]
     pandas -> numpy
-    pandas -> "pandas[aws]"
-    pandas -> "pandas[parquet]"
     pandas -> "pandas[performance]"
     pandas -> "python-dateutil"
     pandas -> pytz
     pandas -> tzdata
-
-    "pandas[aws]" [
-        color="#782F40"
-        shape="box"
-    ]
-    "pandas[aws]" -> fsspec
-    "pandas[aws]" -> s3fs
-
-    "pandas[parquet]" [
-        color="#782F40"
-        shape="box"
-    ]
-    "pandas[parquet]" -> pyarrow
 
     "pandas[performance]" [
         color="#782F40"
@@ -415,31 +408,33 @@ digraph package_dependencies {
     "pandas[performance]" -> numexpr
 
     pluggy [
-        label="\N==1.5.0"
+        label="\N==1.6.0"
         shape="box"
     ]
 
     propcache [
-        label="\N==0.3.0"
+        label="\N==0.4.1"
         shape="box"
     ]
 
     pyarrow [
-        label="\N==19.0.1"
-        style="bold"
-        color="#782f40"
+        label="\N==23.0.*"
+        style="filled"
+        fillcolor="#CEB888"
+        color="#782F40"
+        penwidth=4
         shape="box"
     ]
     pyarrow -> numpy
 
-    pyasn1 [
-        label="\N==0.6.1" // Glue default to awscli==1.23.5 --> 0.4.8
-        style="dotted"
-        shape="cylinder"
-    ]
+    #pyasn1 [
+    #    label="\N==0.6.1"
+    #    style="dotted"
+    #    shape="cylinder"
+    #]
 
     Pygments [
-        label="\N==2.19.1"
+        label="\N==2.19.2"
         shape="box"
     ]
 
@@ -460,7 +455,7 @@ digraph package_dependencies {
     ]
 
     pytest [
-        label="\N==8.2.0"
+        label="\N==8.4.2"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -472,7 +467,7 @@ digraph package_dependencies {
     pytest -> pluggy
 
     "pytest-dependency" [
-        label="\N==0.6.0"
+        label="\N==0.6.*"
         color="#782F40"
         penwidth=4
         shape="box"
@@ -497,18 +492,18 @@ digraph package_dependencies {
     "python-dateutil" -> six
 
     pytz [
-        label="\N==2025.1"
+        label="\N==2026.1.post1"
         shape="box"
     ]
 
-    PyYAML [
-        label="\N==6.0.2" // Glue default to awscli==1.23.5 --> 5.4.1
-        style="dotted"
-        shape="cylinder"
-    ]
+    #PyYAML [
+    #    label="\N==6.0.2"
+    #    style="dotted"
+    #    shape="cylinder"
+    #]
 
     requests [
-        label="\N==2.31.0"
+        label="\N==2.32.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -530,17 +525,19 @@ digraph package_dependencies {
     ]
     "requests-toolbelt" -> requests
 
-    rsa [
-        label="\N==4.7.2"
-        style="dotted"
-        shape="cylinder"
-    ]
-    rsa -> pyasn1 [style="dotted"]
+    #rsa [
+    #    label="\N==4.7.2"
+    #    style="dotted"
+    #    shape="cylinder"
+    #]
+    #rsa -> pyasn1 [style="dotted"]
 
     s3fs [
-        label="\N==2025.3.0"
-        style="bold"
+        label="\N==2025.10.0"
+        style="filled"
+        fillcolor="#CEB888"
         color="#782F40"
+        penwidth=4
         shape="box"
     ]
     s3fs -> aiobotocore
@@ -548,7 +545,7 @@ digraph package_dependencies {
     s3fs -> fsspec
 
     s3transfer [
-        label="\N==0.11.3"
+        label="\N==0.15.0"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -556,7 +553,7 @@ digraph package_dependencies {
     s3transfer -> botocore
 
     setuptools [
-        label="\N==76.0.0"
+        label="\N==82.0.1"
         shape="box"
     ]
 
@@ -565,23 +562,19 @@ digraph package_dependencies {
         shape="box"
     ]
 
-    sniffio [
-        label="\N==1.3.1"
-        shape="box"
-    ]
-
     snowballstemmer [
-        label="\N==2.2.0"
+        label="\N==3.0.1"
         shape="box"
     ]
 
     soupsieve [
-        label="\N==2.6"
+        label="\N==2.8.3"
         shape="box"
     ]
 
     Sphinx [
-        label="\N==7.3.7"
+        label="\N==7.4.*"
+        // With `awscli`, use 5.3.0
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -605,7 +598,7 @@ digraph package_dependencies {
     Sphinx -> "sphinxcontrib-serializinghtml"
 
     "sphinx-autobuild" [
-        label="\N==2024.10.3"
+        label="\N==2025.8.25"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -620,7 +613,7 @@ digraph package_dependencies {
     "sphinx-autobuild" -> websockets
 
     "sphinx-autodocgen" [
-        label="\N==1.3"
+        label="\N==1.4"
         style="filled"
         fillcolor="#DFD1A7"
         color="#782F40"
@@ -660,7 +653,7 @@ digraph package_dependencies {
     ]
 
     SQLAlchemy [
-        label="\N==2.0.29"
+        label="\N==2.0.*"
         style="filled"
         fillcolor="#CEB888"
         color="#782F40"
@@ -671,7 +664,7 @@ digraph package_dependencies {
     SQLAlchemy -> "typing_extensions"
 
     starlette [
-        label="\N==0.46.*"
+        label="\N==0.52.1"
         shape="box"
     ]
     starlette -> anyio
@@ -682,40 +675,40 @@ digraph package_dependencies {
     ]
 
     "typing_extensions" [
-        label="\N==4.12.2"
+        label="\N==4.15.0"
         shape="box"
     ]
 
     tzdata [
-        label="\N==2025.1"
+        label="\N==2025.3"
         shape="box"
     ]
 
     urllib3 [
-        label="\N==2.3.0"
+        label="\N==2.6.3"
         shape="box"
     ]
 
     uvicorn [
-        label="\N==0.34.0"
+        label="\N==0.41.0"
         shape="box"
     ]
     uvicorn -> click
     uvicorn -> h11
 
     watchfiles [
-        label="\N==1.0.4"
+        label="\N==1.1.1"
         shape="box"
     ]
     watchfiles -> anyio
 
     websockets [
-        label="\N==15.0.*"
+        label="\N==16.0"
         shape="box"
     ]
 
     Werkzeug [
-        label="\N==3.1.3"
+        label="\N==3.1.6"
         style="filled"
         fillcolor="#CEB888"
         shape="box"
@@ -723,7 +716,7 @@ digraph package_dependencies {
     Werkzeug -> MarkupSafe
 
     wrapt [
-        label="\N==1.17.2"
+        label="\N==1.17.3"
         shape="box"
     ]
 
@@ -738,7 +731,7 @@ digraph package_dependencies {
     WTForms -> MarkupSafe
 
     yarl [
-        label="\N==1.18.3"
+        label="\N==1.23.0"
         shape="box"
     ]
     yarl -> idna
@@ -746,14 +739,14 @@ digraph package_dependencies {
     yarl -> propcache
 
     "zope.event" [
-        label="\N==5.0"
+        label="\N==6.1"
         style="dashed"
         shape="box"
     ]
     "zope.event" -> setuptools [style="dashed"]
 
     "zope.interface" [
-        label="\N==7.2"
+        label="\N==8.2"
         style="dashed"
         shape="box"
     ]
