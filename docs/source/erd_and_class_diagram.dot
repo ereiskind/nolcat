@@ -311,6 +311,28 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_UploadExcelCOUNTERReports {
+        label="CLASS: UploadExcelCOUNTERReports"
+
+        // Attributes
+        COUNTER_report_files
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_ConvertExcelDfToParquet {
+        label="CLASS: ConvertExcelDfToParquet"
+
+        // Attributes
+        df_from_Excel
+
+        // Methods
+        convert_to_parquet [shape="Mrecord"]
+    }
+
+
     subgraph cluster_ConvertJSONDictToParquet {
         label="CLASS: ConvertJSONDictToParquet"
 

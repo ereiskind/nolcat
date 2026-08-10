@@ -611,6 +611,20 @@ digraph function_call_chains {
             _extraction_start_logging_statement [shape="box"]
             _extraction_complete_logging_statement [shape="box"]
         }
+        subgraph cluster_UploadExcelCOUNTERReports {
+            label="nolcat.nolcat_glue_job.UploadExcelCOUNTERReports"
+            penwidth=5
+            style="rounded"
+
+            create_dataframe [shape="box"]
+        }
+        subgraph cluster_ConvertExcelDfToParquet {
+            label="nolcat.nolcat_glue_job.ConvertExcelDfToParquet"
+            penwidth=5
+            style="rounded"
+
+            convert_to_parquet [shape="box"]
+        }
         unable_to_delete_test_file_in_S3_statement [shape="box"]
         prepare_HTML_page_for_comparison [shape="box"]
         remove_file_from_S3 [shape="folder"]
@@ -1295,6 +1309,22 @@ digraph function_call_chains {
             shape="box"
         ]
         test_create_parquet [
+            style="dashed"
+            shape="folder"
+        ]
+        sample_COUNTER_report_workbook [
+            style="dotted"
+            shape="box"
+        ]
+        sample_COUNTER_report_workbooks [
+            style="dotted"
+            shape="box"
+        ]
+        test_create_dataframe [
+            style="dashed"
+            shape="box"
+        ]
+        test_convert_to_parquet [
             style="dashed"
             shape="box"
         ]

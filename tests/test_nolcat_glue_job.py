@@ -712,7 +712,7 @@ def test_fetch_URL_from_COUNTER_Registry_failure():
     assert URL_regex().fullmatch(registry_URL)
 
 
-#SECTION: `ConvertJSONDictToParquet()` Tests
+#SECTION: `ConvertJSONDictToParquet` Tests
 @pytest.fixture
 def R5_JSON_3_PR_relation():
     """Creates a dataframe of test data based on the COUNTER data in the `3_PR.json` JSON."""
@@ -6153,3 +6153,62 @@ def test_create_parquet(tmp_path, JSON_dicts_with_metadata, caplog):
     )
     df_from_S3 = pd.read_parquet(download_location)
     assert_frame_equal(df_from_S3, df_from_fixture[df_from_S3.columns.tolist()])
+
+
+#SECTION: `UploadExcelCOUNTERReports` and `ConvertExcelDfToParquet` Tests
+@pytest.fixture
+def sample_COUNTER_report_workbook(create_COUNTERData_workbook_iterdir_list):
+    """Creates a mock_FileStorage_object object enclosed in a list for use in testing the `UploadCOUNTERReports` class.
+    
+    The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+
+    Yields:
+        list: a mock_FileStorage_object object enclosed in a list simulating a single file selected in a MultipleFileField field
+    """
+    yield [mock_FileStorage_object(choice(create_COUNTERData_workbook_iterdir_list))]
+
+
+@pytest.fixture
+def sample_COUNTER_report_workbooks(create_COUNTERData_workbook_iterdir_list):
+    """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
+    
+    The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
+
+    Args:
+        create_COUNTERData_workbook_iterdir_list (list): the results of `iterdir()` on the `COUNTER_workbooks_for_tests` folder
+
+    Yields:
+        list: a list of mock_FileStorage_object object(s) simulating multiple files selected in a MultipleFileField field
+    """
+    fixture = []
+    for workbook in create_COUNTERData_workbook_iterdir_list:
+        fixture.append(mock_FileStorage_object(workbook))
+    yield fixture
+
+
+@pytest.fixture(params=[
+    sample_COUNTER_report_workbook,
+    sample_COUNTER_report_workbooks,
+])
+def test_create_dataframe(request):
+    """Tests uploading Excel workbook(s) with COUNTER data into a dataframe.
+
+    Args:
+        request (list): a simulation of Excel file(s) selected in a MultipleFileField field
+    """
+    pass
+
+
+@pytest.fixture(params=[
+    #
+])
+def test_convert_to_parquet(request):
+    """Tests saving dataframes containg data from uploaded Excel file(s) to S3 as parquet files.
+
+    Args:
+        request (dataframe): a dataframe with data from uploaded Excel file(s)
+    """
+    pass
