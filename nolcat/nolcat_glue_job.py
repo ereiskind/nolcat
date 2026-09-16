@@ -1809,13 +1809,9 @@ class ConvertJSONDictToParquet:
                     include_in_df_dtypes['publisher'] = 'string'
                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("publisher", record_in_report_items['publisher']))
 
-                #Subsection: Capture `publisher_ID` or `parent_publisher_ID`Value
+                #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":  # Code below not tested
-                    if report_type == "IR":
-                        field = "parent_publisher_ID"
-                    else:
-                        field = "publisher_ID"
-                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.{field}`"))
+                    self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, f"`COUNTERData.publisher_ID`"))
                     if isinstance(value, dict) and len(value) == 1:
                         value = list(value.values())[0]
                     elif isinstance(value, list) and len(value) == 1:
@@ -1825,8 +1821,8 @@ class ConvertJSONDictToParquet:
                     else:
                         self._log.debug(f"The value '{value}' wasn't in a parsable format for the publisher_ID field.")
                         continue
-                    record_in_report_items[field] = value
-                    include_in_df_dtypes[field] = 'string'
+                    record_in_report_items['publisher_ID'] = value
+                    include_in_df_dtypes['publisher_ID'] = 'string'
                     self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement(field, record_in_report_items[field]))
 
                 #Subsection: Capture `platform` Value
