@@ -1874,7 +1874,7 @@ class ConvertJSONDictToParquet:
 
                 #Subsection: Capture Standard Identifiers or Parent Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
-                elif key == "Item_ID":
+                elif key == "Item_ID" and value:  # Second clause prevents error of empty list going to generator
                     if report_type == "DR" or report_type == "TR":
                         self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(value, key, "the standard ID fields"))
                     else:
@@ -2084,7 +2084,7 @@ class ConvertJSONDictToParquet:
                             self._log.debug(ConvertJSONDictToParquet._extraction_complete_logging_statement("article_version", record_in_items['article_version']))
 
                         #Subsection: Capture Standard Identifiers
-                        elif items_key == "Item_ID":
+                        elif items_key == "Item_ID" and value:  # Second clause prevents error of empty list going to generator
                             self._log.debug(ConvertJSONDictToParquet._extraction_start_logging_statement(items_value, items_key, "the standard ID fields"))
                             for ID_type, ID_value in items_value.items():
 
