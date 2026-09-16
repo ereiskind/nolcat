@@ -2,7 +2,6 @@
 
 import pandas as pd
 
-from nolcat.app import *
 from nolcat.models import *
 
 
@@ -56,24 +55,27 @@ def annualStatistics_relation():
 
 
 def vendors_relation():
-    """Creates a dataframe of test data for the `vendors` relation."""
+    """Creates a dataframe of test data for the `vendors` relation.
+    
+    Because this relation has only two fields including the primary key, this is a pandas series object rather than a dataframe.
+    """
     log.info("Starting `vendors_relation()`.")
-    df = pd.DataFrame(
-        [
-            ["ProQuest", None],
-            ["EBSCO", None],
-            ["Gale", None],
-            ["iG Publishing/BEP", None],
-            ["Ebook Library", None],
-            ["Ebrary", None],
-            ["MyiLibrary", None],
-            ["Duke UP", None],
+    series = pd.Series(
+        data=[
+            "ProQuest",
+            "EBSCO",
+            "Gale",
+            "iG Publishing/BEP",
+            "Ebook Library",
+            "Ebrary",
+            "MyiLibrary",
+            "Duke UP",
         ],
-        columns=["vendor_name", "alma_vendor_code"],
+        name="vendor_name",
     )
-    df.index.name = "vendor_ID"
-    df = df.astype(Vendors.state_data_types())
-    return df
+    series.index.name = "vendor_ID"
+    series = series.astype(Vendors.state_data_types())
+    return series
 
 
 def vendorNotes_relation():
@@ -98,10 +100,10 @@ def statisticsSources_relation():
     log.info("Starting `statisticsSources_relation()`.")
     df = pd.DataFrame(
         [
-            ["ProQuest", "1", 0],
-            ["EBSCOhost", "2", 1],
+            ["ProQuest", "56bdf474-5297-45f0-841f-4083725b4595", 0],  # Registry ID for John Benjamins
+            ["EBSCOhost", "6839b3e4-1a57-413e-9b3f-9faa4df06d54", 1],  # Registry ID for SAGE/CQ Press
             ["Gale Cengage Learning", None, 2],
-            ["Duke UP", "3", 7],
+            ["Duke UP", "da757bb5-4a5e-449b-9434-81eb33cfc696", 7],  # Registry ID for SIAM; Duke UP Registry ID `dd585e77-6351-4548-b679-f2d337d15cdb`
             ["iG Library/Business Expert Press (BEP)", None, 3],
             ["DemographicsNow", None, 2],
             ["Ebook Central", None, 0],
@@ -347,7 +349,7 @@ def annualUsageCollectionTracking_relation():
             [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
             [True, True, False, False, "Collection complete", "11_3.csv", None],
             [True, True, False, False, "Collection complete", "11_4.csv", None],
-            [True, False, False, False, "Collection not started", None, "This is the record for `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`"],
+            [True, False, False, False, "Collection not started", None, None],
         ],
         index=multiindex,
         columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],

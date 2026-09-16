@@ -1,5 +1,3 @@
-import logging
-from pathlib import Path
 import re
 from flask import render_template
 from flask import redirect
@@ -11,9 +9,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import *
 from ..models import *
-from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -49,8 +45,12 @@ def collect_FY_and_vendor_data():
             log.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
-        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        if fiscalYears_dataframe['start_date'].dtype == 'object':  # `isisntance()` doesn't work
+            fiscalYears_dataframe['start_date'] = pd.to_datetime(fiscalYears_dataframe['start_date'], errors='coerce')
+        if fiscalYears_dataframe['end_date'].dtype == 'object':  # `isisntance()` doesn't work
+            fiscalYears_dataframe['end_date'] = pd.to_datetime(fiscalYears_dataframe['end_date'], errors='coerce')
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
@@ -104,45 +104,55 @@ def collect_FY_and_vendor_data():
             log.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
-        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
+        if vendorNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
+            vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], errors='coerce')
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
 
         #Section: Load Data into Database
         data_load_errors = []
-        fiscalYears_load_result = load_data_into_database(
-            df=fiscalYears_dataframe,
-            relation='fiscalYears',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(fiscalYears_load_result):
-            data_load_errors.append(fiscalYears_load_result)
-        annualStatistics_load_result = load_data_into_database(
-            df=annualStatistics_dataframe,
-            relation='annualStatistics',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(annualStatistics_load_result):
-            data_load_errors.append(annualStatistics_load_result)
-        vendors_load_result = load_data_into_database(
-            df=vendors_dataframe,
-            relation='vendors',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(vendors_load_result):
-            data_load_errors.append(vendors_load_result)
-        vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        try:
+            fiscalYears_load_result = load_data_into_database(
+                df=fiscalYears_dataframe,
+                relation='fiscalYears',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as fiscalYears_load_error:
+            data_load_errors.append(fiscalYears_load_error)
+        try:
+            annualStatistics_load_result = load_data_into_database(
+                df=annualStatistics_dataframe,
+                relation='annualStatistics',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as annualStatistics_load_error:
+            data_load_errors.append(annualStatistics_load_error)
+        try:
+            vendors_load_result = load_data_into_database(
+                df=vendors_dataframe,
+                relation='vendors',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as vendors_load_error:
+            data_load_errors.append(vendors_load_error)
+        try:
+            vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         vendorNotes_dataframe.index.name = 'vendor_notes_ID'
-        vendorNotes_load_result = load_data_into_database(
-            df=vendorNotes_dataframe,
-            relation='vendorNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
-            data_load_errors.append(vendorNotes_load_result)
+        try:
+            vendorNotes_load_result = load_data_into_database(
+                df=vendorNotes_dataframe,
+                relation='vendorNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as vendorNotes_load_error:
+            data_load_errors.append(vendorNotes_load_error)
         if data_load_errors:
+            log.debug(data_load_errors)
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         
@@ -197,8 +207,10 @@ def collect_sources_data():
             log.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
-        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
+        if statisticsSourceNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
+            statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], errors='coerce')
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
@@ -216,8 +228,10 @@ def collect_sources_data():
             log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
-        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
+        if resourceSources_dataframe['access_stop_date'].dtype == 'object':  # `isisntance()` doesn't work
+            resourceSources_dataframe['access_stop_date'] = pd.to_datetime(resourceSources_dataframe['access_stop_date'], errors='coerce')
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
@@ -234,8 +248,10 @@ def collect_sources_data():
             log.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
-        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_format` argument
+        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their inclusion raises DateParseError
         log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
+        if resourceSourceNotes_dataframe['date_written'].dtype == 'object':  # `isisntance()` doesn't work
+            resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], errors='coerce')
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
@@ -257,46 +273,58 @@ def collect_sources_data():
 
         #Section: Load Data into Database
         data_load_errors = []
-        statisticsSources_load_result = load_data_into_database(
-            df=statisticsSources_dataframe,
-            relation='statisticsSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsSources_load_result):
-            data_load_errors.append(statisticsSources_load_result)
-        statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        try:
+            statisticsSources_load_result = load_data_into_database(
+                df=statisticsSources_dataframe,
+                relation='statisticsSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsSources_load_error:
+            data_load_errors.append(statisticsSources_load_error)
+        try:
+            statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
-        statisticsSourceNotes_load_result = load_data_into_database(
-            df=statisticsSourceNotes_dataframe,
-            relation='statisticsSourceNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsSourceNotes_load_result):
-            data_load_errors.append(statisticsSourceNotes_load_result)
-        resourceSources_load_result = load_data_into_database(
-            df=resourceSources_dataframe,
-            relation='resourceSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(resourceSources_load_result):
-            data_load_errors.append(resourceSources_load_result)
-        resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        try:
+            statisticsSourceNotes_load_result = load_data_into_database(
+                df=statisticsSourceNotes_dataframe,
+                relation='statisticsSourceNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsSourceNotes_load_error:
+            data_load_errors.append(statisticsSourceNotes_load_error)
+        try:
+            resourceSources_load_result = load_data_into_database(
+                df=resourceSources_dataframe,
+                relation='resourceSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as resourceSources_load_error:
+            data_load_errors.append(resourceSources_load_error)
+        try:
+            resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        except DatabaseInteractionError as error:
+            data_load_errors.append(error)
         resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
-        resourceSourceNotes_load_result = load_data_into_database(
-            df= resourceSourceNotes_dataframe,
-            relation='resourceSourceNotes',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(resourceSourceNotes_load_result):
-            data_load_errors.append(resourceSourceNotes_load_result)
-        statisticsResourceSources_load_result = load_data_into_database(
-            df=statisticsResourceSources_dataframe,
-            relation='statisticsResourceSources',
-            engine=db.engine,
-        )
-        if not load_data_into_database_success_regex().fullmatch(statisticsResourceSources_load_result):
-            data_load_errors.append(statisticsResourceSources_load_result)
+        try:
+            resourceSourceNotes_load_result = load_data_into_database(
+                df= resourceSourceNotes_dataframe,
+                relation='resourceSourceNotes',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as resourceSourceNotes_load_error:
+            data_load_errors.append(resourceSourceNotes_load_error)
+        try:
+            statisticsResourceSources_load_result = load_data_into_database(
+                df=statisticsResourceSources_dataframe,
+                relation='statisticsResourceSources',
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as statisticsResourceSources_load_error:
+            data_load_errors.append(statisticsResourceSources_load_error)
         if data_load_errors:
+            log.debug(data_load_errors)
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_sources_data'))
         
@@ -321,13 +349,16 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        df = query_database(
-            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
-            engine=db.engine,
-            index=["statistics_source_ID", "fiscal_year_ID"],
-        )
-        if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+        try:
+            df = query_database(
+                query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears ORDER BY statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID;",  # The ORDER BY keeps the indexes in order for testing
+                engine=db.engine,
+                index=["statistics_source_ID", "fiscal_year_ID"],
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
@@ -361,17 +392,18 @@ def collect_AUCT_and_historical_COUNTER_data():
             )
             log.debug(f"Successfully created `annualUsageCollectionTracking` relation template CSV at {template_save_location}.")
         except Exception as error:
-            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised the error {error}.")
+            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised '{error}'.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
                 log.error(message)
                 for relation in ['statisticsSources', 'statisticsSourceNotes', 'resourceSources', 'resourceSourceNotes', 'statisticsResourceSources']:
-                    update_result = update_database(
-                        update_statement=f"Truncate {relation};",
-                        engine=db.engine,
-                    )
-                    if not update_database_success_regex().fullmatch(update_result):
-                        message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
+                    try:
+                        update_result = update_database(
+                            update_statement=f"TRUNCATE {relation};",
+                            engine=db.engine,
+                        )
+                    except DatabaseInteractionError as error:
+                        message = f"Unable to truncate `{relation}` relation, requiring initialization wizard restart--{error}\n"
                         log.critical(message)
                         flash(message)
                         return redirect(url_for('initialization.collect_FY_and_vendor_data'))
@@ -416,7 +448,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 if data_not_in_df:
                     messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
             except Exception as error:
-                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                message = f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -425,11 +457,12 @@ def collect_AUCT_and_historical_COUNTER_data():
             try:
                 COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
             except Exception as error:
-                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised '{error}'."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             if COUNTER_reports_df is None:
+                log.debug(message_to_flash)
                 flash(message_to_flash)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             if message_to_flash:
@@ -437,36 +470,39 @@ def collect_AUCT_and_historical_COUNTER_data():
             
             try:
                 COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-            except Exception as error:
-                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-                log.warning(message)
-                messages_to_flash.append(message)
+            except DatabaseInteractionError as error:
+                log.warning(error)
+                messages_to_flash.append(error)
                 flash(messages_to_flash)
                 return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
             log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
             log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
 
         #Subsection: Load Data into Database
-        annualUsageCollectionTracking_load_result = load_data_into_database(
-            df=AUCT_dataframe,
-            relation='annualUsageCollectionTracking',
-            engine=db.engine,
-            index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-        )
-        if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
-            messages_to_flash.append(annualUsageCollectionTracking_load_result)
+        try:
+            annualUsageCollectionTracking_load_result = load_data_into_database(
+                df=AUCT_dataframe,
+                relation='annualUsageCollectionTracking',
+                engine=db.engine,
+                index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+            )
+        except DatabaseInteractionError as annualUsageCollectionTracking_load_error:
+            messages_to_flash.append(annualUsageCollectionTracking_load_error)
+            log.debug(messages_to_flash)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         if COUNTER_reports_df is not None:  # `is not None` required--when `COUNTER_reports_df` is a dataframe, error about ambiguous truthiness of dataframes raised
-            COUNTERData_load_result = load_data_into_database(
-                df=COUNTER_reports_df,
-                relation='COUNTERData',
-                engine=db.engine,
-                index_field_name='COUNTER_data_ID',
-            )
-            if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
-                messages_to_flash.append(COUNTERData_load_result)
+            try:
+                COUNTERData_load_result = load_data_into_database(
+                    df=COUNTER_reports_df,
+                    relation='COUNTERData',
+                    engine=db.engine,
+                    index_field_name='COUNTER_data_ID',
+                )
+            except DatabaseInteractionError as COUNTERData_load_error:
+                messages_to_flash.append(COUNTERData_load_error)
         if messages_to_flash:
+            log.debug(messages_to_flash)
             flash(messages_to_flash)
         return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
 
@@ -490,30 +526,33 @@ def upload_historical_non_COUNTER_usage(testing):
     log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     form = HistoricalNonCOUNTERForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = query_database(
-            query=f"""
-                SELECT
-                    annualUsageCollectionTracking.AUCT_statistics_source,
-                    annualUsageCollectionTracking.AUCT_fiscal_year,
-                    statisticsSources.statistics_source_name,
-                    fiscalYears.fiscal_year
-                FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected=true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
-                    annualUsageCollectionTracking.usage_file_path IS NULL AND
-                    (
-                        annualUsageCollectionTracking.collection_status='Collection not started' OR
-                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
-                    );
-            """,
-            engine=db.engine,
-        )
-        if isinstance(non_COUNTER_files_needed, str):
-            flash(database_query_fail_statement(non_COUNTER_files_needed))
+        try:
+            non_COUNTER_files_needed = query_database(
+                query=f"""
+                    SELECT
+                        annualUsageCollectionTracking.AUCT_statistics_source,
+                        annualUsageCollectionTracking.AUCT_fiscal_year,
+                        statisticsSources.statistics_source_name,
+                        fiscalYears.fiscal_year
+                    FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                    WHERE
+                        annualUsageCollectionTracking.usage_is_being_collected=true AND
+                        annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                        annualUsageCollectionTracking.usage_file_path IS NULL AND
+                        (
+                            annualUsageCollectionTracking.collection_status='Collection not started' OR
+                            annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                            annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                        );
+                """,
+                engine=db.engine,
+            )
+        except DatabaseInteractionError as error:
+            message = f"Unable to load page--{error}"
+            log.warning(message)
+            flash(message)
             return redirect(url_for('initialization.data_load_complete'))
         list_of_non_COUNTER_usage = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         form = HistoricalNonCOUNTERForm(usage_files = [{"usage_file": non_COUNTER_usage[1]} for non_COUNTER_usage in list_of_non_COUNTER_usage])
@@ -532,29 +571,30 @@ def upload_historical_non_COUNTER_usage(testing):
                     log.warning(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
-                df = query_database(
-                    query=f"""
-                        SELECT
-                            annualUsageCollectionTracking.AUCT_statistics_source,
-                            fiscalYears.fiscal_year_ID,
-                            annualUsageCollectionTracking.usage_is_being_collected,
-                            annualUsageCollectionTracking.manual_collection_required,
-                            annualUsageCollectionTracking.collection_via_email,
-                            annualUsageCollectionTracking.is_COUNTER_compliant,
-                            annualUsageCollectionTracking.collection_status,
-                            annualUsageCollectionTracking.usage_file_path,
-                            annualUsageCollectionTracking.notes
-                        FROM annualUsageCollectionTracking
-                        JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-                        WHERE
-                            annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
-                            fiscalYears.fiscal_year='{fiscal_year}';
-                    """,
-                    engine=db.engine,
-                )
-                if isinstance(df, str):
-                    message = database_query_fail_statement(df, f"upload the usage file for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}")
-                    log.error(message)
+                try:
+                    df = query_database(
+                        query=f"""
+                            SELECT
+                                annualUsageCollectionTracking.AUCT_statistics_source,
+                                fiscalYears.fiscal_year_ID,
+                                annualUsageCollectionTracking.usage_is_being_collected,
+                                annualUsageCollectionTracking.manual_collection_required,
+                                annualUsageCollectionTracking.collection_via_email,
+                                annualUsageCollectionTracking.is_COUNTER_compliant,
+                                annualUsageCollectionTracking.collection_status,
+                                annualUsageCollectionTracking.usage_file_path,
+                                annualUsageCollectionTracking.notes
+                            FROM annualUsageCollectionTracking
+                            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                            WHERE
+                                annualUsageCollectionTracking.AUCT_statistics_source={statistics_source_ID} AND
+                                fiscalYears.fiscal_year='{fiscal_year}';
+                        """,
+                        engine=db.engine,
+                    )
+                except DatabaseInteractionError as error:
+                    message = f"Unable to load page for statistics_source_ID {statistics_source_ID} and fiscal year {fiscal_year}--{error}"
+                    log.warning(message)
                     flash_error_messages[file['usage_file'].filename] = message
                     continue
                 AUCT_object = AnnualUsageCollectionTracking(
@@ -570,25 +610,24 @@ def upload_historical_non_COUNTER_usage(testing):
                 )
                 log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", AUCT_object))
                 if testing == "":
-                    bucket_path = PATH_WITHIN_BUCKET
+                    bucket_path = PRODUCTION_NON_COUNTER_FILE_PATH
                 elif testing == "test":
-                    bucket_path = PATH_WITHIN_BUCKET_FOR_TESTS
+                    bucket_path = TEST_NON_COUNTER_FILE_PATH
                 else:
                     message = f"The dynamic route featured the invalid value {testing}."
                     log.error(message)
                     flash(message)
                     return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
-                response = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
-                if upload_nonstandard_usage_file_success_regex().fullmatch(response):
-                    log.debug(response)
-                    files_uploaded += 1
-                elif re.fullmatch(r"Successfully loaded the file .+ into the .+ S3 bucket, but updating the .+ relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n.+", response, flags=re.DOTALL):
-                    log.warning(response)
-                    flash_error_messages[file['usage_file'].filename] = response
+                try:
+                    S3_file_name = AUCT_object.upload_nonstandard_usage_file(file['usage_file'], bucket_path)
+                except Exception as error:
+                    log.error(error)
+                    flash_error_messages[file['usage_file'].filename] = error
                 else:
-                    log.warning(response)
-                    flash_error_messages[file['usage_file'].filename] = response
-        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload}files.")
+                    log.debug(f"File successfully uploaded to {S3_file_name}")
+                    files_uploaded += 1
+        log.info(f"Successfully uploaded {files_uploaded} of {files_submitted_for_upload} files.")
+        flash(flash_error_messages)
         return redirect(url_for('initialization.data_load_complete'))
     else:
         message = Flask_error_statement(form.errors)

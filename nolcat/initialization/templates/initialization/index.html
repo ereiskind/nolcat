@@ -37,7 +37,6 @@
     <ol>
         <li>Download <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_vendors.csv') }}">"initialize_vendors.csv"</a>.</li>
         <li>In the `vendor_name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
-        <li>For all of the above values that have vendor codes in Alma, add those codes to the `alma_vendor_code` field.</li>
         <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `vendor_ID` field.</li>
         <li>Download <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_vendorNotes.csv') }}">"initialize_vendorNotes.csv"</a>.</li>
         <li>For every note on a vendor that needs to be added, in the `vendor_ID` field, put the `vendor_ID` value for the vendor from the "initialize_vendors.csv" file, then fill out the `note`, `written_by`, and `date_written` fields.</li>

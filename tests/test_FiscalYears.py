@@ -1,17 +1,14 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2025-09-29 ##########
+########## Failing 2026-06-24 ##########  #ALERT: Failure may be R5 to R5.1 issue; recheck after 2026-07-15
 
 import pytest
-import logging
 from datetime import date
 from random import choice
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import *
 from nolcat.models import *
-from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -28,14 +25,15 @@ def FY2020_FiscalYears_object(engine, caplog):
     Yields:
         nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2021 record
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):
-        pytest.skip(database_function_skip_statements(record, False))
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    try:
+        record = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2020';",
+            engine=engine,
+            # Conversion to class object easier when primary keys stay as standard fields
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield_object = FiscalYears(
         fiscal_year_ID=record.at[0,'fiscal_year_ID'],
         fiscal_year=record.at[0,'fiscal_year'],
@@ -48,141 +46,163 @@ def FY2020_FiscalYears_object(engine, caplog):
     yield yield_object
 
 
-def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object):
+def test_calculate_depreciated_ACRL_60b(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the old ACRL 60b value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_60b() == 2263
 
 
-def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object):
+def test_calculate_depreciated_ACRL_63(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the old ACRL 63 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_depreciated_ACRL_63() == 2190
 
 
-def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object):
+def test_calculate_ACRL_61a(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61a value.
     
     Dynamically getting the value through SQL queries would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ACRL_61a() == 73
 
 
-def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object):
+def test_calculate_ACRL_61b(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ACRL 61b value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ACRL_61b() == 2190
 
 
-def test_calculate_ARL_18(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_18(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 18 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_18() == 2190
 
 
-def test_calculate_ARL_19(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_19(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 19 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_19() == 85613
 
 
-def test_calculate_ARL_20(client, FY2020_FiscalYears_object):
+def test_calculate_ARL_20(client, FY2020_FiscalYears_object, caplog):
     """Tests getting the ARL 20 value.
     
     Dynamically getting the value through a SQL query would be effectively repeating the method, so the method call is compared to a constant value.
+
+    Args:
+        client (flask.testing.FlaskClient): a Flask test client
+        FY2020_FiscalYears_object (nolcat.models.FiscalYears): a FiscalYears object for the fiscal year with COUNTER R5 test data
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
     with client:
         assert FY2020_FiscalYears_object.calculate_ARL_20() == 0
 
 
 #Section: Test Creating New `annualUsageCollectionTracking` Records
-@pytest.fixture
-def FY2023_FiscalYears_object_and_record():
-    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
-
-    Yields:
-        tuple: the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
-    """
-    primary_key_value = 6
-    fiscal_year_value = "2023"
-    start_date_value = date.fromisoformat('2022-07-01')
-    end_date_value = date.fromisoformat('2023-06-30')
-
-    FY_instance = FiscalYears(
-        fiscal_year_ID = primary_key_value,
-        fiscal_year = fiscal_year_value,
-        start_date = start_date_value,
-        end_date = end_date_value,
-        notes_on_statisticsSources_used = None,
-        notes_on_corrections_after_submission = None,
-    )
-    FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None]],
-        index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
-    )
-    FY_df.index.name = "fiscal_year_ID"
-    yield (FY_instance, FY_df)
-
-
-@pytest.fixture
-def load_new_record_into_fiscalYears(engine, FY2023_FiscalYears_object_and_record, caplog):
+@pytest.fixture(scope='module')
+def load_new_record_into_fiscalYears(engine, new_FiscalYears_object_and_record):
     """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        FY2023_FiscalYears_object_and_record (tuple): the FiscalYears object for the 2023 FY; a single-record dataframe for the fiscalYears relation for FY 2023
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
     
     Yields:
         None
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
-    method_result = load_data_into_database(
-        df=FY2023_FiscalYears_object_and_record[1],
-        relation='fiscalYears',
-        engine=engine,
-        index_field_name='fiscal_year_ID',
-    )
-    if not load_data_into_database_success_regex().fullmatch(method_result):
-        pytest.skip(database_function_skip_statements(method_result, False))
+    # Cannot use `caplog` for `nolcat.nolcat_glue_job` due to scope mismatch
+    try:
+        method_result = load_data_into_database(
+            df=new_FiscalYears_object_and_record[1],
+            relation='fiscalYears',
+            engine=engine,
+            index_field_name='fiscal_year_ID',
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to create fixture--{error}")
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, FY2023_FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_record_into_fiscalYears, new_FiscalYears_object_and_record, caplog):  # `load_new_record_into_fiscalYears()` not called but used to load record needed for test
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
 
     #Section: Call Method
     with client:
-        method_result = FY2023_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
-    if not load_data_into_database_success_regex().fullmatch(method_result):
+        method_result = new_FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+    if not re.fullmatch(re.compile(r'Successfully loaded (\d+) records into the `(.+)` relation\.'), method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
-    retrieved_data = query_database(
-        query="SELECT * FROM annualUsageCollectionTracking;",
-        engine=engine,
-        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    )
-    if isinstance(retrieved_data, str):
-        pytest.skip(database_function_skip_statements(retrieved_data))
+    try:
+        retrieved_data = query_database(
+            query="SELECT * FROM annualUsageCollectionTracking;",
+            engine=engine,
+            index=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
@@ -294,7 +314,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
             [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
             [True, True, False, False, "Collection complete", "11_3.csv", None],
             [True, True, False, False, "Collection complete", "11_4.csv", None],
-            [True, False, False, False, "Collection not started", None, "This is the record for `tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()`"],
+            [True, False, False, False, "Collection not started", None, None],
             [None, None, None, None, None, None, None],
         ],
         index=multiindex,
@@ -302,91 +322,94 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
-    assert regex_match_object is not None
-    assert int(regex_match_object.group(1)) == 10
-    assert regex_match_object.group(2) == "annualUsageCollectionTracking"
+    assert method_result == "Successfully loaded 10 records into the `annualUsageCollectionTracking` relation."
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
 #Section: Test Collecting Usage Statistics
 @pytest.fixture
-def FY2022_FiscalYears_object(engine, caplog):
-    """Creates a FiscalYears object for the fiscal year with an `annualUsageCollectionTracking` record that meets the criteria for inclusion in `FiscalYears.collect_fiscal_year_usage_statistics()`.
-
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+def S3_regex_and_teardown():
+    """Creates a regex matching the S3 files created when `test_FiscalYears.test_collect_fiscal_year_usage_statistics()` runs and handles teardown for those same files.
 
     Yields:
-        nolcat.models.FiscalYears: a FiscalYears object corresponding to the FY 2022 record
+        re.Pattern: a regex for a COUNTER parquet file created the day the fixture runs
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    record = query_database(
-        query=f"SELECT * FROM fiscalYears WHERE fiscal_year='2022';",
-        engine=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    )
-    if isinstance(record, str):
-        pytest.skip(database_function_skip_statements(record, False))
-    yield_object = FiscalYears(
-        fiscal_year_ID=record.at[0,'fiscal_year_ID'],
-        fiscal_year=record.at[0,'fiscal_year'],
-        start_date=record.at[0,'start_date'],
-        end_date=record.at[0,'end_date'],
-        notes_on_statisticsSources_used=record.at[0,'notes_on_statisticsSources_used'],
-        notes_on_corrections_after_submission=record.at[0,'notes_on_corrections_after_submission'],
-    )
-    log.info(initialize_relation_class_object_statement("FiscalYears", yield_object))
-    yield yield_object
+    date_for_regex = f"{date.today().year}-{date.today().month:02}-{date.today().day:02}"
+    regex = re.compile(str(TEST_COUNTER_FILE_PATH) + r'/\d?_\w{2}_' + date_for_regex + r'T\d{2}-\d{2}-\d{2}\.parquet')
+    yield regex
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    for file_name in [file for file in files_in_bucket if regex.fullmatch(str(file))]:
+        try:
+            s3_client.delete_object(
+                Bucket=BUCKET_NAME,
+                Key=file_name.key,
+            )
+        except botocore.exceptions.BotoCoreError as error:
+            log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.mark.slow
-def test_collect_fiscal_year_usage_statistics(engine, FY2022_FiscalYears_object, caplog):
-    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `update_database()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+def test_collect_fiscal_year_usage_statistics(engine, client, tmp_path,  load_new_record_into_fiscalYears, valid_COUNTER_retrieval_code, new_FiscalYears_object_and_record, S3_regex_and_teardown, caplog):  # `load_new_record_into_fiscalYears()` not called but used to load record needed for test
+    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments.
 
-    #Section: Add Random Statistics_Source_Retrieval_Code to Relevant Record
-    # A random value is added at this point for greater variability in the testing
-    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
-    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-        SUSHI_data_file = json.load(JSON_file)
-        for vendor in SUSHI_data_file:
-            for statistics_source_dict in vendor['interface']:
-                if "interface_id" in list(statistics_source_dict.keys()):
-                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
-    retrieval_code = str(choice(retrieval_codes_as_interface_IDs)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+    The previously created record for the most recently passed fiscal year is used to avoid raising any SUSHI 3020 errors.
 
-    update_result = update_database(
-        update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{retrieval_code}' WHERE statistics_source_ID=11;",
-        engine=engine,
-    )
-    if not update_database_success_regex().fullmatch(update_result):
-        pytest.skip("Unable to add statistics source retrieval code to relevant record.")
-    
-    #Section: Make Function Call
-    before_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(before_count, str):
-        pytest.skip(database_function_skip_statements(before_count, False))
-    before_count = extract_value_from_single_value_df(before_count)
-    logging_statement, flash_messages = FY2022_FiscalYears_object.collect_fiscal_year_usage_statistics()
-    if re.fullmatch(r"None of the \d+ statistics sources with SUSHI for FY 2022 returned any data\.", logging_statement):
-        pytest.skip(database_function_skip_statements(f"up to {len(flash_messages)} errors.", no_data=True))
-    after_count = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData;",
-        engine=engine,
-    )
-    if isinstance(after_count, str):
-        pytest.skip(database_function_skip_statements(after_count, False))
-    after_count = extract_value_from_single_value_df(after_count)
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        client (flask.testing.FlaskClient): a Flask test client
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        load_new_record_into_fiscalYears (None): creates a new record with no corresponding usage data in the `fiscalYears` relation
+        valid_COUNTER_retrieval_code (str): a COUNTER Registry ID
+        new_FiscalYears_object_and_record (tuple): the FiscalYears object for the most recently passed fiscal year; a single-record dataframe for the fiscalYears relation for the most recently passed fiscal year
+        S3_regex_and_teardown (re.Pattern): a regex for a COUNTER parquet file created the day the fixture runs
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.nolcat_glue_job')
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')
 
-    #Section: Assert Statements
-    assert before_count < after_count
-    assert load_data_into_database_success_regex().match(logging_statement)
-    assert update_database_success_regex().search(logging_statement)
-    assert isinstance(flash_messages, dict)
+    #Section: Change Data in Database
+    try:
+        with client:
+            update_database(
+                update_statement=f"UPDATE statisticsSources SET statistics_source_retrieval_code='{valid_COUNTER_retrieval_code}' WHERE statistics_source_ID=11;",
+                engine=engine,
+            )
+            update_database(
+                update_statement=f"""
+                    UPDATE annualUsageCollectionTracking
+                    SET
+                        usage_is_being_collected=true,
+                        manual_collection_required=false
+                    WHERE AUCT_fiscal_year={new_FiscalYears_object_and_record[0].fiscal_year_ID};
+                """,
+                engine=engine,
+            )
+    except DatabaseInteractionError as error:
+        pytest.skip(f"Unable to run test--{error}")
+
+    #Section: Test Function
+    flash_message_dict = new_FiscalYears_object_and_record[0].collect_fiscal_year_usage_statistics()
+    assert isinstance(flash_message_dict, dict)
+    if 'STOP' in flash_message_dict.keys():
+        pytest.skip(f"The SUSHI call raised up to {len(flash_message_dict)} errors.")
+    files_in_bucket = list_files_in_bucket_location(TEST_COUNTER_FILE_PATH)
+    #TEST: temp
+    log.error(f"`files_in_bucket`:\n{format_list_for_stdout(files_in_bucket)}")
+    log.error(f"`S3_regex_and_teardown` (type {type(S3_regex_and_teardown)}): {S3_regex_and_teardown}")
+    for file in files_in_bucket:
+        log.error(f"`str(file)`: {str(file)}")
+        log.error(f"`S3_regex_and_teardown.fullmatch(str(file))` (type {type(S3_regex_and_teardown.fullmatch(str(file)))}): {S3_regex_and_teardown.fullmatch(str(file))}")
+        log.error(f"`S3_regex_and_teardown.match(str(file))` (type {type(S3_regex_and_teardown.match(str(file)))}): {S3_regex_and_teardown.match(str(file))}")
+        log.error(f"`S3_regex_and_teardown.search(str(file))` (type {type(S3_regex_and_teardown.search(str(file)))}): {S3_regex_and_teardown.search(str(file))}")
+    #TEST: end temp
+    S3_file_names = [file for file in files_in_bucket if S3_regex_and_teardown.fullmatch(str(file))]
+    assert 0 < len(S3_file_names) <= 4
+    for S3_file_name in S3_file_names:
+        download_location = tmp_path / S3_file_name.name
+        s3_client.download_file(
+            Bucket=BUCKET_NAME,
+            Key=S3_file_name.key,
+            Filename=download_location,
+        )
+        assert download_location.is_file()
+    #ToDo: Teardown of above files
